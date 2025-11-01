@@ -110,6 +110,7 @@ namespace FoxIDs.Client.Pages.Settings
                     ApiUrl = smsSettings.ApiUrl,
                     ClientId = smsSettings.ClientId,
                     ClientSecret = smsSettings.ClientSecret,
+                    Label = smsSettings.Label,
                     Key = smsSettings.Key,
                 });
             }
@@ -133,11 +134,21 @@ namespace FoxIDs.Client.Pages.Settings
                     case SendSmsTypes.GatewayApi:
                         smsSettingsForm.Model.ClientId = null;
                         smsSettingsForm.Model.Key = null;
+                        if (smsSettingsForm.Model.Label.IsNullOrWhiteSpace())
+                        {
+                            smsSettingsForm.Model.Label = null;
+                        }
+                        else
+                        {
+                            smsSettingsForm.Model.Label = smsSettingsForm.Model.Label.Trim();
+                        }
                         break;
                     case SendSmsTypes.Smstools:
                         smsSettingsForm.Model.Key = null;
+                        smsSettingsForm.Model.Label = null;
                         break;
                     case SendSmsTypes.TeliaSmsGateway:
+                        smsSettingsForm.Model.Label = null;
                         break;
                     default:
                         throw new NotImplementedException();

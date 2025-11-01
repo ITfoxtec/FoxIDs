@@ -23,6 +23,9 @@ namespace FoxIDs.Models.Config
         [MaxLength(Constants.Models.Track.SendSms.ClientSecretLength)]
         public string ClientSecret { get; set; }
 
+        [MaxLength(Constants.Models.Track.SendSms.LabelLength)]
+        public string Label { get; set; }
+
         public string CertificatePemCrt { get; set; }
         public string CertificatePemKey { get; set; }
 

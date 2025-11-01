@@ -27,7 +27,7 @@ Configure [OpenID Connect](auth-method-oidc.md) which trust an external OpenID P
 How to guides:
 
 - Connect [IdentityServer](auth-method-howto-oidc-identityserver.md)
-- Connect [Microsoft Entra ID (Azure AD)](auth-method-howto-oidc-azure-ad.md) 
+- Connect [Microsoft Entra ID (Azure AD)](auth-method-howto-oidc-microsoft-entra-id.md) 
 - Connect [Azure AD B2C](auth-method-howto-oidc-azure-ad-b2c.md) 
 - Connect [Amazon Cognito](auth-method-howto-oidc-amazon-cognito.md)
 - Connect [Google](auth-method-howto-oidc-google.md)
@@ -70,12 +70,18 @@ You would most often connect applications and APIs. But an application registrat
 ### OpenID Connect and OAuth 2.0
 It is recommended to secure applications and APIs with [OpenID Connect](app-reg-oidc.md) and [OAuth 2.0](app-reg-oauth-2.0.md). Please see the [samples](samples.md).
 
+How to guides:
+
+- Connect [Tailscale](app-reg-howto-oidc-tailscale.md)
+
 ### SAML 2.0
 Configure [SAML 2.0](app-reg-saml-2.0.md) to be an Identity Provider (IdP).
 
 How to guides:
 
-- Connect [Amazon IAM Identity Center](auth-method-howto-saml-amazon-iam-identity-center.md)
+- Connect [Amazon IAM Identity Center](app-reg-howto-saml-amazon-iam-identity-center.md)
+- Connect [Google Workspace](app-reg-howto-saml-google-workspace.md)
+- Connect [Microsoft Entra ID](app-reg-howto-saml-microsoft-entra-id.md)
 - Connect [Context Handler test IdP (Danish identity broker)](howto-saml-2.0-context-handler#configuring-test-identity-provider-for-context-handler)
 
 ## Connect FoxIDs environments

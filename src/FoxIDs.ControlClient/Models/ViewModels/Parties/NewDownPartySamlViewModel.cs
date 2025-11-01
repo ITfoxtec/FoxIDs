@@ -1,4 +1,5 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
+﻿using System;
+using FoxIDs.Infrastructure.DataAnnotations;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -6,6 +7,7 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class NewDownPartySamlViewModel
     {
+        [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
         [Display(Name = "Technical name")]
@@ -39,5 +41,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Display(Name = "Single Logout URL")]
         public string MetadataLogout { get; set; }
+
+        public KeyInfoViewModel IdPKeyInfo { get; set; }
     }
 }

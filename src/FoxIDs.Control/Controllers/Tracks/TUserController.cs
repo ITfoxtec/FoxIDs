@@ -26,9 +26,10 @@ namespace FoxIDs.Controllers
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly BaseAccountLogic accountLogic;
+        private readonly OAuthRefreshTokenGrantDownBaseLogic oAuthRefreshTokenGrantDownBaseLogic;
         private readonly TenantApiLockLogic tenantApiLockLogic;
 
-        public TUserController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, BaseAccountLogic accountLogic, TenantApiLockLogic tenantApiLockLogic) : base(logger)
+        public TUserController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, BaseAccountLogic accountLogic, OAuthRefreshTokenGrantDownBaseLogic oAuthRefreshTokenGrantDownBaseLogic, TenantApiLockLogic tenantApiLockLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -36,6 +37,7 @@ namespace FoxIDs.Controllers
             this.tenantDataRepository = tenantDataRepository;
             this.planCacheLogic = planCacheLogic;
             this.accountLogic = accountLogic;
+            this.oAuthRefreshTokenGrantDownBaseLogic = oAuthRefreshTokenGrantDownBaseLogic;
             this.tenantApiLockLogic = tenantApiLockLogic;
         }
 
@@ -184,6 +186,11 @@ namespace FoxIDs.Controllers
 
                 var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = user.Email, UserIdentifier = user.Phone ?? user.Username }), queryAdditionalIds: true);
 
+                if (!mUser.DisableAccount && user.DisableAccount)
+                {
+                    await oAuthRefreshTokenGrantDownBaseLogic.DeleteRefreshTokenGrantsAsync(user.Email ?? user.Phone ?? user.Username, upPartyType: PartyTypes.Login);
+                }
+
                 if (user.UpdateEmail != null)
                 {
                     user.UpdateEmail = user.UpdateEmail?.Trim().ToLower();
@@ -319,6 +326,9 @@ namespace FoxIDs.Controllers
                 username = username?.Trim()?.ToLower();
 
                 await tenantDataRepository.DeleteAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = email, UserIdentifier = phone ?? username }), queryAdditionalIds: true);
+
+                await oAuthRefreshTokenGrantDownBaseLogic.DeleteRefreshTokenGrantsAsync(email ?? phone ?? username, upPartyType: PartyTypes.Login);
+
                 return NoContent();
             }
             catch (FoxIDsDataException ex)

@@ -546,6 +546,7 @@ namespace FoxIDs
                     public const int ApiUrlLength = 500;
                     public const int ClientIdLength = 300;
                     public const int ClientSecretLength = 300;
+                    public const int LabelLength = 100;
                     public const int SenderAddressLength = 100;
                 }
                 public static class Logging

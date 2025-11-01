@@ -17,6 +17,7 @@ using FoxIDs.Client.Util;
 using static ITfoxtec.Identity.IdentityConstants;
 using System.Linq;
 using System.Security.Claims;
+using Microsoft.JSInterop;
 
 namespace FoxIDs.Client.Pages
 {
@@ -45,6 +46,12 @@ namespace FoxIDs.Client.Pages
 
         [Inject]
         public DownPartyService DownPartyService { get; set; }
+
+        [Inject]
+        public TrackService TrackService { get; set; }
+
+        [Inject]
+        public IJSRuntime JSRuntime { get; set; }
 
         [Parameter]
         public string TenantName { get; set; }
@@ -76,6 +83,10 @@ namespace FoxIDs.Client.Pages
         private async Task DefaultLoadAsync()
         {
             downPartyFilterForm?.ClearError();
+            if (newDownPartyModal != null)
+            {
+                newDownPartyModal.IsVisible = false;
+            }
             try
             {
                 SetGeneralDownParties(await DownPartyService.GetDownPartiesAsync(null));
@@ -316,6 +327,16 @@ namespace FoxIDs.Client.Pages
             newDownPartyModal.Init();
             newDownPartyModal.IsVisible = false;
             StateHasChanged();
+        }
+
+        private async Task DownloadCertificateAsync(string subject, string certificateBase64)
+        {
+            if (certificateBase64.IsNullOrWhiteSpace())
+            {
+                return;
+            }
+
+            await JSRuntime.InvokeAsync<object>("saveCertFile", $"{subject}.cer", certificateBase64);
         }
 
         private async Task AddNewDownPartyAsync(GeneralDownPartyViewModel generalDownPartyViewModel)
@@ -741,6 +762,45 @@ namespace FoxIDs.Client.Pages
             model.OidcDiscovery = resourceOidcDiscovery;
         }
 
+        private async Task ShowNewDownPartySamlMetadataDetailsAsync()
+        {
+            if (newDownPartyModal?.SamlForm?.Model == null)
+            {
+                newDownPartyModal.ShowSamlMetadataDetails = true;
+                return;
+            }
+
+            if (newDownPartyModal.SamlForm.Model.IdPKeyInfo == null)
+            {
+                try
+                {
+                    var trackKeys = await TrackService.GetTrackKeyContainedAsync();
+                    newDownPartyModal.SamlForm.Model.IdPKeyInfo = new KeyInfoViewModel
+                    {
+                        Subject = trackKeys.PrimaryKey.CertificateInfo.Subject,
+                        ValidFrom = trackKeys.PrimaryKey.CertificateInfo.ValidFrom,
+                        ValidTo = trackKeys.PrimaryKey.CertificateInfo.ValidTo,
+                        IsValid = trackKeys.PrimaryKey.CertificateInfo.IsValid(),
+                        Thumbprint = trackKeys.PrimaryKey.CertificateInfo.Thumbprint,
+                        KeyId = trackKeys.PrimaryKey.Kid,
+                        CertificateBase64 = trackKeys.PrimaryKey.X5c?.FirstOrDefault(),
+                        Key = trackKeys.PrimaryKey
+                    };
+                }
+                catch (TokenUnavailableException)
+                {
+                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    newDownPartyModal.SamlForm.SetError(ex.Message);
+                }
+            }
+
+            newDownPartyModal.ShowSamlMetadataDetails = true;
+        }
+
         private void EnsureNewDownPartySamlSummaryDefaults()
         {
             if (newDownPartyModal?.IsVisible != true || newDownPartyModal.SamlForm?.Model == null)
@@ -777,5 +837,3 @@ namespace FoxIDs.Client.Pages
         }
     }
 }
-
-

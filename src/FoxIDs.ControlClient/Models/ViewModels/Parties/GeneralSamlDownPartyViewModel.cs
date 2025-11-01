@@ -1,4 +1,4 @@
-﻿using FoxIDs.Client.Shared.Components;
+using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
 using System.Collections.Generic;
 

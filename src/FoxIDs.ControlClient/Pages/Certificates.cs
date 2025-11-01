@@ -11,10 +11,12 @@ using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.WebUtilities;
 using FoxIDs.Client.Models.Config;
+using Microsoft.JSInterop;
 
 namespace FoxIDs.Client.Pages
 {
@@ -36,6 +38,9 @@ namespace FoxIDs.Client.Pages
 
         [Inject]
         public HelpersService HelpersService { get; set; }        
+
+        [Inject]
+        public IJSRuntime JSRuntime { get; set; }
 
         [Parameter]
         public string TenantName { get; set; }
@@ -88,6 +93,16 @@ namespace FoxIDs.Client.Pages
             }
         }
 
+        private async Task DownloadCertificateAsync(string subject, string certificateBase64)
+        {
+            if (certificateBase64.IsNullOrWhiteSpace())
+            {
+                return;
+            }
+
+            await JSRuntime.InvokeAsync<object>("saveCertFile", $"{subject}.cer", certificateBase64);
+        }
+
         private async Task DefaultLoadAsync()
         {
             certificateLoadError = null;
@@ -95,9 +110,14 @@ namespace FoxIDs.Client.Pages
             {
                 trackKey = await TrackService.GetTrackKeyTypeAsync();
 
-                if(trackKey.Type == TrackKeyTypes.Contained)
+                if(trackKey.Type == TrackKeyTypes.Contained || trackKey.Type == TrackKeyTypes.ContainedRenewSelfSigned)
                 {
-                    SetGeneralCertificates(await TrackService.GetTrackKeyContainedAsync());
+                    var trackKeys = await TrackService.GetTrackKeyContainedAsync();
+                    SetGeneralCertificates(trackKeys, trackKey.Type == TrackKeyTypes.Contained);
+                }
+                else
+                {
+                    certificates.Clear();
                 }
             }
             catch (TokenUnavailableException)
@@ -112,15 +132,19 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void SetGeneralCertificates(TrackKeyItemsContained trackKeys)
+        private void SetGeneralCertificates(TrackKeyItemsContained trackKeys, bool includeCreatePlaceholder)
         {
             certificates.Clear();
-            certificates.Add(new GeneralTrackCertificateViewModel(trackKeys.PrimaryKey, true));
-            if(trackKeys.SecondaryKey != null)
+            if (trackKeys?.PrimaryKey != null)
+            {
+                certificates.Add(new GeneralTrackCertificateViewModel(trackKeys.PrimaryKey, true));
+            }
+
+            if(trackKeys?.SecondaryKey != null)
             {
                 certificates.Add(new GeneralTrackCertificateViewModel(trackKeys.SecondaryKey, false));
             }
-            else
+            else if (includeCreatePlaceholder)
             {
                 certificates.Add(new GeneralTrackCertificateViewModel(false) { CreateMode = true });
             }
@@ -175,6 +199,7 @@ namespace FoxIDs.Client.Pages
                 model.ValidTo = generalCertificate.ValidTo;
                 model.IsValid = generalCertificate.IsValid;
                 model.Thumbprint = generalCertificate.Thumbprint;
+                model.CertificateBase64 = generalCertificate.CertificateBase64;
             }
         }
 
@@ -222,6 +247,10 @@ namespace FoxIDs.Client.Pages
                 generalCertificate.Form.Model.IsValid = jwkWithCertificateInfo.CertificateInfo.IsValid();
                 generalCertificate.Form.Model.Thumbprint = jwkWithCertificateInfo.CertificateInfo.Thumbprint;
                 generalCertificate.Form.Model.Key = jwkWithCertificateInfo;
+                generalCertificate.Form.Model.CertificateBase64 = jwkWithCertificateInfo.X5c?.FirstOrDefault();
+                generalCertificate.CertificateBase64 = generalCertificate.Form.Model.CertificateBase64;
+                generalCertificate.Key = jwkWithCertificateInfo;
+                generalCertificate.KeyId = jwkWithCertificateInfo.Kid;
 
                 generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
             }
@@ -259,6 +288,15 @@ namespace FoxIDs.Client.Pages
                 generalCertificate.ValidTo = keyResponse.CertificateInfo.ValidTo;
                 generalCertificate.IsValid = keyResponse.CertificateInfo.IsValid();
                 generalCertificate.Thumbprint = keyResponse.CertificateInfo.Thumbprint;
+                generalCertificate.CertificateBase64 = keyResponse.X5c?.FirstOrDefault();
+                generalCertificate.Key = keyResponse;
+                generalCertificate.KeyId = keyResponse.Kid;
+                if (generalCertificate.Form?.Model != null)
+                {
+                    generalCertificate.Form.Model.CertificateBase64 = generalCertificate.CertificateBase64;
+                    generalCertificate.Form.Model.Key = keyResponse;
+                    generalCertificate.Form.Model.KeyId = keyResponse.Kid;
+                }
                 generalCertificate.CreateMode = false;
                 generalCertificate.Edit = false;
             }
@@ -291,6 +329,9 @@ namespace FoxIDs.Client.Pages
                 generalCertificate.ValidTo = generalCertificate.Form.Model.ValidTo;
                 generalCertificate.IsValid = generalCertificate.Form.Model.IsValid;
                 generalCertificate.Thumbprint = generalCertificate.Form.Model.Thumbprint;
+                generalCertificate.CertificateBase64 = generalCertificate.Form.Model.CertificateBase64;
+                generalCertificate.Key = generalCertificate.Form.Model.Key;
+                generalCertificate.KeyId = generalCertificate.Form.Model.Key?.Kid;
                 generalCertificate.CreateMode = false;
                 generalCertificate.Edit = false;
             }
@@ -320,6 +361,15 @@ namespace FoxIDs.Client.Pages
                 generalCertificate.Edit = false; 
                 generalCertificate.Subject = null;
                 generalCertificate.Form.Model.Subject = null;
+                generalCertificate.CertificateBase64 = null;
+                generalCertificate.Key = null;
+                generalCertificate.KeyId = null;
+                if (generalCertificate.Form?.Model != null)
+                {
+                    generalCertificate.Form.Model.CertificateBase64 = null;
+                    generalCertificate.Form.Model.Key = null;
+                    generalCertificate.Form.Model.KeyId = null;
+                }
             }
             catch (TokenUnavailableException)
             {

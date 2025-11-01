@@ -50,7 +50,7 @@ namespace FoxIDs.Models.Api
         public List<ExtendedUi> ExtendedUis { get; set; }
 
         /// <summary>
-        /// Claim transforms executed before exit / response from up-party and after the external users claims has been loaded.
+        /// Claim transforms executed before exit / response from authentication method and after the external users claims has been loaded.
         /// </summary>
         [Obsolete("Delete after 2026-07-01.")]
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
@@ -70,7 +70,7 @@ namespace FoxIDs.Models.Api
         }
 
         /// <summary>
-        /// Claim transforms executed before exit / response from up-party and after the external users claims has been loaded.
+        /// Claim transforms executed before exit / response from authentication method and after the external users claims has been loaded.
         /// </summary>
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<OAuthClaimTransform> ExitClaimTransforms { get; set; }

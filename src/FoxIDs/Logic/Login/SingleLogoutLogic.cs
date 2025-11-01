@@ -128,7 +128,7 @@ namespace FoxIDs.Logic
                     return await serviceProvider.GetService<ExternalLogoutUpLogic>().LogoutRedirect(GetUpPartyLink(externalLoginUpPartySessionLink), GetLoginRequest(sequenceData), isSingleLogout: true);
                 }
 
-                throw new InvalidOperationException($"Unknown up-party type '{sequenceData.UpPartyLinks.FirstOrDefault()?.Type}' in single logout.");
+                throw new InvalidOperationException($"Unknown authentication method type '{sequenceData.UpPartyLinks.FirstOrDefault()?.Type}' in single logout.");
             }
            
             return await HandleSingleLogoutDownAsync(sequenceData);

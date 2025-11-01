@@ -11,6 +11,7 @@ using System.Linq;
 using ITfoxtec.Identity;
 using System;
 using FoxIDs.Infrastructure.Security;
+using FoxIDs.Models.SearchModels;
 
 namespace FoxIDs.Controllers
 {
@@ -75,24 +76,26 @@ namespace FoxIDs.Controllers
 
             if (filterName.IsNullOrWhiteSpace() && filterHrdDomains.IsNullOrWhiteSpace())
             {
-                return await tenantDataRepository.GetManyAsync<UpPartyWithProfile<UpPartyProfile>>(idKey, whereQuery: p => p.DataType.Equals(dataType), paginationToken: paginationToken);
+                return await tenantDataRepository.GetManyAsync<SearchUpPartyWithProfile<UpPartyProfile>>(idKey, whereQuery: p => p.DataType.Equals(dataType), paginationToken: paginationToken);
             }
             else if(!filterName.IsNullOrWhiteSpace() && filterHrdDomains.IsNullOrWhiteSpace())
             {
-                return await tenantDataRepository.GetManyAsync<UpPartyWithProfile<UpPartyProfile>>(idKey, whereQuery: p => p.DataType.Equals(dataType) &&
+                return await tenantDataRepository.GetManyAsync<SearchUpPartyWithProfile<UpPartyProfile>>(idKey, whereQuery: p => p.DataType.Equals(dataType) &&
                     (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) ||
+                      (p.Client != null && p.Client.SpClientId.Contains(filterName, StringComparison.CurrentCultureIgnoreCase)) ||
                       (p.Profiles != null && p.Profiles.Any(p => p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase))) ||
                       (doFilterPartyType && p.Type == filterPartyType)), paginationToken: paginationToken);
             }
             else if (filterName.IsNullOrWhiteSpace() && !filterHrdDomains.IsNullOrWhiteSpace())
             {
-                return await tenantDataRepository.GetManyAsync<UpPartyWithProfile<UpPartyProfile>>(idKey, whereQuery: p => p.DataType.Equals(dataType) &&
+                return await tenantDataRepository.GetManyAsync<SearchUpPartyWithProfile<UpPartyProfile>>(idKey, whereQuery: p => p.DataType.Equals(dataType) &&
                     p.HrdDomains.Where(d => d.Contains(filterHrdDomains, StringComparison.CurrentCultureIgnoreCase)).Any(), paginationToken: paginationToken);
             }
             else
             {
-                return await tenantDataRepository.GetManyAsync<UpPartyWithProfile<UpPartyProfile>>(idKey, whereQuery: p => p.DataType.Equals(dataType) &&
+                return await tenantDataRepository.GetManyAsync<SearchUpPartyWithProfile<UpPartyProfile>>(idKey, whereQuery: p => p.DataType.Equals(dataType) &&
                     (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) ||
+                      (p.Client != null && p.Client.SpClientId.Contains(filterName, StringComparison.CurrentCultureIgnoreCase)) ||
                       (p.Profiles != null && p.Profiles.Any(p => p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase))) ||
                       (doFilterPartyType && p.Type == filterPartyType)) ||
                       p.HrdDomains.Where(d => d.Contains(filterHrdDomains, StringComparison.CurrentCultureIgnoreCase)).Any(), paginationToken: paginationToken);

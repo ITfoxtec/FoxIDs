@@ -138,7 +138,7 @@ namespace FoxIDs.Logic.Seed
                 {
                     if (!await masterTenantDocumentsSeedLogic.MasterTenantExist())
                     {
-                        throw new Exception("Master tenant not seeded.");
+                        throw new Exception("Master tenant not seeded. Waiting for Control to seed the master tenant...");
                     }
                 }
             }

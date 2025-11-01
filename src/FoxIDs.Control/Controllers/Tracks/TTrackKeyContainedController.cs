@@ -42,9 +42,9 @@ namespace FoxIDs.Controllers
                 var mTrack = await tenantDataRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName});
                 try
                 {
-                    if (mTrack.Key.Type != TrackKeyTypes.Contained)
+                    if (mTrack.Key.Type != TrackKeyTypes.Contained && mTrack.Key.Type != TrackKeyTypes.ContainedRenewSelfSigned)
                     {
-                        throw new ValidationException($"Only {Api.TrackKeyTypes.Contained} keys is supported.");
+                        throw new ValidationException($"Only {Api.TrackKeyTypes.Contained} and {Api.TrackKeyTypes.ContainedRenewSelfSigned} keys are supported.");
                     }
                 }
                 catch (ValidationException vex)

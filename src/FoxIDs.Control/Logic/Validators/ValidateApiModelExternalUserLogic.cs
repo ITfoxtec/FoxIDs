@@ -61,11 +61,11 @@ namespace FoxIDs.Logic
             var upParty = await tenantService.GetAsync<UpParty>(await UpParty.IdFormatAsync(RouteBinding, upPartyName), required: false);
             if (upParty == null)
             {
-                throw new ValidationException($"Up-party '{upPartyName}' not found.");
+                throw new ValidationException($"Authentication method '{upPartyName}' not found.");
             }
             else if (upParty.Type == PartyTypes.Login || upParty.Type == PartyTypes.OAuth2)
             {
-                throw new ValidationException($"External users can not be connected to up-party type '{upParty.Type}'.");
+                throw new ValidationException($"External users can not be connected to authentication method type '{upParty.Type}'.");
             }
         }
     }

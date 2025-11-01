@@ -118,11 +118,11 @@ namespace FoxIDs.Logic
                 }
                 if (scopedLogger != null)
                 {
-                    scopedLogger.Event($"{AuditTypes.Login} action in {partyType} up-party", properties: properties);
+                    scopedLogger.Event($"{AuditTypes.Login} action in {partyType} authentication method", properties: properties);
                 }
                 else
                 {
-                    telemetryLogger.Event($"{AuditTypes.Login} action in {partyType} up-party", properties: properties);
+                    telemetryLogger.Event($"{AuditTypes.Login} action in {partyType} authentication method", properties: properties);
                 }
             }
             catch (Exception ex)
@@ -153,11 +153,11 @@ namespace FoxIDs.Logic
                 AddProperty(properties, Constants.Logs.SessionId, sessionId);
                 if (scopedLogger != null)
                 {
-                    scopedLogger.Event($"{AuditTypes.Logout} action in {partyType} up-party", properties: properties);
+                    scopedLogger.Event($"{AuditTypes.Logout} action in {partyType} authentication method", properties: properties);
                 }
                 else
                 {
-                    telemetryLogger.Event($"{AuditTypes.Logout} action in {partyType} up-party", properties: properties);
+                    telemetryLogger.Event($"{AuditTypes.Logout} action in {partyType} authentication method", properties: properties);
                 }
             }
             catch (Exception ex)
@@ -188,11 +188,11 @@ namespace FoxIDs.Logic
                 AddProperty(properties, Constants.Logs.UserId, userId);
                 if (scopedLogger != null)
                 {
-                    scopedLogger.Event($"{AuditTypes.ChangePassword} action in {partyType} up-party", properties: properties);
+                    scopedLogger.Event($"{AuditTypes.ChangePassword} action in {partyType} authentication method", properties: properties);
                 }
                 else
                 {
-                    telemetryLogger.Event($"{AuditTypes.ChangePassword} action in {partyType} up-party", properties: properties);
+                    telemetryLogger.Event($"{AuditTypes.ChangePassword} action in {partyType} authentication method", properties: properties);
                 }
             }
             catch (Exception ex)
@@ -227,11 +227,11 @@ namespace FoxIDs.Logic
                 }
                 if (scopedLogger != null)
                 {
-                    scopedLogger.Event($"{AuditTypes.CreateUser} action in {partyType} up-party", properties: properties);
+                    scopedLogger.Event($"{AuditTypes.CreateUser} action in {partyType} authentication method", properties: properties);
                 }
                 else
                 {
-                    telemetryLogger.Event($"{AuditTypes.CreateUser} action in {partyType} up-party", properties: properties);
+                    telemetryLogger.Event($"{AuditTypes.CreateUser} action in {partyType} authentication method", properties: properties);
                 }
             }
             catch (Exception ex)

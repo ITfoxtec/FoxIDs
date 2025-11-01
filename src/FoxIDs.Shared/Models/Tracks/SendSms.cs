@@ -29,6 +29,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "client_secret")]
         public string ClientSecret { get; set; }
 
+        [MaxLength(Constants.Models.Track.SendSms.LabelLength)]
+        [JsonProperty(PropertyName = "label")]
+        public string Label { get; set; }
+
         [JsonProperty(PropertyName = "key")]
         public JsonWebKey Key { get; set; }
 

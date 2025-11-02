@@ -475,7 +475,7 @@ namespace FoxIDs.Logic.Usage
 
         private decimal RoundPrice(decimal price, bool isUnitPrice)
         {
-            return decimal.Round(price, isUnitPrice ? 6 : 2);
+            return decimal.Round(price, isUnitPrice ? 6 : 2, MidpointRounding.AwayFromZero);
         }
 
         private async Task<ExtInv.InvoiceResponse> CallExternalMakeInvoiceAsync(Used used, Invoice invoice, bool sendInvoice)

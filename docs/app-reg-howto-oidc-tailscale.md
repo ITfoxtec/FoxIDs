@@ -2,6 +2,7 @@
 
 Connect FoxIDs as an **external identity provider for Tailscale** with OpenID Connect (OIDC) 1.0.
 
+Tailscale guide [Set up SSO with a custom OIDC provider](https://tailscale.com/kb/1240/sso-custom-oidc).
 Tailscale requires proof of domain ownership through [WebFinger discovery](https://datatracker.ietf.org/doc/html/rfc7033) when you use a custom OIDC provider. Configure a WebFinger response that points to the FoxIDs application you create for Tailscale.
 
 ## Configure FoxIDs
@@ -29,7 +30,8 @@ Tailscale requires proof of domain ownership through [WebFinger discovery](https
 
 **2 - Then set up a WebFinger endpoint on your domain**
 
-To allow Tailscale to discover your FoxIDs issuer, host a WebFinger endpoint at `https://<your-domain>/.well-known/webfinger`. The response must point to the FoxIDs issuer URL. Example JSON for the administrator account `admin@contoso.com`:
+To allow Tailscale to discover your FoxIDs issuer, host a WebFinger endpoint at `https://<your-domain>/.well-known/webfinger`. 
+The response must point to the FoxIDs issuer URL. Example JSON for the administrator account `admin@contoso.com`:
 
 ```json
 {
@@ -43,7 +45,11 @@ To allow Tailscale to discover your FoxIDs issuer, host a WebFinger endpoint at 
 }
 ```
 
-Update the `subject` and `href` values for each domain you plan to use with Tailscale.
+Ensure the domain in the email address matches both:
+- The domain where the WebFinger endpoint is hosted, and
+- The domain you will use with Tailscale.
+
+> The administrator account that configures OIDC for Tailscale becomes the Owner of the tailnet. When additional users from your domain sign in to Tailscale, they can enter their email address and will be redirected to authenticate with FoxIDs.
 
 ## Configure Tailscale
 

@@ -1,56 +1,53 @@
-**FoxIDs is an Identity Service (IDS) with support for [OAuth 2.0](oauth-2.0.md), [OpenID Connect 1.0](oidc.md) and [SAML 2.0](saml-2.0.md).**
+# Description
+FoxIDs is an Identity Service (IDS) that automatically handles [OAuth 2.0](oauth-2.0.md), [OpenID Connect 1.0](oidc.md), and [SAML 2.0](saml-2.0.md) so you can deliver secure sign-in flows without running the underlying identity infrastructure yourself.
 
-> Hosted in Europe / Ownership and data in Europe.
+> Hosted in Europe - Ownership and data remain in Europe.
 
-FoxIDs is both an [authentication](login.md) platform and a security broker where FoxIDs supports [converting](bridge.md) between OpenID Connect 1.0 and SAML 2.0.
+## Platform overview
+- **Unified identity hub**: Use FoxIDs as both an [authentication](login.md) platform and a federation broker. Bridge protocols by [converting](bridge.md) between OpenID Connect 1.0 and SAML 2.0 when needed.
+- **Multi-tenant design**: Each tenant can host multiple environments (for example prod, QA, test, dev or corporate, external-idp, app-a, app-b) and optionally [interconnect](howto-environmentlink-foxids.md) them.
+- **Per-environment security**: Every environment is its own Identity Provider with a dedicated [user repository](users.md) and [certificate](certificates.md). Connect to external IdPs using [OpenID Connect 1.0](auth-method-oidc.md) or [SAML 2.0](auth-method-saml-2.0.md), and register applications with [OAuth 2.0](app-reg-oauth-2.0.md), [OpenID Connect 1.0](app-reg-oidc.md), or [SAML 2.0](app-reg-saml-2.0.md).
+- **Customisable experiences**: Tailor the user [login](login.md) journey and optionally [customise](customisation.md) branding, texts, and behaviour per environment.
 
-FoxIDs is designed as a service with multi-tenant support. Your tenant holds your environments (prod, QA, test, dev or corporate, external-idp, app-a, app-b) and can optionally [interconnect](howto-environmentlink-foxids.md) the environments.  
-Each environment is an Identity Provider with a [user repository](users.md) and a unique [certificate](certificates.md). 
-An environment can be connected to an external Identity Provider with [OpenID Connect 1.0](auth-method-oidc.md) or [SAML 2.0](auth-method-saml-2.0.md) authentication methods. 
-The environment is configured as the IdP for applications and APIs with [OAuth 2.0](app-reg-oauth-2.0.md), [OpenID Connect 1.0](app-reg-oidc.md) or [SAML 2.0](app-reg-saml-2.0.md) application registrations.  
-The user's [log in](login.md) experience is configured and optionally [customised](customisation.md).
+> Explore the FoxIDs test configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
+> Sign in with `reader@foxids.com` and password `gEh#V6kSw` for read-only access.
 
-> Take a look at the FoxIDs test configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `gEh#V6kSw`
+## Services
+- [FoxIDs](connections.md): The runtime identity service that manages user authentication and the OAuth 2.0, OpenID Connect 1.0, and SAML 2.0 protocol flows.
+- [FoxIDs Control](control.md): The administration surface available as a UI and API for configuring tenants, environments, connections, and applications.
 
-FoxIDs consists of two services:
+## Hosting options
+- **FoxIDs Cloud (SaaS)**: Consume FoxIDs as a managed Identity Service at [FoxIDs Cloud](https://www.foxids.com/action/createtenant).
+- **Self-hosted**: [Deploy](deployment.md) FoxIDs yourself on IIS, Docker or Kubernetes (K8s) when you need full control over the hosting environment.
 
-- [FoxIDs](connections.md) - identity service, which handles user log in, OAuth 2.0, OpenID Connect 1.0 and SAML 2.0.
-- [FoxIDs Control](control.md), which is used to configure FoxIDs in a user interface or by calling an API.
+> New to FoxIDs? Start with the [get started](get-started.md) guide.
 
-Hosting options:
-
-- FoxIDs SaaS is available at [FoxIDs Cloud](https://www.foxids.com/action/createtenant) as an Identity Service (IDS).  
-- You can [deploy](deployment.md) FoxIDs anywhere using Docker or Kubernetes (K8s).
-
-> For more information please see the [get started](get-started.md) guide.
-
-## Source code available 
-
-The FoxIDs source code is available at the [GitHub repository](https://github.com/ITfoxtec/FoxIDs). 
-The [license](https://github.com/ITfoxtec/FoxIDs/blob/main/LICENSE) grants you the right to install and use FoxIDs for non-production. The license grants small companies, personal projects, and non-profit educational institutions the right to install and use FoxIDs in production.
+## Source code availability
+The FoxIDs source code lives on [GitHub](https://github.com/ITfoxtec/FoxIDs). The [license](https://github.com/ITfoxtec/FoxIDs/blob/main/LICENSE) lets you install and use FoxIDs for non-production scenarios, and grants small companies, personal projects, and non-profit educational institutions the right to run FoxIDs in production.
 
 ## Selection by URL
-The [structure](foxids-inside.md#structure) of FoxIDs separates the different tenants, environments and [connections](connections.md), which are selected via URL elements. 
+FoxIDs separates tenants, environments, and [connections](connections.md) with a consistent URL structure.
 
-If FoxIDs is hosted on e.g., `https://foxidsxxxx.com/` the tenants are separated in the first path element of the URL `https://foxidsxxxx.com/tenant-x/`. 
-The environments are separated under each tenant in the second path element of the URL `https://foxidsxxxx.com/tenant-x/environment-y/`.
+- Base host example: `https://foxidsxxxx.com/`
+- Tenant segment: `https://foxidsxxxx.com/tenant-x/`
+- Environment segment: `https://foxidsxxxx.com/tenant-x/environment-y/`
+- Application registration: `https://foxidsxxxx.com/tenant-x/environment-y/application-z/`
+- Authentication method: `https://foxidsxxxx.com/tenant-x/environment-y/(auth-method-s)/`
 
-An application registration is called by adding the application registration name as the third path element in the URL `https://foxidsxxxx.com/tenant-x/environment-y/application-z/`.  
-An authentication method is called by adding the authentication method name inside round brackets as the third path element in the URL `https://foxidsxxxx.com/tenant-x/environment-y/(auth-method-s)/`. 
-If FoxIDs handles an authentication method sequence resulting in a session cookie the same URL notation is used to lock the cookie to the URL.
+When FoxIDs handles a login sequence that results in a session cookie, the cookie stays scoped to the specific URL.
 
-When a client (application) starts an OpenID Connect or SAML 2.0 login sequence it needs to specify by which authentication method the user should authenticate. 
-The authentication method is selected by adding the authentication method name in round brackets in the URLs third path element after the application registration name `https://foxidsxxxx.com/tenant-x/environment-y/application-z(auth-method-s)/`.  
+During OpenID Connect or SAML 2.0 flows, clients choose the authentication method by appending the method name in round brackets after the application registration name:  
+`https://foxidsxxxx.com/tenant-x/environment-y/application-z(auth-method-s)/`
 
 Selecting multiple authentication methods:
 
-- **Default** - Select all allowed authentication methods for an application registration by adding a star `*` in round brackets in the URL after the application registration name `https://foxidsxxxx.com/tenant-x/environment-y/application-z(*)/`
-- Select a maximum of 4 allowed authentication methods for an application registration by adding the authentication methods as a comma separated list in round brackets 
-  in the URL after the application registration name `https://foxidsxxxx.com/tenant-x/environment-y/application-z(auth-method-s1,auth-method-s2,auth-method-s3,auth-method-s4)/`
-- Select an authentication methods profile by adding the authentication method `+` profile instead of just the authentication method in the URL `https://foxidsxxxx.com/tenant-x/environment-y/application-z(auth-method-s+profile-u)/`
+- **Default**: Allow every permitted authentication method with a star `*`:  
+  `https://foxidsxxxx.com/tenant-x/environment-y/application-z(*)/`
+- **List**: Pick up to four methods separated by commas:  
+  `https://foxidsxxxx.com/tenant-x/environment-y/application-z(auth-method-s1,auth-method-s2,auth-method-s3,auth-method-s4)/`
+- **Profiles**: Address a predefined authentication profile using `+`:  
+  `https://foxidsxxxx.com/tenant-x/environment-y/application-z(auth-method-s+profile-u)/`
 
-> The allowed authentication methods are configured in each [application registration](connections.md#application-registration).
+> Configure the permitted authentication methods inside each application registration.
 
-A client using the client credentials authorization grant would not specify the authentication method. 
-It is likewise optional to specify the authentication method when calling an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.
+A client using the client credentials grant does not have to specify the authentication method. The same applies when requesting an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.

@@ -21,26 +21,24 @@ You can select another environment, create a new environment or start building i
 
 ## 2) Configure your first application
 Let's configure the first OpenID Connect application and log in with a test user.  
-You may want to start by looking at the [sample applications](samples.md), which can also be [configured](samples.md#configure-samples-in-foxids-environment) in your test environment. 
 
-Click `New application` to configure your OpenID Connect application and select the type of application.
+Click `New application` and then select a OpenID Connect Web Application.
 
 ![New app registration](images/get-started-new-app-reg.png)
 
-I'll select Web Application, then fill in the `Name` and the base URL as the `Redirect URI`
+Then fill in the `Name` and the base URL as the `Redirect URI`
 
 ![New app registration configuration](images/get-started-new-app-reg-conf.png)
 
-Click `Register` to save the application configuration. Copy the `Authority`, `Client ID`, and `Client secret`, and optionally the `scopes`.
+Click `Create` to save the application configuration. Copy the `Authority`, `Client ID`, and `Client secret`, and optionally the `scopes`.
+Click `Show more` if you need the OpenID Connect (OIDC) Discovery endpoint.
 
 ![New app registration done](images/get-started-new-app-reg-done.png)
 
-Configure your application with the `Authority`, `Client ID`, and `Client secret`.  
-You are presented with a detailed configuration view when you close the pop-up. If needed, you can find the OpenID Connect (OIDC) Discovery endpoint and make configuration changes.
+Add the configuration details `Authority`, `Client ID`, and `Client secret` to your application.  
 
-Open your application and start the login flow. You are then redirected to the FoxIDs login prompt where you can choose to create a new test user.
-
-> Each environment has a separate user store. You cannot log in with your administrator user, which only exists in the master environment. Therefore, you need to create a new user (or the same user) in the test environment.
+Open your application and start the login flow.  
+You are then redirected to the FoxIDs login prompt (displayed in your language) where you can choose to create a new test user.
 
 ![Create test user](images/get-started-test-user.png)
 

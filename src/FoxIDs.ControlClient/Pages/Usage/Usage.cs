@@ -303,7 +303,7 @@ namespace FoxIDs.Client.Pages.Usage
                 else
                 {
                     var rate = GetExchangesRate(tenant.Currency, usageSettings.CurrencyExchanges);
-                    generalUsed.HourPrice = decimal.Round(usageSettings.HourPrice * rate, 2);
+                    generalUsed.HourPrice = decimal.Round(usageSettings.HourPrice * rate, 2, MidpointRounding.AwayFromZero);
                 }
             }
             catch (TokenUnavailableException)

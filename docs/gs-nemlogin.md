@@ -11,7 +11,7 @@ By default, FoxIDs is a [bridge](bridge.md) between [SAML 2.0](saml-2.0.md) and 
 
 ## About FoxIDs
 FoxIDs is developed in Denmark and hosted in Netherlands, ownership and data is kept in Europe.  
-You can [get started](https://www.foxids.com/action/signup) for free and optionally continue to use a Free plan.
+You can [get started](https://www.foxids.com/action/createtenant) for free and optionally continue to use a Free plan.
 
 ## Online test
 Test NemLog-in with the <a href="https://aspnetoidcsample.itfoxtec.com/auth/login" target="_blank">online test app</a>, select `Danish NemLog-in` or `Danish NemLog-in TEST` for the test environment.  

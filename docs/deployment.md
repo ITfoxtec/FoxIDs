@@ -7,7 +7,7 @@ FoxIDs support multiple deployment options and you can host it yourself both in 
 - Deploy on [Windows Server with IIS](deployment-window-iis.md)
 - Deploy in [Azure App Service Container](deployment-azure.md) 
 
-or use [FoxIDs Cloud](https://www.foxids.com/action/signup).
+or use [FoxIDs Cloud](https://www.foxids.com/action/createtenant).
 
 > New [releases of FoxIDs](https://github.com/ITfoxtec/FoxIDs/releases) are continuously published to [Docker Hub](https://hub.docker.com/u/foxids), so make sure to update your installation at appropriate intervals.
 

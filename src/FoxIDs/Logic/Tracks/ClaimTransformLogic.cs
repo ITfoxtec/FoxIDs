@@ -601,7 +601,7 @@ namespace FoxIDs.Logic
                     var userSaveClaims = await FindInternalUserAsync(tenantDataRepository, idKey, lookupClaimOnUser, lookupUserClaimValue);
                     if (userSaveClaims != null)
                     {
-                        // TODO Find claims, if exist add/replace claims on user. Save internal user if changed
+                        // TODO Find claims by claimTransform.TransformationExtension, if exist add (ClaimTransformActions.Add) or replace (ClaimTransformActions.Replace) claims by claimTransform.ClaimOut on user in User.Claims (userSaveClaims.Claims). Save the internal user if it has changed
                         return;
                     }
                     break;
@@ -609,7 +609,7 @@ namespace FoxIDs.Logic
                     var externalUserSaveClaims = await FindExternalUserAsync(tenantDataRepository, idKey, lookupClaimOnUser, lookupUserClaimValue, claimTransform.UpPartyName);
                     if (externalUserSaveClaims != null)
                     {
-                        // TODO Find claims, if exist add/replace claims on user. Save external user if changed
+                        // TODO Find claims by claimTransform.TransformationExtension, if exist add (ClaimTransformActions.Add) or replace (ClaimTransformActions.Replace) claims by claimTransform.ClaimOut on user in User.Claims (externalUserSaveClaims.Claims). Save the external user if it has changed
                         return;
                     }
                     break;

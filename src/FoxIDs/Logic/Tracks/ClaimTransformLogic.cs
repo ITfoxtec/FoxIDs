@@ -734,15 +734,16 @@ namespace FoxIDs.Logic
             return null;
         }
 
-        private IEnumerable<string> GetUpdateSourceValues(IEnumerable<Claim> claims, string updateSourceClaimType, bool isInternalUser)
+        private List<string> GetUpdateSourceValues(IEnumerable<Claim> claims, string updateSourceClaimType, bool isInternalUser)
         {
             var updateSourceValues = claims
                 .Where(c => c.Type.Equals(updateSourceClaimType, StringComparison.Ordinal))
                 .Select(c => c.Value)
                 .Where(v => !v.IsNullOrWhiteSpace())
-                .Distinct();
+                .Distinct()
+                .ToList();
 
-            if (updateSourceValues?.Count() > 0)
+            if (updateSourceValues.Count() > 0)
             {
                 return updateSourceValues;
             }
@@ -753,12 +754,63 @@ namespace FoxIDs.Logic
             }
         }
 
-        private (List<ClaimAndValues>, bool isChanged) UpdateUsersClaimValues(List<ClaimAndValues> claims, string targetClaimType, IEnumerable<string> updateSourceValues, ClaimTransformActions action)
+        private (List<ClaimAndValues>, bool isChanged) UpdateUsersClaimValues(List<ClaimAndValues> claims, string targetClaimType, List<string> targetValues, ClaimTransformActions action)
         {
-            // TODO implement method
-            // If action == Add then if claims contain the targetClaimType claim add the updateSourceValues that is not already in the list, if the claim do not exist add the targetClaimType claim with the values.
-            // If action == Replace then if claims contain the targetClaimType claim replace the values with updateSourceValues, if the claim do not exist add the targetClaimType claim with the values.
-            throw new NotImplementedException();
+            var targetClaim = claims.FirstOrDefault(c => c.Claim == targetClaimType);
+            var isChanged = false;
+
+            switch (action)
+            {
+                case ClaimTransformActions.Add:
+                    if (targetClaim == null)
+                    {
+                        claims.Add(new ClaimAndValues
+                        {
+                            Claim = targetClaimType,
+                            Values = targetValues
+                        });
+                        isChanged = true;
+                    }
+                    else
+                    {
+                        targetClaim.Values ??= new List<string>();
+                        foreach (var value in targetValues)
+                        {
+                            if (!targetClaim.Values.Contains(value))
+                            {
+                                targetClaim.Values.Add(value);
+                                isChanged = true;
+                            }
+                        }
+                    }
+                    break;
+
+                case ClaimTransformActions.Replace:
+                    if (targetClaim == null)
+                    {
+                        claims.Add(new ClaimAndValues
+                        {
+                            Claim = targetClaimType,
+                            Values = targetValues
+                        });
+                        isChanged = true;
+                    }
+                    else
+                    {
+                        var existingValues = targetClaim.Values ?? new List<string>();
+                        if (!existingValues.SequenceEqual(targetValues, StringComparer.Ordinal))
+                        {
+                            targetClaim.Values = targetValues;
+                            isChanged = true;
+                        }
+                    }
+                    break;
+
+                default:
+                    throw new NotSupportedException("Claim transform action is not supported for updating user claims.");
+            }
+
+            return (claims, isChanged);
         }
 
         private static void AddOrReplaceClaims(List<Claim> outputClaims, ClaimTransformActions claimTransformAction, Claim newClaim)

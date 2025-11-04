@@ -69,10 +69,9 @@ namespace FoxIDs.Client.Pages.Components
 
             if (generalOidcDownParty.DownPartyType == DownPartyOAuthTypes.Client || generalOidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
             {
-                var (authority, trackIssuer, oidcDiscovery, authorize, token) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, true, model.PartyBindingPattern);
+                var (authority, partyAuthority, oidcDiscovery, authorize, token) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, true, model.PartyBindingPattern);
                 model.Authority = authority;
-                model.TrackIssuer = trackIssuer;
-                model.PartyIssuer = authority;  
+                model.PartyAuthority = partyAuthority;  
                 model.OidcDiscovery = oidcDiscovery;
                 model.AuthorizeUrl = authorize;
                 model.TokenUrl = token;
@@ -88,10 +87,9 @@ namespace FoxIDs.Client.Pages.Components
 
             if (generalOidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
             {
-                var (resourceAuthority, trackIssuer, resourceOidcDiscovery, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, false, model.PartyBindingPattern);
+                var (resourceAuthority, partyResourceAuthority, resourceOidcDiscovery, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, false, model.PartyBindingPattern);
                 model.ResourceAuthority = resourceAuthority;
-                model.TrackResourceIssuer = trackIssuer;
-                model.PartyResourceIssuer= resourceAuthority;
+                model.PartyResourceAuthority = partyResourceAuthority;
                 model.ResourceOidcDiscovery = resourceOidcDiscovery;
             }
             else

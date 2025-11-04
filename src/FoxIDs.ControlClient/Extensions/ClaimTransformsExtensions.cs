@@ -23,7 +23,7 @@ namespace FoxIDs.Client
                     case ClaimTransformTypes.RegexMap:
                     case ClaimTransformTypes.DkPrivilege:
                         var oauthClaimTransformClaimIn = claimTransform.Map<OAuthClaimTransformClaimInViewModel>();
-                        oauthClaimTransformClaimIn.ClaimIn = claimTransform.ClaimsIn?.First();
+                        oauthClaimTransformClaimIn.ClaimIn = claimTransform.ClaimsIn?.FirstOrDefault();
                         newClaimTransforms.Add(oauthClaimTransformClaimIn);
                         break;
                     case ClaimTransformTypes.Constant:
@@ -57,7 +57,7 @@ namespace FoxIDs.Client
                     case ClaimTransformTypes.RegexMap:
                     case ClaimTransformTypes.DkPrivilege:
                         var samlClaimTransformClaimIn = claimTransform.Map<SamlClaimTransformClaimInViewModel>();
-                        samlClaimTransformClaimIn.ClaimIn = claimTransform.ClaimsIn?.First();
+                        samlClaimTransformClaimIn.ClaimIn = claimTransform.ClaimsIn?.FirstOrDefault();
                         newClaimTransforms.Add(samlClaimTransformClaimIn);
                         break;
                     case ClaimTransformTypes.Constant:

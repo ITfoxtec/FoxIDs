@@ -32,7 +32,6 @@
                     {
                         @if (!oauthDownParty.Form.Model.Authority.IsNullOrWhiteSpace())
                         {
-
                             <FFieldTextClipboard Class="@(oauthDownParty.ShowAuthorityDetails ? string.Empty : "pb-1")" @bind-Value="oauthDownParty.Form.Model.Authority" For="@(() => oauthDownParty.Form.Model.Authority)" />
                             @if (!oauthDownParty.ShowAuthorityDetails && !oauthDownParty.Form.Model.Name.IsNullOrWhiteSpace())
                             {

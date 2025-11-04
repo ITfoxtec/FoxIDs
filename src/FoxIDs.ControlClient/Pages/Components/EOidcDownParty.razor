@@ -58,13 +58,15 @@
                         <h6 class="card-title mt-1 mb-3">Application information</h6>
                         @if ((oidcDownParty.DownPartyType == DownPartyOAuthTypes.Client || oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource) && !oidcDownParty.Form.Model.Authority.IsNullOrWhiteSpace())
                         {
+                            <FFieldTextClipboard Class="@(oidcDownParty.ShowAuthorityDetails ? string.Empty : "pb-1")" @bind-Value="oidcDownParty.Form.Model.Authority" For="@(() => oidcDownParty.Form.Model.Authority)" />
+
                             @if (oidcDownParty.Form.Model.UsePartyIssuer)
                             {
-                                <FFieldTextClipboard Class="@(oidcDownParty.ShowAuthorityDetails ? string.Empty : "pb-1")" @bind-Value="oidcDownParty.Form.Model.PartyAuthority" For="@(() => oidcDownParty.Form.Model.PartyAuthority)" />
+                                <FFieldTextClipboard @bind-Value="oidcDownParty.Form.Model.PartyIssuer" For="@(() => oidcDownParty.Form.Model.PartyIssuer)" />
                             }
                             else
                             {
-                                <FFieldTextClipboard Class="@(oidcDownParty.ShowAuthorityDetails ? string.Empty : "pb-1")" @bind-Value="oidcDownParty.Form.Model.Authority" For="@(() => oidcDownParty.Form.Model.Authority)" />
+                                <FFieldTextClipboard @bind-Value="oidcDownParty.Form.Model.TrackIssuer" For="@(() => oidcDownParty.Form.Model.TrackIssuer)" />
                             }
                             @if (!oidcDownParty.ShowAuthorityDetails && !oidcDownParty.Form.Model.Name.IsNullOrWhiteSpace())
                             {
@@ -82,13 +84,14 @@
                         {
                             <hr class="my-3" />
                             <div class="small text-muted pb-2">Resource Authority and OIDC Discovery</div>
+                            <FFieldTextClipboard Class="@(oidcDownParty.ShowResourceAuthorityDetails ? string.Empty : "pb-1")" @bind-Value="oidcDownParty.Form.Model.ResourceAuthority" For="@(() => oidcDownParty.Form.Model.ResourceAuthority)" />
                             @if (oidcDownParty.Form.Model.UsePartyIssuer)
                             {
-                                <FFieldTextClipboard Class="@(oidcDownParty.ShowResourceAuthorityDetails ? string.Empty : "pb-1")" @bind-Value="oidcDownParty.Form.Model.PartyResourceAuthority" For="@(() => oidcDownParty.Form.Model.PartyResourceAuthority)" />
+                                <FFieldTextClipboard @bind-Value="oidcDownParty.Form.Model.PartyResourceIssuer" For="@(() => oidcDownParty.Form.Model.PartyResourceIssuer)" />
                             }
                             else
                             {
-                                <FFieldTextClipboard Class="@(oidcDownParty.ShowResourceAuthorityDetails ? string.Empty : "pb-1")" @bind-Value="oidcDownParty.Form.Model.ResourceAuthority" For="@(() => oidcDownParty.Form.Model.ResourceAuthority)" />
+                                <FFieldTextClipboard @bind-Value="oidcDownParty.Form.Model.TrackResourceIssuer" For="@(() => oidcDownParty.Form.Model.TrackResourceIssuer)" />
                             }
                             @if (!oidcDownParty.ShowResourceAuthorityDetails && !oidcDownParty.Form.Model.Name.IsNullOrWhiteSpace())
                             {

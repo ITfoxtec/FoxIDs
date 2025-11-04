@@ -1,5 +1,4 @@
-﻿using FoxIDs.Infrastructure;
-using FoxIDs.Models;
+﻿using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
@@ -12,14 +11,12 @@ namespace FoxIDs.Logic.Seed
 {
     public class MainTenantDocumentsSeedLogic : LogicBase 
     {
-        private readonly TelemetryLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly Settings settings;
         private readonly ITenantDataRepository tenantDataRepository;
 
-        public MainTenantDocumentsSeedLogic(TelemetryLogger logger, IServiceProvider serviceProvider, Settings settings, ITenantDataRepository tenantDataRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public MainTenantDocumentsSeedLogic(IServiceProvider serviceProvider, Settings settings, ITenantDataRepository tenantDataRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
-            this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.settings = settings;
             this.tenantDataRepository = tenantDataRepository;
@@ -46,8 +43,7 @@ namespace FoxIDs.Logic.Seed
             }
             catch (Exception ex)
             {
-                logger.CriticalError(ex, "Error seeding master tenant document.");
-                throw;
+                throw new Exception("Error seeding master tenant document.", ex);
             }
         }
 

@@ -569,67 +569,50 @@ namespace FoxIDs.Logic
             return outputLoginRequest;
         }
 
-        private async Task HandleAddReplaceTaskAsync(List<Claim> claims, ClaimTransform claimTransform, string claimIn, string selectUserClaimValue)
+        private async Task HandleAddReplaceTaskAsync(List<Claim> claims, ClaimTransform claimTransform, string claimIn, string lookupUserClaimValue)
         {
-            var selectUserClaim = claimTransform.Transformation;
+            var lookupClaimOnUser = claimTransform.Transformation;
             var tenantDataRepository = serviceProvider.GetService<ITenantDataRepository>();
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
 
             switch (claimTransform.Task)
             {
                 case ClaimTransformTasks.QueryInternalUser:
-                    if (selectUserClaim == JwtClaimTypes.Email || selectUserClaim == JwtClaimTypes.PhoneNumber || selectUserClaim == JwtClaimTypes.PreferredUsername)
                     {
-                        var user = await tenantDataRepository.GetAsync<User>(await User.IdFormatAsync(RouteBinding, new User.IdKey { UserIdentifier = selectUserClaimValue }), required: false, queryAdditionalIds: true);
-                        if (user != null && !user.DisableAccount)
+                        var user = await FindInternalUserAsync(tenantDataRepository, idKey, lookupClaimOnUser, lookupUserClaimValue);
+                        if (user != null)
                         {
-                            logger.ScopeTrace(() => $"Claims transformation, Internal user '{user.UserId}' found in user identifiers by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
-                            AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(user, claimIn, selectUserClaim, selectUserClaimValue));
+                            AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(user, claimIn, lookupClaimOnUser, lookupUserClaimValue));
                             return;
                         }
+                        break;
                     }
-
-                    (var users, _) = await tenantDataRepository.GetManyAsync<User>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.User) && !u.DisableAccount && 
-                        u.Claims.Where(c => c.Claim == selectUserClaim && c.Values.Any(v => v == selectUserClaimValue)).Any());
-
-                    if (users?.Count() == 1)
-                    {
-                        logger.ScopeTrace(() => $"Claims transformation, Internal user '{users.First().UserId}' found in claims by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
-                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(users.First(), claimIn, selectUserClaim, selectUserClaimValue));
-                        return;
-                    }
-
-                    if(users?.Count() > 1)
-                    {
-                        logger.ScopeTrace(() => $"Claims transformation, More then one internal users found by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
-                    }
-                    else
-                    {
-                        logger.ScopeTrace(() => $"Claims transformation, No internal user found by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
-                    }
-                    break;
-
                 case ClaimTransformTasks.QueryExternalUser:
-                    (var externalUsers, _) = await tenantDataRepository.GetManyAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.ExternalUser) && !u.DisableAccount && u.UpPartyName.Equals(claimTransform.UpPartyName) && 
-                        u.Claims.Where(c => c.Claim == selectUserClaim && c.Values.Any(v => v == selectUserClaimValue)).Any());
-
-                    if (externalUsers?.Count() == 1)
                     {
-                        logger.ScopeTrace(() => $"Claims transformation, External user '{externalUsers.First().UserId}' found in claims by authentication method '{claimTransform.UpPartyName}' and claim '{selectUserClaim}' with claim value '{selectUserClaimValue}'.");
-                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(externalUsers.First(), claimIn, selectUserClaim, selectUserClaimValue));
+                        var externalUser = await FindExternalUserAsync(tenantDataRepository, idKey, lookupClaimOnUser, lookupUserClaimValue, claimTransform.UpPartyName);
+                        if (externalUser != null)
+                        {
+                            AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(externalUser, claimIn, lookupClaimOnUser, lookupUserClaimValue));
+                            return;
+                        }
+                        break;
+                    }
+                case ClaimTransformTasks.SaveClaimInternalUser:
+                    var userSaveClaims = await FindInternalUserAsync(tenantDataRepository, idKey, lookupClaimOnUser, lookupUserClaimValue);
+                    if (userSaveClaims != null)
+                    {
+                        // TODO Find claims, if exist add/replace claims on user. Save internal user if changed
                         return;
                     }
-
-                    if (externalUsers?.Count() > 1)
+                    break;
+                case ClaimTransformTasks.SaveClaimExternalUser:
+                    var externalUserSaveClaims = await FindExternalUserAsync(tenantDataRepository, idKey, lookupClaimOnUser, lookupUserClaimValue, claimTransform.UpPartyName);
+                    if (externalUserSaveClaims != null)
                     {
-                        logger.ScopeTrace(() => $"Claims transformation, More then one external users found by authentication method '{claimTransform.UpPartyName}' and claim '{selectUserClaim}' with claim value '{selectUserClaimValue}'.");
-                    }
-                    else
-                    {
-                        logger.ScopeTrace(() => $"Claims transformation, No external user found by authentication method '{claimTransform.UpPartyName}' and claim '{selectUserClaim}' with claim value '{selectUserClaimValue}'.");
+                        // TODO Find claims, if exist add/replace claims on user. Save external user if changed
+                        return;
                     }
                     break;
-
                 default:
                     throw new NotSupportedException();
             }
@@ -681,6 +664,63 @@ namespace FoxIDs.Logic
             }
             logger.ScopeTrace(() => $"Claims transformation, External users JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return claims;
+        }
+
+        private async Task<User> FindInternalUserAsync(ITenantDataRepository tenantDataRepository, Track.IdKey idKey, string lookupClaimOnUser, string lookupUserClaimValue)
+        {
+            if (lookupClaimOnUser == JwtClaimTypes.Email || lookupClaimOnUser == JwtClaimTypes.PhoneNumber || lookupClaimOnUser == JwtClaimTypes.PreferredUsername)
+            {
+                var user = await tenantDataRepository.GetAsync<User>(await User.IdFormatAsync(RouteBinding, new User.IdKey { UserIdentifier = lookupUserClaimValue }), required: false, queryAdditionalIds: true);
+                if (user != null && !user.DisableAccount)
+                {
+                    logger.ScopeTrace(() => $"Claims transformation, Internal user '{user.UserId}' found in user identifiers by claim '{lookupClaimOnUser}' and claim value '{lookupUserClaimValue}'.");
+                    return user;
+                }
+            }
+
+            (var users, _) = await tenantDataRepository.GetManyAsync<User>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.User) && !u.DisableAccount &&
+                u.Claims.Where(c => c.Claim == lookupClaimOnUser && c.Values.Any(v => v == lookupUserClaimValue)).Any());
+
+            if (users?.Count() == 1)
+            {
+                logger.ScopeTrace(() => $"Claims transformation, Internal user '{users.First().UserId}' found in claims by claim '{lookupClaimOnUser}' and claim value '{lookupUserClaimValue}'.");
+                return users.First();
+            }
+
+            if (users?.Count() > 1)
+            {
+                logger.ScopeTrace(() => $"Claims transformation, More then one internal users found by claim '{lookupClaimOnUser}' and claim value '{lookupUserClaimValue}'.");
+            }
+            else
+            {
+                logger.ScopeTrace(() => $"Claims transformation, No internal user found by claim '{lookupClaimOnUser}' and claim value '{lookupUserClaimValue}'.");
+            }
+            return null;
+        }
+
+        private async Task<ExternalUser> FindExternalUserAsync(ITenantDataRepository tenantDataRepository, Track.IdKey idKey, string lookupClaimOnUser, string selectUserClaimValue, string upPartyName)
+        {
+            (var externalUsers, _) = await tenantDataRepository.GetManyAsync<ExternalUser>(idKey, whereQuery: u =>
+                u.DataType.Equals(Constants.Models.DataType.ExternalUser) &&
+                !u.DisableAccount &&
+                u.UpPartyName.Equals(upPartyName) &&
+                u.Claims.Where(c => c.Claim == lookupClaimOnUser && c.Values.Any(v => v == selectUserClaimValue)).Any());
+
+            if (externalUsers?.Count() == 1)
+            {
+                logger.ScopeTrace(() => $"Claims transformation, External user '{externalUsers.First().UserId}' found in claims by authentication method '{upPartyName}' and claim '{lookupClaimOnUser}' with claim value '{selectUserClaimValue}'.");
+                return externalUsers.First();
+            }
+
+            if (externalUsers?.Count() > 1)
+            {
+                logger.ScopeTrace(() => $"Claims transformation, More then one external users found by authentication method '{upPartyName}' and claim '{lookupClaimOnUser}' with claim value '{selectUserClaimValue}'.");
+            }
+            else
+            {
+                logger.ScopeTrace(() => $"Claims transformation, No external user found by authentication method '{upPartyName}' and claim '{lookupClaimOnUser}' with claim value '{selectUserClaimValue}'.");
+            }
+            return null;
         }
 
         private static void AddOrReplaceClaims(List<Claim> outputClaims, ClaimTransformActions claimTransformAction, Claim newClaim)

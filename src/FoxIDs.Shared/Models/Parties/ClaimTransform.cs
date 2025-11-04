@@ -138,15 +138,31 @@ namespace FoxIDs.Models
                     switch (Task)
                     {
                         case ClaimTransformTasks.QueryInternalUser:
+                            ValidateMatchClaimAddReplace(results);
                             if (Transformation.IsNullOrWhiteSpace())
                             {
                                 results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation task '{Task}'.", [nameof(Transformation)]));
                             }
                             break;
                         case ClaimTransformTasks.QueryExternalUser:
+                            ValidateMatchClaimAddReplace(results);
                             if (UpPartyName.IsNullOrWhiteSpace() || Transformation.IsNullOrWhiteSpace())
                             {
                                 results.Add(new ValidationResult($"The fields {nameof(UpPartyName)} and {nameof(Transformation)} is required for claim transformation task '{Task}'.", [nameof(UpPartyName), nameof(Transformation)]));
+                            }
+                            break;
+                        case ClaimTransformTasks.SaveClaimInternalUser:
+                            ValidateMatchClaimAddReplace(results);
+                            if (Transformation.IsNullOrWhiteSpace() || TransformationExtension.IsNullOrWhiteSpace() || ClaimOut.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The fields {nameof(Transformation)}, {nameof(TransformationExtension)} and {nameof(ClaimOut)} is required for claim transformation task '{Task}'.", [nameof(Transformation), nameof(TransformationExtension), nameof(ClaimOut)]));
+                            }
+                            break;
+                        case ClaimTransformTasks.SaveClaimExternalUser:
+                            ValidateMatchClaimAddReplace(results);
+                            if (UpPartyName.IsNullOrWhiteSpace() || Transformation.IsNullOrWhiteSpace() || TransformationExtension.IsNullOrWhiteSpace() || ClaimOut.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The fields {nameof(UpPartyName)}, {nameof(Transformation)}, {nameof(TransformationExtension)} and {nameof(ClaimOut)} is required for claim transformation task '{Task}'.", [nameof(UpPartyName), nameof(Transformation), nameof(TransformationExtension), nameof(ClaimOut)]));
                             }
                             break;
                         default:

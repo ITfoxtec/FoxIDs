@@ -277,9 +277,9 @@
                                             switch (claimTransform.Type)
                                             {
                                                 case ClaimTransformTypes.MatchClaim:
-                                                    <div class="p-0 alert alert-light font-italic small" role="alert">Use the lookup claim set to find exactly one external user based on the value of the claim. The request fails if more than one external user is found. Then add/replace the external users' claims.</div>
+                                                    <div class="p-0 alert alert-light font-italic small" role="alert">Use the lookup claim set to find exactly one external user based on the value of the claim. The request fails if more than one external user is found. Then add/replace the external users' claims. Use the lookup claim <code>link_claim</code> on the external user to match the user by the link claim value.</div>
                                                     <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" LabelText="Lookup claim" />
-                                                    <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Lookup claim on internal user" />
+                                                    <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Lookup claim on external user" />
                                                     <SelectUpParty Model="claimTransform"></SelectUpParty>
                                                     break;
                                                 default:
@@ -304,9 +304,9 @@
                                             switch (claimTransform.Type)
                                             {
                                                 case ClaimTransformTypes.MatchClaim:
-                                                    <div class="p-0 alert alert-light font-italic small" role="alert">Use the lookup claim set to find exactly one external user based on the value of the claim. The request fails if more than one external user is found. Then add/replace the update claim on the external user.</div>
+                                                    <div class="p-0 alert alert-light font-italic small" role="alert">Use the lookup claim set to find exactly one external user based on the value of the claim. The request fails if more than one external user is found. Then add/replace the update claim on the external user. Use the lookup claim <code>link_claim</code> on the external user to match the user by the link claim value.</div>
                                                     <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" LabelText="Lookup claim" />
-                                                    <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Lookup claim on internal user" />
+                                                    <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Lookup claim on external user" />
                                                     <FInputText @bind-Value="claimTransformClaimIn.TransformationExtension" For="@(() => claimTransformClaimIn.TransformationExtension)" LabelText="Select claim with update value" />
                                                     <FInputText @bind-Value="claimTransformClaimIn.ClaimOut" For="@(() => claimTransformClaimIn.ClaimOut)" LabelText="Claim to update on external user" />
                                                     <SelectUpParty Model="claimTransform"></SelectUpParty>

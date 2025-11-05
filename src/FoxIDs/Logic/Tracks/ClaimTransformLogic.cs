@@ -711,6 +711,24 @@ namespace FoxIDs.Logic
 
         private async Task<ExternalUser> FindExternalUserAsync(ITenantDataRepository tenantDataRepository, Track.IdKey idKey, string lookupClaimOnUser, string selectUserClaimValue, string upPartyName)
         {
+            if (lookupClaimOnUser == Constants.ClaimTransformClaimTypes.ExternalUserLink)
+            {
+                var externalUserByLink = await tenantDataRepository.GetAsync<ExternalUser>(
+                    await ExternalUser.IdFormatAsync(RouteBinding, upPartyName, await selectUserClaimValue.HashIdStringAsync()),
+                    required: false);
+
+                if (externalUserByLink != null)
+                {
+                    if (!externalUserByLink.DisableAccount)
+                    {
+                        logger.ScopeTrace(() => $"Claims transformation, External user '{externalUserByLink.UserId}' found by authentication method '{upPartyName}' and link claim value '{selectUserClaimValue}'.");
+                        return externalUserByLink;
+                    }
+
+                    logger.ScopeTrace(() => $"Claims transformation, External user '{externalUserByLink.UserId}' found by authentication method '{upPartyName}' and link claim value '{selectUserClaimValue}' is disabled.");
+                }
+            }
+
             (var externalUsers, _) = await tenantDataRepository.GetManyAsync<ExternalUser>(idKey, whereQuery: u =>
                 u.DataType.Equals(Constants.Models.DataType.ExternalUser) &&
                 !u.DisableAccount &&

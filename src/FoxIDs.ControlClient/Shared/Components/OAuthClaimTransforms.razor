@@ -79,6 +79,26 @@
                                                 throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' and task '{claimTransform.Task}' not supported.");
                                         }
                                         break;
+                                    case ClaimTransformTasks.SaveClaimInternalUser:
+                                        switch (claimTransform.Type)
+                                        {
+                                            case ClaimTransformTypes.MatchClaim:
+                                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Save claim on internal user</div>
+                                                break;
+                                            default:
+                                                throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' and task '{claimTransform.Task}' not supported.");
+                                        }
+                                        break;
+                                    case ClaimTransformTasks.SaveClaimExternalUser:
+                                        switch (claimTransform.Type)
+                                        {
+                                            case ClaimTransformTypes.MatchClaim:
+                                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Save claim on external user</div>
+                                                break;
+                                            default:
+                                                throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' and task '{claimTransform.Task}' not supported.");
+                                        }
+                                        break;
                                     default:
                                         throw new NotSupportedException($"Claim transform task '{claimTransform.Task}' not supported.");
                                 }
@@ -165,7 +185,7 @@
                                     <option value="@ClaimTransformActions.IfNot">If not match</option>
                                 </FInputSelect>
                             }
-                            else if (claimTransform.Task != ClaimTransformTasks.QueryInternalUser && claimTransform.Task != ClaimTransformTasks.QueryExternalUser && (claimTransform.Type == ClaimTransformTypes.MatchClaim || claimTransform.Type == ClaimTransformTypes.Match || claimTransform.Type == ClaimTransformTypes.RegexMatch))
+                            else if (claimTransform.Task != ClaimTransformTasks.QueryInternalUser && claimTransform.Task != ClaimTransformTasks.QueryExternalUser && claimTransform.Task != ClaimTransformTasks.SaveClaimInternalUser && claimTransform.Task != ClaimTransformTasks.SaveClaimExternalUser && (claimTransform.Type == ClaimTransformTypes.MatchClaim || claimTransform.Type == ClaimTransformTypes.Match || claimTransform.Type == ClaimTransformTypes.RegexMatch))
                             {
                                 <FInputSelect @bind-Value="claimTransform.Action" For="@(() => claimTransform.Action)">
                                     <option value="@ClaimTransformActions.Replace">Replace claim</option>
@@ -245,9 +265,9 @@
                                             switch (claimTransform.Type)
                                             {
                                                 case ClaimTransformTypes.MatchClaim:
-                                                    <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and find exactly one internal user based on the value of the claim. The request will fail if more than one internal user is found. Then add the internal users' claims.</div>
-                                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
-                                                    <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Select claim on internal user" />
+                                                    <div class="p-0 alert alert-light font-italic small" role="alert">Use the lookup claim set to find exactly one internal user based on the value of the claim. The request fails if more than one internal user is found. Then add/replace the internal users' claims.</div>
+                                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" LabelText="Lookup claim" />
+                                                    <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Lookup claim on internal user" />
                                                     break;
                                                 default:
                                                     throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' and task '{claimTransform.Task}' not supported.");
@@ -257,9 +277,38 @@
                                             switch (claimTransform.Type)
                                             {
                                                 case ClaimTransformTypes.MatchClaim:
-                                                    <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and find exactly one external user based on the value of the claim. The request will fail if more than one external user is found. Then add the external users' claims.</div>
-                                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
-                                                    <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Select claim on external user" />
+                                                    <div class="p-0 alert alert-light font-italic small" role="alert">Use the lookup claim set to find exactly one external user based on the value of the claim. The request fails if more than one external user is found. Then add/replace the external users' claims. Use the lookup claim <code>link_claim</code> on the external user to match the user by the link claim value.</div>
+                                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" LabelText="Lookup claim" />
+                                                    <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Lookup claim on external user" />
+                                                    <SelectUpParty Model="claimTransform"></SelectUpParty>
+                                                    break;
+                                                default:
+                                                    throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' and task '{claimTransform.Task}' not supported.");
+                                            }
+                                            break;
+                                        case ClaimTransformTasks.SaveClaimInternalUser:
+                                            switch (claimTransform.Type)
+                                            {
+                                                case ClaimTransformTypes.MatchClaim:
+                                                    <div class="p-0 alert alert-light font-italic small" role="alert">Use the lookup claim set to find exactly one internal user based on the value of the claim. The request fails if more than one internal user is found. Then add/replace the update claim on the internal user.</div>
+                                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" LabelText="Lookup claim" />
+                                                    <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Lookup claim on internal user" />
+                                                    <FInputText @bind-Value="claimTransformClaimIn.TransformationExtension" For="@(() => claimTransformClaimIn.TransformationExtension)" LabelText="Select claim with update value" />
+                                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimOut" For="@(() => claimTransformClaimIn.ClaimOut)" LabelText="Claim to update on internal user" />
+                                                    break;
+                                                default:
+                                                    throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' and task '{claimTransform.Task}' not supported.");
+                                            }
+                                            break;
+                                        case ClaimTransformTasks.SaveClaimExternalUser:
+                                            switch (claimTransform.Type)
+                                            {
+                                                case ClaimTransformTypes.MatchClaim:
+                                                    <div class="p-0 alert alert-light font-italic small" role="alert">Use the lookup claim set to find exactly one external user based on the value of the claim. The request fails if more than one external user is found. Then add/replace the update claim on the external user. Use the lookup claim <code>link_claim</code> on the external user to match the user by the link claim value.</div>
+                                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" LabelText="Lookup claim" />
+                                                    <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Lookup claim on external user" />
+                                                    <FInputText @bind-Value="claimTransformClaimIn.TransformationExtension" For="@(() => claimTransformClaimIn.TransformationExtension)" LabelText="Select claim with update value" />
+                                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimOut" For="@(() => claimTransformClaimIn.ClaimOut)" LabelText="Claim to update on external user" />
                                                     <SelectUpParty Model="claimTransform"></SelectUpParty>
                                                     break;
                                                 default:
@@ -422,6 +471,9 @@
             <h6 class="dropdown-header">Query user and then add/replace claims</h6>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.MatchClaim, ClaimTransformTasks.QueryInternalUser))">Query internal user</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.MatchClaim, ClaimTransformTasks.QueryExternalUser))">Query external user</button>
+            <h6 class="dropdown-header">Save claim on user</h6>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.MatchClaim, ClaimTransformTasks.SaveClaimInternalUser))">Save claim on internal user</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.MatchClaim, ClaimTransformTasks.SaveClaimExternalUser))">Save claim on external user</button>
             <div class="dropdown-divider"></div>
             <h6 class="dropdown-header">Match or not match claim and then return error</h6>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.MatchClaim, ClaimTransformTasks.RequestException))">Match claim and return error</button>
@@ -557,6 +609,8 @@
                 break;
             case ClaimTransformTasks.QueryInternalUser:
             case ClaimTransformTasks.QueryExternalUser:
+            case ClaimTransformTasks.SaveClaimInternalUser:
+            case ClaimTransformTasks.SaveClaimExternalUser:
                 switch (type)
                 {
                     case ClaimTransformTypes.MatchClaim:

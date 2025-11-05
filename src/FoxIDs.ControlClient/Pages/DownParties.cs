@@ -685,8 +685,9 @@ namespace FoxIDs.Client.Pages
                 return;
             }
 
-            (var authority, _, var clientOidcDiscovery, var clientAuthorize, var clientToken) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, true);
+            (var authority, var trackIssuer, var clientOidcDiscovery, var clientAuthorize, var clientToken) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, true);
             model.Authority = authority;
+            model.TrackIssuer = trackIssuer;
             model.OidcDiscovery = clientOidcDiscovery;
             model.AuthorizeUrl = clientAuthorize;
             model.TokenUrl = clientToken;
@@ -714,7 +715,11 @@ namespace FoxIDs.Client.Pages
             }
 
             (var authority, _, var clientOidcDiscovery, _, var clientToken) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, false);
-            model.Authority = authority;
+            if (string.IsNullOrWhiteSpace(model.Authority))
+            {
+                model.Authority = authority;
+            }
+
             model.OidcDiscovery = clientOidcDiscovery;
             model.TokenUrl = clientToken;
         }
@@ -746,7 +751,11 @@ namespace FoxIDs.Client.Pages
             }
 
             (var authority, _, var resourceOidcDiscovery, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, false);
-            model.Authority = authority;
+            if (string.IsNullOrWhiteSpace(model.Authority))
+            {
+                model.Authority = authority;
+            }
+
             model.OidcDiscovery = resourceOidcDiscovery;
         }
 

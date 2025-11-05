@@ -195,21 +195,7 @@ namespace FoxIDs.Logic
 
             if (loginRequest.LoginHint.IsNullOrWhiteSpace())
             {
-                if (HttpContext.Request.Query != null)
-                {
-                    foreach (var key in new[] { "login_hint", "LoginHint", "username" })
-                    {
-                        if (HttpContext.Request.Query.TryGetValue(key, out var values))
-                        {
-                            var loginHintCandidate = values.FirstOrDefault(v => !v.IsNullOrWhiteSpace());
-                            if (!loginHintCandidate.IsNullOrWhiteSpace())
-                            {
-                                loginRequest.LoginHint = loginHintCandidate.Trim().ToLower();
-                                break;
-                            }
-                        }
-                    }
-                }
+                loginRequest.LoginHint = GetLoginHint();
             }
 
             if (saml2AuthnRequest.RequestedAuthnContext?.AuthnContextClassRef?.Count() > 0)
@@ -218,6 +204,47 @@ namespace FoxIDs.Logic
             }
 
             return loginRequest;
+        }
+
+        private string GetLoginHint()
+        {
+            var loginHintKeys = new[] { "login_hint", "LoginHint", "username" };
+
+            if (HttpContext.Request.Query != null)
+            {
+                foreach (var key in loginHintKeys)
+                {
+                    if (HttpContext.Request.Query.TryGetValue(key, out var values))
+                    {
+                        var loginHintCandidate = values.FirstOrDefault(v => !v.IsNullOrWhiteSpace());
+                        if (!loginHintCandidate.IsNullOrWhiteSpace())
+                        {
+                            return loginHintCandidate.Trim().ToLower();
+                        }
+                    }
+                }
+            }
+
+            if (HttpContext.Request.HasFormContentType)
+            {
+                var form = HttpContext.Request.Form;
+                if (form != null)
+                {
+                    foreach (var key in loginHintKeys)
+                    {
+                        if (form.TryGetValue(key, out var values))
+                        {
+                            var loginHintCandidate = values.FirstOrDefault(v => !v.IsNullOrWhiteSpace());
+                            if (!loginHintCandidate.IsNullOrWhiteSpace())
+                            {
+                                return loginHintCandidate.Trim().ToLower();
+                            }
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
 
         public async Task<IActionResult> AuthnResponseAsync(string partyId, Saml2StatusCodes status = Saml2StatusCodes.Success, IEnumerable<Claim> jwtClaims = null, IdPInitiatedDownPartyLink idPInitiatedLink = null, bool allowNullSequenceData = false)

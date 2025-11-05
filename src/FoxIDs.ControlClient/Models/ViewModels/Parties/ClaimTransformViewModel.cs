@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System;
 using FoxIDs.Models.Api;
+using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -146,10 +147,55 @@ namespace FoxIDs.Client.Models.ViewModels
                     switch (Task)
                     {
                         case ClaimTransformTasks.QueryInternalUser:
-                        case ClaimTransformTasks.QueryExternalUser:
+                            ValidateMatchClaimAddReplace(results);
                             if (Transformation.IsNullOrWhiteSpace())
                             {
                                 results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
+                            }
+                            break;
+                        case ClaimTransformTasks.QueryExternalUser:
+                            ValidateMatchClaimAddReplace(results);
+                            if (Transformation.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
+                            }
+                            if (UpPartyName.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(UpPartyName)]));
+                            }
+                            break;
+                        case ClaimTransformTasks.SaveClaimInternalUser:
+                            ValidateMatchClaimAddReplace(results);
+                            if (Transformation.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
+                            }
+                            if (TransformationExtension.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(TransformationExtension)]));
+                            }
+                            if (ClaimOut.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(ClaimOut)]));
+                            }
+                            break;
+                        case ClaimTransformTasks.SaveClaimExternalUser:
+                            ValidateMatchClaimAddReplace(results);
+                            if (Transformation.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
+                            }
+                            if (TransformationExtension.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(TransformationExtension)]));
+                            }
+                            if (ClaimOut.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(ClaimOut)]));
+                            }
+                            if (UpPartyName.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(UpPartyName)]));
                             }
                             break;
                         default:

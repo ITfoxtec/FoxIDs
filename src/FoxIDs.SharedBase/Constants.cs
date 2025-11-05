@@ -1198,6 +1198,8 @@ namespace FoxIDs
             public static string MaxAge = $"{Namespace}max_age";
             public static string LoginHint = $"{Namespace}login_hint";
             public static string Acr = $"{Namespace}{FoxI.JwtClaimTypes.Acr}";
+
+            public const string ExternalUserLink = "link_claim";
         }
 
         public static class JwtClaimTypes

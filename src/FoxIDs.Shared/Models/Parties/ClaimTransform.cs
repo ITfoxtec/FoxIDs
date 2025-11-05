@@ -119,6 +119,13 @@ namespace FoxIDs.Models
                                 results.Add(new ValidationResult($"The fields {nameof(UpPartyType)} and {nameof(UpPartyName)} is required for claim transformation task '{Task}'.", [nameof(UpPartyType), nameof(UpPartyName)]));
                             }
                             break;
+                        case ClaimTransformTasks.LogEvent:
+                            ValidateMatchClaimAddReplace(results);
+                            if (Action != ClaimTransformActions.If)
+                            {
+                                results.Add(new ValidationResult($"Only action '{ClaimTransformActions.If}' is supported for claim transformation task '{Task}'.", [nameof(Action)]));
+                            }
+                            break;
                         default:
                             throw new NotSupportedException($"Claim transformation task '{Task}' is not supported with type '{Type}' and action '{Action}'.");
                     }

@@ -59,6 +59,16 @@
                                                 throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' and task '{claimTransform.Task}' not supported.");
                                         }
                                         break;
+                                    case ClaimTransformTasks.LogEvent:
+                                        switch (claimTransform.Type)
+                                        {
+                                            case ClaimTransformTypes.MatchClaim:
+                                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Match claim and log event</div>
+                                                break;
+                                            default:
+                                                throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' and task '{claimTransform.Task}' not supported.");
+                                        }
+                                        break;
                                     case ClaimTransformTasks.QueryInternalUser:
                                         switch (claimTransform.Type)
                                         {
@@ -185,7 +195,7 @@
                                     <option value="@ClaimTransformActions.IfNot">If not match</option>
                                 </FInputSelect>
                             }
-                            else if (claimTransform.Task != ClaimTransformTasks.QueryInternalUser && claimTransform.Task != ClaimTransformTasks.QueryExternalUser && claimTransform.Task != ClaimTransformTasks.SaveClaimInternalUser && claimTransform.Task != ClaimTransformTasks.SaveClaimExternalUser && (claimTransform.Type == ClaimTransformTypes.MatchClaim || claimTransform.Type == ClaimTransformTypes.Match || claimTransform.Type == ClaimTransformTypes.RegexMatch))
+                            else if (claimTransform.Task != ClaimTransformTasks.QueryInternalUser && claimTransform.Task != ClaimTransformTasks.QueryExternalUser && claimTransform.Task != ClaimTransformTasks.SaveClaimInternalUser && claimTransform.Task != ClaimTransformTasks.SaveClaimExternalUser && claimTransform.Task != ClaimTransformTasks.LogEvent && (claimTransform.Type == ClaimTransformTypes.MatchClaim || claimTransform.Type == ClaimTransformTypes.Match || claimTransform.Type == ClaimTransformTypes.RegexMatch))
                             {
                                 <FInputSelect @bind-Value="claimTransform.Action" For="@(() => claimTransform.Action)">
                                     <option value="@ClaimTransformActions.Replace">Replace claim</option>
@@ -203,7 +213,7 @@
                                     <option value="@ClaimTransformActions.AddIfNotOut">Add claim, if new claim do not exist</option>
                                 </FInputSelect>
                             }
-                            else
+                            else if (claimTransform.Task != ClaimTransformTasks.LogEvent)
                             {
                                 <FInputSelect @bind-Value="claimTransform.Action" For="@(() => claimTransform.Action)">
                                     <option value="@ClaimTransformActions.Replace">Replace claim</option>
@@ -260,6 +270,17 @@
                                                     throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' and task '{claimTransform.Task}' not supported.");
                                             }
                                             <SelectUpParty Model="claimTransform" IncludeProfiles="true"></SelectUpParty>
+                                            break;
+                                        case ClaimTransformTasks.LogEvent:
+                                            switch (claimTransform.Type)
+                                            {
+                                                case ClaimTransformTypes.MatchClaim:
+                                                    <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and log the value as a log event entry.</div>
+                                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                                    break;
+                                                default:
+                                                    throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' and task '{claimTransform.Task}' not supported.");
+                                            }
                                             break;
                                         case ClaimTransformTasks.QueryInternalUser:
                                             switch (claimTransform.Type)
@@ -413,10 +434,17 @@
                             }
                             else
                             {
-                                <div class="card">
-                                    <div class="card-body">
+                                if (claimTransform.Task == ClaimTransformTasks.LogEvent)
+                                {
+                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                }
+                                else
+                                {
+                                    <div class="card">
+                                        <div class="card-body">
+                                        </div>
                                     </div>
-                                </div>
+                                }
                             }
                         </div>
                         <div class="col-1 text-right">
@@ -479,6 +507,9 @@
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.MatchClaim, ClaimTransformTasks.RequestException))">Match claim and return error</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.Match, ClaimTransformTasks.RequestException))">Match claim and value and return error</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.RegexMatch, ClaimTransformTasks.RequestException))">Regex match and return error</button>
+            <div class="dropdown-divider"></div>
+            <h6 class="dropdown-header">Match claim and log</h6>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.MatchClaim, ClaimTransformTasks.LogEvent))">Match claim and log event</button>
             <div class="dropdown-divider"></div>
             <h6 class="dropdown-header">
                 Match or not match claim and then start authentication
@@ -595,6 +626,22 @@
                     case ClaimTransformTypes.MatchClaim:
                     case ClaimTransformTypes.Match:
                     case ClaimTransformTypes.RegexMatch:
+                        ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
+                            {
+                                ShowDetails = true,
+                                Type = type,
+                                Action = ClaimTransformActions.If,
+                                Task = task
+                            });
+                        break;
+                    default:
+                        throw new NotSupportedException("Claim transform type not supported for task.");
+                }
+                break;
+            case ClaimTransformTasks.LogEvent:
+                switch (type)
+                {
+                    case ClaimTransformTypes.MatchClaim:
                         ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
                             {
                                 ShowDetails = true,

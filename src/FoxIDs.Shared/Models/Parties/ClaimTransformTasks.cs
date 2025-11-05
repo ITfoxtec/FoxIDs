@@ -8,5 +8,6 @@
         QueryExternalUser = 220,
         SaveClaimInternalUser = 300,
         SaveClaimExternalUser = 320,
+        LogEvent = 400,
     }
 }

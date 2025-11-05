@@ -128,6 +128,13 @@ namespace FoxIDs.Client.Models.ViewModels
                             break;
                         case ClaimTransformTasks.UpPartyAction:
                             break;
+                        case ClaimTransformTasks.LogEvent:
+                            ValidateMatchClaimAddReplace(results);
+                            if (Action != ClaimTransformActions.If)
+                            {
+                                results.Add(new ValidationResult($"Only action '{ClaimTransformActions.If}' is supported.", [nameof(Action)]));
+                            }
+                            break;
                         default:
                             throw new NotSupportedException($"Claim transformation task '{Task}' is not supported with type '{Type}' and action '{Action}'.");
                     }

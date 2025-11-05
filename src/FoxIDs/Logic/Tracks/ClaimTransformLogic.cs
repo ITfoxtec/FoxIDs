@@ -1,4 +1,5 @@
-﻿using FoxIDs.Infrastructure;
+﻿using AspNetCoreGeneratedDocument;
+using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Models.Logic;
 using FoxIDs.Repository;
@@ -169,11 +170,19 @@ namespace FoxIDs.Logic
                 var claimIn = claimTransform.ClaimsIn.Single();
                 if (claimTransform.Action == ClaimTransformActions.If || claimTransform.Action == ClaimTransformActions.IfNot)
                 {
-                    var exist = claims.Where(c => c.Type.Equals(claimIn, StringComparison.Ordinal)).Any();
-                    var doAction = (exist && claimTransform.Action == ClaimTransformActions.If) || (!exist && claimTransform.Action == ClaimTransformActions.IfNot);
-                    if (doAction)
+                    var existClaim = claims.Where(c => c.Type.Equals(claimIn, StringComparison.Ordinal));
+                    var exist = existClaim.Any();
+                    if (claimTransform.Task == ClaimTransformTasks.LogEvent && exist && claimTransform.Action == ClaimTransformActions.If)
                     {
-                        return await HandleIfAndIfNotTaskAsync(claims, claimTransform, loginRequest);
+                        HandleLogEventTask(existClaim.Select(c => c.Value));
+                    }
+                    else
+                    {
+                        var doAction = (exist && claimTransform.Action == ClaimTransformActions.If) || (!exist && claimTransform.Action == ClaimTransformActions.IfNot);
+                        if (doAction)
+                        {
+                            return await HandleIfAndIfNotTaskAsync(claims, claimTransform, loginRequest);
+                        }
                     }
                 }
                 else
@@ -481,6 +490,19 @@ namespace FoxIDs.Logic
             }
 
             AddOrReplaceClaims(claims, claimTransform.Action, newClaims);
+        }
+
+        private void HandleLogEventTask(IEnumerable<string> eventMessages) 
+        {
+            var cleanEventMessages = eventMessages
+                .Where(em => !em.IsNullOrWhiteSpace())
+                .Distinct()
+                .Take(10);
+
+            foreach (var eventMessage in cleanEventMessages)
+            {
+                logger.Event(eventMessage);
+            }   
         }
 
         private async Task<IActionResult> HandleIfAndIfNotTaskAsync(List<Claim> claims, ClaimTransform claimTransform, ILoginRequest loginRequest)

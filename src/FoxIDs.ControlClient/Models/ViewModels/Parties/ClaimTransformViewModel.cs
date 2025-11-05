@@ -323,10 +323,6 @@ namespace FoxIDs.Client.Models.ViewModels
 
         private void ValidateMatchClaimAddReplace(List<ValidationResult> results)
         {
-            if (ClaimsIn?.Count() != 1)
-            {
-                results.Add(new ValidationResult($"The field is required.", [nameof(ClaimsIn)]));
-            }
             if (Task == null && Transformation.IsNullOrWhiteSpace())
             {
                 results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));

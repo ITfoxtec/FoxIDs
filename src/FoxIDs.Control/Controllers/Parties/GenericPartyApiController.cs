@@ -114,7 +114,7 @@ namespace FoxIDs.Controllers
 
                 if (!(mParty is UpParty ? validateModelGenericPartyLogic.ValidateModelUpPartyProfiles(ModelState, mUpPartyProfiles) : true)) return BadRequest(ModelState);
                 if (!(party is Api.IDownParty downParty ? await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpParties), mParty as DownParty) : true)) return BadRequest(ModelState);
-                if (!await validateModelGenericPartyLogic.ValidateModelClaimTransformsAsync(ModelState, mParty)) return BadRequest(ModelState);
+                if (!validateModelGenericPartyLogic.ValidateModelClaimTransforms(ModelState, mParty)) return BadRequest(ModelState);
                 if (preLoadModelActionAsync != null && !await preLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
                 if (postLoadModelActionAsync != null && !await postLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
 
@@ -184,7 +184,7 @@ namespace FoxIDs.Controllers
 
                 if (!(mParty is UpParty ? validateModelGenericPartyLogic.ValidateModelUpPartyProfiles(ModelState, mUpPartyProfiles) : true)) return BadRequest(ModelState);
                 if (!(party is Api.IDownParty downParty ? await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpParties), mParty as DownParty) : true)) return BadRequest(ModelState);
-                if (!await validateModelGenericPartyLogic.ValidateModelClaimTransformsAsync(ModelState, mParty)) return BadRequest(ModelState);
+                if (!validateModelGenericPartyLogic.ValidateModelClaimTransforms(ModelState, mParty)) return BadRequest(ModelState);
                 if (preLoadModelActionAsync != null && !await preLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
 
                 if (mParty is OidcDownParty mOidcDownParty)

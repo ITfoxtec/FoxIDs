@@ -66,10 +66,13 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool UsePartyIssuer { get; set; }
 
         [Display(Name = "Authority")]
-        public string Authority { get; set; }  
-        
-        [Display(Name = "Authority")]
-        public string PartyAuthority { get; set; }
+        public string Authority { get; set; }
+
+        [Display(Name = "IdP Issuer")]
+        public string TrackIssuer { get; set; }
+
+        [Display(Name = "IdP Issuer")]
+        public string PartyIssuer { get; set; }
 
         [Display(Name = "OIDC Discovery")]
         public string OidcDiscovery { get; set; }
@@ -83,8 +86,11 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Authority")]
         public string ResourceAuthority { get; set; }
 
-        [Display(Name = "Authority")]
-        public string PartyResourceAuthority { get; set; }
+        [Display(Name = "IdP Issuer")]
+        public string TrackResourceIssuer { get; set; }
+
+        [Display(Name = "IdP Issuer")]
+        public string PartyResourceIssuer { get; set; }
 
         [Display(Name = "OIDC Discovery")]
         public string ResourceOidcDiscovery { get; set; }

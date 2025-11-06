@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace FoxIDs.Models
+namespace FoxIDs.Models.Logic.Health
 {
     public record class HealthCheckResult
     {

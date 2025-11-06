@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
+using FoxIDs.Models.Logic.Health;
 using FoxIDs.Repository;
 using Microsoft.ApplicationInsights;
 using StackExchange.Redis;

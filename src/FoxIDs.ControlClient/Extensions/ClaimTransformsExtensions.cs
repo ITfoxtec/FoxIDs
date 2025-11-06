@@ -16,8 +16,28 @@ namespace FoxIDs.Client
             {
                 switch (claimTransform.Type)
                 {
-                    case ClaimTransformTypes.MatchClaim:
                     case ClaimTransformTypes.Match:
+                        if (claimTransform.Task == ClaimTransformTasks.QueryInternalUser || claimTransform.Task == ClaimTransformTasks.QueryExternalUser)
+                        {
+                            newClaimTransforms.Add(claimTransform.Map<OAuthClaimTransformClaimInClaimsOutViewModel>(afterMap =>
+                            {
+                                afterMap.ClaimIn = claimTransform.ClaimsIn?.FirstOrDefault();
+                                if (afterMap.ClaimsOut == null || afterMap.ClaimsOut.Count == 0)
+                                {
+                                    afterMap.ClaimsOut = new List<string> { "*" };
+                                }
+                            }));
+                        }
+                        else 
+                        {
+                            newClaimTransforms.Add(claimTransform.Map<OAuthClaimTransformClaimInClaimOutViewModel>(afterMap =>
+                            {
+                                afterMap.ClaimIn = claimTransform.ClaimsIn?.FirstOrDefault();
+                                afterMap.ClaimOut = claimTransform.ClaimsOut?.FirstOrDefault();
+                            }));
+                        }
+                        break;
+                    case ClaimTransformTypes.MatchClaim:
                     case ClaimTransformTypes.RegexMatch:
                     case ClaimTransformTypes.Map:
                     case ClaimTransformTypes.RegexMap:
@@ -61,8 +81,28 @@ namespace FoxIDs.Client
             {
                 switch (claimTransform.Type)
                 {
-                    case ClaimTransformTypes.MatchClaim:
                     case ClaimTransformTypes.Match:
+                        if (claimTransform.Task == ClaimTransformTasks.QueryInternalUser || claimTransform.Task == ClaimTransformTasks.QueryExternalUser)
+                        {
+                            newClaimTransforms.Add(claimTransform.Map<SamlClaimTransformClaimInClaimsOutViewModel>(afterMap =>
+                            {
+                                afterMap.ClaimIn = claimTransform.ClaimsIn?.FirstOrDefault();
+                                if ((afterMap.Task == ClaimTransformTasks.QueryInternalUser || afterMap.Task == ClaimTransformTasks.QueryExternalUser) && (afterMap.ClaimsOut == null || afterMap.ClaimsOut.Count == 0))
+                                {
+                                    afterMap.ClaimsOut = new List<string> { "*" };
+                                }
+                            }));
+                        }
+                        else
+                        {
+                            newClaimTransforms.Add(claimTransform.Map<SamlClaimTransformClaimInClaimOutViewModel>(afterMap =>
+                            {
+                                afterMap.ClaimIn = claimTransform.ClaimsIn?.FirstOrDefault();
+                                afterMap.ClaimOut = claimTransform.ClaimsOut?.FirstOrDefault();
+                            }));
+                        }
+                        break;
+                    case ClaimTransformTypes.MatchClaim:
                     case ClaimTransformTypes.RegexMatch:
                     case ClaimTransformTypes.Map:
                     case ClaimTransformTypes.RegexMap:
@@ -105,10 +145,18 @@ namespace FoxIDs.Client
             {
                 foreach (var claimTransform in claimTransforms)
                 {
-                    if (claimTransform is OAuthClaimTransformClaimInClaimOutViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
+                    if (claimTransform is OAuthClaimTransformClaimInClaimOutViewModel claimTransformClaimInClaimOut)
                     {
-                        claimTransform.ClaimsIn = claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace() ? null : [claimTransformClaimIn.ClaimIn];
-                        claimTransform.ClaimsOut = claimTransformClaimIn.ClaimOut.IsNullOrWhiteSpace() ? null : [claimTransformClaimIn.ClaimOut];
+                        claimTransform.ClaimsIn = claimTransformClaimInClaimOut.ClaimIn.IsNullOrWhiteSpace() ? null : [claimTransformClaimInClaimOut.ClaimIn];
+                        claimTransform.ClaimsOut = claimTransformClaimInClaimOut.ClaimOut.IsNullOrWhiteSpace() ? null : [claimTransformClaimInClaimOut.ClaimOut];
+                    }
+                    else if (claimTransform is OAuthClaimTransformClaimInClaimsOutViewModel claimTransformClaimInClaimsOut)
+                    {
+                        claimTransform.ClaimsIn = claimTransformClaimInClaimsOut.ClaimIn.IsNullOrWhiteSpace() ? null : [claimTransformClaimInClaimsOut.ClaimIn];
+                    }
+                    else if (claimTransform is OAuthClaimTransformClaimsInClaimOutViewModel claimTransformClaimsInClaimOut)
+                    {
+                        claimTransform.ClaimsOut = claimTransformClaimsInClaimOut.ClaimOut.IsNullOrWhiteSpace() ? null : [claimTransformClaimsInClaimOut.ClaimOut];
                     }
                 }
             }
@@ -122,10 +170,18 @@ namespace FoxIDs.Client
             {
                 foreach (var claimTransform in claimTransforms)
                 {
-                    if (claimTransform is SamlClaimTransformClaimInClaimOutViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
+                    if (claimTransform is SamlClaimTransformClaimInClaimOutViewModel claimTransformClaimInClaimOut)
                     {
-                        claimTransform.ClaimsIn = claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace() ? null : [claimTransformClaimIn.ClaimIn];
-                        claimTransform.ClaimsOut = claimTransformClaimIn.ClaimOut.IsNullOrWhiteSpace() ? null : [claimTransformClaimIn.ClaimOut];
+                        claimTransform.ClaimsIn = claimTransformClaimInClaimOut.ClaimIn.IsNullOrWhiteSpace() ? null : [claimTransformClaimInClaimOut.ClaimIn];
+                        claimTransform.ClaimsOut = claimTransformClaimInClaimOut.ClaimOut.IsNullOrWhiteSpace() ? null : [claimTransformClaimInClaimOut.ClaimOut];
+                    }
+                    else if (claimTransform is SamlClaimTransformClaimInClaimsOutViewModel claimTransformClaimInClaimsOut)
+                    {
+                        claimTransform.ClaimsIn = claimTransformClaimInClaimsOut.ClaimIn.IsNullOrWhiteSpace() ? null : [claimTransformClaimInClaimsOut.ClaimIn];
+                    }
+                    else if (claimTransform is SamlClaimTransformClaimsInClaimOutViewModel claimTransformClaimsInClaimOut)
+                    {
+                        claimTransform.ClaimsOut = claimTransformClaimsInClaimOut.ClaimOut.IsNullOrWhiteSpace() ? null : [claimTransformClaimsInClaimOut.ClaimOut];
                     }
                 }
             }

@@ -602,7 +602,7 @@ namespace FoxIDs.Logic
                     var user = await FindInternalUserAsync(tenantDataRepository, idKey, claimTransform.Transformation, lookupUserClaimValue);
                     if (user != null)
                     {
-                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(user, claimIn, claimTransform.Transformation, lookupUserClaimValue));
+                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(user, claimIn, claimTransform.Transformation, lookupUserClaimValue, claimTransform.ClaimsOut));
                         return;
                     }
                     break;
@@ -610,7 +610,7 @@ namespace FoxIDs.Logic
                     var externalUser = await FindExternalUserAsync(tenantDataRepository, idKey, claimTransform.Transformation, lookupUserClaimValue, claimTransform.UpPartyName);
                     if (externalUser != null)
                     {
-                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(externalUser, claimIn, claimTransform.Transformation, lookupUserClaimValue));
+                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(externalUser, claimIn, claimTransform.Transformation, lookupUserClaimValue, claimTransform.ClaimsOut));
                         return;
                     }
                     break;
@@ -651,7 +651,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private List<Claim> GetClaims(User user, string claimIn, string selectUserClaim, string selectUserClaimValue)
+        private List<Claim> GetClaims(User user, string claimIn, string selectUserClaim, string selectUserClaimValue, IEnumerable<string> claimTypesOutLimit)
         {
             var claims = new List<Claim>();
             claims.AddClaim(JwtClaimTypes.Subject, user.UserId);
@@ -678,11 +678,12 @@ namespace FoxIDs.Logic
             {
                 claims = claims.Where(c => !(c.Type.Equals(selectUserClaim, StringComparison.CurrentCulture) && c.Value.Equals(selectUserClaimValue, StringComparison.CurrentCulture))).ToList();
             }
+            claims = LimitClaimsOut(claims, claimTypesOutLimit);
             logger.ScopeTrace(() => $"Claims transformation, Internal users JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return claims;
         }
 
-        private List<Claim> GetClaims(ExternalUser externalUser, string claimIn, string selectUserClaim, string selectUserClaimValue)
+        private List<Claim> GetClaims(ExternalUser externalUser, string claimIn, string selectUserClaim, string selectUserClaimValue, IEnumerable<string> claimTypesOutLimit)
         {
             var claims = new List<Claim>();
             claims.AddClaim(JwtClaimTypes.Subject, externalUser.UserId);
@@ -695,8 +696,28 @@ namespace FoxIDs.Logic
             {
                 claims = claims.Where(c => !(c.Type.Equals(selectUserClaim, StringComparison.CurrentCulture) && c.Value.Equals(selectUserClaimValue, StringComparison.CurrentCulture))).ToList();
             }
+            claims = LimitClaimsOut(claims, claimTypesOutLimit);
             logger.ScopeTrace(() => $"Claims transformation, External users JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return claims;
+        }
+
+        private List<Claim> LimitClaimsOut(List<Claim> claims, IEnumerable<string> claimTypesOutLimit)
+        {
+            if (claimTypesOutLimit == null)
+            {
+                return claims;
+            }
+
+            var filteredClaimTypes = claimTypesOutLimit
+                .Where(c => !c.IsNullOrWhiteSpace())
+                .ToHashSet();
+
+            if (filteredClaimTypes.Count == 0 || filteredClaimTypes.Any(c => c == "*"))
+            {
+                return claims;
+            }
+
+            return claims.Where(c => filteredClaimTypes.Contains(c.Type)).ToList();
         }
 
         private async Task<User> FindInternalUserAsync(ITenantDataRepository tenantDataRepository, Track.IdKey idKey, string lookupClaimTypeOnUser, string lookupUserClaimValue)

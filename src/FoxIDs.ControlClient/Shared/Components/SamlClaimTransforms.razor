@@ -10,8 +10,8 @@
         {
             foreach (var claimTransform in ClaimTransforms)
             {
-                var claimTransformClaimsIn = claimTransform as SamlClaimTransformClaimsInViewModel;
-                var claimTransformClaimIn = claimTransform as SamlClaimTransformClaimInViewModel;
+                var claimTransformClaimsIn = claimTransform as SamlClaimTransformClaimsInClaimOutViewModel;
+                var claimTransformClaimIn = claimTransform as SamlClaimTransformClaimInClaimOutViewModel;
                 <li class="list-group-item">
                     <div class="row">
                         <div class="col-9">
@@ -534,21 +534,21 @@
             case ClaimTransformTypes.RegexMatch:
             case ClaimTransformTypes.Map:
             case ClaimTransformTypes.RegexMap:
-                ClaimTransforms.Add(new SamlClaimTransformClaimInViewModel
+                ClaimTransforms.Add(new SamlClaimTransformClaimInClaimOutViewModel
                     {
                         ShowDetails = true,
                         Type = type
                     });
                 break;
             case ClaimTransformTypes.Constant:
-                ClaimTransforms.Add(new SamlClaimTransformClaimInViewModel
+                ClaimTransforms.Add(new SamlClaimTransformClaimInClaimOutViewModel
                     {
                         ShowDetails = true,
                         Type = type
                     });
                 break;
             case ClaimTransformTypes.Concatenate:
-                ClaimTransforms.Add(new SamlClaimTransformClaimsInViewModel
+                ClaimTransforms.Add(new SamlClaimTransformClaimsInClaimOutViewModel
                     {
                         ClaimsIn = new List<string> { string.Empty },
                         ShowDetails = true,
@@ -556,7 +556,7 @@
                     });
                 break;
             case ClaimTransformTypes.ExternalClaims:
-                ClaimTransforms.Add(new SamlClaimTransformClaimsInViewModel
+                ClaimTransforms.Add(new SamlClaimTransformClaimsInClaimOutViewModel
                     {
                         Name = RandomName.GenerateDefaultName(),
                         ExternalConnectType = ExternalConnectTypes.Api,
@@ -566,7 +566,7 @@
                     });
                 break;
             case ClaimTransformTypes.DkPrivilege:
-                ClaimTransforms.Add(new SamlClaimTransformClaimInViewModel
+                ClaimTransforms.Add(new SamlClaimTransformClaimInClaimOutViewModel
                     {
                         ClaimIn = "https://data.gov.dk/model/core/eid/privilegesIntermediate",
                         ClaimOut = "https://data.gov.dk/model/core/eid/privilegesIntermediate",
@@ -590,7 +590,7 @@
                     case ClaimTransformTypes.MatchClaim:
                     case ClaimTransformTypes.Match:
                     case ClaimTransformTypes.RegexMatch:
-                        ClaimTransforms.Add(new SamlClaimTransformClaimInViewModel
+                        ClaimTransforms.Add(new SamlClaimTransformClaimInClaimOutViewModel
                             {
                                 ShowDetails = true,
                                 Type = type,
@@ -609,7 +609,7 @@
                     case ClaimTransformTypes.MatchClaim:
                     case ClaimTransformTypes.Match:
                     case ClaimTransformTypes.RegexMatch:
-                        ClaimTransforms.Add(new SamlClaimTransformClaimInViewModel
+                        ClaimTransforms.Add(new SamlClaimTransformClaimInClaimOutViewModel
                             {
                                 ShowDetails = true,
                                 Type = type,
@@ -625,7 +625,7 @@
                 switch (type)
                 {
                     case ClaimTransformTypes.MatchClaim:
-                        ClaimTransforms.Add(new SamlClaimTransformClaimInViewModel
+                        ClaimTransforms.Add(new SamlClaimTransformClaimInClaimOutViewModel
                             {
                                 ShowDetails = true,
                                 Type = type,
@@ -644,7 +644,7 @@
                 switch (type)
                 {
                     case ClaimTransformTypes.MatchClaim:
-                        ClaimTransforms.Add(new SamlClaimTransformClaimInViewModel
+                        ClaimTransforms.Add(new SamlClaimTransformClaimInClaimOutViewModel
                             {
                                 ShowDetails = true,
                                 Type = type,

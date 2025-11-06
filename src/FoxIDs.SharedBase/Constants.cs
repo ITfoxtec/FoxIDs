@@ -661,6 +661,8 @@ namespace FoxIDs
                 public const int TransformTransformationLength = 300;
                 public const int TransformClaimsInMin = 0;
                 public const int TransformClaimsInMax = 10;
+                public const int TransformClaimsOutMin = 0;
+                public const int TransformClaimsOutMax = 10;
                 public const int TransformOrderMin = 0;
                 public const int TransformOrderMax = 1000;
             }

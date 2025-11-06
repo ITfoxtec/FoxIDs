@@ -17,8 +17,8 @@
         {
             foreach (var claimTransform in ClaimTransforms)
             {
-                var claimTransformClaimsIn = claimTransform as OAuthClaimTransformClaimsInViewModel;
-                var claimTransformClaimIn = claimTransform as OAuthClaimTransformClaimInViewModel;
+                var claimTransformClaimsIn = claimTransform as OAuthClaimTransformClaimsInClaimOutViewModel;
+                var claimTransformClaimIn = claimTransform as OAuthClaimTransformClaimInClaimOutViewModel;
                 <li class="list-group-item">
                     <div class="row">
                         <div class="col-9">
@@ -550,21 +550,21 @@
             case ClaimTransformTypes.RegexMatch:
             case ClaimTransformTypes.Map:
             case ClaimTransformTypes.RegexMap:
-                ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
+                ClaimTransforms.Add(new OAuthClaimTransformClaimInClaimOutViewModel
                     {
                         ShowDetails = true,
                         Type = type
                     });
                 break;
             case ClaimTransformTypes.Constant:
-                ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
+                ClaimTransforms.Add(new OAuthClaimTransformClaimInClaimOutViewModel
                     {
                         ShowDetails = true,
                         Type = type
                     });
                 break;
             case ClaimTransformTypes.Concatenate:
-                ClaimTransforms.Add(new OAuthClaimTransformClaimsInViewModel
+                ClaimTransforms.Add(new OAuthClaimTransformClaimsInClaimOutViewModel
                     {
                         ClaimsIn = new List<string> { string.Empty },
                         ShowDetails = true,
@@ -572,7 +572,7 @@
                     });
                 break;
             case ClaimTransformTypes.ExternalClaims:
-                ClaimTransforms.Add(new OAuthClaimTransformClaimsInViewModel
+                ClaimTransforms.Add(new OAuthClaimTransformClaimsInClaimOutViewModel
                     {
                         Name = RandomName.GenerateDefaultName(),
                         ExternalConnectType = ExternalConnectTypes.Api,
@@ -582,7 +582,7 @@
                     });
                 break;
             case ClaimTransformTypes.DkPrivilege:
-                ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
+                ClaimTransforms.Add(new OAuthClaimTransformClaimInClaimOutViewModel
                     {
                         ClaimIn = "privileges_intermediate",
                         ClaimOut = "privileges_intermediate",
@@ -607,7 +607,7 @@
                     case ClaimTransformTypes.MatchClaim:
                     case ClaimTransformTypes.Match:
                     case ClaimTransformTypes.RegexMatch:
-                        ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
+                        ClaimTransforms.Add(new OAuthClaimTransformClaimInClaimOutViewModel
                             {
                                 ShowDetails = true,
                                 Type = type,
@@ -626,7 +626,7 @@
                     case ClaimTransformTypes.MatchClaim:
                     case ClaimTransformTypes.Match:
                     case ClaimTransformTypes.RegexMatch:
-                        ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
+                        ClaimTransforms.Add(new OAuthClaimTransformClaimInClaimOutViewModel
                             {
                                 ShowDetails = true,
                                 Type = type,
@@ -642,7 +642,7 @@
                 switch (type)
                 {
                     case ClaimTransformTypes.MatchClaim:
-                        ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
+                        ClaimTransforms.Add(new OAuthClaimTransformClaimInClaimOutViewModel
                             {
                                 ShowDetails = true,
                                 Type = type,
@@ -661,7 +661,7 @@
                 switch (type)
                 {
                     case ClaimTransformTypes.MatchClaim:
-                        ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
+                        ClaimTransforms.Add(new OAuthClaimTransformClaimInClaimOutViewModel
                             {
                                 ShowDetails = true,
                                 Type = type,

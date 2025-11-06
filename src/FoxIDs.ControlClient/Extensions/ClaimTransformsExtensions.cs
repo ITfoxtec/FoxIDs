@@ -22,18 +22,29 @@ namespace FoxIDs.Client
                     case ClaimTransformTypes.Map:
                     case ClaimTransformTypes.RegexMap:
                     case ClaimTransformTypes.DkPrivilege:
-                        var oauthClaimTransformClaimIn = claimTransform.Map<OAuthClaimTransformClaimInViewModel>();
-                        oauthClaimTransformClaimIn.ClaimIn = claimTransform.ClaimsIn?.FirstOrDefault();
-                        newClaimTransforms.Add(oauthClaimTransformClaimIn);
+                        newClaimTransforms.Add(claimTransform.Map<OAuthClaimTransformClaimInClaimOutViewModel>(afterMap =>
+                        {
+                            afterMap.ClaimIn = claimTransform.ClaimsIn?.FirstOrDefault();
+                            afterMap.ClaimOut = claimTransform.ClaimsOut?.FirstOrDefault();
+                        }));
                         break;
                     case ClaimTransformTypes.Constant:
-                        newClaimTransforms.Add(claimTransform.Map<OAuthClaimTransformClaimInViewModel>());
+                        newClaimTransforms.Add(claimTransform.Map<OAuthClaimTransformClaimInClaimOutViewModel>(afterMap =>
+                        {
+                            afterMap.ClaimOut = claimTransform.ClaimsOut?.FirstOrDefault();
+                        }));
                         break;
                     case ClaimTransformTypes.Concatenate:
-                        newClaimTransforms.Add(claimTransform.Map<OAuthClaimTransformClaimsInViewModel>());
+                        newClaimTransforms.Add(claimTransform.Map<OAuthClaimTransformClaimsInClaimOutViewModel>(afterMap =>
+                        {
+                            afterMap.ClaimOut = claimTransform.ClaimsOut?.FirstOrDefault();
+                        }));
                         break;
                     case ClaimTransformTypes.ExternalClaims:
-                        newClaimTransforms.Add(claimTransform.Map<OAuthClaimTransformClaimsInViewModel>());
+                        newClaimTransforms.Add(claimTransform.Map<OAuthClaimTransformClaimsInClaimOutViewModel>(afterMap =>
+                        {
+                            afterMap.ClaimOut = claimTransform.ClaimsOut?.FirstOrDefault();
+                        }));
                         break;
                     default:
                         throw new NotSupportedException("claim transform type not supported.");
@@ -56,18 +67,29 @@ namespace FoxIDs.Client
                     case ClaimTransformTypes.Map:
                     case ClaimTransformTypes.RegexMap:
                     case ClaimTransformTypes.DkPrivilege:
-                        var samlClaimTransformClaimIn = claimTransform.Map<SamlClaimTransformClaimInViewModel>();
-                        samlClaimTransformClaimIn.ClaimIn = claimTransform.ClaimsIn?.FirstOrDefault();
-                        newClaimTransforms.Add(samlClaimTransformClaimIn);
+                        newClaimTransforms.Add(claimTransform.Map<SamlClaimTransformClaimInClaimOutViewModel>(afterMap =>
+                        {
+                            afterMap.ClaimIn = claimTransform.ClaimsIn?.FirstOrDefault();
+                            afterMap.ClaimOut = claimTransform.ClaimsOut?.FirstOrDefault();
+                        }));
                         break;
                     case ClaimTransformTypes.Constant:
-                        newClaimTransforms.Add(claimTransform.Map<SamlClaimTransformClaimInViewModel>());
+                        newClaimTransforms.Add(claimTransform.Map<SamlClaimTransformClaimInClaimOutViewModel>(afterMap =>
+                        {
+                            afterMap.ClaimOut = claimTransform.ClaimsOut?.FirstOrDefault();
+                        }));
                         break;
                     case ClaimTransformTypes.Concatenate:
-                        newClaimTransforms.Add(claimTransform.Map<SamlClaimTransformClaimsInViewModel>());
+                        newClaimTransforms.Add(claimTransform.Map<SamlClaimTransformClaimsInClaimOutViewModel>(afterMap =>
+                        {
+                            afterMap.ClaimOut = claimTransform.ClaimsOut?.FirstOrDefault();
+                        }));
                         break;
                     case ClaimTransformTypes.ExternalClaims:
-                        newClaimTransforms.Add(claimTransform.Map<SamlClaimTransformClaimsInViewModel>());
+                        newClaimTransforms.Add(claimTransform.Map<SamlClaimTransformClaimsInClaimOutViewModel>(afterMap =>
+                        {
+                            afterMap.ClaimOut = claimTransform.ClaimsOut?.FirstOrDefault();
+                        }));
                         break;
                     default:
                         throw new NotSupportedException("claim transform type not supported.");
@@ -83,9 +105,10 @@ namespace FoxIDs.Client
             {
                 foreach (var claimTransform in claimTransforms)
                 {
-                    if (claimTransform is OAuthClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
+                    if (claimTransform is OAuthClaimTransformClaimInClaimOutViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
                     {
-                        claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
+                        claimTransform.ClaimsIn = claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace() ? null : [claimTransformClaimIn.ClaimIn];
+                        claimTransform.ClaimsOut = claimTransformClaimIn.ClaimOut.IsNullOrWhiteSpace() ? null : [claimTransformClaimIn.ClaimOut];
                     }
                 }
             }
@@ -99,9 +122,10 @@ namespace FoxIDs.Client
             {
                 foreach (var claimTransform in claimTransforms)
                 {
-                    if (claimTransform is SamlClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
+                    if (claimTransform is SamlClaimTransformClaimInClaimOutViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
                     {
-                        claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
+                        claimTransform.ClaimsIn = claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace() ? null : [claimTransformClaimIn.ClaimIn];
+                        claimTransform.ClaimsOut = claimTransformClaimIn.ClaimOut.IsNullOrWhiteSpace() ? null : [claimTransformClaimIn.ClaimOut];
                     }
                 }
             }

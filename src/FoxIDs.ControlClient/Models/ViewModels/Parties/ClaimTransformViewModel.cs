@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System;
 using FoxIDs.Models.Api;
-using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -26,6 +25,8 @@ namespace FoxIDs.Client.Models.ViewModels
         public virtual List<string> ClaimsIn { get; set; }
 
         public virtual string ClaimOut { get; set; }
+
+        public virtual List<string> ClaimsOut { get; set; }
 
         [Required]
         [Display(Name = "Action")]

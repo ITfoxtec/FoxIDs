@@ -191,7 +191,7 @@ namespace FoxIDs.Logic
                                 break;
 
                             case ClaimTransformTypes.ExternalClaims:
-                                claimTransform.ClaimOut = null;
+                                claimTransform.ClaimsOut = null;
                                 claimTransform.Transformation = null;
                                 claimTransform.TransformationExtension = null;
                                 break;

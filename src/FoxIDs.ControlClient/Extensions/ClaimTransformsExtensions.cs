@@ -16,7 +16,7 @@ namespace FoxIDs.Client
             {
                 switch (claimTransform.Type)
                 {
-                    case ClaimTransformTypes.Match:
+                    case ClaimTransformTypes.MatchClaim:
                         if (claimTransform.Task == ClaimTransformTasks.QueryInternalUser || claimTransform.Task == ClaimTransformTasks.QueryExternalUser)
                         {
                             newClaimTransforms.Add(claimTransform.Map<OAuthClaimTransformClaimInClaimsOutViewModel>(afterMap =>
@@ -37,7 +37,7 @@ namespace FoxIDs.Client
                             }));
                         }
                         break;
-                    case ClaimTransformTypes.MatchClaim:
+                    case ClaimTransformTypes.Match:
                     case ClaimTransformTypes.RegexMatch:
                     case ClaimTransformTypes.Map:
                     case ClaimTransformTypes.RegexMap:
@@ -81,7 +81,7 @@ namespace FoxIDs.Client
             {
                 switch (claimTransform.Type)
                 {
-                    case ClaimTransformTypes.Match:
+                    case ClaimTransformTypes.MatchClaim:
                         if (claimTransform.Task == ClaimTransformTasks.QueryInternalUser || claimTransform.Task == ClaimTransformTasks.QueryExternalUser)
                         {
                             newClaimTransforms.Add(claimTransform.Map<SamlClaimTransformClaimInClaimsOutViewModel>(afterMap =>
@@ -102,7 +102,7 @@ namespace FoxIDs.Client
                             }));
                         }
                         break;
-                    case ClaimTransformTypes.MatchClaim:
+                    case ClaimTransformTypes.Match:
                     case ClaimTransformTypes.RegexMatch:
                     case ClaimTransformTypes.Map:
                     case ClaimTransformTypes.RegexMap:

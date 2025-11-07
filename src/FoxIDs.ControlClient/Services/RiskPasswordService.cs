@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Client.Logic;
 using FoxIDs.Models.Api;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Services
@@ -13,8 +14,8 @@ namespace FoxIDs.Client.Services
         public RiskPasswordService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
 
-        public async Task<bool> GetRiskPasswordTestAsync(string password) => await GetAsync<bool>(apiUri, password, parmName1: nameof(password));
+        public async Task<bool> GetRiskPasswordTestAsync(string password, CancellationToken cancellationToken = default) => await GetAsync<bool>(apiUri, password, parmName1: nameof(password), cancellationToken: cancellationToken);
 
-        public async Task<RiskPasswordInfo> GetRiskPasswordInfoAsync() => await GetAsync<RiskPasswordInfo>(infoApiUri);
+        public async Task<RiskPasswordInfo> GetRiskPasswordInfoAsync(CancellationToken cancellationToken = default) => await GetAsync<RiskPasswordInfo>(infoApiUri, cancellationToken);
     }
 }

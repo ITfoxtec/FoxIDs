@@ -2,6 +2,7 @@
 using FoxIDs.Models.Api;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Services
@@ -16,11 +17,11 @@ namespace FoxIDs.Client.Services
         public HelpersService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
 
-        public async Task<JwkWithCertificateInfo> ReadCertificateAsync(CertificateAndPassword certificateAndPassword) => await PostResponseAsync<CertificateAndPassword, JwkWithCertificateInfo>(readCertificateApiUri, certificateAndPassword);
-        public async Task<JwkWithCertificateInfo> ReadCertificateFromPemAsync(CertificateCrtAndKey certificateCrtAndKey) => await PostResponseAsync<CertificateCrtAndKey, JwkWithCertificateInfo>(readCertificatePemApiUri, certificateCrtAndKey);
+        public async Task<JwkWithCertificateInfo> ReadCertificateAsync(CertificateAndPassword certificateAndPassword, CancellationToken cancellationToken = default) => await PostResponseAsync<CertificateAndPassword, JwkWithCertificateInfo>(readCertificateApiUri, certificateAndPassword, cancellationToken);
+        public async Task<JwkWithCertificateInfo> ReadCertificateFromPemAsync(CertificateCrtAndKey certificateCrtAndKey, CancellationToken cancellationToken = default) => await PostResponseAsync<CertificateCrtAndKey, JwkWithCertificateInfo>(readCertificatePemApiUri, certificateCrtAndKey, cancellationToken);
 
-        public async Task<DownPartyTestStartResponse> StartDownPartyTestAsync(DownPartyTestStartRequest downPartyTestStartRequest) => await PostResponseAsync<DownPartyTestStartRequest, DownPartyTestStartResponse>(downPartyTestApiUri, downPartyTestStartRequest);
+        public async Task<DownPartyTestStartResponse> StartDownPartyTestAsync(DownPartyTestStartRequest downPartyTestStartRequest, CancellationToken cancellationToken = default) => await PostResponseAsync<DownPartyTestStartRequest, DownPartyTestStartResponse>(downPartyTestApiUri, downPartyTestStartRequest, cancellationToken);
 
-        public async Task<IEnumerable<PlanInfo>> GetPlanInfoAsync() => await GetAsync<IEnumerable<PlanInfo>>(planInfoApiUri);
+        public async Task<IEnumerable<PlanInfo>> GetPlanInfoAsync(CancellationToken cancellationToken = default) => await GetAsync<IEnumerable<PlanInfo>>(planInfoApiUri, cancellationToken);
     }
 }

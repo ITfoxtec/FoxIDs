@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Client.Logic;
 using FoxIDs.Models.Api;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Services
@@ -12,6 +13,6 @@ namespace FoxIDs.Client.Services
         public ClientService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic, sendAccessToken: false)
         { }
 
-        public async Task<ControlClientSettings> GetControlClientSettingsAsync() => await GetAsync<ControlClientSettings>(clientConfigApiUri);
+        public async Task<ControlClientSettings> GetControlClientSettingsAsync(CancellationToken cancellationToken = default) => await GetAsync<ControlClientSettings>(clientConfigApiUri, cancellationToken);
     }
 }

@@ -173,6 +173,10 @@
                                         <FFieldTextClipboard Class="pb-0" @bind-Value="certificate.CertificateBase64" For="@(() => certificate.CertificateBase64)" LabelText="Certificate (Base64)" />
                                         <button type="button" class="btn btn-link btn-xs py-2 pl-0" @onclick="@(async () => await DownloadCertificateAsync(certificate.Subject, certificate.CertificateBase64))"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download certificate</button>
                                     </div>
+                                    <div class="d-flex">
+                                        <div class="mr-auto"></div>
+                                        <button type="button" class="btn btn-link" @onclick="@(() => ShowUpdateCertificate(certificate))">Change certificate</button>
+                                    </div>
                                 }
                             }
                         }

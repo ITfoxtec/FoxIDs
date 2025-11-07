@@ -6,7 +6,7 @@
         if (item.Index == 0 && !DynamicFirstRow)
         {
             <input type="text" value="@item.Effect" @onchange="@(async e => await OnChangeAsync(e, item.Index))" class="form-control input-control" />
-            <Label For="@For" class="label-control" />
+            <Label For="@For" LabelText="@LabelText" class="label-control" />
         }
         else
         {
@@ -50,6 +50,9 @@
 @code {
     [Inject]
     public ClipboardLogic ClipboardLogic { get; set; }
+
+    [Parameter]
+    public string LabelText { get; set; }
 
     [Parameter]
     public bool IncludeActiveFormGroup { get; set; } = true;

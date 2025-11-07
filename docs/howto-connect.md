@@ -70,12 +70,17 @@ You would most often connect applications and APIs. But an application registrat
 ### OpenID Connect and OAuth 2.0
 It is recommended to secure applications and APIs with [OpenID Connect](app-reg-oidc.md) and [OAuth 2.0](app-reg-oauth-2.0.md). Please see the [samples](samples.md).
 
+How to guides:
+
+- Connect [Tailscale](app-reg-howto-oidc-tailscale.md)
+
 ### SAML 2.0
 Configure [SAML 2.0](app-reg-saml-2.0.md) to be an Identity Provider (IdP).
 
 How to guides:
 
 - Connect [Amazon IAM Identity Center](app-reg-howto-saml-amazon-iam-identity-center.md)
+- Connect [Google Workspace](app-reg-howto-saml-google-workspace.md)
 - Connect [Microsoft Entra ID](app-reg-howto-saml-microsoft-entra-id.md)
 - Connect [Context Handler test IdP (Danish identity broker)](howto-saml-2.0-context-handler#configuring-test-identity-provider-for-context-handler)
 

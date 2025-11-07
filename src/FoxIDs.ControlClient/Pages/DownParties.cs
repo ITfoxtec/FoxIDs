@@ -18,6 +18,7 @@ using static ITfoxtec.Identity.IdentityConstants;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.JSInterop;
+using FoxIDs.Util;
 
 namespace FoxIDs.Client.Pages
 {
@@ -197,7 +198,7 @@ namespace FoxIDs.Client.Pages
                 var downPartyTestStartResponse = await HelpersService.StartDownPartyTestAsync(new DownPartyTestStartRequest
                 {
                     UpParties = await GetUpPartiesAsync(),
-                    RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test".ToLower()
+                    RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test#id={RandomName.GenerateDefaultName()}".ToLower()
                 });
 
                 testDownPartyModal.DisplayName = downPartyTestStartResponse.DisplayName;

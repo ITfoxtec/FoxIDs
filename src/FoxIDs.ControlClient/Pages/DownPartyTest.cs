@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Client.Logic;
 using Microsoft.AspNetCore.Components;
-using System.Security;
 using System;
 using System.Threading.Tasks;
 using ITfoxtec.Identity;
@@ -12,6 +11,7 @@ using FoxIDs.Models.Api;
 using FoxIDs.Infrastructure;
 using Microsoft.JSInterop;
 using System.Linq;
+using Blazored.SessionStorage;
 
 namespace FoxIDs.Client.Pages
 {
@@ -22,6 +22,9 @@ namespace FoxIDs.Client.Pages
         private bool loggedOut;
         private ElementReference submitIdTokenButton;
         private ElementReference submitAccessTokenButton;
+        private TestSessionData testSessionData;
+
+        private const string SessionStorageKeyPrefix = "foxids.downpartytest.";
 
         [Inject]
         public IJSRuntime JSRuntime { get; set; }
@@ -35,6 +38,9 @@ namespace FoxIDs.Client.Pages
         [Inject]
         public HelpersNoAccessTokenService HelpersNoAccessTokenService { get; set; }
 
+        [Inject]
+        public ISessionStorageService SessionStorage { get; set; }
+
         [Parameter]
         public string TenantName { get; set; }
 
@@ -42,12 +48,15 @@ namespace FoxIDs.Client.Pages
         {
             error = string.Empty;
             response = null;
+            loggedOut = false;
             await base.OnInitializedAsync();
+
+            await LoadTestSessionDataAsync();
 
             try
             {
                 var responseQuery = GetResponseQuery(navigationManager.Uri);
-                if (responseQuery?.Count() > 0)
+                if (responseQuery?.Where(q => q.Key != "id")?.Count() > 0)
                 {
                     var authenticationResponse = responseQuery.ToObject<AuthenticationResponse>();
                     authenticationResponse.Validate();
@@ -65,6 +74,8 @@ namespace FoxIDs.Client.Pages
                         State = authenticationResponse.State,
                         Code = authenticationResponse.Code,
                     }, TenantName, trackName);
+
+                    await StoreTestSessionDataAsync(trackName, response);
                 }
                 else
                 {
@@ -99,5 +110,156 @@ namespace FoxIDs.Client.Pages
         {
             await JSRuntime.InvokeVoidAsync("triggerClick", submitAccessTokenButton);
         }
+
+        private async Task LoadTestSessionDataAsync()
+        {
+            var key = GetSessionStorageKey();
+            if (key.IsNullOrEmpty())
+            {
+                return;
+            }
+
+            try
+            {
+                if (!await SessionStorage.ContainKeyAsync(key))
+                {
+                    return;
+                }
+
+                var data = await SessionStorage.GetItemAsync<TestSessionData>(key);
+                if (data == null)
+                {
+                    await ClearTestSessionDataAsync();
+                    return;
+                }
+
+                testSessionData = data;
+                if (IsExpired(data))
+                {
+                    await ClearTestSessionDataAsync();
+                }
+            }
+            catch (Exception)
+            {
+                testSessionData = null;
+                await ClearTestSessionDataAsync();
+            }
+        }
+
+        private async Task StoreTestSessionDataAsync(string trackName, DownPartyTestResultResponse result)
+        {
+            var key = GetSessionStorageKey();
+            if (key.IsNullOrEmpty())
+            {
+                return;
+            }
+
+            if (result == null)
+            {
+                testSessionData = null;
+                await ClearTestSessionDataAsync();
+                return;
+            }
+
+            testSessionData = new TestSessionData(trackName, result.TestUrl, result.TestExpireAt, result.TestExpireInSeconds);
+
+            try
+            {
+                await SessionStorage.SetItemAsync(key, testSessionData);
+            }
+            catch (Exception)
+            {
+                // sessionStorage is not available or serialization failed, clear and continue.
+                testSessionData = null;
+                await ClearTestSessionDataAsync();
+            }
+        }
+
+        private async Task ClearTestSessionDataAsync()
+        {
+            var key = GetSessionStorageKey();
+            if (key.IsNullOrEmpty())
+            {
+                return;
+            }
+
+            try
+            {
+                await SessionStorage.RemoveItemAsync(key);
+            }
+            catch (Exception)
+            {
+                // sessionStorage is not available, ignore.
+            }
+        }
+
+        private string GetSessionStorageKey()
+        {
+            var responseQuery = GetResponseQuery(navigationManager.Uri);
+            var id = responseQuery?.Where(q => q.Key == "id")?.Select(q => q.Value).FirstOrDefault();
+
+            if (id.IsNullOrWhiteSpace())
+            {
+                return null;
+            }
+
+            return string.Concat(SessionStorageKeyPrefix, id.ToLowerInvariant());
+        }
+
+        private static bool HasExpiration(TestSessionData data) => data.TestExpireInSeconds > 0 && data.TestExpireAt > 0;
+
+        private static bool IsExpired(TestSessionData data) => HasExpiration(data) && DateTimeOffset.FromUnixTimeSeconds(data.TestExpireAt) <= DateTimeOffset.UtcNow;
+
+        private string RetryTestUrl => testSessionData?.TestUrl;
+
+        private bool CanRetryLogin => testSessionData != null && !RetryTestUrl.IsNullOrWhiteSpace() && (!HasExpiration(testSessionData) || !IsExpired(testSessionData));
+
+        private bool TestSessionExpired => testSessionData != null && IsExpired(testSessionData);
+
+        private string TestValidityText
+        {
+            get
+            {
+                if (testSessionData == null)
+                {
+                    return null;
+                }
+
+                if (!HasExpiration(testSessionData))
+                {
+                    return "The test application does not expire.";
+                }
+
+                var expireUtc = DateTimeOffset.FromUnixTimeSeconds(testSessionData.TestExpireAt);
+                var expireLocal = expireUtc.ToLocalTime();
+                var remaining = expireUtc - DateTimeOffset.UtcNow;
+                if (remaining <= TimeSpan.Zero)
+                {
+                    return $"The test application expired at {expireLocal.LocalDateTime.ToShortTimeString()}.";
+                }
+
+                return $"The test application is valid until {expireLocal.LocalDateTime.ToShortTimeString()} ({FormatRemaining(remaining)} remaining).";
+            }
+        }
+
+        private static string FormatRemaining(TimeSpan remaining)
+        {
+            if (remaining.TotalHours >= 1)
+            {
+                var hours = (int)Math.Floor(remaining.TotalHours);
+                return $"{hours} hour{(hours == 1 ? string.Empty : "s")}";
+            }
+
+            if (remaining.TotalMinutes >= 1)
+            {
+                var minutes = Math.Max(1, (int)Math.Ceiling(remaining.TotalMinutes));
+                return $"{minutes} minute{(minutes == 1 ? string.Empty : "s")}";
+            }
+
+            var seconds = Math.Max(1, (int)Math.Ceiling(remaining.TotalSeconds));
+            return $"{seconds} second{(seconds == 1 ? string.Empty : "s")}";
+        }
+
+        private sealed record TestSessionData(string TrackName, string TestUrl, long TestExpireAt, int TestExpireInSeconds);
     }
 }

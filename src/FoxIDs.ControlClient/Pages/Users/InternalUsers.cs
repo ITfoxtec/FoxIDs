@@ -69,7 +69,7 @@ namespace FoxIDs.Client.Pages.Users
             userFilterForm?.ClearError();
             try
             {
-                SetGeneralUsers(await UserService.GetUsersAsync(null, null, null, null));
+                SetGeneralUsers(await UserService.GetUsersAsync(null, null, null, null, cancellationToken: PageCancellationToken));
             }
             catch (TokenUnavailableException)
             {
@@ -86,7 +86,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             try
             {
-                SetGeneralUsers(await UserService.GetUsersAsync(userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue));
+                SetGeneralUsers(await UserService.GetUsersAsync(userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, cancellationToken: PageCancellationToken));
             }
             catch (FoxIDsApiException ex)
             {
@@ -105,7 +105,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             try
             {
-                SetGeneralUsers(await UserService.GetUsersAsync(userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, paginationToken: paginationToken), addUsers: true);
+                SetGeneralUsers(await UserService.GetUsersAsync(userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, paginationToken: paginationToken, cancellationToken: PageCancellationToken), addUsers: true);
             }
             catch (TokenUnavailableException)
             {
@@ -156,7 +156,7 @@ namespace FoxIDs.Client.Pages.Users
 
             try
             {
-                var user = await UserService.GetUserAsync(generalUser.Email, generalUser.Phone, generalUser.Username);
+                var user = await UserService.GetUserAsync(generalUser.Email, generalUser.Phone, generalUser.Username, cancellationToken: PageCancellationToken);
                 await generalUser.Form.InitAsync(ToViewModel(user));
             }
             catch (TokenUnavailableException)
@@ -253,7 +253,7 @@ namespace FoxIDs.Client.Pages.Users
             {
                 if (generalUser.CreateMode)
                 {
-                    var userResult = await UserService.CreateUserAsync(generalUser.Form.Model.Map<CreateUserRequest>());
+                    var userResult = await UserService.CreateUserAsync(generalUser.Form.Model.Map<CreateUserRequest>(), cancellationToken: PageCancellationToken);
                     generalUser.Email = userResult.Email;
                     generalUser.Phone = userResult.Phone;
                     generalUser.Username = userResult.Username;
@@ -281,7 +281,7 @@ namespace FoxIDs.Client.Pages.Users
                         afterMap.Email = generalUser.Email;
                         afterMap.Phone = generalUser.Phone;
                         afterMap.Username = generalUser.Username;
-                    }));
+                    }), cancellationToken: PageCancellationToken);
                     generalUser.Email = userResult.Email;
                     generalUser.Phone = userResult.Phone;
                     generalUser.Username = userResult.Username;
@@ -309,7 +309,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             try
             {
-                await UserService.DeleteUserAsync(generalUser.Email, generalUser.Phone, generalUser.Username);
+                await UserService.DeleteUserAsync(generalUser.Email, generalUser.Phone, generalUser.Username, cancellationToken: PageCancellationToken);
                 users.Remove(generalUser);
                 toastService.ShowSuccess("User deleted.");
             }

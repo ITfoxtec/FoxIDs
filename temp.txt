@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure;
 using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
@@ -134,20 +134,6 @@ namespace FoxIDs.Client.Shared.Components
                             if (tempUpPartyFilters != null && itemProfile != null)
                             {
                                 tempUpPartyFilters.Remove(itemProfile);
-                            }
-                        }
-                    }
-                }
-
-                if (tempUpPartyFilters?.Count() > 0)
-                {
-                    tempUpPartyFilters.ForEach(u => u.Hide = true);
-                    upPartyFilters.AddRange(tempUpPartyFilters);
-                }
-            }
-            catch (TokenUnavailableException)
-            {
-                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
         }
 
@@ -180,6 +166,20 @@ namespace FoxIDs.Client.Shared.Components
                     cancellationTokenSource.Dispose();
                     cancellationTokenSource = null;
                 }
+            }
+        }
+    }
+}
+
+                if(tempUpPartyFilters?.Count() > 0)
+                {
+                    tempUpPartyFilters.ForEach(u => u.Hide = true);
+                    upPartyFilters.AddRange(tempUpPartyFilters);
+                }
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
         }
 

@@ -126,7 +126,7 @@ namespace FoxIDs.Client.Pages.Logging
                     usageLogRequest.TenantName = usageLogRequestForm.Model.TenantName;
                     usageLogRequest.TrackName = usageLogRequestForm.Model.TrackName;
                 }
-                usageLogResponse = await TenantService.GetUsageLogAsync(usageLogRequest);
+                usageLogResponse = await TenantService.GetUsageLogAsync(usageLogRequest, cancellationToken: PageCancellationToken);
             }
             else if(IsMasterTrack)
             {
@@ -136,13 +136,13 @@ namespace FoxIDs.Client.Pages.Logging
                 {
                     usageLogRequest.TrackName = usageLogRequestForm.Model.TrackName;
                 }
-                usageLogResponse = await MyTenantService.GetUsageLogAsync(usageLogRequest);
+                usageLogResponse = await MyTenantService.GetUsageLogAsync(usageLogRequest, cancellationToken: PageCancellationToken);
             }
             else
             {
                 var usageLogRequest = new UsageLogRequest();
                 AddUsageLogValues(usageLogRequest);
-                usageLogResponse = await TrackService.GetTrackUsageLogAsync(usageLogRequest);
+                usageLogResponse = await TrackService.GetTrackUsageLogAsync(usageLogRequest, cancellationToken: PageCancellationToken);
             }
         }
 

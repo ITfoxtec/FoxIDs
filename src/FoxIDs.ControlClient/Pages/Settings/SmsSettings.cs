@@ -98,7 +98,7 @@ namespace FoxIDs.Client.Pages.Settings
             smsSettingsForm?.ClearError();
             try
             {
-                var smsSettings = await TrackService.GetTrackSendSmsAsync();
+                var smsSettings = await TrackService.GetTrackSendSmsAsync(cancellationToken: PageCancellationToken);
                 if (smsSettings == null)
                 {
                     smsSettings = new SendSms();
@@ -154,7 +154,7 @@ namespace FoxIDs.Client.Pages.Settings
                         throw new NotImplementedException();
                 }
 
-                await TrackService.UpdateTrackSendSmsAsync(smsSettingsForm.Model.Map<SendSms>());
+                await TrackService.UpdateTrackSendSmsAsync(smsSettingsForm.Model.Map<SendSms>(), cancellationToken: PageCancellationToken);
                 toastService.ShowSuccess("SMS settings updated.");
             }
             catch (Exception ex)
@@ -167,7 +167,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                await TrackService.DeleteTrackSendSmsAsync();
+                await TrackService.DeleteTrackSendSmsAsync(cancellationToken: PageCancellationToken);
                 deleteSmsAcknowledge = false;
                 await DefaultLoadAsync();
             }
@@ -206,7 +206,7 @@ namespace FoxIDs.Client.Pages.Settings
                     return;
                 }
                 var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(pfxBytes);
-                stagedKey = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate, Password = pfxPassword });
+                stagedKey = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate, Password = pfxPassword }, cancellationToken: PageCancellationToken);
             }
             catch (TokenUnavailableException)
             {
@@ -253,7 +253,7 @@ namespace FoxIDs.Client.Pages.Settings
                     smsSettingsForm.SetFieldError(nameof(smsSettingsForm.Model.Key), "Select both .crt and .key files.");
                     return;
                 }
-                stagedKey = await HelpersService.ReadCertificateFromPemAsync(new CertificateCrtAndKey { CertificatePemCrt = pemCrt, CertificatePemKey = pemKey });
+                stagedKey = await HelpersService.ReadCertificateFromPemAsync(new CertificateCrtAndKey { CertificatePemCrt = pemCrt, CertificatePemKey = pemKey }, cancellationToken: PageCancellationToken);
             }
             catch (TokenUnavailableException)
             {

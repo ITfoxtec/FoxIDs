@@ -79,7 +79,7 @@ namespace FoxIDs.Client.Pages.Settings
             mailSettingsForm?.ClearError();
             try
             {
-                var mailSettings = await TrackService.GetTrackSendEmailAsync();       
+                var mailSettings = await TrackService.GetTrackSendEmailAsync(cancellationToken: PageCancellationToken);       
                 if (mailSettings == null)
                 {
                     mailSettings = new SendEmail();
@@ -120,7 +120,7 @@ namespace FoxIDs.Client.Pages.Settings
                         FromName = mailSettingsForm.Model.FromName,
                         FromEmail = mailSettingsForm.Model.FromEmail,
                         SendgridApiKey = mailSettingsForm.Model.SendgridApiKey
-                    });
+                    }, cancellationToken: PageCancellationToken);
                 }
                 else if(mailSettingsForm.Model.MailProvider == MailProviders.Smtp)
                 {
@@ -156,7 +156,7 @@ namespace FoxIDs.Client.Pages.Settings
                             SmtpPort = mailSettingsForm.Model.SmtpPort,
                             SmtpUsername = mailSettingsForm.Model.SmtpUsername,
                             SmtpPassword = mailSettingsForm.Model.SmtpPassword
-                        });
+                        }, cancellationToken: PageCancellationToken);
                     }
                     else
                     {
@@ -179,7 +179,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                await TrackService.DeleteTrackSendEmailAsync();
+                await TrackService.DeleteTrackSendEmailAsync(cancellationToken: PageCancellationToken);
                 deleteMailAcknowledge = false;
                 await DefaultLoadAsync();
             }

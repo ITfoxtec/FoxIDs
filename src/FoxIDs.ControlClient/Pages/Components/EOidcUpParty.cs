@@ -45,8 +45,8 @@ namespace FoxIDs.Client.Pages.Components
             try
             {
                 var generalOidcUpParty = UpParty as GeneralOidcUpPartyViewModel;
-                var oidcUpParty = await UpPartyService.GetOidcUpPartyAsync(UpParty.Name);
-                var clientKeyResponse = await UpPartyService.GetOidcClientKeyUpPartyAsync(UpParty.Name);
+                var oidcUpParty = await UpPartyService.GetOidcUpPartyAsync(UpParty.Name, cancellationToken: ComponentCancellationToken);
+                var clientKeyResponse = await UpPartyService.GetOidcClientKeyUpPartyAsync(UpParty.Name, cancellationToken: ComponentCancellationToken);
                 await generalOidcUpParty.Form.InitAsync(ToViewModel(generalOidcUpParty, oidcUpParty, clientKeyResponse));
             }
             catch (TokenUnavailableException)
@@ -186,7 +186,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (oidcUpParty.CreateMode)
             {
-                model.Name = await UpPartyService.GetNewPartyNameAsync();
+                model.Name = await UpPartyService.GetNewPartyNameAsync(cancellationToken: ComponentCancellationToken);
                 model.Client = new OidcUpClientViewModel();
                 model.Client.Claims = new List<string> { "*" };
             }
@@ -237,7 +237,7 @@ namespace FoxIDs.Client.Pages.Components
 
                 if (generalOidcUpParty.CreateMode)
                 {
-                    var oidcUpPartyResult = await UpPartyService.CreateOidcUpPartyAsync(oidcUpParty);
+                    var oidcUpPartyResult = await UpPartyService.CreateOidcUpPartyAsync(oidcUpParty, cancellationToken: ComponentCancellationToken);
                     generalOidcUpParty.Form.UpdateModel(ToViewModel(generalOidcUpParty, oidcUpPartyResult, null));
                     generalOidcUpParty.CreateMode = false;
                     toastService.ShowSuccess("OpenID Connect application created.");
@@ -273,19 +273,19 @@ namespace FoxIDs.Client.Pages.Components
                         }
                         else
                         {
-                            await UpPartyService.UpdateOidcClientSecretUpPartyAsync(new OAuthClientSecretSingleRequest { PartyName = UpParty.Name, Secret = oidcUpParty.Client.ClientSecret });
+                            await UpPartyService.UpdateOidcClientSecretUpPartyAsync(new OAuthClientSecretSingleRequest { PartyName = UpParty.Name, Secret = oidcUpParty.Client.ClientSecret }, cancellationToken: ComponentCancellationToken);
                         }
                         oidcUpParty.Client.ClientSecret = null;
                     }
 
-                    var oidcUpPartyResult = await UpPartyService.UpdateOidcUpPartyAsync(oidcUpParty);
+                    var oidcUpPartyResult = await UpPartyService.UpdateOidcUpPartyAsync(oidcUpParty, cancellationToken: ComponentCancellationToken);
                     generalOidcUpParty.Name = oidcUpPartyResult.Name;
                     if (deleteClientSecret)
                     {
-                        await UpPartyService.DeleteOidcClientSecretUpPartyAsync(UpParty.Name);
+                        await UpPartyService.DeleteOidcClientSecretUpPartyAsync(UpParty.Name, cancellationToken: ComponentCancellationToken);
                         oidcUpPartyResult.Client.ClientSecret = null;
                     }
-                    var clientKeyResponse = await UpPartyService.GetOidcClientKeyUpPartyAsync(UpParty.Name);
+                    var clientKeyResponse = await UpPartyService.GetOidcClientKeyUpPartyAsync(UpParty.Name, cancellationToken: ComponentCancellationToken);
                     generalOidcUpParty.Form.UpdateModel(ToViewModel(generalOidcUpParty, oidcUpPartyResult, clientKeyResponse));
                     toastService.ShowSuccess("OpenID Connect application updated.");
                     generalOidcUpParty.DisplayName = oidcUpPartyResult.DisplayName;
@@ -309,7 +309,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
-                await UpPartyService.DeleteOidcUpPartyAsync(generalOidcUpParty.Name);
+                await UpPartyService.DeleteOidcUpPartyAsync(generalOidcUpParty.Name, cancellationToken: ComponentCancellationToken);
                 UpParties.Remove(generalOidcUpParty);
                 await OnStateHasChanged.InvokeAsync(UpParty);
             }
@@ -355,7 +355,7 @@ namespace FoxIDs.Client.Pages.Components
                 }
 
                 var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(certificateBytes);
-                var clientKeyResponse = await UpPartyService.CreateOidcClientKeyUpPartyAsync(new OAuthClientKeyRequest { PartyName = UpParty.Name, Certificate = base64UrlEncodeCertificate, Password = importClientKeyForm.Model.Password });
+                var clientKeyResponse = await UpPartyService.CreateOidcClientKeyUpPartyAsync(new OAuthClientKeyRequest { PartyName = UpParty.Name, Certificate = base64UrlEncodeCertificate, Password = importClientKeyForm.Model.Password }, cancellationToken: ComponentCancellationToken);
 
                 oidcUpParty.Form.Model.Client.PublicClientKeyInfo = importClientKeyForm.Model.PublicClientKeyInfo = new KeyInfoViewModel
                 {
@@ -391,7 +391,7 @@ namespace FoxIDs.Client.Pages.Components
 
         private async Task RemoveClientKeyAsync(GeneralOidcUpPartyViewModel oidcUpParty, string keyName)
         {
-            await UpPartyService.DeleteOidcClientKeyUpPartyAsync($"{oidcUpParty.Name}.{keyName}");
+            await UpPartyService.DeleteOidcClientKeyUpPartyAsync($"{oidcUpParty.Name}.{keyName}", cancellationToken: ComponentCancellationToken);
 
             oidcUpParty.Form.Model.Client.PublicClientKeyInfo = null;
             toastService.ShowSuccess("Authentication method client key removed.");

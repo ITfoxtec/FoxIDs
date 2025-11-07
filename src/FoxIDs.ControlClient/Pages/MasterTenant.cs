@@ -83,7 +83,7 @@ namespace FoxIDs.Client.Pages
             NotificationLogic.OnOpenPaymentMethodAsync += OnOpenPaymentMethodAsync;
             if (TrackSelectedLogic.Track.Name != Constants.Routes.MasterTrackName)
             {
-                var masterTrack = await TrackService.GetTrackAsync(Constants.Routes.MasterTrackName);
+                var masterTrack = await TrackService.GetTrackAsync(Constants.Routes.MasterTrackName, cancellationToken: PageCancellationToken);
                 await TrackSelectedLogic.TrackSelectedAsync(masterTrack);
             }
             if (TrackSelectedLogic.IsTrackSelected)
@@ -119,7 +119,7 @@ namespace FoxIDs.Client.Pages
                 deleteTenantError = null;
                 deleteTenantAcknowledge = false;
 
-                myTenant = await MyTenantService.GetTenantAsync();
+                myTenant = await MyTenantService.GetTenantAsync(cancellationToken: PageCancellationToken);
                 RouteBindingLogic.SetMyTenant(myTenant);
 
                 savedCustomDomain = myTenant.CustomDomain;
@@ -140,7 +140,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                planInfoList = await HelpersService.GetPlanInfoAsync();
+                planInfoList = await HelpersService.GetPlanInfoAsync(cancellationToken: PageCancellationToken);
             }
             catch (TokenUnavailableException)
             {
@@ -157,7 +157,7 @@ namespace FoxIDs.Client.Pages
                     return;
                 }
                 tenantWorking = true;
-                var myTenant = await MyTenantService.UpdateTenantAsync(tenantSettingsForm.Model.Map<MyTenantRequest>());
+                var myTenant = await MyTenantService.UpdateTenantAsync(tenantSettingsForm.Model.Map<MyTenantRequest>(), cancellationToken: PageCancellationToken);
                 ToastService.ShowSuccess("Tenant settings updated.");
                 tenantSettingsForm.Model.PlanName = myTenant.PlanName;
                 savedCustomDomain = myTenant.CustomDomain;
@@ -236,7 +236,7 @@ namespace FoxIDs.Client.Pages
                 try
                 {
                     changePaymentError = null;
-                    var firstPaymentResponse = await MyTenantService.CreateMollieFirstPaymentAsync(new MollieFirstPaymentRequest { CardToken = result.Token });
+                    var firstPaymentResponse = await MyTenantService.CreateMollieFirstPaymentAsync(new MollieFirstPaymentRequest { CardToken = result.Token }, cancellationToken: PageCancellationToken);
 
                     if (!firstPaymentResponse.CheckoutUrl.IsNullOrWhiteSpace())
                     {
@@ -277,7 +277,7 @@ namespace FoxIDs.Client.Pages
                     return;
                 }
                 tenantWorking = true;
-                await MyTenantService.DeleteTenantAsync();
+                await MyTenantService.DeleteTenantAsync(cancellationToken: PageCancellationToken);
                 tenantDeletedModal.Show();
                 tenantWorking = false;
             }

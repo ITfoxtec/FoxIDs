@@ -110,7 +110,7 @@ namespace FoxIDs.Client.Pages.Logging
                     logRequest.TenantName = logRequestForm.Model.TenantName;
                     logRequest.TrackName = logRequestForm.Model.TrackName;
                 }
-                logResponse = (await TenantService.GetLogAsync(logRequest)).Map<LogResponseViewModel>();
+                logResponse = (await TenantService.GetLogAsync(logRequest, cancellationToken: PageCancellationToken)).Map<LogResponseViewModel>();
             }
             else if (IsMasterTrack)
             {
@@ -120,13 +120,13 @@ namespace FoxIDs.Client.Pages.Logging
                 {
                     logRequest.TrackName = logRequestForm.Model.TrackName;
                 }
-                logResponse = (await MyTenantService.GetLogAsync(logRequest)).Map<LogResponseViewModel>();
+                logResponse = (await MyTenantService.GetLogAsync(logRequest, cancellationToken: PageCancellationToken)).Map<LogResponseViewModel>();
             }
             else
             {
                 var logRequest = new LogRequest();
                 AddLogValues(logRequest);
-                logResponse = (await TrackService.GetLogAsync(logRequest)).Map<LogResponseViewModel>(); 
+                logResponse = (await TrackService.GetLogAsync(logRequest, cancellationToken: PageCancellationToken)).Map<LogResponseViewModel>(); 
             }
         }
 

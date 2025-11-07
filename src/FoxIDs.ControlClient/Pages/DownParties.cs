@@ -89,7 +89,7 @@ namespace FoxIDs.Client.Pages
             }
             try
             {
-                SetGeneralDownParties(await DownPartyService.GetDownPartiesAsync(null));
+                SetGeneralDownParties(await DownPartyService.GetDownPartiesAsync(null, cancellationToken: PageCancellationToken));
             }
             catch (TokenUnavailableException)
             {
@@ -106,7 +106,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralDownParties(await DownPartyService.GetDownPartiesAsync(downPartyFilterForm.Model.FilterName));
+                SetGeneralDownParties(await DownPartyService.GetDownPartiesAsync(downPartyFilterForm.Model.FilterName, cancellationToken: PageCancellationToken));
 
                 if (newDownPartyModal?.IsVisible == true && newDownPartyModal.Created)
                 {
@@ -130,7 +130,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralDownParties(await DownPartyService.GetDownPartiesAsync(downPartyFilterForm.Model.FilterName, paginationToken: paginationToken), addParties: true);
+                SetGeneralDownParties(await DownPartyService.GetDownPartiesAsync(downPartyFilterForm.Model.FilterName, paginationToken: paginationToken, cancellationToken: PageCancellationToken), addParties: true);
             }
             catch (TokenUnavailableException)
             {
@@ -198,7 +198,7 @@ namespace FoxIDs.Client.Pages
                 {
                     UpParties = await GetUpPartiesAsync(),
                     RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test".ToLower()
-                });
+                }, cancellationToken: PageCancellationToken);
 
                 testDownPartyModal.DisplayName = downPartyTestStartResponse.DisplayName;
                 testDownPartyModal.TestUrl = downPartyTestStartResponse.TestUrl;
@@ -223,7 +223,7 @@ namespace FoxIDs.Client.Pages
 
         private async Task<List<UpPartyLink>> GetUpPartiesAsync()
         {
-            var ups = await UpPartyService.GetUpPartiesAsync(null);
+            var ups = await UpPartyService.GetUpPartiesAsync(null, cancellationToken: PageCancellationToken);
             var upParties = new List<UpPartyLink>();
             foreach (var up in ups.Data)
             {
@@ -383,7 +383,7 @@ namespace FoxIDs.Client.Pages
 
         private async Task OnNewDownPartyOidcModalAfterInitAsync(NewDownPartyOidcViewModel model)
         {
-            model.Name = await DownPartyService.GetNewPartyNameAsync();
+            model.Name = await DownPartyService.GetNewPartyNameAsync(cancellationToken: PageCancellationToken);
         }
 
         private async Task OnNewDownPartyOidcModalValidSubmitAsync(NewDownPartyViewModel newDownPartyViewModel, PageEditForm<NewDownPartyOidcViewModel> newDownPartyOidcForm, EditContext editContext)
@@ -450,11 +450,11 @@ namespace FoxIDs.Client.Pages
                     }
                 });
 
-                var oidcDownPartyResult = await DownPartyService.CreateOidcDownPartyAsync(oidcDownParty);
+                var oidcDownPartyResult = await DownPartyService.CreateOidcDownPartyAsync(oidcDownParty, cancellationToken: PageCancellationToken);
                 newDownPartyOidcForm.Model.Scopes = oidcDownParty.Client.Scopes.Select(s => s.Scope).ToList();
                 if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Confidential)
                 {
-                    await DownPartyService.CreateOidcClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = oidcDownPartyResult.Name, Secrets = new List<string> { newDownPartyOidcForm.Model.Secret } });
+                    await DownPartyService.CreateOidcClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = oidcDownPartyResult.Name, Secrets = new List<string> { newDownPartyOidcForm.Model.Secret } }, cancellationToken: PageCancellationToken);
                 }
                 else if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public || newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
                 {
@@ -489,7 +489,7 @@ namespace FoxIDs.Client.Pages
 
         private async Task OnNewDownPartyOAuthClientModalAfterInitAsync(NewDownPartyOAuthClientViewModel model)
         {
-            model.Name = await DownPartyService.GetNewPartyNameAsync();
+            model.Name = await DownPartyService.GetNewPartyNameAsync(cancellationToken: PageCancellationToken);
         }
 
         private async Task OnNewDownPartyOAuthClientModalValidSubmitAsync(NewDownPartyViewModel newDownPartyViewModel, PageEditForm<NewDownPartyOAuthClientViewModel> newDownPartyOAuthClientForm, EditContext editContext)
@@ -513,8 +513,8 @@ namespace FoxIDs.Client.Pages
                     };
                 });
 
-                var oauthDownPartyResult = await DownPartyService.CreateOAuthDownPartyAsync(oauthDownParty);
-                await DownPartyService.CreateOAuthClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = oauthDownPartyResult.Name, Secrets = new List<string> { newDownPartyOAuthClientForm.Model.Secret } });
+                var oauthDownPartyResult = await DownPartyService.CreateOAuthDownPartyAsync(oauthDownParty, cancellationToken: PageCancellationToken);
+                await DownPartyService.CreateOAuthClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = oauthDownPartyResult.Name, Secrets = new List<string> { newDownPartyOAuthClientForm.Model.Secret } }, cancellationToken: PageCancellationToken);
                 toastService.ShowSuccess("OAuth 2.0 authentication method created.");
 
                 newDownPartyOAuthClientForm.Model.Name = oauthDownPartyResult.Name;
@@ -544,7 +544,7 @@ namespace FoxIDs.Client.Pages
 
         private async Task OnNewDownPartyOAuthResourceModalAfterInitAsync(NewDownPartyOAuthResourceViewModel model)
         {
-            model.Name = await DownPartyService.GetNewPartyNameAsync();
+            model.Name = await DownPartyService.GetNewPartyNameAsync(cancellationToken: PageCancellationToken);
         }
 
         private async Task OnNewDownPartyOAuthResourceModalValidSubmitAsync(NewDownPartyViewModel newDownPartyViewModel, PageEditForm<NewDownPartyOAuthResourceViewModel> newDownPartyOAuthResourceForm, EditContext editContext)
@@ -562,7 +562,7 @@ namespace FoxIDs.Client.Pages
                     };
                 });
 
-                var oauthDownPartyResult = await DownPartyService.CreateOAuthDownPartyAsync(oauthDownParty);
+                var oauthDownPartyResult = await DownPartyService.CreateOAuthDownPartyAsync(oauthDownParty, cancellationToken: PageCancellationToken);
                 toastService.ShowSuccess("OAuth 2.0 authentication method created.");
 
                 newDownPartyOAuthResourceForm.Model.Name = oauthDownPartyResult.Name;
@@ -594,7 +594,7 @@ namespace FoxIDs.Client.Pages
 
         private async Task OnNewDownPartySamlModalAfterInitAsync(NewDownPartySamlViewModel model)
         {
-            model.Name = await DownPartyService.GetNewPartyNameAsync();
+            model.Name = await DownPartyService.GetNewPartyNameAsync(cancellationToken: PageCancellationToken);
 
             if (!model.Name.IsNullOrWhiteSpace() && model.Issuer.IsNullOrWhiteSpace())
             {
@@ -615,7 +615,7 @@ namespace FoxIDs.Client.Pages
                     afterMap.Claims = new List<string> { ClaimTypes.Email, ClaimTypes.Name, ClaimTypes.GivenName, ClaimTypes.Surname };
                 });
 
-                var samlDownPartyResult = await DownPartyService.CreateSamlDownPartyAsync(samlDownParty);
+                var samlDownPartyResult = await DownPartyService.CreateSamlDownPartyAsync(samlDownParty, cancellationToken: PageCancellationToken);
                 toastService.ShowSuccess("SAML 2.0 authentication method created.");
 
                 newDownPartySamlForm.Model.Name = samlDownPartyResult.Name;
@@ -762,7 +762,7 @@ namespace FoxIDs.Client.Pages
             {
                 try
                 {
-                    var trackKeys = await TrackService.GetTrackKeyContainedAsync();
+                    var trackKeys = await TrackService.GetTrackKeyContainedAsync(cancellationToken: PageCancellationToken);
                     newDownPartyModal.SamlForm.Model.IdPKeyInfo = new KeyInfoViewModel
                     {
                         Subject = trackKeys.PrimaryKey.CertificateInfo.Subject,

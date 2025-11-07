@@ -71,7 +71,7 @@ namespace FoxIDs.Client.Pages.Components
             try
             {
                 var generalLoginUpParty = UpParty as GeneralLoginUpPartyViewModel;                
-                var loginUpParty = await UpPartyService.GetLoginUpPartyAsync(UpParty.Name);
+                var loginUpParty = await UpPartyService.GetLoginUpPartyAsync(UpParty.Name, cancellationToken: ComponentCancellationToken);
                 await generalLoginUpParty.Form.InitAsync(ToViewModel(loginUpParty));
                 if (generalLoginUpParty.ShowCreateUserTab && !loginUpParty.EnableCreateUser)
                 {
@@ -118,7 +118,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (loginParty.CreateMode)
             {
-                model.Name = await UpPartyService.GetNewPartyNameAsync();
+                model.Name = await UpPartyService.GetNewPartyNameAsync(cancellationToken: ComponentCancellationToken);
             }
 
             if (model.TwoFactorAppName.IsNullOrWhiteSpace())
@@ -150,7 +150,7 @@ namespace FoxIDs.Client.Pages.Components
                         }
                         afterMap.ExtendedUis.MapExtendedUisAfterMap();
                         afterMap.ExitClaimTransforms.MapOAuthClaimTransformsAfterMap();
-                    }));
+                    }), cancellationToken: ComponentCancellationToken);
                     generalLoginUpParty.Form.UpdateModel(ToViewModel(loginUpPartyResult));
                     generalLoginUpParty.CreateMode = false;
                     toastService.ShowSuccess("Login application created.");
@@ -176,7 +176,7 @@ namespace FoxIDs.Client.Pages.Components
                         }
                         afterMap.ExtendedUis.MapExtendedUisAfterMap();
                         afterMap.ExitClaimTransforms.MapOAuthClaimTransformsAfterMap();
-                    }));
+                    }), cancellationToken: ComponentCancellationToken);
                     generalLoginUpParty.Form.UpdateModel(ToViewModel(loginUpParty));
                     toastService.ShowSuccess("Login application updated.");
                     generalLoginUpParty.Name = loginUpParty.Name;
@@ -471,7 +471,7 @@ label {{
         {
             try
             {
-                await UpPartyService.DeleteLoginUpPartyAsync(generalLoginUpParty.Name);
+                await UpPartyService.DeleteLoginUpPartyAsync(generalLoginUpParty.Name, cancellationToken: ComponentCancellationToken);
                 UpParties.Remove(generalLoginUpParty);
                 await OnStateHasChanged.InvokeAsync(UpParty);
             }

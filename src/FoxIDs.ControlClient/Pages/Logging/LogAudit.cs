@@ -110,7 +110,7 @@ namespace FoxIDs.Client.Pages.Logging
                     auditLogRequest.TenantName = auditLogRequestForm.Model.TenantName?.Trim();
                     auditLogRequest.TrackName = auditLogRequestForm.Model.TrackName?.Trim();
                 }
-                auditLogResponse = (await TenantService.GetAuditLogAsync(auditLogRequest)).Map<LogResponseViewModel>();
+                auditLogResponse = (await TenantService.GetAuditLogAsync(auditLogRequest, cancellationToken: PageCancellationToken)).Map<LogResponseViewModel>();
             }
             else if (IsMasterTrack)
             {
@@ -123,7 +123,7 @@ namespace FoxIDs.Client.Pages.Logging
                 {
                     auditLogRequest.TrackName = auditLogRequestForm.Model.TrackName?.Trim();
                 }
-                auditLogResponse = (await MyTenantService.GetAuditLogAsync(auditLogRequest)).Map<LogResponseViewModel>();
+                auditLogResponse = (await MyTenantService.GetAuditLogAsync(auditLogRequest, cancellationToken: PageCancellationToken)).Map<LogResponseViewModel>();
             }
             else
             {
@@ -132,7 +132,7 @@ namespace FoxIDs.Client.Pages.Logging
                 {
                     return;
                 }
-                auditLogResponse = (await TrackService.GetTrackAuditLogAsync(auditLogRequest)).Map<LogResponseViewModel>();
+                auditLogResponse = (await TrackService.GetTrackAuditLogAsync(auditLogRequest, cancellationToken: PageCancellationToken)).Map<LogResponseViewModel>();
             }
         }
 

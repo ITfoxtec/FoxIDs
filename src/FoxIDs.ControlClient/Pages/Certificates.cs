@@ -78,7 +78,7 @@ namespace FoxIDs.Client.Pages
             changeContainerTypeError = null;
             try
             {
-                await TrackService.UpdateTrackKeyTypeAsync(new TrackKey { Type = type });
+                await TrackService.UpdateTrackKeyTypeAsync(new TrackKey { Type = type }, cancellationToken: PageCancellationToken);
                 trackKey.Type = type;
                 changeContainerTypeModal.Hide();
                 await DefaultLoadAsync();
@@ -108,11 +108,11 @@ namespace FoxIDs.Client.Pages
             certificateLoadError = null;
             try
             {
-                trackKey = await TrackService.GetTrackKeyTypeAsync();
+                trackKey = await TrackService.GetTrackKeyTypeAsync(cancellationToken: PageCancellationToken);
 
                 if(trackKey.Type == TrackKeyTypes.Contained || trackKey.Type == TrackKeyTypes.ContainedRenewSelfSigned)
                 {
-                    var trackKeys = await TrackService.GetTrackKeyContainedAsync();
+                    var trackKeys = await TrackService.GetTrackKeyContainedAsync(cancellationToken: PageCancellationToken);
                     SetGeneralCertificates(trackKeys, trackKey.Type == TrackKeyTypes.Contained);
                 }
                 else
@@ -155,7 +155,7 @@ namespace FoxIDs.Client.Pages
             swapCertificateError = null;
             try
             {
-                await TrackService.SwapTrackKeyContainedAsync(new TrackKeyItemContainedSwap { SwapKeys = true });
+                await TrackService.SwapTrackKeyContainedAsync(new TrackKeyItemContainedSwap { SwapKeys = true }, cancellationToken: PageCancellationToken);
                 await DefaultLoadAsync();
                 swapCertificateModal.Hide();
             }
@@ -230,7 +230,7 @@ namespace FoxIDs.Client.Pages
                 }
 
                 var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(certificateBytes);
-                var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate, Password = generalCertificate.Form.Model.Password });
+                var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate, Password = generalCertificate.Form.Model.Password }, cancellationToken: PageCancellationToken);
                     
                 if (!jwkWithCertificateInfo.HasPrivateKey())
                 {
@@ -279,7 +279,7 @@ namespace FoxIDs.Client.Pages
                 {
                     afterMap.CreateSelfSigned = true;
                     afterMap.Key = null;
-                }));
+                }), cancellationToken: PageCancellationToken);
 
                 var keyResponse = generalCertificate.Form.Model.IsPrimary ? trackKeyResponse.PrimaryKey : trackKeyResponse.SecondaryKey;
 
@@ -323,7 +323,7 @@ namespace FoxIDs.Client.Pages
                     throw new Exception("Please add the certificate.");
                 }
 
-                _ = await TrackService.UpdateTrackKeyContainedAsync(generalCertificate.Form.Model.Map<TrackKeyItemContainedRequest>());
+                _ = await TrackService.UpdateTrackKeyContainedAsync(generalCertificate.Form.Model.Map<TrackKeyItemContainedRequest>(), cancellationToken: PageCancellationToken);
                 generalCertificate.Subject = generalCertificate.Form.Model.Subject;
                 generalCertificate.ValidFrom = generalCertificate.Form.Model.ValidFrom;
                 generalCertificate.ValidTo = generalCertificate.Form.Model.ValidTo;
@@ -356,7 +356,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                await TrackService.DeleteTrackKeyContainedAsync();
+                await TrackService.DeleteTrackKeyContainedAsync(cancellationToken: PageCancellationToken);
                 generalCertificate.CreateMode = true;
                 generalCertificate.Edit = false; 
                 generalCertificate.Subject = null;

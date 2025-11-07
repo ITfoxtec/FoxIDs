@@ -87,11 +87,11 @@ namespace FoxIDs.Client.Pages.Settings
             resourceFilterForm?.ClearError();
             try
             {
-                var culturesResponse = await TrackService.GetMasterResourceCulturesAsync();
+                var culturesResponse = await TrackService.GetMasterResourceCulturesAsync(cancellationToken: PageCancellationToken);
                 supportedCultures = culturesResponse?.Data?.Select(c => c.Culture)?.ToList();
 
-                SetTrackOnlyResources(await TrackService.GetTrackOnlyResourceNamesAsync(null));
-                SetGeneralResources(await TrackService.GetMasterResourceNamesAsync(null));
+                SetTrackOnlyResources(await TrackService.GetTrackOnlyResourceNamesAsync(null, cancellationToken: PageCancellationToken));
+                SetGeneralResources(await TrackService.GetMasterResourceNamesAsync(null, cancellationToken: PageCancellationToken));
             }
             catch (TokenUnavailableException)
             {
@@ -107,8 +107,8 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                SetTrackOnlyResources(await TrackService.GetTrackOnlyResourceNamesAsync(resourceFilterForm.Model.FilterName));
-                SetGeneralResources(await TrackService.GetMasterResourceNamesAsync(resourceFilterForm.Model.FilterName));
+                SetTrackOnlyResources(await TrackService.GetTrackOnlyResourceNamesAsync(resourceFilterForm.Model.FilterName, cancellationToken: PageCancellationToken));
+                SetGeneralResources(await TrackService.GetMasterResourceNamesAsync(resourceFilterForm.Model.FilterName, cancellationToken: PageCancellationToken));
             }
             catch (FoxIDsApiException ex)
             {
@@ -158,7 +158,7 @@ namespace FoxIDs.Client.Pages.Settings
 
             try
             {
-                var resourceItem = await TrackService.GetTrackOnlyResourceAsync(trackOnlyResource.Id);
+                var resourceItem = await TrackService.GetTrackOnlyResourceAsync(trackOnlyResource.Id, cancellationToken: PageCancellationToken);
                 if (resourceItem == null)
                 {
                     trackOnlyResource.CreateMode = true;
@@ -204,7 +204,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                var resourceName = await TrackService.UpdateTrackOnlyResourceNameAsync(new TrackResourceName { Id = trackOnlyResource.CreateMode ? 0 : trackOnlyResource.Id, Name = trackOnlyResource.Form.Model.Name });
+                var resourceName = await TrackService.UpdateTrackOnlyResourceNameAsync(new TrackResourceName { Id = trackOnlyResource.CreateMode ? 0 : trackOnlyResource.Id, Name = trackOnlyResource.Form.Model.Name }, cancellationToken: PageCancellationToken);
                 if (trackOnlyResource.CreateMode)
                 {
                     trackOnlyResource.Id = resourceName.Id;
@@ -218,7 +218,7 @@ namespace FoxIDs.Client.Pages.Settings
                 trackOnlyResource.Name = resourceName.Name;
                 trackOnlyResource.Form.Model.Name = resourceName.Name;
 
-                var resourceItem = await TrackService.UpdateTrackOnlyResourceAsync(trackOnlyResource.Form.Model.Map<TrackResourceItem>());
+                var resourceItem = await TrackService.UpdateTrackOnlyResourceAsync(trackOnlyResource.Form.Model.Map<TrackResourceItem>(), cancellationToken: PageCancellationToken);
                 var resourceItemViewModel = resourceItem.Map<ResourceItemViewModel>();
                 resourceItemViewModel.Name = trackOnlyResource.Name;
                 trackOnlyResource.Form.UpdateModel(resourceItemViewModel);
@@ -249,7 +249,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                await TrackService.DeleteTrackOnlyResourceNameAsync(trackOnlyResource.Name);
+                await TrackService.DeleteTrackOnlyResourceNameAsync(trackOnlyResource.Name, cancellationToken: PageCancellationToken);
                 trackOnlyResources.Remove(trackOnlyResource);
                 toastService.ShowSuccess("Text deleted.");
             }
@@ -283,7 +283,7 @@ namespace FoxIDs.Client.Pages.Settings
 
             try
             {
-                var resourceItem = await TrackService.GetTrackResourceAsync(resource.Id);
+                var resourceItem = await TrackService.GetTrackResourceAsync(resource.Id, cancellationToken: PageCancellationToken);
                 await resource.Form.InitAsync(resourceItem.Map<ResourceItemViewModel>(), afterInit: afterInit =>
                 {
                     afterInit.Name = resource.Name;
@@ -308,7 +308,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                var resourceItem = await TrackService.UpdateTrackResourceAsync(resource.Form.Model.Map<TrackResourceItem>());
+                var resourceItem = await TrackService.UpdateTrackResourceAsync(resource.Form.Model.Map<TrackResourceItem>(), cancellationToken: PageCancellationToken);
                 var resourceItemViewModel = resourceItem.Map<ResourceItemViewModel>();
                 resourceItemViewModel.Name = resource.Name;
                 resource.Form.UpdateModel(resourceItemViewModel);
@@ -335,7 +335,7 @@ namespace FoxIDs.Client.Pages.Settings
 
             try
             {
-                var textSettings = await TrackService.GetTrackResourceSettingAsync();
+                var textSettings = await TrackService.GetTrackResourceSettingAsync(cancellationToken: PageCancellationToken);
                 await generalTextSettings.Form.InitAsync(textSettings);
                 textSettingsModal.Show();
             }
@@ -353,7 +353,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                await TrackService.SaveTrackResourceSettingAsync(generalTextSettings.Form.Model);
+                await TrackService.SaveTrackResourceSettingAsync(generalTextSettings.Form.Model, cancellationToken: PageCancellationToken);
                 generalTextSettings.Edit = false;
                 textSettingsModal.Hide();
                 toastService.ShowSuccess("Text settings updated.");

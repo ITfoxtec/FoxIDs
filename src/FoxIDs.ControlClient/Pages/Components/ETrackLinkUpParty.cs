@@ -40,7 +40,7 @@ namespace FoxIDs.Client.Pages.Components
             try
             {
                 var generalTrackLinkUpParty = UpParty as GeneralTrackLinkUpPartyViewModel;
-                var trackLinkUpParty = await UpPartyService.GetTrackLinkUpPartyAsync(UpParty.Name);
+                var trackLinkUpParty = await UpPartyService.GetTrackLinkUpPartyAsync(UpParty.Name, cancellationToken: ComponentCancellationToken);
                 await generalTrackLinkUpParty.Form.InitAsync(ToViewModel(trackLinkUpParty));
             }
             catch (TokenUnavailableException)
@@ -94,10 +94,10 @@ namespace FoxIDs.Client.Pages.Components
             {
                 if (!model.ToDownTrackName.IsNullOrWhiteSpace())
                 {
-                    var track = await TrackService.GetTrackAsync(model.ToDownTrackName);
+                    var track = await TrackService.GetTrackAsync(model.ToDownTrackName, cancellationToken: ComponentCancellationToken);
                     model.ToDownTrackDisplayName = track.DisplayName;
 
-                    var downParty = await DownPartyService.GetTrackLinkDownPartyAsync(model.ToDownPartyName, trackName: model.ToDownTrackName);
+                    var downParty = await DownPartyService.GetTrackLinkDownPartyAsync(model.ToDownPartyName, trackName: model.ToDownTrackName, cancellationToken: ComponentCancellationToken);
                     model.ToDownPartyDisplayName = downParty.DisplayName;
                 }
             }
@@ -153,7 +153,7 @@ namespace FoxIDs.Client.Pages.Components
                         }
                     }
 
-                    var trackLinkUpPartyResult = await UpPartyService.UpdateTrackLinkUpPartyAsync(trackLinkUpParty);
+                    var trackLinkUpPartyResult = await UpPartyService.UpdateTrackLinkUpPartyAsync(trackLinkUpParty, cancellationToken: ComponentCancellationToken);
                     generalTrackLinkUpParty.Form.UpdateModel(ToViewModel(trackLinkUpPartyResult));
                     toastService.ShowSuccess("Environment Link authentication method updated.");
                     generalTrackLinkUpParty.DisplayName = trackLinkUpPartyResult.DisplayName;
@@ -177,10 +177,10 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
-                await UpPartyService.DeleteTrackLinkUpPartyAsync(generalTrackLinkUpParty.Name);
+                await UpPartyService.DeleteTrackLinkUpPartyAsync(generalTrackLinkUpParty.Name, cancellationToken: ComponentCancellationToken);
                 try
                 {
-                    await DownPartyService.DeleteTrackLinkDownPartyAsync(generalTrackLinkUpParty.Form.Model.ToDownPartyName, trackName: generalTrackLinkUpParty.Form.Model.ToDownTrackName);
+                    await DownPartyService.DeleteTrackLinkDownPartyAsync(generalTrackLinkUpParty.Form.Model.ToDownPartyName, trackName: generalTrackLinkUpParty.Form.Model.ToDownTrackName, cancellationToken: ComponentCancellationToken);
                 }
                 catch
                 { }

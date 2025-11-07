@@ -79,7 +79,7 @@ namespace FoxIDs.Client.Pages.Settings
             trackClaimMappingForm?.ClearError();
             try
             {
-                var trackClaimMapping = await TrackService.GetTrackClaimMappingAsync();
+                var trackClaimMapping = await TrackService.GetTrackClaimMappingAsync(cancellationToken: PageCancellationToken);
                 await trackClaimMappingForm.InitAsync(new ClaimMappingViewModel { ClaimMappings = trackClaimMapping ?? new List<ClaimMap>() });
                 await trackClaimMappingDefaultForm.InitAsync();
             }
@@ -108,7 +108,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                await TrackService.SaveTrackClaimMappingAsync(trackClaimMappingForm.Model.ClaimMappings);
+                await TrackService.SaveTrackClaimMappingAsync(trackClaimMappingForm.Model.ClaimMappings, cancellationToken: PageCancellationToken);
                 toastService.ShowSuccess("Claim mappings updated.");
             }
             catch (Exception ex)

@@ -32,8 +32,8 @@ namespace FoxIDs.Client.Pages.Components
             try
             {
                 var generalOidcDownParty = DownParty as GeneralOidcDownPartyViewModel;
-                var oidcDownParty = await DownPartyService.GetOidcDownPartyAsync(DownParty.Name);
-                var oidcDownSecrets = await DownPartyService.GetOidcClientSecretDownPartyAsync(DownParty.Name);
+                var oidcDownParty = await DownPartyService.GetOidcDownPartyAsync(DownParty.Name, cancellationToken: ComponentCancellationToken);
+                var oidcDownSecrets = await DownPartyService.GetOidcClientSecretDownPartyAsync(DownParty.Name, cancellationToken: ComponentCancellationToken);
                 await generalOidcDownParty.Form.InitAsync(ToViewModel(generalOidcDownParty, oidcDownParty, oidcDownSecrets));
             }
             catch (TokenUnavailableException)
@@ -268,21 +268,21 @@ namespace FoxIDs.Client.Pages.Components
                     }
                 });
              
-                var oidcDownPartyResult = await DownPartyService.UpdateOidcDownPartyAsync(oidcDownParty);
+                var oidcDownPartyResult = await DownPartyService.UpdateOidcDownPartyAsync(oidcDownParty, cancellationToken: ComponentCancellationToken);
                 generalOidcDownParty.Name = oidcDownPartyResult.Name;
                 if (oidcDownParty.Client != null)
                 {
                     foreach (var existingSecret in generalOidcDownParty.Form.Model.Client.ExistingSecrets.Where(s => s.Removed))
                     {
-                        await DownPartyService.DeleteOidcClientSecretDownPartyAsync(existingSecret.Name);
+                        await DownPartyService.DeleteOidcClientSecretDownPartyAsync(existingSecret.Name, cancellationToken: ComponentCancellationToken);
                     }
                 }
                 if (oidcDownParty.Client != null && generalOidcDownParty.Form.Model.Client.Secrets.Count() > 0)
                 {
-                    await DownPartyService.CreateOidcClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = oidcDownPartyResult.Name, Secrets = generalOidcDownParty.Form.Model.Client.Secrets });
+                    await DownPartyService.CreateOidcClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = oidcDownPartyResult.Name, Secrets = generalOidcDownParty.Form.Model.Client.Secrets }, cancellationToken: ComponentCancellationToken);
                 }
 
-                var oauthDownSecrets = await DownPartyService.GetOAuthClientSecretDownPartyAsync(oidcDownPartyResult.Name);
+                var oauthDownSecrets = await DownPartyService.GetOAuthClientSecretDownPartyAsync(oidcDownPartyResult.Name, cancellationToken: ComponentCancellationToken);
                 generalOidcDownParty.Form.UpdateModel(ToViewModel(generalOidcDownParty, oidcDownPartyResult, oauthDownSecrets));
                 toastService.ShowSuccess("OpenID Connect authentication method updated.");
                 generalOidcDownParty.DisplayName = oidcDownPartyResult.DisplayName;
@@ -304,7 +304,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
-                await DownPartyService.DeleteOidcDownPartyAsync(generalOidcDownParty.Name);
+                await DownPartyService.DeleteOidcDownPartyAsync(generalOidcDownParty.Name, cancellationToken: ComponentCancellationToken);
                 DownParties.Remove(generalOidcDownParty);
                 await OnStateHasChanged.InvokeAsync(DownParty);
             }
@@ -343,7 +343,7 @@ namespace FoxIDs.Client.Pages.Components
                     try
                     {
                         var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(memoryStream.ToArray());
-                        var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
+                        var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate }, cancellationToken: ComponentCancellationToken);
 
                         if (generalOidcDownParty.Form.Model.Client.ClientKeys.Any(k => k.Kid.Equals(jwkWithCertificateInfo.Kid, StringComparison.OrdinalIgnoreCase)))
                         {

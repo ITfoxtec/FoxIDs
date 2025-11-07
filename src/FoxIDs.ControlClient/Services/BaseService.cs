@@ -14,15 +14,17 @@ namespace FoxIDs.Client.Services
     {
         public const string HttpClientSecureLogicalName = "FoxIDs.ControlAPI.Secure";
         public const string HttpClientLogicalName = "FoxIDs.ControlAPI";
-        protected readonly HttpClient httpClient;
+        protected readonly IHttpClientFactory httpClientFactory;
         protected readonly RouteBindingLogic routeBindingLogic;
         private readonly TrackSelectedLogic trackSelectedLogic;
+        private readonly bool sendAccessToken;
 
         public BaseService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic, bool sendAccessToken = true)
         {
-            httpClient = httpClientFactory.CreateClient(sendAccessToken ? HttpClientSecureLogicalName : HttpClientLogicalName);
+            this.httpClientFactory = httpClientFactory;            
             this.routeBindingLogic = routeBindingLogic;
             this.trackSelectedLogic = trackSelectedLogic;
+            this.sendAccessToken = sendAccessToken;
         }
 
         protected async Task<string> GetTenantApiUrlAsync(string url)
@@ -66,6 +68,7 @@ namespace FoxIDs.Client.Services
             TryAddParameter(queryParameters, "paginationToken", paginationToken);
 
             var requestUrl = await BuildTenantRequestUrlAsync(url, queryParameters).ConfigureAwait(false);
+            using var httpClient = GetHttpClient();
             using var response = await httpClient.GetAsync(requestUrl, cancellationToken).ConfigureAwait(false);
             return await response.ToObjectAsync<PaginationResponse<T>>().ConfigureAwait(false);
         }
@@ -73,6 +76,7 @@ namespace FoxIDs.Client.Services
         protected async Task<T> GetAsync<T>(string url, CancellationToken cancellationToken = default)
         {
             var requestUrl = await GetTenantApiUrlAsync(url).ConfigureAwait(false);
+            using var httpClient = GetHttpClient();
             using var response = await httpClient.GetAsync(requestUrl, cancellationToken).ConfigureAwait(false);
             return await response.ToObjectAsync<T>().ConfigureAwait(false);
         }
@@ -85,6 +89,7 @@ namespace FoxIDs.Client.Services
             TryAddParameter(queryParameters, parmName3, parmValue3);
 
             var requestUrl = await BuildTenantRequestUrlAsync(url, queryParameters).ConfigureAwait(false);
+            using var httpClient = GetHttpClient();
             using var response = await httpClient.GetAsync(requestUrl, cancellationToken).ConfigureAwait(false);
             return await response.ToObjectAsync<T>().ConfigureAwait(false);
         }
@@ -93,34 +98,40 @@ namespace FoxIDs.Client.Services
         {
             var requestItems = request.ToDictionary();
             var requestUrl = QueryHelpers.AddQueryString(await GetTenantApiUrlAsync(url).ConfigureAwait(false), requestItems);
+            using var httpClient = GetHttpClient();
             using var response = await httpClient.GetAsync(requestUrl, cancellationToken).ConfigureAwait(false);
             return await response.ToObjectAsync<TResponse>().ConfigureAwait(false);
         }
 
         protected async Task PostAsync<T>(string url, T data, CancellationToken cancellationToken = default)
         {
+            using var httpClient = GetHttpClient();
             using var response = await httpClient.PostAsFoxIDsApiJsonAsync(await GetTenantApiUrlAsync(url).ConfigureAwait(false), data, cancellationToken).ConfigureAwait(false);
         }
 
         protected async Task<TResponse> PostResponseAsync<T, TResponse>(string url, T data, CancellationToken cancellationToken = default)
         {
+            using var httpClient = GetHttpClient();
             using var response = await httpClient.PostAsFoxIDsApiJsonAsync(await GetTenantApiUrlAsync(url).ConfigureAwait(false), data, cancellationToken).ConfigureAwait(false);
             return await response.ToObjectAsync<TResponse>().ConfigureAwait(false);
         }
 
         protected async Task PutAsync<T>(string url, T data, CancellationToken cancellationToken = default)
         {
+            using var httpClient = GetHttpClient();
             using var response = await httpClient.PutAsFoxIDsApiJsonAsync(await GetTenantApiUrlAsync(url).ConfigureAwait(false), data, cancellationToken).ConfigureAwait(false);
         }
 
         protected async Task<TResponse> PutResponseAsync<T, TResponse>(string url, T data, CancellationToken cancellationToken = default)
         {
+            using var httpClient = GetHttpClient();
             using var response = await httpClient.PutAsFoxIDsApiJsonAsync(await GetTenantApiUrlAsync(url).ConfigureAwait(false), data, cancellationToken).ConfigureAwait(false);
             return await response.ToObjectAsync<TResponse>().ConfigureAwait(false);
         }
 
         protected async Task DeleteAsync(string url, CancellationToken cancellationToken = default)
         {
+            using var httpClient = GetHttpClient();
             using var response = await httpClient.DeleteAsync(await GetTenantApiUrlAsync(url).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
         }
 
@@ -132,6 +143,7 @@ namespace FoxIDs.Client.Services
             TryAddParameter(queryParameters, parmName3, parmValue3);
 
             var requestUrl = await BuildTenantRequestUrlAsync(url, queryParameters).ConfigureAwait(false);
+            using var httpClient = GetHttpClient();
             using var response = await httpClient.DeleteAsync(requestUrl, cancellationToken).ConfigureAwait(false);
         }
 
@@ -139,6 +151,7 @@ namespace FoxIDs.Client.Services
         {
             var requestItems = request.ToDictionary();
             var requestUrl = QueryHelpers.AddQueryString(await GetTenantApiUrlAsync(url).ConfigureAwait(false), requestItems);
+            using var httpClient = GetHttpClient();
             using var response = await httpClient.DeleteAsync(requestUrl, cancellationToken).ConfigureAwait(false);
         }
 
@@ -161,6 +174,11 @@ namespace FoxIDs.Client.Services
             }
 
             return QueryHelpers.AddQueryString(tenantUrl, queryParameters);
+        }
+
+        private HttpClient GetHttpClient()
+        {
+            return httpClientFactory.CreateClient(sendAccessToken ? HttpClientSecureLogicalName : HttpClientLogicalName);
         }
     }
 }

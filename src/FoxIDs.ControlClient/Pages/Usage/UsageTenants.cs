@@ -59,7 +59,7 @@ namespace FoxIDs.Client.Pages.Usage
         {
             try
             {
-                SetGeneralTenants(await TenantService.GetUsageTenantsAsync(searchTenantForm.Model.FilterValue));
+                SetGeneralTenants(await TenantService.GetUsageTenantsAsync(searchTenantForm.Model.FilterValue, cancellationToken: PageCancellationToken));
             }
             catch (FoxIDsApiException ex)
             {
@@ -78,7 +78,7 @@ namespace FoxIDs.Client.Pages.Usage
         {
             try
             {
-                SetGeneralTenants(await TenantService.GetUsageTenantsAsync(searchTenantForm.Model.FilterValue, paginationToken: paginationToken), addTenants: true);
+                SetGeneralTenants(await TenantService.GetUsageTenantsAsync(searchTenantForm.Model.FilterValue, paginationToken: paginationToken, cancellationToken: PageCancellationToken), addTenants: true);
             }
             catch (TokenUnavailableException)
             {
@@ -103,8 +103,8 @@ namespace FoxIDs.Client.Pages.Usage
             searchTenantForm?.ClearError();
             try
             {
-                SetGeneralTenants(await TenantService.GetUsageTenantsAsync(null));
-                usageSettings = await TenantService.GetUsageSettingsAsync();
+                SetGeneralTenants(await TenantService.GetUsageTenantsAsync(null, cancellationToken: PageCancellationToken));
+                usageSettings = await TenantService.GetUsageSettingsAsync(cancellationToken: PageCancellationToken);
             }
             catch (TokenUnavailableException)
             {
@@ -145,7 +145,7 @@ namespace FoxIDs.Client.Pages.Usage
 
             try
             {
-                var tenant = await TenantService.GetTenantAsync(generalTenant.Name);
+                var tenant = await TenantService.GetTenantAsync(generalTenant.Name, cancellationToken: PageCancellationToken);
                 await generalTenant.Form.InitAsync(tenant.Map<TenantViewModel>());
             }
             catch (TokenUnavailableException)
@@ -199,7 +199,7 @@ namespace FoxIDs.Client.Pages.Usage
                         afterMap.AdministratorEmail = afterMap.Customer?.InvoiceEmails?.FirstOrDefault();
                         afterMap.AdministratorPassword = Util.SecretGenerator.GenerateNewPassword();
                         afterMap.ControlClientBaseUri = RouteBindingLogic.GetBaseUri();
-                    }));
+                    }), cancellationToken: PageCancellationToken);
                     generalTenant.Form.UpdateModel(tenantResult.Map<TenantViewModel>());
                     generalTenant.CreateMode = false;
                     toastService.ShowSuccess("Usage tenant created.");
@@ -209,7 +209,7 @@ namespace FoxIDs.Client.Pages.Usage
                     var tenantResult = await TenantService.UpdateTenantAsync(generalTenant.Form.Model.Map<TenantRequest>(afterMap: afterMap => 
                     {
                         afterMap.ForUsage = true;
-                    }));
+                    }), cancellationToken: PageCancellationToken);
                     generalTenant.Form.UpdateModel(tenantResult.Map<TenantViewModel>());
                     toastService.ShowSuccess("Usage tenant updated.");
                 }
@@ -240,7 +240,7 @@ namespace FoxIDs.Client.Pages.Usage
                     return;
                 }
                 tenantWorking = true;
-                await TenantService.DeleteTenantAsync(generalTenant.Name);
+                await TenantService.DeleteTenantAsync(generalTenant.Name, cancellationToken: PageCancellationToken);
                 tenants.Remove(generalTenant);
                 tenantWorking = false;
             }

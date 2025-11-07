@@ -85,7 +85,7 @@ namespace FoxIDs.Client.Pages.Settings
                 trackWorking = false;
                 deleteTrackError = null;
                 deleteTrackAcknowledge = false;
-                var track = await TrackService.GetTrackAsync(TrackSelectedLogic.Track.Name);
+                var track = await TrackService.GetTrackAsync(TrackSelectedLogic.Track.Name, cancellationToken: PageCancellationToken);
                 await trackSettingsForm.InitAsync(track.Map<TrackSettingsViewModel>());
             }
             catch (TokenUnavailableException)
@@ -113,7 +113,7 @@ namespace FoxIDs.Client.Pages.Settings
                     {
                         afterMap.ExternalPassword = null;
                     }
-                }));
+                }), cancellationToken: PageCancellationToken);
                 trackSettingsForm.UpdateModel(trackSettingsResult.Map<TrackSettingsViewModel>());
                 toastService.ShowSuccess("Track settings updated.");
                 trackWorking = false;
@@ -143,7 +143,7 @@ namespace FoxIDs.Client.Pages.Settings
                     return;
                 }
                 trackWorking = true;
-                await TrackService.DeleteTrackAsync(TrackSelectedLogic.Track.Name);
+                await TrackService.DeleteTrackAsync(TrackSelectedLogic.Track.Name, cancellationToken: PageCancellationToken);
                 await TrackSelectedLogic.SelectTrackAsync();
                 trackWorking = false;
             }

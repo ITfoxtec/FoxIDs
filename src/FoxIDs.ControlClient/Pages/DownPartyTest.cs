@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using System.Security;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.WebUtilities;
@@ -15,13 +16,14 @@ using System.Linq;
 
 namespace FoxIDs.Client.Pages
 {
-    public partial class DownPartyTest
+    public partial class DownPartyTest : IDisposable
     {
         private string error;
         private DownPartyTestResultResponse response;
         private bool loggedOut;
         private ElementReference submitIdTokenButton;
         private ElementReference submitAccessTokenButton;
+        private CancellationTokenSource cancellationTokenSource;
 
         [Inject]
         public IJSRuntime JSRuntime { get; set; }
@@ -42,6 +44,8 @@ namespace FoxIDs.Client.Pages
         {
             error = string.Empty;
             response = null;
+            cancellationTokenSource?.Dispose();
+            cancellationTokenSource = new CancellationTokenSource();
             await base.OnInitializedAsync();
 
             try
@@ -64,7 +68,7 @@ namespace FoxIDs.Client.Pages
                     {
                         State = authenticationResponse.State,
                         Code = authenticationResponse.Code,
-                    }, TenantName, trackName);
+                    }, TenantName, trackName, cancellationToken: ComponentCancellationToken);
                 }
                 else
                 {
@@ -98,6 +102,29 @@ namespace FoxIDs.Client.Pages
         public async Task DecodeAccessTokenAsync()
         {
             await JSRuntime.InvokeVoidAsync("triggerClick", submitAccessTokenButton);
+        }
+
+        private CancellationToken ComponentCancellationToken => cancellationTokenSource?.Token ?? CancellationToken.None;
+
+        public void Dispose()
+        {
+            if (cancellationTokenSource != null)
+            {
+                try
+                {
+                    if (!cancellationTokenSource.IsCancellationRequested)
+                    {
+                        cancellationTokenSource.Cancel();
+                    }
+                }
+                catch (ObjectDisposedException)
+                { }
+                finally
+                {
+                    cancellationTokenSource.Dispose();
+                    cancellationTokenSource = null;
+                }
+            }
         }
     }
 }

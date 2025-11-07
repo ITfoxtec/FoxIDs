@@ -78,7 +78,7 @@ namespace FoxIDs.Client.Pages
             }
             try
             {
-                SetGeneralUpParties(await UpPartyService.GetUpPartiesAsync(null));
+                SetGeneralUpParties(await UpPartyService.GetUpPartiesAsync(null, cancellationToken: PageCancellationToken));
             }
             catch (TokenUnavailableException)
             {
@@ -95,7 +95,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralUpParties(await UpPartyService.GetUpPartiesAsync(upPartyFilterForm.Model.FilterName));
+                SetGeneralUpParties(await UpPartyService.GetUpPartiesAsync(upPartyFilterForm.Model.FilterName, cancellationToken: PageCancellationToken));
             }
             catch (FoxIDsApiException ex)
             {
@@ -114,7 +114,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralUpParties(await UpPartyService.GetUpPartiesAsync(upPartyFilterForm.Model.FilterName, paginationToken: paginationToken), addParties: true);
+                SetGeneralUpParties(await UpPartyService.GetUpPartiesAsync(upPartyFilterForm.Model.FilterName, paginationToken: paginationToken, cancellationToken: PageCancellationToken), addParties: true);
             }
             catch (TokenUnavailableException)
             {
@@ -333,7 +333,7 @@ namespace FoxIDs.Client.Pages
                 {
                     UpParties = GetUpParties(upParty),
                     RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test".ToLower()
-                });
+                }, cancellationToken: PageCancellationToken);
 
                 testDownPartyModal.DisplayName = downPartyTestStartResponse.DisplayName;
                 testDownPartyModal.TestUrl = downPartyTestStartResponse.TestUrl;
@@ -377,7 +377,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                var selectTrackTasks = (await TrackService.GetTracksAsync(filterName)).Data.OrderTracks();
+                var selectTrackTasks = (await TrackService.GetTracksAsync(filterName, cancellationToken: PageCancellationToken)).Data.OrderTracks();
                 newUpPartyModal.SelectTracks = selectTrackTasks.Where(t => t.Name != TrackSelectedLogic.Track.Name);
             }
             catch (FoxIDsApiException ex)
@@ -417,7 +417,7 @@ namespace FoxIDs.Client.Pages
                     afterMap.Claims = new List<string> { "*" };
                     afterMap.PipeExternalId = true;
                 });
-                var trackLinkUpPartyResult = await UpPartyService.CreateTrackLinkUpPartyAsync(trackLinkUpParty);
+                var trackLinkUpPartyResult = await UpPartyService.CreateTrackLinkUpPartyAsync(trackLinkUpParty, cancellationToken: PageCancellationToken);
 
                 var trackLinkDownPartyResult = await DownPartyService.CreateTrackLinkDownPartyAsync(new TrackLinkDownParty
                 {
@@ -432,10 +432,10 @@ namespace FoxIDs.Client.Pages
                     {
                         new OAuthDownClaim { Claim = "*" }
                     }
-                }, trackName: newUpPartyOAuthEnvironmentLinkForm.Model.ToDownTrackName);
+                }, trackName: newUpPartyOAuthEnvironmentLinkForm.Model.ToDownTrackName, cancellationToken: PageCancellationToken);
 
                 trackLinkUpPartyResult.ToDownPartyName = trackLinkDownPartyResult.Name;
-                _ = await UpPartyService.UpdateTrackLinkUpPartyAsync(trackLinkUpPartyResult);
+                _ = await UpPartyService.UpdateTrackLinkUpPartyAsync(trackLinkUpPartyResult, cancellationToken: PageCancellationToken);
                 toastService.ShowSuccess("Environment Link authentication method created.");
 
                 var generalUpPartyViewModel = new GeneralTrackLinkUpPartyViewModel(new UpParty { Type = PartyTypes.TrackLink, Name = trackLinkUpPartyResult.Name, DisplayName = trackLinkUpPartyResult.DisplayName });

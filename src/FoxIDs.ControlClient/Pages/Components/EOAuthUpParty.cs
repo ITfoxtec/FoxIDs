@@ -33,7 +33,7 @@ namespace FoxIDs.Client.Pages.Components
             try
             {
                 var generalOAuthUpParty = UpParty as GeneralOAuthUpPartyViewModel;
-                var oauthUpParty = await UpPartyService.GetOAuthUpPartyAsync(UpParty.Name);
+                var oauthUpParty = await UpPartyService.GetOAuthUpPartyAsync(UpParty.Name, cancellationToken: ComponentCancellationToken);
                 await generalOAuthUpParty.Form.InitAsync(ToViewModel(generalOAuthUpParty, oauthUpParty));
             }
             catch (TokenUnavailableException)
@@ -114,7 +114,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (oauthUpParty.CreateMode)
             {
-                model.Name = await UpPartyService.GetNewPartyNameAsync();
+                model.Name = await UpPartyService.GetNewPartyNameAsync(cancellationToken: ComponentCancellationToken);
                 if (oauthUpParty.TokenExchange)
                 {
                     model.DisableUserAuthenticationTrust = true;
@@ -149,7 +149,7 @@ namespace FoxIDs.Client.Pages.Components
 
                 if (generalOAuthUpParty.CreateMode)
                 {
-                    var oauthUpPartyResult = await UpPartyService.CreateOAuthUpPartyAsync(oauthUpParty);
+                    var oauthUpPartyResult = await UpPartyService.CreateOAuthUpPartyAsync(oauthUpParty, cancellationToken: ComponentCancellationToken);
                     generalOAuthUpParty.Form.UpdateModel(ToViewModel(generalOAuthUpParty, oauthUpPartyResult));
                     generalOAuthUpParty.CreateMode = false;
                     toastService.ShowSuccess("OAuth 2.0 application created.");
@@ -163,7 +163,7 @@ namespace FoxIDs.Client.Pages.Components
                         oauthUpParty.NewName = oauthUpParty.Name;
                         oauthUpParty.Name = generalOAuthUpParty.Form.Model.InitName;
                     }
-                    var oauthUpPartyResult = await UpPartyService.UpdateOAuthUpPartyAsync(oauthUpParty);
+                    var oauthUpPartyResult = await UpPartyService.UpdateOAuthUpPartyAsync(oauthUpParty, cancellationToken: ComponentCancellationToken);
                     generalOAuthUpParty.Form.UpdateModel(ToViewModel(generalOAuthUpParty, oauthUpPartyResult));
                     toastService.ShowSuccess("OAuth 2.0 application updated.");
                     generalOAuthUpParty.Name = oauthUpPartyResult.Name;
@@ -187,7 +187,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
-                await UpPartyService.DeleteOAuthUpPartyAsync(generalOAuthUpParty.Name);
+                await UpPartyService.DeleteOAuthUpPartyAsync(generalOAuthUpParty.Name, cancellationToken: ComponentCancellationToken);
                 UpParties.Remove(generalOAuthUpParty);
                 await OnStateHasChanged.InvokeAsync(UpParty);
             }

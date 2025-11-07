@@ -17,10 +17,11 @@ using FoxIDs.Client.Models.Config;
 using System.Linq;
 using ITfoxtec.Identity;
 using Blazored.Toast.Services;
+using System.Threading;
 
 namespace FoxIDs.Client.Shared
 {
-    public partial class MainLayout
+    public partial class MainLayout : IDisposable
     {
         private Modal createTenantModal;
         private PageEditForm<CreateTenantViewModel> createTenantForm;
@@ -45,6 +46,7 @@ namespace FoxIDs.Client.Shared
         private IEnumerable<Claim> myProfileClaims;
         private string myProfileError;
         private Modal notAccessModal;
+        private CancellationTokenSource cancellationTokenSource;
 
         [CascadingParameter]
         private Task<AuthenticationState> authenticationStateTask { get; set; }
@@ -106,6 +108,7 @@ namespace FoxIDs.Client.Shared
 
         protected override async Task OnInitializedAsync()
         {
+            RefreshLayoutCancellationToken();
             var user = (await authenticationStateTask).User;
             if (user.Identity.IsAuthenticated)
             {
@@ -118,8 +121,9 @@ namespace FoxIDs.Client.Shared
             NotificationLogic.OnRequestPaymentUpdated += OnRequestPaymentUpdated;
         }
 
-        protected void Dispose()
+        public void Dispose()
         {
+            CancelPendingOperations();
             TrackSelectedLogic.OnSelectTrackAsync -= OnSelectTrackAsync;
             NotificationLogic.OnClientSettingLoaded -= OnClientSettingLoaded;
             NotificationLogic.OnRequestPaymentUpdated -= OnRequestPaymentUpdated;
@@ -160,7 +164,7 @@ namespace FoxIDs.Client.Shared
             {
                 if (ClientSettings.EnablePayment && planInfoList == null)
                 {
-                    planInfoList = await HelpersService.GetPlanInfoAsync();
+                    planInfoList = await HelpersService.GetPlanInfoAsync(cancellationToken: LayoutCancellationToken);
                 }
 
                 createTenantWorking = false;
@@ -223,7 +227,7 @@ namespace FoxIDs.Client.Shared
                 await TenantService.CreateTenantAsync(createTenantForm.Model.Map<CreateTenantRequest>(afterMap =>
                 {
                     afterMap.ControlClientBaseUri = RouteBindingLogic.GetBaseUri();
-                }));
+                }), cancellationToken: LayoutCancellationToken);
                 createTenantDone = true;
                 createTenantReceipt.Add("Tenant created.");
                 createTenantReceipt.Add("Master environment with user repository created.");
@@ -270,7 +274,7 @@ namespace FoxIDs.Client.Shared
                 createTrackWorking = true;
                 var track = createTrackForm.Model.Map<Track>();
                 track.AutoMapSamlClaims = true;
-                var trackResponse = await TrackService.CreateTrackAsync(track);
+                var trackResponse = await TrackService.CreateTrackAsync(track, cancellationToken: LayoutCancellationToken);
                 createTrackForm.Model.Name = trackResponse.Name;
                 createTrackDone = true;
                 createTrackReceipt.Add("Environment created.");
@@ -326,7 +330,7 @@ namespace FoxIDs.Client.Shared
             {
                 if(TrackSelectedLogic.Track.Name != Constants.Routes.MasterTrackName)
                 {
-                    var masterTrack = await TrackService.GetTrackAsync(Constants.Routes.MasterTrackName);
+                    var masterTrack = await TrackService.GetTrackAsync(Constants.Routes.MasterTrackName, cancellationToken: LayoutCancellationToken);
                     await TrackSelectedLogic.TrackSelectedAsync(masterTrack);
                 }
                 NavigationManager.NavigateTo($"{await RouteBindingLogic.GetTenantNameAsync()}/tenant");
@@ -345,7 +349,7 @@ namespace FoxIDs.Client.Shared
             {
                 try
                 {
-                    await SelectTrackAsync(await TrackService.GetTrackAsync(Constants.Routes.MasterTrackName));
+                    await SelectTrackAsync(await TrackService.GetTrackAsync(Constants.Routes.MasterTrackName, cancellationToken: LayoutCancellationToken));
                 }
                 catch (TokenUnavailableException)
                 {
@@ -385,7 +389,7 @@ namespace FoxIDs.Client.Shared
             try
             {
                 selectTrackError = null;
-                selectTrackTasks = (await TrackService.GetTracksAsync(null)).Data.OrderTracks();
+                selectTrackTasks = (await TrackService.GetTracksAsync(null, cancellationToken: LayoutCancellationToken)).Data.OrderTracks();
                 selectTrackTotalCount = selectTrackTasks.Count();
             }
             catch (TokenUnavailableException)
@@ -402,7 +406,7 @@ namespace FoxIDs.Client.Shared
         {
             try
             {
-                selectTrackTasks = (await TrackService.GetTracksAsync(selectTrackFilterForm.Model.FilterName)).Data.OrderTracks();
+                selectTrackTasks = (await TrackService.GetTracksAsync(selectTrackFilterForm.Model.FilterName, cancellationToken: LayoutCancellationToken)).Data.OrderTracks();
                 if (selectTrackFilterForm.Model.FilterName.IsNullOrWhiteSpace())
                 {
                     selectTrackTotalCount = selectTrackTasks.Count();
@@ -493,7 +497,7 @@ namespace FoxIDs.Client.Shared
         {
             try
             {
-                await UserService.UpdateMyUserAsync(new MyUser { ChangePassword = true });
+                await UserService.UpdateMyUserAsync(new MyUser { ChangePassword = true }, cancellationToken: LayoutCancellationToken);
 
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync(prompt: IdentityConstants.AuthorizationServerPrompt.Login);
 
@@ -505,6 +509,37 @@ namespace FoxIDs.Client.Shared
             catch (Exception ex)
             {
                 myProfileError = ex.Message;
+            }
+        }
+
+        private CancellationToken LayoutCancellationToken => cancellationTokenSource?.Token ?? CancellationToken.None;
+
+        private void RefreshLayoutCancellationToken()
+        {
+            CancelPendingOperations();
+            cancellationTokenSource = new CancellationTokenSource();
+        }
+
+        private void CancelPendingOperations()
+        {
+            if (cancellationTokenSource == null)
+            {
+                return;
+            }
+
+            try
+            {
+                if (!cancellationTokenSource.IsCancellationRequested)
+                {
+                    cancellationTokenSource.Cancel();
+                }
+            }
+            catch (ObjectDisposedException)
+            { }
+            finally
+            {
+                cancellationTokenSource.Dispose();
+                cancellationTokenSource = null;
             }
         }
     }

@@ -84,7 +84,7 @@ namespace FoxIDs.Client.Pages.Logging
 
             try
             {
-                var logSettings = await TrackService.GetTrackLogSettingAsync();
+                var logSettings = await TrackService.GetTrackLogSettingAsync(cancellationToken: PageCancellationToken);
                 await generalLogSettings.Form.InitAsync(logSettings);
             }
             catch (TokenUnavailableException)
@@ -102,7 +102,7 @@ namespace FoxIDs.Client.Pages.Logging
             logSreamSettingsListError = null;
             try
             {
-                var logStreams = await TrackService.GetTrackLogStreamSettingsAsync();
+                var logStreams = await TrackService.GetTrackLogStreamSettingsAsync(cancellationToken: PageCancellationToken);
                 logSreamSettingsList.Clear();
                 if (logStreams?.LogStreamSettings?.Count > 0)
                 {
@@ -131,7 +131,7 @@ namespace FoxIDs.Client.Pages.Logging
         {
             try
             {
-                await TrackService.SaveTrackLogSettingAsync(generalLogSettings.Form.Model);
+                await TrackService.SaveTrackLogSettingAsync(generalLogSettings.Form.Model, cancellationToken: PageCancellationToken);
                 toastService.ShowSuccess("Log settings updated.");
             }
             catch (Exception ex)
@@ -237,7 +237,7 @@ namespace FoxIDs.Client.Pages.Logging
                     logStreams.LogStreamSettings.Add(ls.LogStreamSettings);
                 }
             }
-            await TrackService.SaveTrackLogStreamSettingsAsync(logStreams);
+            await TrackService.SaveTrackLogStreamSettingsAsync(logStreams, cancellationToken: PageCancellationToken);
             updatedgeneralLogStreamSettings.LogStreamSettings = generalLogStreamSettings.Form.Model;
             if (generalLogStreamSettings.CreateMode)
             {
@@ -263,7 +263,7 @@ namespace FoxIDs.Client.Pages.Logging
                         logStreams.LogStreamSettings.Add(ls.LogStreamSettings);
                     }
                 }
-                await TrackService.SaveTrackLogStreamSettingsAsync(logStreams);
+                await TrackService.SaveTrackLogStreamSettingsAsync(logStreams, cancellationToken: PageCancellationToken);
                 logSreamSettingsList.Remove(generalLogStreamSettings);
             }
             catch (TokenUnavailableException)

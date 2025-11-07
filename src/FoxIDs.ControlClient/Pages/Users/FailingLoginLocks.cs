@@ -71,7 +71,7 @@ namespace FoxIDs.Client.Pages.Users
             failingLoginFilterForm?.ClearError();
             try
             {
-                SetGeneralFailingLogins(await UserService.GetFailingLoginLocksAsync(null));
+                SetGeneralFailingLogins(await UserService.GetFailingLoginLocksAsync(null, cancellationToken: PageCancellationToken));
             }
             catch (TokenUnavailableException)
             {
@@ -88,7 +88,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             try
             {
-                SetGeneralFailingLogins(await UserService.GetFailingLoginLocksAsync(failingLoginFilterForm.Model.FilterUserIdentifier));
+                SetGeneralFailingLogins(await UserService.GetFailingLoginLocksAsync(failingLoginFilterForm.Model.FilterUserIdentifier, cancellationToken: PageCancellationToken));
             }
             catch (FoxIDsApiException ex)
             {
@@ -111,7 +111,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             try
             {
-                SetGeneralFailingLogins(await UserService.GetFailingLoginLocksAsync(failingLoginFilterForm.Model.FilterUserIdentifier, paginationToken: paginationToken), addUsers: true);
+                SetGeneralFailingLogins(await UserService.GetFailingLoginLocksAsync(failingLoginFilterForm.Model.FilterUserIdentifier, paginationToken: paginationToken, cancellationToken: PageCancellationToken), addUsers: true);
             }
             catch (TokenUnavailableException)
             {
@@ -177,7 +177,7 @@ namespace FoxIDs.Client.Pages.Users
 
             try
             {
-                await UserService.DeleteFailingLoginLockAsync(failingLogin.UserIdentifier, failingLogin.FailingLoginType);
+                await UserService.DeleteFailingLoginLockAsync(failingLogin.UserIdentifier, failingLogin.FailingLoginType, cancellationToken: PageCancellationToken);
                 await OnFailingLoginsFilterValidSubmitAsync(null);
             }
             catch (TokenUnavailableException)

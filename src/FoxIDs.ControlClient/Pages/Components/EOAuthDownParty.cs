@@ -33,8 +33,8 @@ namespace FoxIDs.Client.Pages.Components
             try
             {
                 var generalOAuthDownParty = DownParty as GeneralOAuthDownPartyViewModel;
-                var oauthDownParty = await DownPartyService.GetOAuthDownPartyAsync(DownParty.Name);
-                var oauthDownSecrets = await DownPartyService.GetOAuthClientSecretDownPartyAsync(DownParty.Name);
+                var oauthDownParty = await DownPartyService.GetOAuthDownPartyAsync(DownParty.Name, cancellationToken: ComponentCancellationToken);
+                var oauthDownSecrets = await DownPartyService.GetOAuthClientSecretDownPartyAsync(DownParty.Name, cancellationToken: ComponentCancellationToken);
                 await generalOAuthDownParty.Form.InitAsync(ToViewModel(generalOAuthDownParty, oauthDownParty, oauthDownSecrets));
             }
             catch (TokenUnavailableException)
@@ -324,21 +324,21 @@ namespace FoxIDs.Client.Pages.Components
                     afterMap.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
                 });
 
-                var oauthDownPartyResult = await DownPartyService.UpdateOAuthDownPartyAsync(oauthDownParty);
+                var oauthDownPartyResult = await DownPartyService.UpdateOAuthDownPartyAsync(oauthDownParty, cancellationToken: ComponentCancellationToken);
                 generalOAuthDownParty.Name = oauthDownPartyResult.Name;
                 if (oauthDownParty.Client != null)
                 {
                     foreach (var existingSecret in generalOAuthDownParty.Form.Model.Client.ExistingSecrets.Where(s => s.Removed))
                     {
-                        await DownPartyService.DeleteOAuthClientSecretDownPartyAsync(existingSecret.Name);
+                        await DownPartyService.DeleteOAuthClientSecretDownPartyAsync(existingSecret.Name, cancellationToken: ComponentCancellationToken);
                     }
                 }
                 if (oauthDownParty.Client != null && generalOAuthDownParty.Form.Model.Client.Secrets.Count() > 0)
                 {
-                    await DownPartyService.CreateOAuthClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = oauthDownPartyResult.Name, Secrets = generalOAuthDownParty.Form.Model.Client.Secrets });
+                    await DownPartyService.CreateOAuthClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = oauthDownPartyResult.Name, Secrets = generalOAuthDownParty.Form.Model.Client.Secrets }, cancellationToken: ComponentCancellationToken);
                 }
 
-                var oauthDownSecrets = await DownPartyService.GetOAuthClientSecretDownPartyAsync(oauthDownPartyResult.Name);
+                var oauthDownSecrets = await DownPartyService.GetOAuthClientSecretDownPartyAsync(oauthDownPartyResult.Name, cancellationToken: ComponentCancellationToken);
                 generalOAuthDownParty.Form.UpdateModel(ToViewModel(generalOAuthDownParty, oauthDownPartyResult, oauthDownSecrets));
                 toastService.ShowSuccess("OAuth 2.0 authentication method updated.");
                 generalOAuthDownParty.DisplayName = oauthDownPartyResult.DisplayName;
@@ -360,7 +360,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
-                await DownPartyService.DeleteOAuthDownPartyAsync(generalOAuthDownParty.Name);
+                await DownPartyService.DeleteOAuthDownPartyAsync(generalOAuthDownParty.Name, cancellationToken: ComponentCancellationToken);
                 DownParties.Remove(generalOAuthDownParty);
                 await OnStateHasChanged.InvokeAsync(DownParty);
             }
@@ -399,7 +399,7 @@ namespace FoxIDs.Client.Pages.Components
                     try
                     {
                         var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(memoryStream.ToArray());
-                        var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
+                        var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate }, cancellationToken: ComponentCancellationToken);
 
                         if (generalOAuthDownParty.Form.Model.Client.ClientKeys.Any(k => k.Kid.Equals(jwkWithCertificateInfo.Kid, StringComparison.OrdinalIgnoreCase)))
                         {

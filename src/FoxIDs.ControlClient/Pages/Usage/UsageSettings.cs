@@ -43,7 +43,7 @@ namespace FoxIDs.Client.Pages.Usage
 
             try
             {
-                var usageSettings = await TenantService.GetUsageSettingsAsync();
+                var usageSettings = await TenantService.GetUsageSettingsAsync(cancellationToken: PageCancellationToken);
                 await generalUsageSettings.Form.InitAsync(usageSettings.Map<UsageSettingsViewModel>());
             }
             catch (TokenUnavailableException)
@@ -70,7 +70,7 @@ namespace FoxIDs.Client.Pages.Usage
         {
             try
             {
-                var usageSettings = await TenantService.UpdateUsageSettingsAsync(generalUsageSettings.Form.Model);
+                var usageSettings = await TenantService.UpdateUsageSettingsAsync(generalUsageSettings.Form.Model, cancellationToken: PageCancellationToken);
                 generalUsageSettings.Form.UpdateModel(usageSettings.Map<UsageSettingsViewModel>());
                 toastService.ShowSuccess("Usage settings updated.");
             }

@@ -39,7 +39,7 @@ namespace FoxIDs.Client.Pages.Components
             try
             {
                 var generalSamlUpParty = UpParty as GeneralSamlUpPartyViewModel;
-                var samlUpParty = await UpPartyService.GetSamlUpPartyAsync(UpParty.Name);
+                var samlUpParty = await UpPartyService.GetSamlUpPartyAsync(UpParty.Name, cancellationToken: ComponentCancellationToken);
                 await generalSamlUpParty.Form.InitAsync(ToViewModel(generalSamlUpParty, samlUpParty));
             }
             catch (TokenUnavailableException)
@@ -167,7 +167,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (samlUpParty.CreateMode)
             {
-                model.Name = await UpPartyService.GetNewPartyNameAsync();
+                model.Name = await UpPartyService.GetNewPartyNameAsync(cancellationToken: ComponentCancellationToken);
                 if (samlUpParty.TokenExchange)
                 {
                     model.DisableUserAuthenticationTrust = true;
@@ -192,7 +192,7 @@ namespace FoxIDs.Client.Pages.Components
                 }
                 var metadataXml = Encoding.ASCII.GetString(metadataXmlBytes);
 
-                var samlUpParty = await UpPartyService.ReadSamlUpPartyMetadataAsync(new SamlReadMetadataRequest { Type = SamlReadMetadataType.Xml, Metadata = metadataXml });
+                var samlUpParty = await UpPartyService.ReadSamlUpPartyMetadataAsync(new SamlReadMetadataRequest { Type = SamlReadMetadataType.Xml, Metadata = metadataXml }, cancellationToken: ComponentCancellationToken);
 
                 generalSamlUpParty.Form.Model.Issuer = samlUpParty.Issuer;
                 generalSamlUpParty.Form.Model.AuthnUrl = samlUpParty.AuthnUrl;
@@ -264,7 +264,7 @@ namespace FoxIDs.Client.Pages.Components
                     try
                     {
                         var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(memoryStream.ToArray());
-                        var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
+                        var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate }, cancellationToken: ComponentCancellationToken);
 
                         if (generalSamlUpParty.Form.Model.Keys.Any(k => k.Kid.Equals(jwkWithCertificateInfo.Kid, StringComparison.OrdinalIgnoreCase)))
                         {
@@ -371,7 +371,7 @@ namespace FoxIDs.Client.Pages.Components
 
                 if (generalSamlUpParty.CreateMode)
                 {
-                    var samlUpPartyResult = await UpPartyService.CreateSamlUpPartyAsync(samlUpParty);
+                    var samlUpPartyResult = await UpPartyService.CreateSamlUpPartyAsync(samlUpParty, cancellationToken: ComponentCancellationToken);
                     generalSamlUpParty.Form.UpdateModel(ToViewModel(generalSamlUpParty, samlUpPartyResult));
                     generalSamlUpParty.CreateMode = false;
                     toastService.ShowSuccess("SAML 2.0 application created.");
@@ -399,7 +399,7 @@ namespace FoxIDs.Client.Pages.Components
                         }
                     }
 
-                    var samlUpPartyResult = await UpPartyService.UpdateSamlUpPartyAsync(samlUpParty);
+                    var samlUpPartyResult = await UpPartyService.UpdateSamlUpPartyAsync(samlUpParty, cancellationToken: ComponentCancellationToken);
                     generalSamlUpParty.Form.UpdateModel(ToViewModel(generalSamlUpParty, samlUpPartyResult));
                     toastService.ShowSuccess("SAML 2.0 application updated.");
                     generalSamlUpParty.Name = samlUpPartyResult.Name;
@@ -424,7 +424,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
-                await UpPartyService.DeleteSamlUpPartyAsync(generalSamlUpParty.Name);
+                await UpPartyService.DeleteSamlUpPartyAsync(generalSamlUpParty.Name, cancellationToken: ComponentCancellationToken);
                 UpParties.Remove(generalSamlUpParty);
                 await OnStateHasChanged.InvokeAsync(UpParty);
             }

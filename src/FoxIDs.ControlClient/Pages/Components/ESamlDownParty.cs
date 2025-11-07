@@ -39,7 +39,7 @@ namespace FoxIDs.Client.Pages.Components
             try
             {
                 var generalSamlDownParty = DownParty as GeneralSamlDownPartyViewModel;
-                var samlDownParty = await DownPartyService.GetSamlDownPartyAsync(DownParty.Name);
+                var samlDownParty = await DownPartyService.GetSamlDownPartyAsync(DownParty.Name, cancellationToken: ComponentCancellationToken);
                 await generalSamlDownParty.Form.InitAsync(ToViewModel(generalSamlDownParty, samlDownParty));
             }
             catch (TokenUnavailableException)
@@ -84,7 +84,7 @@ namespace FoxIDs.Client.Pages.Components
             {
                 try
                 {
-                    var trackKeys = await TrackService.GetTrackKeyContainedAsync();
+                    var trackKeys = await TrackService.GetTrackKeyContainedAsync(cancellationToken: ComponentCancellationToken);
                     IdPKeyInfo = new KeyInfoViewModel
                     {
                         Subject = trackKeys.PrimaryKey.CertificateInfo.Subject,
@@ -182,7 +182,7 @@ namespace FoxIDs.Client.Pages.Components
                     try
                     {
                         var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(memoryStream.ToArray());
-                        var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
+                        var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate }, cancellationToken: ComponentCancellationToken);
 
                         generalSamlDownParty.EncryptionKeyInfo = new KeyInfoViewModel
                         {
@@ -241,7 +241,7 @@ namespace FoxIDs.Client.Pages.Components
                     try
                     {
                         var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(memoryStream.ToArray());
-                        var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
+                        var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate }, cancellationToken: ComponentCancellationToken);
 
                         if (generalSamlDownParty.Form.Model.Keys.Any(k => k.Kid.Equals(jwkWithCertificateInfo.Kid, StringComparison.OrdinalIgnoreCase)))
                         {
@@ -314,7 +314,7 @@ namespace FoxIDs.Client.Pages.Components
                     afterMap.ClaimTransforms.MapSamlClaimTransformsAfterMap();
                 });
 
-                var samlDownPartyResult = await DownPartyService.UpdateSamlDownPartyAsync(samlDownParty);
+                var samlDownPartyResult = await DownPartyService.UpdateSamlDownPartyAsync(samlDownParty, cancellationToken: ComponentCancellationToken);
                 generalSamlDownParty.Form.UpdateModel(ToViewModel(generalSamlDownParty, samlDownPartyResult));
                 toastService.ShowSuccess("SAML 2.0 authentication method updated.");
                 generalSamlDownParty.Name = samlDownPartyResult.Name;
@@ -337,7 +337,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
-                await DownPartyService.DeleteSamlDownPartyAsync(generalSamlDownParty.Name);
+                await DownPartyService.DeleteSamlDownPartyAsync(generalSamlDownParty.Name, cancellationToken: ComponentCancellationToken);
                 DownParties.Remove(generalSamlDownParty);
                 await OnStateHasChanged.InvokeAsync(DownParty);
             }

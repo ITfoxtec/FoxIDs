@@ -61,8 +61,8 @@ namespace FoxIDs.Client.Pages.Usage
             try
             {
                 var thisMonth = DateTimeOffset.Now;
-                SetGeneralUsageList(await TenantService.GetUsagesAsync(null, thisMonth.Year, thisMonth.Month));
-                usageSettings = await TenantService.GetUsageSettingsAsync();
+                SetGeneralUsageList(await TenantService.GetUsagesAsync(null, thisMonth.Year, thisMonth.Month, cancellationToken: PageCancellationToken));
+                usageSettings = await TenantService.GetUsageSettingsAsync(cancellationToken: PageCancellationToken);
             }
             catch (TokenUnavailableException)
             {
@@ -126,7 +126,7 @@ namespace FoxIDs.Client.Pages.Usage
 
             try
             {
-                var used = await TenantService.GetUsageAsync(new UsageRequest { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate });
+                var used = await TenantService.GetUsageAsync(new UsageRequest { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate }, cancellationToken: PageCancellationToken);
                 await generalUsed.Form.InitAsync(used.Map<UsedViewModel>());
             }
             catch (TokenUnavailableException)
@@ -223,7 +223,7 @@ namespace FoxIDs.Client.Pages.Usage
                 }
                 searchUsageForm.Model.PeriodYear = date.Year;
                 searchUsageForm.Model.PeriodMonth = date.Month;
-                SetGeneralUsageList(await TenantService.GetUsagesAsync(searchUsageForm.Model.FilterTenantValue, searchUsageForm.Model.PeriodYear, searchUsageForm.Model.PeriodMonth));
+                SetGeneralUsageList(await TenantService.GetUsagesAsync(searchUsageForm.Model.FilterTenantValue, searchUsageForm.Model.PeriodYear, searchUsageForm.Model.PeriodMonth, cancellationToken: PageCancellationToken));
             }
             catch (TokenUnavailableException)
             {
@@ -239,7 +239,7 @@ namespace FoxIDs.Client.Pages.Usage
         {
             try
             {
-                SetGeneralUsageList(await TenantService.GetUsagesAsync(searchUsageForm.Model.FilterTenantValue, searchUsageForm.Model.PeriodYear, searchUsageForm.Model.PeriodMonth));
+                SetGeneralUsageList(await TenantService.GetUsagesAsync(searchUsageForm.Model.FilterTenantValue, searchUsageForm.Model.PeriodYear, searchUsageForm.Model.PeriodMonth, cancellationToken: PageCancellationToken));
             }
             catch (FoxIDsApiException ex)
             {
@@ -258,7 +258,7 @@ namespace FoxIDs.Client.Pages.Usage
         {
             try
             {
-                SetGeneralUsageList(await TenantService.GetUsagesAsync(searchUsageForm.Model.FilterTenantValue, searchUsageForm.Model.PeriodYear, searchUsageForm.Model.PeriodMonth, paginationToken: paginationToken), addTenants: true);
+                SetGeneralUsageList(await TenantService.GetUsagesAsync(searchUsageForm.Model.FilterTenantValue, searchUsageForm.Model.PeriodYear, searchUsageForm.Model.PeriodMonth, paginationToken: paginationToken, cancellationToken: PageCancellationToken), addTenants: true);
             }
             catch (TokenUnavailableException)
             {
@@ -294,7 +294,7 @@ namespace FoxIDs.Client.Pages.Usage
         {
             try
             {
-                var tenant = await TenantService.GetTenantAsync(generalUsed.TenantName);
+                var tenant = await TenantService.GetTenantAsync(generalUsed.TenantName, cancellationToken: PageCancellationToken);
                 generalUsed.EnableUsage = tenant.EnableUsage;
                 if (tenant.HourPrice > 0)
                 {
@@ -363,7 +363,7 @@ namespace FoxIDs.Client.Pages.Usage
             {
                 if (generalUsed.CreateMode)
                 {
-                    var usedResult = await TenantService.CreateUsageAsync(generalUsed.Form.Model.Map<UpdateUsageRequest>());
+                    var usedResult = await TenantService.CreateUsageAsync(generalUsed.Form.Model.Map<UpdateUsageRequest>(), cancellationToken: PageCancellationToken);
                     generalUsed.Form.UpdateModel(usedResult.Map<UsedViewModel>());
                     generalUsed.TenantName = usedResult.TenantName;
                     await SetHourPrice(generalUsed);
@@ -373,7 +373,7 @@ namespace FoxIDs.Client.Pages.Usage
                 }
                 else
                 {
-                    var usedResult = await TenantService.UpdateUsageAsync(generalUsed.Form.Model.Map<UpdateUsageRequest>());
+                    var usedResult = await TenantService.UpdateUsageAsync(generalUsed.Form.Model.Map<UpdateUsageRequest>(), cancellationToken: PageCancellationToken);
                     generalUsed.Form.UpdateModel(usedResult.Map<UsedViewModel>());
                     UpdateGeneralModel(generalUsed, usedResult);
                     toastService.ShowSuccess("User updated.");
@@ -397,7 +397,7 @@ namespace FoxIDs.Client.Pages.Usage
             try
             {
                 generalUsed.DeleteAcknowledge = false;
-                await TenantService.DeleteUsageAsync(generalUsed.Name);
+                await TenantService.DeleteUsageAsync(generalUsed.Name, cancellationToken: PageCancellationToken);
                 usedList.Remove(generalUsed);
             }
             catch (TokenUnavailableException)
@@ -435,7 +435,7 @@ namespace FoxIDs.Client.Pages.Usage
             generalUsed.InvoicingActionButtonDisabled = true;
             try
             {
-                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, DoInvoicing = true });
+                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, DoInvoicing = true }, cancellationToken: PageCancellationToken);
                 UpdateGeneralModel(generalUsed, usedResult);
             }
             catch (TokenUnavailableException)
@@ -454,7 +454,7 @@ namespace FoxIDs.Client.Pages.Usage
             generalUsed.InvoicingActionButtonDisabled = true;
             try
             {
-                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, DoSendInvoiceAgain = true });
+                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, DoSendInvoiceAgain = true }, cancellationToken: PageCancellationToken);
                 UpdateGeneralModel(generalUsed, usedResult);
             }
             catch (TokenUnavailableException)
@@ -473,7 +473,7 @@ namespace FoxIDs.Client.Pages.Usage
             generalUsed.InvoicingActionButtonDisabled = true;
             try
             {
-                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, DoCreditNote = true });
+                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, DoCreditNote = true }, cancellationToken: PageCancellationToken);
                 UpdateGeneralModel(generalUsed, usedResult);
             }
             catch (TokenUnavailableException)
@@ -492,7 +492,7 @@ namespace FoxIDs.Client.Pages.Usage
             generalUsed.InvoicingActionButtonDisabled = true;
             try
             {
-                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, DoSendCreditNoteAgain = true });
+                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, DoSendCreditNoteAgain = true }, cancellationToken: PageCancellationToken);
                 UpdateGeneralModel(generalUsed, usedResult);
             }
             catch (TokenUnavailableException)
@@ -511,7 +511,7 @@ namespace FoxIDs.Client.Pages.Usage
             generalUsed.InvoicingActionButtonDisabled = true;
             try
             {
-                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, DoPaymentAgain = true });
+                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, DoPaymentAgain = true }, cancellationToken: PageCancellationToken);
                 UpdateGeneralModel(generalUsed, usedResult);
             }
             catch (TokenUnavailableException)
@@ -530,7 +530,7 @@ namespace FoxIDs.Client.Pages.Usage
             generalUsed.InvoicingActionButtonDisabled = true;
             try
             {
-                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, MarkAsPaid = true });
+                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, MarkAsPaid = true }, cancellationToken: PageCancellationToken);
                 UpdateGeneralModel(generalUsed, usedResult);
             }
             catch (TokenUnavailableException)
@@ -549,7 +549,7 @@ namespace FoxIDs.Client.Pages.Usage
             generalUsed.InvoicingActionButtonDisabled = true;
             try
             {
-                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, MarkAsNotPaid = true });
+                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, MarkAsNotPaid = true }, cancellationToken: PageCancellationToken);
                 UpdateGeneralModel(generalUsed, usedResult);
             }
             catch (TokenUnavailableException)

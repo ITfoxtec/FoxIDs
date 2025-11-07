@@ -59,7 +59,7 @@ namespace FoxIDs.Client.Pages.Settings
             riskPasswordLoadError = null;
             try
             {
-                uploadRiskPassword = await RiskPasswordService.GetRiskPasswordInfoAsync();
+                uploadRiskPassword = await RiskPasswordService.GetRiskPasswordInfoAsync(cancellationToken: PageCancellationToken);
             }
             catch (TokenUnavailableException)
             {
@@ -75,7 +75,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                var passwordInRisk = await RiskPasswordService.GetRiskPasswordTestAsync(testRiskPasswordForm.Model.Password);
+                var passwordInRisk = await RiskPasswordService.GetRiskPasswordTestAsync(testRiskPasswordForm.Model.Password, cancellationToken: PageCancellationToken);
                 testRiskPasswordForm.Model.IsValid = !passwordInRisk;
             }
             catch

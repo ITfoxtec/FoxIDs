@@ -75,7 +75,7 @@ namespace FoxIDs.Client.Pages.Users
             externalUserFilterForm?.ClearError();
             try
             {
-                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(null));
+                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(null, cancellationToken: PageCancellationToken));
             }
             catch (TokenUnavailableException)
             {
@@ -93,7 +93,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             try
             {
-                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(externalUserFilterForm.Model.FilterValue));
+                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(externalUserFilterForm.Model.FilterValue, cancellationToken: PageCancellationToken));
             }
             catch (FoxIDsApiException ex)
             {
@@ -112,7 +112,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             try
             {
-                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(externalUserFilterForm.Model.FilterValue, paginationToken: paginationToken), addUsers: true);
+                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(externalUserFilterForm.Model.FilterValue, paginationToken: paginationToken, cancellationToken: PageCancellationToken), addUsers: true);
             }
             catch (TokenUnavailableException)
             {
@@ -164,7 +164,7 @@ namespace FoxIDs.Client.Pages.Users
 
         private async Task<string> GetUpPartyDisplayName(string upPartyName)
         {
-            var subUps = (await UpPartyService.GetUpPartiesAsync(upPartyName)).Data;
+            var subUps = (await UpPartyService.GetUpPartiesAsync(upPartyName, cancellationToken: PageCancellationToken)).Data;
             if (subUps.Count() > 0)
             {
                 return subUps.Where(u => u.Name == upPartyName).Select(u => u.DisplayName)?.FirstOrDefault();
@@ -190,7 +190,7 @@ namespace FoxIDs.Client.Pages.Users
 
             try
             {
-                var externalUser = await ExternalUserService.GetExternalUserAsync(generalExternalUser.UpPartyName, generalExternalUser.LinkClaimValue, generalExternalUser.RedemptionClaimValue);
+                var externalUser = await ExternalUserService.GetExternalUserAsync(generalExternalUser.UpPartyName, generalExternalUser.LinkClaimValue, generalExternalUser.RedemptionClaimValue, cancellationToken: PageCancellationToken);
                 generalExternalUser.LinkClaimValue = externalUser.LinkClaimValue;
                 generalExternalUser.RedemptionClaimValue = externalUser.RedemptionClaimValue;
                 await generalExternalUser.Form.InitAsync(externalUser.Map<ExternalUserViewModel>(afterMap: afterMap =>
@@ -248,7 +248,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             if (force || !(selectUpParties?.Count() > 0) || !filterName.IsNullOrEmpty())
             {
-                var sup = (await UpPartyService.GetUpPartiesAsync(filterName)).Data;
+                var sup = (await UpPartyService.GetUpPartiesAsync(filterName, cancellationToken: PageCancellationToken)).Data;
                 selectUpParties = sup.Where(u => u.Type != PartyTypes.Login && u.Type != PartyTypes.OAuth2);
             }
         }
@@ -284,7 +284,7 @@ namespace FoxIDs.Client.Pages.Users
             {
                 if (generalExternalUser.CreateMode)
                 {
-                    var externalUserResult = await ExternalUserService.CreateExternalUserAsync(generalExternalUser.Form.Model.Map<ExternalUserRequest>());
+                    var externalUserResult = await ExternalUserService.CreateExternalUserAsync(generalExternalUser.Form.Model.Map<ExternalUserRequest>(), cancellationToken: PageCancellationToken);
                     generalExternalUser.CreateMode = false;
                     toastService.ShowSuccess("External user created.");
                     generalExternalUser.LinkClaimValue = externalUserResult.LinkClaimValue;
@@ -312,7 +312,7 @@ namespace FoxIDs.Client.Pages.Users
                         }
                         afterMap.RedemptionClaimValue = generalExternalUser.RedemptionClaimValue;
                         afterMap.LinkClaimValue = generalExternalUser.LinkClaimValue;
-                    }));
+                    }), cancellationToken: PageCancellationToken);
                     toastService.ShowSuccess("External user updated.");
                     generalExternalUser.LinkClaimValue = externalUserResult.LinkClaimValue;
                     generalExternalUser.RedemptionClaimValue = externalUserResult.RedemptionClaimValue;
@@ -387,7 +387,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             try
             {
-                await ExternalUserService.DeleteExternalUserAsync(generalExternalUser.UpPartyName, generalExternalUser.LinkClaimValue, generalExternalUser.RedemptionClaimValue);
+                await ExternalUserService.DeleteExternalUserAsync(generalExternalUser.UpPartyName, generalExternalUser.LinkClaimValue, generalExternalUser.RedemptionClaimValue, cancellationToken: PageCancellationToken);
                 externalUsers.Remove(generalExternalUser);
             }
             catch (TokenUnavailableException)

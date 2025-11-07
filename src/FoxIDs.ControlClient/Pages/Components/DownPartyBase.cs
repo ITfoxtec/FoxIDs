@@ -10,12 +10,15 @@ using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Pages.Components
 {
-    public abstract class DownPartyBase : ComponentBase
+    public abstract class DownPartyBase : ComponentBase, IDisposable
     {
+        private bool isDisposed;
+        private CancellationTokenSource cancellationTokenSource;
         [Inject]
         public IToastService toastService { get; set; }
 
@@ -51,6 +54,65 @@ namespace FoxIDs.Client.Pages.Components
 
         [Parameter]
         public string TenantName { get; set; }
+
+        protected CancellationToken ComponentCancellationToken => cancellationTokenSource?.Token ?? CancellationToken.None;
+
+        protected override Task OnInitializedAsync()
+        {
+            EnsureCancellationToken();
+            return Task.CompletedTask;
+        }
+
+        protected void RefreshComponentCancellationToken()
+        {
+            CancelPendingOperations();
+            cancellationTokenSource = new CancellationTokenSource();
+        }
+
+        private void EnsureCancellationToken()
+        {
+            if (cancellationTokenSource == null || cancellationTokenSource.IsCancellationRequested)
+            {
+                cancellationTokenSource?.Dispose();
+                cancellationTokenSource = new CancellationTokenSource();
+            }
+        }
+
+        private void CancelPendingOperations()
+        {
+            if (cancellationTokenSource == null)
+            {
+                return;
+            }
+
+            try
+            {
+                if (!cancellationTokenSource.IsCancellationRequested)
+                {
+                    cancellationTokenSource.Cancel();
+                }
+            }
+            catch (ObjectDisposedException)
+            { }
+            finally
+            {
+                cancellationTokenSource.Dispose();
+                cancellationTokenSource = null;
+            }
+        }
+
+        public void Dispose()
+        {
+            if (!isDisposed)
+            {
+                isDisposed = true;
+                CancelPendingOperations();
+                OnDispose();
+            }
+        }
+
+        protected virtual void OnDispose()
+        { }
 
         public void ShowOAuthTab(IGeneralOAuthDownPartyTabViewModel downParty, OAuthTabTypes oauthTabTypes)
         {

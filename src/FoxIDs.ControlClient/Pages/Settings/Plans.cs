@@ -77,7 +77,7 @@ namespace FoxIDs.Client.Pages.Settings
             planFilterForm?.ClearError();
             try
             {
-                SetGeneralPlans(await PlanService.GetPlansAsync(null));
+                SetGeneralPlans(await PlanService.GetPlansAsync(null, cancellationToken: PageCancellationToken));
             }
             catch (TokenUnavailableException)
             {
@@ -94,7 +94,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                SetGeneralPlans(await PlanService.GetPlansAsync(planFilterForm.Model.FilterName));
+                SetGeneralPlans(await PlanService.GetPlansAsync(planFilterForm.Model.FilterName, cancellationToken: PageCancellationToken));
             }
             catch (FoxIDsApiException ex)
             {
@@ -136,7 +136,7 @@ namespace FoxIDs.Client.Pages.Settings
 
             try
             {
-                var plan = await PlanService.GetPlanAsync(generalPlan.Name);
+                var plan = await PlanService.GetPlanAsync(generalPlan.Name, cancellationToken: PageCancellationToken);
                 await generalPlan.Form.InitAsync(ToViewModel(plan));
             }
             catch (TokenUnavailableException)
@@ -208,14 +208,14 @@ namespace FoxIDs.Client.Pages.Settings
 
                 if (generalPlan.CreateMode)
                 {
-                    var planResult = await PlanService.CreatePlanAsync(plan);
+                    var planResult = await PlanService.CreatePlanAsync(plan, cancellationToken: PageCancellationToken);
                     generalPlan.Form.UpdateModel(ToViewModel(planResult));
                     generalPlan.CreateMode = false;
                     toastService.ShowSuccess("Plan created.");
                 }
                 else
                 {
-                    var planResult = await PlanService.UpdatePlanAsync(plan);
+                    var planResult = await PlanService.UpdatePlanAsync(plan, cancellationToken: PageCancellationToken);
                     generalPlan.Form.UpdateModel(ToViewModel(planResult));
                     toastService.ShowSuccess("Plan updated.");
                 }
@@ -240,7 +240,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                await PlanService.DeletePlanAsync(generalPlan.Name);
+                await PlanService.DeletePlanAsync(generalPlan.Name, cancellationToken: PageCancellationToken);
                 plans.Remove(generalPlan);
             }
             catch (TokenUnavailableException)

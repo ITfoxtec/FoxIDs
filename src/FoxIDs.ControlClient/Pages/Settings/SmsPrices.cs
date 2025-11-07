@@ -77,7 +77,7 @@ namespace FoxIDs.Client.Pages.Settings
             smsPriceFilterForm?.ClearError();
             try
             {
-                SetGeneralSmsPrices(await SmsPriceService.GetSmsPricesAsync(null));
+                SetGeneralSmsPrices(await SmsPriceService.GetSmsPricesAsync(null, cancellationToken: PageCancellationToken));
             }
             catch (TokenUnavailableException)
             {
@@ -94,7 +94,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                SetGeneralSmsPrices(await SmsPriceService.GetSmsPricesAsync(smsPriceFilterForm.Model.FilterName));
+                SetGeneralSmsPrices(await SmsPriceService.GetSmsPricesAsync(smsPriceFilterForm.Model.FilterName, cancellationToken: PageCancellationToken));
             }
             catch (FoxIDsApiException ex)
             {
@@ -135,7 +135,7 @@ namespace FoxIDs.Client.Pages.Settings
 
             try
             {
-                var smsPrice = await SmsPriceService.GetSmsPriceAsync(generalSmsPrice.Iso2);
+                var smsPrice = await SmsPriceService.GetSmsPriceAsync(generalSmsPrice.Iso2, cancellationToken: PageCancellationToken);
                 await generalSmsPrice.Form.InitAsync(smsPrice);
             }
             catch (TokenUnavailableException)
@@ -172,14 +172,14 @@ namespace FoxIDs.Client.Pages.Settings
                 generalSmsPrice.Form.Model.Iso2 = generalSmsPrice.Form.Model.Iso2.Trim().ToUpper();
                 if (generalSmsPrice.CreateMode)
                 {
-                    await SmsPriceService.CreateSmsPriceAsync(generalSmsPrice.Form.Model);
+                    await SmsPriceService.CreateSmsPriceAsync(generalSmsPrice.Form.Model, cancellationToken: PageCancellationToken);
                     generalSmsPrice.Form.UpdateModel(generalSmsPrice.Form.Model);
                     generalSmsPrice.CreateMode = false;
                     toastService.ShowSuccess("SMS price created.");
                 }
                 else
                 {
-                    await SmsPriceService.UpdateSmsPriceAsync(generalSmsPrice.Form.Model);
+                    await SmsPriceService.UpdateSmsPriceAsync(generalSmsPrice.Form.Model, cancellationToken: PageCancellationToken);
                     generalSmsPrice.Form.UpdateModel(generalSmsPrice.Form.Model);
                     toastService.ShowSuccess("SMS price updated.");
                 }
@@ -204,7 +204,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                await SmsPriceService.DeleteSmsPriceAsync(generalSmsPrice.Iso2);
+                await SmsPriceService.DeleteSmsPriceAsync(generalSmsPrice.Iso2, cancellationToken: PageCancellationToken);
                 smsPrices.Remove(generalSmsPrice);
             }
             catch (TokenUnavailableException)

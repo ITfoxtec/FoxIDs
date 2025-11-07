@@ -32,7 +32,7 @@ namespace FoxIDs.Client.Pages.Components
             try
             {
                 var generalExtLoginUpParty = UpParty as GeneralExternalLoginUpPartyViewModel;                
-                var extLoginUpParty = await UpPartyService.GetExternalLoginUpPartyAsync(UpParty.Name);
+                var extLoginUpParty = await UpPartyService.GetExternalLoginUpPartyAsync(UpParty.Name, cancellationToken: ComponentCancellationToken);
                 await generalExtLoginUpParty.Form.InitAsync(ToViewModel(extLoginUpParty));
             }
             catch (TokenUnavailableException)
@@ -90,7 +90,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (extLoginParty.CreateMode)
             {
-                model.Name = await UpPartyService.GetNewPartyNameAsync();
+                model.Name = await UpPartyService.GetNewPartyNameAsync(cancellationToken: ComponentCancellationToken);
             }
         }
 
@@ -133,7 +133,7 @@ namespace FoxIDs.Client.Pages.Components
 
                 if (generalExtLoginUpParty.CreateMode)
                 {
-                    var extLoginUpPartyResult = await UpPartyService.CreateExternalLoginUpPartyAsync(extLoginUpParty);
+                    var extLoginUpPartyResult = await UpPartyService.CreateExternalLoginUpPartyAsync(extLoginUpParty, cancellationToken: ComponentCancellationToken);
                     generalExtLoginUpParty.Form.UpdateModel(ToViewModel(extLoginUpPartyResult));
                     generalExtLoginUpParty.CreateMode = false;
                     toastService.ShowSuccess("External login application created.");
@@ -169,16 +169,16 @@ namespace FoxIDs.Client.Pages.Components
                         }
                         else
                         {
-                            await UpPartyService.UpdateExternalLoginSecretUpPartyAsync(new ExternalLoginSecretRequest { PartyName = UpParty.Name, Secret = extLoginUpParty.Secret });
+                            await UpPartyService.UpdateExternalLoginSecretUpPartyAsync(new ExternalLoginSecretRequest { PartyName = UpParty.Name, Secret = extLoginUpParty.Secret }, cancellationToken: ComponentCancellationToken);
                         }
                         extLoginUpParty.Secret = null;
                     }
 
-                    var extLoginUpPartyResult = await UpPartyService.UpdateExternalLoginUpPartyAsync(extLoginUpParty);
+                    var extLoginUpPartyResult = await UpPartyService.UpdateExternalLoginUpPartyAsync(extLoginUpParty, cancellationToken: ComponentCancellationToken);
                     generalExtLoginUpParty.Name = extLoginUpPartyResult.Name;
                     if (deleteSecret)
                     {
-                        await UpPartyService.DeleteExternalLoginSecretUpPartyAsync(UpParty.Name);
+                        await UpPartyService.DeleteExternalLoginSecretUpPartyAsync(UpParty.Name, cancellationToken: ComponentCancellationToken);
                         extLoginUpPartyResult.Secret = null;
                     }
                     generalExtLoginUpParty.Form.UpdateModel(ToViewModel(extLoginUpPartyResult));
@@ -204,7 +204,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
-                await UpPartyService.DeleteExternalLoginUpPartyAsync(generalExtLoginUpParty.Name);
+                await UpPartyService.DeleteExternalLoginUpPartyAsync(generalExtLoginUpParty.Name, cancellationToken: ComponentCancellationToken);
                 UpParties.Remove(generalExtLoginUpParty);
                 await OnStateHasChanged.InvokeAsync(UpParty);
             }

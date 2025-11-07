@@ -66,7 +66,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralTenants(await TenantService.GetTenantsAsync(searchTenantForm.Model.FilterValue));
+                SetGeneralTenants(await TenantService.GetTenantsAsync(searchTenantForm.Model.FilterValue, cancellationToken: PageCancellationToken));
             }
             catch (FoxIDsApiException ex)
             {
@@ -85,7 +85,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralTenants(await TenantService.GetTenantsAsync(searchTenantForm.Model.FilterValue, paginationToken: paginationToken), addTenants: true);
+                SetGeneralTenants(await TenantService.GetTenantsAsync(searchTenantForm.Model.FilterValue, paginationToken: paginationToken, cancellationToken: PageCancellationToken), addTenants: true);
             }
             catch (TokenUnavailableException)
             {
@@ -110,7 +110,7 @@ namespace FoxIDs.Client.Pages
             try
             {
                 await DefaultTenantLoadAsync();
-                usageSettings = await TenantService.GetUsageSettingsAsync();
+                usageSettings = await TenantService.GetUsageSettingsAsync(cancellationToken: PageCancellationToken);
             }
             catch (TokenUnavailableException)
             {
@@ -126,7 +126,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralTenants(await TenantService.GetTenantsAsync(null));
+                SetGeneralTenants(await TenantService.GetTenantsAsync(null, cancellationToken: PageCancellationToken));
             }
             catch (TokenUnavailableException)
             {
@@ -171,10 +171,10 @@ namespace FoxIDs.Client.Pages
             {
                 if (ClientSettings.EnablePayment && planInfoList == null)
                 {
-                    planInfoList = await HelpersService.GetPlanInfoAsync();
+                    planInfoList = await HelpersService.GetPlanInfoAsync(cancellationToken: PageCancellationToken);
                 }
 
-                var tenant = await TenantService.GetTenantAsync(generalTenant.Name);
+                var tenant = await TenantService.GetTenantAsync(generalTenant.Name, cancellationToken: PageCancellationToken);
                 await generalTenant.Form.InitAsync(tenant.Map<TenantViewModel>());
             }
             catch (TokenUnavailableException)
@@ -210,7 +210,7 @@ namespace FoxIDs.Client.Pages
                             afterMap.Customer = null;
                         }
                     }
-                }));
+                }), cancellationToken: PageCancellationToken);
                 generalTenant.Form.UpdateModel(tenantResult.Map<TenantViewModel>());
                 toastService.ShowSuccess("Tenant updated.");
 
@@ -249,7 +249,7 @@ namespace FoxIDs.Client.Pages
                     return;
                 }
                 tenantWorking = true;
-                await TenantService.DeleteTenantAsync(generalTenant.Name);
+                await TenantService.DeleteTenantAsync(generalTenant.Name, cancellationToken: PageCancellationToken);
                 tenants.Remove(generalTenant);
                 tenantWorking = false;
             }

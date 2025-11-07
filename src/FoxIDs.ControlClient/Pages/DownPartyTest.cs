@@ -275,7 +275,7 @@ namespace FoxIDs.Client.Pages
             return string.Concat(SessionStorageKeyPrefix, id.ToLowerInvariant());
         }
 
-        private static bool HasExpiration(TestSessionData data) => data.TestExpireInSeconds > 0 && data.TestExpireAt > 0;
+        private static bool HasExpiration(TestSessionData data) => data.TestExpireInSeconds > 0;
 
         private static bool IsExpired(TestSessionData data) => HasExpiration(data) && DateTimeOffset.FromUnixTimeSeconds(data.TestExpireAt) <= DateTimeOffset.UtcNow;
 

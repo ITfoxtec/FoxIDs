@@ -25,6 +25,7 @@ namespace FoxIDs.Client.Pages
         private TestSessionData testSessionData;
 
         private const string SessionStorageKeyPrefix = "foxids.downpartytest.";
+        private const int SessionStorageMaxItems = 10;
 
         [Inject]
         public IJSRuntime JSRuntime { get; set; }
@@ -90,6 +91,8 @@ namespace FoxIDs.Client.Pages
             {
                 error = aex.Message;
             }
+
+            await MaintainSessionStorageAsync();
         }
 
         private Dictionary<string, string> GetResponseQuery(string responseUrl)
@@ -162,7 +165,6 @@ namespace FoxIDs.Client.Pages
             }
 
             testSessionData = new TestSessionData(trackName, result.TestUrl, result.TestExpireAt, result.TestExpireInSeconds);
-
             try
             {
                 await SessionStorage.SetItemAsync(key, testSessionData);
@@ -175,9 +177,9 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private async Task ClearTestSessionDataAsync()
+        private async Task ClearTestSessionDataAsync(string key = null)
         {
-            var key = GetSessionStorageKey();
+            key ??= GetSessionStorageKey();
             if (key.IsNullOrEmpty())
             {
                 return;
@@ -190,6 +192,73 @@ namespace FoxIDs.Client.Pages
             catch (Exception)
             {
                 // sessionStorage is not available, ignore.
+            }
+        }
+
+        private async Task MaintainSessionStorageAsync()
+        {
+            try
+            {
+                var keys = await SessionStorage.KeysAsync();
+                if (keys == null)
+                {
+                    return;
+                }
+
+                var activeKey = GetSessionStorageKey();
+
+                var relevantKeys = keys
+                    .Where(key => key != null && key != activeKey && key.StartsWith(SessionStorageKeyPrefix, StringComparison.OrdinalIgnoreCase))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                if (relevantKeys.Count == 0)
+                {
+                    return;
+                }
+
+                var entries = new List<(string Key, TestSessionData Data)>(relevantKeys.Count);
+                foreach (var key in relevantKeys)
+                {
+                    TestSessionData data = null;
+                    try
+                    {
+                        data = await SessionStorage.GetItemAsync<TestSessionData>(key);
+                    }
+                    catch (Exception)
+                    {
+                        await ClearTestSessionDataAsync(key);
+                        continue;
+                    }
+
+                    if (data == null || IsExpired(data))
+                    {
+                        await ClearTestSessionDataAsync(key);
+                        continue;
+                    }
+
+                    entries.Add((key, data));
+                }
+
+                var overLimit = entries.Count - SessionStorageMaxItems;
+                if (overLimit <= 0)
+                {
+                    return;
+                }
+
+                var itemsToRemove = entries
+                    .OrderBy(entry => HasExpiration(entry.Data) ? entry.Data.TestExpireAt : long.MaxValue)
+                    .Take(overLimit)
+                    .ToList();
+
+                foreach (var entry in itemsToRemove)
+                {
+                    await ClearTestSessionDataAsync(entry.Key);
+                }
+            }
+            catch (Exception)
+            {
+                // sessionStorage is not available, ignore cleanup.
             }
         }
 

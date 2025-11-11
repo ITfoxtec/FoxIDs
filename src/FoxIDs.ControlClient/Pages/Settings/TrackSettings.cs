@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using FoxIDs.Client.Logic;
 using Blazored.Toast.Services;
 using FoxIDs.Client.Models.Config;
+using Microsoft.JSInterop;
 
 namespace FoxIDs.Client.Pages.Settings
 {
@@ -28,6 +29,7 @@ namespace FoxIDs.Client.Pages.Settings
         private bool deleteTrackAcknowledge = false;
         private string deleteTrackAcknowledgeText = string.Empty;
         private bool trackWorking;
+        private bool scrollToTopAfterLoad;
 
         [Inject]
         public ClientSettings ClientSettings { get; set; }
@@ -40,6 +42,9 @@ namespace FoxIDs.Client.Pages.Settings
 
         [Inject]
         public TrackService TrackService { get; set; }
+
+        [Inject]
+        public IJSRuntime JSRuntime { get; set; }
 
         [Parameter]
         public string TenantName { get; set; }
@@ -75,6 +80,11 @@ namespace FoxIDs.Client.Pages.Settings
         {
             await DefaultLoadAsync();
             StateHasChanged();
+            if (scrollToTopAfterLoad)
+            {
+                scrollToTopAfterLoad = false;
+                await ScrollToTopAsync();
+            }
         }
 
         private async Task DefaultLoadAsync()
@@ -144,6 +154,7 @@ namespace FoxIDs.Client.Pages.Settings
                 }
                 trackWorking = true;
                 await TrackService.DeleteTrackAsync(TrackSelectedLogic.Track.Name);
+                scrollToTopAfterLoad = true;
                 await TrackSelectedLogic.SelectTrackAsync();
                 trackWorking = false;
             }
@@ -154,7 +165,25 @@ namespace FoxIDs.Client.Pages.Settings
             catch (Exception ex)
             {
                 trackWorking = false;
+                scrollToTopAfterLoad = false;
                 deleteTrackError = ex.Message;
+            }
+        }
+
+        private async Task ScrollToTopAsync()
+        {
+            if (JSRuntime == null)
+            {
+                return;
+            }
+
+            try
+            {
+                await JSRuntime.InvokeVoidAsync("window.scrollTo", 0d, 0d);
+            }
+            catch (JSException)
+            {
+                // Ignore scroll errors to avoid blocking UI updates.
             }
         }
     }

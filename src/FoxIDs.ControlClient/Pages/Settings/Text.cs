@@ -4,6 +4,7 @@ using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
+using FoxIDs;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using System;
@@ -15,6 +16,7 @@ using FoxIDs.Client.Logic;
 using Blazored.Toast.Services;
 using FoxIDs.Client.Models.Config;
 using System.Linq;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Pages.Settings
 {
@@ -32,6 +34,7 @@ namespace FoxIDs.Client.Pages.Settings
         private PageEditForm<FilterResourceViewModel> resourceFilterForm;
         private List<GeneralResourceViewModel> trackOnlyResources = new List<GeneralResourceViewModel>();
         private List<GeneralResourceViewModel> resources = new List<GeneralResourceViewModel>();
+        private List<TrackResourceLargeViewModel> largeResources = new List<TrackResourceLargeViewModel>();
 
         private GeneralResourceSettingsViewModel generalTextSettings = new GeneralResourceSettingsViewModel();
         private Modal textSettingsModal;
@@ -92,6 +95,7 @@ namespace FoxIDs.Client.Pages.Settings
 
                 SetTrackOnlyResources(await TrackService.GetTrackOnlyResourceNamesAsync(null));
                 SetGeneralResources(await TrackService.GetMasterResourceNamesAsync(null));
+                SetLargeResources(await TrackService.GetTrackLargeResourcesAsync(null));
             }
             catch (TokenUnavailableException)
             {
@@ -109,6 +113,7 @@ namespace FoxIDs.Client.Pages.Settings
             {
                 SetTrackOnlyResources(await TrackService.GetTrackOnlyResourceNamesAsync(resourceFilterForm.Model.FilterName));
                 SetGeneralResources(await TrackService.GetMasterResourceNamesAsync(resourceFilterForm.Model.FilterName));
+                SetLargeResources(await TrackService.GetTrackLargeResourcesAsync(resourceFilterForm.Model.FilterName));
             }
             catch (FoxIDsApiException ex)
             {
@@ -261,6 +266,200 @@ namespace FoxIDs.Client.Pages.Settings
             {
                 trackOnlyResource.Form.SetError(ex.Message);
             }
+        }
+        #endregion
+
+        #region LargeResources
+        private void SetLargeResources(PaginationResponse<TrackResourceLargeItem> largeResourceItems)
+        {
+            largeResources.Clear();
+            if (largeResourceItems?.Data?.Count > 0)
+            {
+                foreach (var largeResource in largeResourceItems.Data.OrderBy(r => r.Name))
+                {
+                    largeResources.Add(new TrackResourceLargeViewModel(largeResource));
+                }
+            }
+        }
+
+        private void ShowCreateLargeResource()
+        {
+            if (!string.IsNullOrWhiteSpace(resourceFilterForm?.Model?.FilterName))
+            {
+                resourceFilterForm.Model.FilterName = null;
+            }
+
+            var largeResource = new TrackResourceLargeViewModel
+            {
+                CreateMode = true,
+                Edit = true
+            };
+
+            largeResources.Add(largeResource);
+        }
+
+        private async Task ShowUpdateLargeResourceAsync(TrackResourceLargeViewModel largeResource)
+        {
+            largeResource.DeleteAcknowledge = false;
+            largeResource.ShowAdvanced = false;
+            largeResource.Error = null;
+            largeResource.Edit = true;
+
+            try
+            {
+                var resourceItem = !largeResource.Id.IsNullOrWhiteSpace() ? await TrackService.GetTrackLargeResourceAsync(largeResource.Id) : null;
+                if (resourceItem == null)
+                {
+                    largeResource.CreateMode = true;
+                    await largeResource.Form.InitAsync(new TrackResourceLargeItemViewModel { Name = largeResource.Name }, afterInit: afterInit =>
+                    {
+                        LargeResourceAfterInit(afterInit);
+                    });
+                }
+                else
+                {
+                    largeResource.CreateMode = false;
+                    largeResource.Name = resourceItem.Name;
+                    await largeResource.Form.InitAsync(resourceItem.Map<TrackResourceLargeItemViewModel>(), afterInit: afterInit =>
+                    {
+                        afterInit.Name = largeResource.Name;
+                        LargeResourceAfterInit(afterInit);
+                    });
+                }
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                largeResource.Error = ex.Message;
+            }
+        }
+
+        private void LargeResourceCancel(TrackResourceLargeViewModel largeResource)
+        {
+            largeResource.Edit = false;
+            if (largeResource.CreateMode)
+            {
+                largeResources.Remove(largeResource);
+            }
+        }
+
+        private void LargeResourceAfterInit(TrackResourceLargeItemViewModel resourceItem)
+        {
+            resourceItem.Items ??= new List<TrackResourceLargeCultureItem>();
+            EnsureSupportedCultures(resourceItem);
+        }
+
+        private async Task OnEditLargeResourceValidSubmitAsync(TrackResourceLargeViewModel largeResource, EditContext editContext)
+        {
+            try
+            {
+                if (largeResource.CreateMode)
+                {
+                    var enItem = largeResource.Form.Model.Items?.FirstOrDefault(i => i.Culture.Equals(Constants.Models.Resource.DefaultLanguage, StringComparison.InvariantCultureIgnoreCase));
+                    if (enItem != null && enItem.Value.IsNullOrWhiteSpace())
+                    {
+                        enItem.Value = largeResource.Form.Model.Name;
+                    }
+                }
+
+                TrackResourceLargeItem resourceItem;
+                if (largeResource.CreateMode)
+                {
+                    resourceItem = await TrackService.CreateTrackLargeResourceAsync(largeResource.Form.Model.Map<TrackResourceLargeItem>());
+                }
+                else
+                {
+                    resourceItem = await TrackService.UpdateTrackLargeResourceAsync(largeResource.Form.Model.Map<TrackResourceLargeItem>());
+                }
+
+                var resourceItemViewModel = resourceItem.Map<TrackResourceLargeItemViewModel>();
+                resourceItemViewModel.Name = resourceItem.Name;
+                EnsureSupportedCultures(resourceItemViewModel);
+
+                largeResource.Id = resourceItem.Id;
+                largeResource.Name = resourceItem.Name;
+                largeResource.Form.UpdateModel(resourceItemViewModel);
+
+                if (largeResource.CreateMode)
+                {
+                    largeResource.CreateMode = false;
+                    toastService.ShowSuccess("New large text created.");
+                }
+                else
+                {
+                    toastService.ShowSuccess("Large text updated.");
+                }
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    largeResource.Form.SetFieldError(nameof(largeResource.Form.Model.Name), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                largeResource.Form.SetError(ex.Message);
+            }
+        }
+
+        private async Task DeleteLargeResourceAsync(TrackResourceLargeViewModel largeResource)
+        {
+            try
+            {
+                if (!largeResource.Id.IsNullOrWhiteSpace())
+                {
+                    await TrackService.DeleteTrackLargeResourceAsync(largeResource.Id);
+                }
+                largeResources.Remove(largeResource);
+                toastService.ShowSuccess("Large text deleted.");
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                largeResource.Form.SetError(ex.Message);
+            }
+        }
+
+        private void EnsureSupportedCultures(TrackResourceLargeItemViewModel resourceItem)
+        {
+            if (resourceItem == null)
+            {
+                return;
+            }
+
+            resourceItem.Items ??= new List<TrackResourceLargeCultureItem>();
+
+            if (supportedCultures?.Count > 0)
+            {
+                foreach (var culture in supportedCultures)
+                {
+                    if (!resourceItem.Items.Any(i => i.Culture.Equals(culture, StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        resourceItem.Items.Add(new TrackResourceLargeCultureItem { Culture = culture });
+                    }
+                }
+            }
+            else if (!resourceItem.Items.Any())
+            {
+                resourceItem.Items.Add(new TrackResourceLargeCultureItem { Culture = Constants.Models.Resource.DefaultLanguage });
+            }
+
+            resourceItem.Items = resourceItem.Items.OrderBy(i => i.Culture).ToList();
         }
         #endregion
 

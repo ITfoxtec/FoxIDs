@@ -154,6 +154,113 @@
     <div class="active-group active">
         <div class="card">
             <div class="card-body py-3">
+                <div class="d-flex pt-2">
+                    <div class="info-text mr-auto pb-4">
+                        Manage large texts (documents) defined in this environment.
+                    </div>
+                    <div class="d-block">
+                        <button type="button" class="btn btn-primary" @onclick="ShowCreateLargeResource">
+                            <span class="oi oi-plus" aria-hidden="true"></span> New large text
+                        </button>
+                    </div>
+                </div>
+                <ul class="list-group">
+                    @foreach (var largeResource in largeResources)
+                    {
+                        <li class="list-group-item overflow-hidden @(largeResource.Edit ? "active" : string.Empty)">
+                            @if (!string.IsNullOrWhiteSpace(largeResource.Error))
+                            {
+                                <div class="alert alert-danger" role="alert">
+                                    @largeResource.Error
+                                </div>
+                            }
+                            @if (largeResource.Edit)
+                            {
+                                <PageEditForm @ref="largeResource.Form" TModel="TrackResourceLargeItemViewModel" OnAfterInit="LargeResourceAfterInit" OnValidSubmit="@(async (editContext) => await OnEditLargeResourceValidSubmitAsync(largeResource, editContext))">
+                                    <div class="modal-header">
+                                        @if (!largeResource.CreateMode && !string.IsNullOrWhiteSpace(largeResource.Id))
+                                        {
+                                            <span>Resource ID: @largeResource.Id</span>
+                                        }
+                                    </div>
+                                    <div class="modal-body">
+                                        <FInputText @bind-Value="largeResource.Form.Model.Name" For="@(() => largeResource.Form.Model.Name)" Focus="largeResource.CreateMode" />
+                                        <div class="form-group active-group active">
+                                            <label class="label-control">Translations</label>
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    @foreach (var item in largeResource.Form.Model.Items)
+                                                    {
+                                                        <div class="pt-2">
+                                                            <div class="active-group active pb-0">
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                        <FInputTextArea Class="pb-0" @bind-Value="item.Value" For="@(() => item.Value)" LabelText="Custom translation" />
+                                                                    </div>
+                                                                </div>
+                                                                <label class="label-control">@($"({item.Culture})")</label>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <ValidationMessage For="@(() => largeResource.Form.Model.Items)" />
+                                        </div>
+                                    </div>
+                                    @if (!largeResource.CreateMode && largeResource.DeleteAcknowledge)
+                                    {
+                                        <div class="modal-footer">
+                                            <div class="alert alert-danger" role="alert">
+                                                <div>
+                                                    You are about to delete the large text "@largeResource.Name", are you sure?
+                                                </div>
+
+                                                <div class="mt-3">
+                                                    <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteLargeResourceAsync(largeResource))">Yes delete text</button>
+                                                    <button type="button" class="btn btn-secondary" @onclick="@(() => largeResource.DeleteAcknowledge = false)">No</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    <div class="modal-footer">
+                                        @if (!largeResource.CreateMode)
+                                        {
+                                            <button type="button" class="btn btn-link" @onclick="@(() => largeResource.DeleteAcknowledge = true)">Delete</button>
+                                        }
+                                        <button type="submit" class="btn btn-primary">@(largeResource.CreateMode ? "Create" : "Update")</button>
+                                        <button type="button" class="btn btn-secondary" @onclick="@(() => LargeResourceCancel(largeResource))">Cancel</button>
+                                    </div>
+                                </PageEditForm>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-link text-left p-0" @onclick="@(async () => await ShowUpdateLargeResourceAsync(largeResource))">
+                                    @(string.IsNullOrWhiteSpace(largeResource.Name) ? largeResource.Id : largeResource.Name)
+                                </button>
+                                @if (!string.IsNullOrWhiteSpace(largeResource.Id))
+                                {
+                                    <br />
+                                    <span>@largeResource.Id</span>
+                                }
+                            }
+                        </li>
+                    }
+                    @if (largeResources.Count <= 0)
+                    {
+                        <li class="list-group-item">
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <label class="label-control">Large texts defined in this environment</label>
+    </div>
+</div>
+
+<div class="pt-2">
+    <div class="active-group active">
+        <div class="card">
+            <div class="card-body py-3">
                 <ul class="list-group">
                     @foreach (var resource in resources)
                     {

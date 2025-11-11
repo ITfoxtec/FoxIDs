@@ -289,6 +289,7 @@ namespace FoxIDs
                 public const string Used = "used";
                 public const string UsageSettings = "uset";
                 public const string SmsPrices = "smsp";
+                public const string TrackResourceLarge = "tresl";
 
                 // data type used for cache
                 public const string Cache = "cache";
@@ -466,6 +467,15 @@ namespace FoxIDs
                 public const int CultureLength = 5;
                 public const int NameLength = 500;
                 public const int ValueLength = 500;
+
+                public static class ResourceLarge
+                {
+                    public const int IdLength = 200;
+                    public const string IdRegExPattern = @"^[\w:\-]*$";
+                    public const int UniqueIdLength = 40;
+                    public const string UniqueIdRegExPattern = @"^[a-z0-9]*$";
+                    public const int ValueLength = 40000;
+                }
             }
 
             public static class Tenant

@@ -3,13 +3,13 @@ using FoxIDs.Models.Api;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class TrackResourceLargeViewModel
+    public class TrackLargeResourceViewModel
     {
-        public TrackResourceLargeViewModel()
+        public TrackLargeResourceViewModel()
         {
         }
 
-        public TrackResourceLargeViewModel(TrackResourceLargeItem resource)
+        public TrackLargeResourceViewModel(TrackLargeResourceItem resource)
         {
             Id = resource.Id;
             Name = resource.Name;
@@ -29,6 +29,6 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public string Error { get; set; }
 
-        public PageEditForm<TrackResourceLargeItemViewModel> Form { get; set; }
+        public PageEditForm<TrackLargeResourceItemViewModel> Form { get; set; }
     }
 }

@@ -7,19 +7,19 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Models
 {
-    public class TrackResourceLarge : DataDocument
+    public class TrackLargeResource : DataDocument
     {
         public static async Task<string> IdFormatAsync(IdKey idKey)
         {
             if (idKey == null) throw new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
 
-            return $"{Constants.Models.DataType.TrackResourceLarge}:{idKey.TenantName}:{idKey.TrackName}:{idKey.UniqueId}";
+            return $"{Constants.Models.DataType.TrackLargeResource}:{idKey.TenantName}:{idKey.TrackName}:{idKey.UniqueId}";
         }
 
         [Required]
-        [MaxLength(Constants.Models.Resource.ResourceLarge.IdLength)]
-        [RegularExpression(Constants.Models.Resource.ResourceLarge.IdRegExPattern)]
+        [MaxLength(Constants.Models.Resource.LargeResource.IdLength)]
+        [RegularExpression(Constants.Models.Resource.LargeResource.IdRegExPattern)]
         [JsonProperty(PropertyName = "id")]
         public override string Id { get; set; }
 
@@ -30,13 +30,13 @@ namespace FoxIDs.Models
 
         [ListLength(Constants.Models.Resource.ResourcesMin, Constants.Models.Resource.ResourcesMax)]
         [JsonProperty(PropertyName = "items")]
-        public List<TrackResourceLargeCultureItem> Items { get; set; }
+        public List<TrackLargeResourceCultureItem> Items { get; set; }
 
         public class IdKey : Track.IdKey
         {
             [Required]
-            [MaxLength(Constants.Models.Resource.ResourceLarge.UniqueIdLength)]
-            [RegularExpression(Constants.Models.Resource.ResourceLarge.UniqueIdRegExPattern)]
+            [MaxLength(Constants.Models.Resource.LargeResource.UniqueIdLength)]
+            [RegularExpression(Constants.Models.Resource.LargeResource.UniqueIdRegExPattern)]
             public string UniqueId { get; set; }
         }
     }

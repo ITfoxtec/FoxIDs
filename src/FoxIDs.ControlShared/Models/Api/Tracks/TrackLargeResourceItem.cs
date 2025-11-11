@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class TrackResourceLargeItem : INameValue
+    public class TrackLargeResourceItem : INameValue
     {
-        [MaxLength(Constants.Models.Resource.ResourceLarge.IdLength)]
+        [MaxLength(Constants.Models.Resource.LargeResource.IdLength)]
         public string Id { get; set; }
 
         [Required]
@@ -15,6 +15,6 @@ namespace FoxIDs.Models.Api
         public string Name { get; set; }
 
         [ListLength(Constants.Models.Resource.ResourcesMin, Constants.Models.Resource.ResourcesMax)]
-        public List<TrackResourceLargeCultureItem> Items { get; set; }
+        public List<TrackLargeResourceCultureItem> Items { get; set; }
     }
 }

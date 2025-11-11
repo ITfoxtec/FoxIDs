@@ -176,7 +176,7 @@
                             }
                             @if (largeResource.Edit)
                             {
-                                <PageEditForm @ref="largeResource.Form" TModel="TrackResourceLargeItemViewModel" OnAfterInit="LargeResourceAfterInit" OnValidSubmit="@(async (editContext) => await OnEditLargeResourceValidSubmitAsync(largeResource, editContext))">
+                                <PageEditForm @ref="largeResource.Form" TModel="TrackLargeResourceItemViewModel" OnAfterInit="LargeResourceAfterInit" OnValidSubmit="@(async (editContext) => await OnEditLargeResourceValidSubmitAsync(largeResource, editContext))">
                                     <div class="modal-header">
                                         @if (!largeResource.CreateMode && !string.IsNullOrWhiteSpace(largeResource.Id))
                                         {

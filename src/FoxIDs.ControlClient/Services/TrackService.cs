@@ -24,8 +24,8 @@ namespace FoxIDs.Client.Services
         private const string trackOnlyResourceApiUri = "api/{tenant}/{track}/!trackonlyresource";
         private const string resourceApiUri = "api/{tenant}/{track}/!trackresource";
         private const string resourceSettingApiUri = "api/{tenant}/{track}/!trackresourcesetting";
-        private const string listTrackResourcesLargeApiUri = "API/{tenant}/{track}/!trackresourcenameslarge";
-        private const string trackResourceLargeApiUri = "API/{tenant}/{track}/!tracklargeresource";
+        private const string listTrackLargeResourcesApiUri = "API/{tenant}/{track}/!tracklargeresourcenames";
+        private const string trackLargeResourceApiUri = "API/{tenant}/{track}/!tracklargeresource";
 
         private const string sendEmailApiUri = "api/{tenant}/{track}/!tracksendemail";
         private const string sendSmsApiUri = "api/{tenant}/{track}/!tracksendsms";
@@ -70,11 +70,11 @@ namespace FoxIDs.Client.Services
         public async Task<ResourceItem> UpdateTrackResourceAsync(TrackResourceItem trackResourceItem) => await PutResponseAsync<ResourceItem, ResourceItem>(resourceApiUri, trackResourceItem);
         public async Task DeleteTrackResourceAsync(int resourceId) => await DeleteAsync(resourceApiUri, Convert.ToString(resourceId), parmName1: nameof(resourceId));
 
-    public async Task<PaginationResponse<TrackResourceLargeItem>> GetTrackLargeResourcesAsync(string filterName, string paginationToken = null) => await GetListAsync<TrackResourceLargeItem>(listTrackResourcesLargeApiUri, filterName, paginationToken: paginationToken);
-    public async Task<TrackResourceLargeItem> GetTrackLargeResourceAsync(string resourceId) => await GetAsync<TrackResourceLargeItem>(trackResourceLargeApiUri, resourceId, parmName1: nameof(resourceId));
-    public async Task<TrackResourceLargeItem> CreateTrackLargeResourceAsync(TrackResourceLargeItem trackResourceLargeItem) => await PostResponseAsync<TrackResourceLargeItem, TrackResourceLargeItem>(trackResourceLargeApiUri, trackResourceLargeItem);
-    public async Task<TrackResourceLargeItem> UpdateTrackLargeResourceAsync(TrackResourceLargeItem trackResourceLargeItem) => await PutResponseAsync<TrackResourceLargeItem, TrackResourceLargeItem>(trackResourceLargeApiUri, trackResourceLargeItem);
-    public async Task DeleteTrackLargeResourceAsync(string resourceId) => await DeleteAsync(trackResourceLargeApiUri, resourceId, parmName1: nameof(resourceId));
+        public async Task<PaginationResponse<TrackLargeResourceItem>> GetTrackLargeResourcesAsync(string filterName, string paginationToken = null) => await GetListAsync<TrackLargeResourceItem>(listTrackLargeResourcesApiUri, filterName, paginationToken: paginationToken);
+        public async Task<TrackLargeResourceItem> GetTrackLargeResourceAsync(string resourceId) => await GetAsync<TrackLargeResourceItem>(trackLargeResourceApiUri, resourceId, parmName1: nameof(resourceId));
+        public async Task<TrackLargeResourceItem> CreateTrackLargeResourceAsync(TrackLargeResourceItem trackLargeResourceItem) => await PostResponseAsync<TrackLargeResourceItem, TrackLargeResourceItem>(trackLargeResourceApiUri, trackLargeResourceItem);
+        public async Task<TrackLargeResourceItem> UpdateTrackLargeResourceAsync(TrackLargeResourceItem trackLargeResourceItem) => await PutResponseAsync<TrackLargeResourceItem, TrackLargeResourceItem>(trackLargeResourceApiUri, trackLargeResourceItem);
+        public async Task DeleteTrackLargeResourceAsync(string resourceId) => await DeleteAsync(trackLargeResourceApiUri, resourceId, parmName1: nameof(resourceId));
 
         public async Task<ResourceSettings> GetTrackResourceSettingAsync() => await GetAsync<ResourceSettings>(resourceSettingApiUri);
         public async Task SaveTrackResourceSettingAsync(ResourceSettings resourceSettings) => await PostAsync(resourceSettingApiUri, resourceSettings);

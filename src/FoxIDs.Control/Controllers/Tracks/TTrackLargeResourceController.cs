@@ -18,14 +18,14 @@ using System.Linq.Expressions;
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize]
-    public class TTrackResourceLargeController : ApiController
+    public class TTrackLargeResourceController : ApiController
     {
-        private const string dataType = Constants.Models.DataType.TrackResourceLarge;
+        private const string dataType = Constants.Models.DataType.TrackLargeResource;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
 
-        public TTrackResourceLargeController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
+        public TTrackLargeResourceController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -38,30 +38,30 @@ namespace FoxIDs.Controllers
         /// <param name="filterName">Filter by resource key.</param>
         /// <param name="paginationToken">Pagination token.</param>
         /// <returns>Large track resources.</returns>
-        [ProducesResponseType(typeof(Api.PaginationResponse<Api.TrackResourceLargeItem>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<Api.PaginationResponse<Api.TrackResourceLargeItem>>> GetTrackLargeResources(string filterName, string paginationToken = null)
+        [ProducesResponseType(typeof(Api.PaginationResponse<Api.TrackLargeResourceItem>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<Api.PaginationResponse<Api.TrackLargeResourceItem>>> GetTrackLargeResources(string filterName, string paginationToken = null)
         {
             try
             {
                 filterName = filterName?.Trim();
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                Expression<Func<TrackResourceLarge, bool>> whereQuery = r => r.DataType.Equals(dataType);
+                Expression<Func<TrackLargeResource, bool>> whereQuery = r => r.DataType.Equals(dataType);
                 if (!filterName.IsNullOrWhiteSpace())
                 {
                     whereQuery = r => r.DataType.Equals(dataType) && r.Name.Contains(filterName, StringComparison.InvariantCultureIgnoreCase);
                 }
 
-                (var mResources, var nextPaginationToken) = await tenantDataRepository.GetManyAsync<TrackResourceLarge>(trackIdKey, whereQuery: whereQuery, paginationToken: paginationToken);
+                (var mResources, var nextPaginationToken) = await tenantDataRepository.GetManyAsync<TrackLargeResource>(trackIdKey, whereQuery: whereQuery, paginationToken: paginationToken);
 
-                var response = new Api.PaginationResponse<Api.TrackResourceLargeItem>
+                var response = new Api.PaginationResponse<Api.TrackLargeResourceItem>
                 {
-                    Data = new HashSet<Api.TrackResourceLargeItem>(mResources.Count()),
+                    Data = new HashSet<Api.TrackLargeResourceItem>(mResources.Count()),
                     PaginationToken = nextPaginationToken
                 };
 
                 foreach (var mResource in mResources.OrderBy(r => r.Name))
                 {
-                    var apiResource = mapper.Map<Api.TrackResourceLargeItem>(mResource);
+                    var apiResource = mapper.Map<Api.TrackLargeResourceItem>(mResource);
                     OrderCultureItems(apiResource);
                     response.Data.Add(apiResource);
                 }
@@ -72,8 +72,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.TrackResourceLargeItem).Name}' by environment name '{RouteBinding.TrackName}'.");
-                    return NotFound(typeof(Api.TrackResourceLargeItem).Name, RouteBinding.TrackName);
+                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.TrackLargeResourceItem).Name}' by environment name '{RouteBinding.TrackName}'.");
+                    return NotFound(typeof(Api.TrackLargeResourceItem).Name, RouteBinding.TrackName);
                 }
                 throw;
             }
@@ -84,19 +84,19 @@ namespace FoxIDs.Controllers
         /// </summary>
         /// <param name="resourceId">Resource identifier.</param>
         /// <returns>Large resource.</returns>
-        [ProducesResponseType(typeof(Api.TrackResourceLargeItem), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Api.TrackLargeResourceItem), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.TrackResourceLargeItem>> GetTrackLargeResource(string resourceId)
+        public async Task<ActionResult<Api.TrackLargeResourceItem>> GetTrackLargeResource(string resourceId)
         {
             try
             {
-                var mResource = await tenantDataRepository.GetAsync<TrackResourceLarge>(resourceId, required: false);
+                var mResource = await tenantDataRepository.GetAsync<TrackLargeResource>(resourceId, required: false);
                 if (mResource == null || !mResource.DataType.Equals(dataType, StringComparison.Ordinal))
                 {
-                    return NotFound(typeof(Api.TrackResourceLargeItem).Name, resourceId);
+                    return NotFound(typeof(Api.TrackLargeResourceItem).Name, resourceId);
                 }
 
-                var apiResource = mapper.Map<Api.TrackResourceLargeItem>(mResource);
+                var apiResource = mapper.Map<Api.TrackLargeResourceItem>(mResource);
                 OrderCultureItems(apiResource);
                 return Ok(apiResource);
             }
@@ -104,8 +104,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.TrackResourceLargeItem).Name}' by environment name '{RouteBinding.TrackName}' and id '{resourceId}'.");
-                    return NotFound(typeof(Api.TrackResourceLargeItem).Name, resourceId);
+                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.TrackLargeResourceItem).Name}' by environment name '{RouteBinding.TrackName}' and id '{resourceId}'.");
+                    return NotFound(typeof(Api.TrackLargeResourceItem).Name, resourceId);
                 }
                 throw;
             }
@@ -116,9 +116,9 @@ namespace FoxIDs.Controllers
         /// </summary>
         /// <param name="trackResourceLargeItem">Resource to create.</param>
         /// <returns>Created resource.</returns>
-        [ProducesResponseType(typeof(Api.TrackResourceLargeItem), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Api.TrackLargeResourceItem), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.TrackResourceLargeItem>> PostTrackLargeResource([FromBody] Api.TrackResourceLargeItem trackResourceLargeItem)
+        public async Task<ActionResult<Api.TrackLargeResourceItem>> PostTrackLargeResource([FromBody] Api.TrackLargeResourceItem trackResourceLargeItem)
         {
             try
             {
@@ -130,7 +130,7 @@ namespace FoxIDs.Controllers
                 catch (ValidationException vex)
                 {
                     logger.Warning(vex);
-                    ModelState.TryAddModelError($"{nameof(trackResourceLargeItem.Items)}.{nameof(Api.TrackResourceLargeCultureItem.Culture)}".ToCamelCase(), vex.Message);
+                    ModelState.TryAddModelError($"{nameof(trackResourceLargeItem.Items)}.{nameof(Api.TrackLargeResourceCultureItem.Culture)}".ToCamelCase(), vex.Message);
                     return BadRequest(ModelState);
                 }
 
@@ -138,23 +138,23 @@ namespace FoxIDs.Controllers
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 if (await NameExistsAsync(trackIdKey, trackResourceLargeItem.Name))
                 {
-                    return Conflict(nameof(Api.TrackResourceLargeItem), trackResourceLargeItem.Name, nameof(trackResourceLargeItem.Name));
+                    return Conflict(nameof(Api.TrackLargeResourceItem), trackResourceLargeItem.Name, nameof(trackResourceLargeItem.Name));
                 }
 
-                var idKey = new TrackResourceLarge.IdKey
+                var idKey = new TrackLargeResource.IdKey
                 {
                     TenantName = trackIdKey.TenantName,
                     TrackName = trackIdKey.TrackName,
                     UniqueId = RandomName.GenerateDefaultName()
                 };
 
-                var mResource = mapper.Map<TrackResourceLarge>(trackResourceLargeItem);
-                mResource.Id = await TrackResourceLarge.IdFormatAsync(idKey);
+                var mResource = mapper.Map<TrackLargeResource>(trackResourceLargeItem);
+                mResource.Id = await TrackLargeResource.IdFormatAsync(idKey);
                 NormalizeItems(mResource);
 
                 await tenantDataRepository.CreateAsync(mResource);
 
-                var apiResource = mapper.Map<Api.TrackResourceLargeItem>(mResource);
+                var apiResource = mapper.Map<Api.TrackLargeResourceItem>(mResource);
                 OrderCultureItems(apiResource);
                 return Ok(apiResource);
             }
@@ -162,8 +162,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Create '{typeof(Api.TrackResourceLargeItem).Name}' by environment name '{RouteBinding.TrackName}'.");
-                    return NotFound(typeof(Api.TrackResourceLargeItem).Name, RouteBinding.TrackName);
+                    logger.Warning(ex, $"NotFound, Create '{typeof(Api.TrackLargeResourceItem).Name}' by environment name '{RouteBinding.TrackName}'.");
+                    return NotFound(typeof(Api.TrackLargeResourceItem).Name, RouteBinding.TrackName);
                 }
                 throw;
             }
@@ -174,10 +174,10 @@ namespace FoxIDs.Controllers
         /// </summary>
         /// <param name="trackResourceLargeItem">Resource to update.</param>
         /// <returns>Updated resource.</returns>
-        [ProducesResponseType(typeof(Api.TrackResourceLargeItem), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Api.TrackLargeResourceItem), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.TrackResourceLargeItem>> PutTrackLargeResource([FromBody] Api.TrackResourceLargeItem trackResourceLargeItem)
+        public async Task<ActionResult<Api.TrackLargeResourceItem>> PutTrackLargeResource([FromBody] Api.TrackLargeResourceItem trackResourceLargeItem)
         {
             try
             {
@@ -189,7 +189,7 @@ namespace FoxIDs.Controllers
                 catch (ValidationException vex)
                 {
                     logger.Warning(vex);
-                    ModelState.TryAddModelError($"{nameof(trackResourceLargeItem.Items)}.{nameof(Api.TrackResourceLargeCultureItem.Culture)}".ToCamelCase(), vex.Message);
+                    ModelState.TryAddModelError($"{nameof(trackResourceLargeItem.Items)}.{nameof(Api.TrackLargeResourceCultureItem.Culture)}".ToCamelCase(), vex.Message);
                     return BadRequest(ModelState);
                 }
 
@@ -203,16 +203,16 @@ namespace FoxIDs.Controllers
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 if (await NameExistsAsync(trackIdKey, trackResourceLargeItem.Name, trackResourceLargeItem.Id))
                 {
-                    return Conflict(nameof(Api.TrackResourceLargeItem), trackResourceLargeItem.Name, nameof(trackResourceLargeItem.Name));
+                    return Conflict(nameof(Api.TrackLargeResourceItem), trackResourceLargeItem.Name, nameof(trackResourceLargeItem.Name));
                 }
 
-                var existing = await tenantDataRepository.GetAsync<TrackResourceLarge>(trackResourceLargeItem.Id, required: false);
+                var existing = await tenantDataRepository.GetAsync<TrackLargeResource>(trackResourceLargeItem.Id, required: false);
                 if (existing == null || !existing.DataType.Equals(dataType, StringComparison.Ordinal))
                 {
-                    return NotFound(typeof(Api.TrackResourceLargeItem).Name, trackResourceLargeItem.Id, nameof(trackResourceLargeItem.Id));
+                    return NotFound(typeof(Api.TrackLargeResourceItem).Name, trackResourceLargeItem.Id, nameof(trackResourceLargeItem.Id));
                 }
 
-                var mResource = mapper.Map<TrackResourceLarge>(trackResourceLargeItem);
+                var mResource = mapper.Map<TrackLargeResource>(trackResourceLargeItem);
                 NormalizeItems(mResource);
 
                 if (mResource.Items.Count > 0)
@@ -221,10 +221,10 @@ namespace FoxIDs.Controllers
                 }
                 else
                 {
-                    await tenantDataRepository.DeleteAsync<TrackResourceLarge>(mResource.Id);
+                    await tenantDataRepository.DeleteAsync<TrackLargeResource>(mResource.Id);
                 }
 
-                var apiResource = mapper.Map<Api.TrackResourceLargeItem>(mResource);
+                var apiResource = mapper.Map<Api.TrackLargeResourceItem>(mResource);
                 OrderCultureItems(apiResource);
                 return Ok(apiResource);
             }
@@ -232,8 +232,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.TrackResourceLargeItem).Name}' by environment name '{RouteBinding.TrackName}' and id '{trackResourceLargeItem.Id}'.");
-                    return NotFound(typeof(Api.TrackResourceLargeItem).Name, trackResourceLargeItem.Id, nameof(trackResourceLargeItem.Id));
+                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.TrackLargeResourceItem).Name}' by environment name '{RouteBinding.TrackName}' and id '{trackResourceLargeItem.Id}'.");
+                    return NotFound(typeof(Api.TrackLargeResourceItem).Name, trackResourceLargeItem.Id, nameof(trackResourceLargeItem.Id));
                 }
                 throw;
             }
@@ -248,21 +248,21 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                await tenantDataRepository.DeleteAsync<TrackResourceLarge>(resourceId);
+                await tenantDataRepository.DeleteAsync<TrackLargeResource>(resourceId);
                 return NoContent();
             }
             catch (FoxIDsDataException ex)
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.TrackResourceLargeItem).Name}' by environment name '{RouteBinding.TrackName}' and id '{resourceId}'.");
-                    return NotFound(typeof(Api.TrackResourceLargeItem).Name, resourceId);
+                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.TrackLargeResourceItem).Name}' by environment name '{RouteBinding.TrackName}' and id '{resourceId}'.");
+                    return NotFound(typeof(Api.TrackLargeResourceItem).Name, resourceId);
                 }
                 throw;
             }
         }
 
-        private static void OrderCultureItems(Api.TrackResourceLargeItem resource)
+        private static void OrderCultureItems(Api.TrackLargeResourceItem resource)
         {
             if (resource?.Items != null)
             {
@@ -270,7 +270,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private static void ValidateCultures(Api.TrackResourceLargeItem resource)
+        private static void ValidateCultures(Api.TrackLargeResourceItem resource)
         {
             if (resource?.Items?.Count > 0)
             {
@@ -282,11 +282,11 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private static void NormalizeItems(TrackResourceLarge resource)
+        private static void NormalizeItems(TrackLargeResource resource)
         {
             if (resource.Items == null)
             {
-                resource.Items = new List<TrackResourceLargeCultureItem>();
+                resource.Items = new List<TrackLargeResourceCultureItem>();
             }
 
             resource.Items = resource.Items.Where(i => !i.Value.IsNullOrWhiteSpace()).ToList();
@@ -302,7 +302,7 @@ namespace FoxIDs.Controllers
             var paginationToken = (string)null;
             do
             {
-                (var mResources, var nextPaginationToken) = await tenantDataRepository.GetManyAsync<TrackResourceLarge>(idKey, whereQuery: r => r.DataType.Equals(dataType), paginationToken: paginationToken);
+                (var mResources, var nextPaginationToken) = await tenantDataRepository.GetManyAsync<TrackLargeResource>(idKey, whereQuery: r => r.DataType.Equals(dataType), paginationToken: paginationToken);
                 if (mResources.Any(r => r.Name != null && r.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase) && (excludeId == null || !r.Id.Equals(excludeId, StringComparison.Ordinal))))
                 {
                     return true;

@@ -34,7 +34,7 @@ namespace FoxIDs.Client.Pages.Settings
         private PageEditForm<FilterResourceViewModel> resourceFilterForm;
         private List<GeneralResourceViewModel> trackOnlyResources = new List<GeneralResourceViewModel>();
         private List<GeneralResourceViewModel> resources = new List<GeneralResourceViewModel>();
-        private List<TrackResourceLargeViewModel> largeResources = new List<TrackResourceLargeViewModel>();
+    private List<TrackLargeResourceViewModel> largeResources = new List<TrackLargeResourceViewModel>();
 
         private GeneralResourceSettingsViewModel generalTextSettings = new GeneralResourceSettingsViewModel();
         private Modal textSettingsModal;
@@ -270,14 +270,14 @@ namespace FoxIDs.Client.Pages.Settings
         #endregion
 
         #region LargeResources
-        private void SetLargeResources(PaginationResponse<TrackResourceLargeItem> largeResourceItems)
+        private void SetLargeResources(PaginationResponse<TrackLargeResourceItem> largeResourceItems)
         {
             largeResources.Clear();
             if (largeResourceItems?.Data?.Count > 0)
             {
                 foreach (var largeResource in largeResourceItems.Data.OrderBy(r => r.Name))
                 {
-                    largeResources.Add(new TrackResourceLargeViewModel(largeResource));
+                    largeResources.Add(new TrackLargeResourceViewModel(largeResource));
                 }
             }
         }
@@ -289,7 +289,7 @@ namespace FoxIDs.Client.Pages.Settings
                 resourceFilterForm.Model.FilterName = null;
             }
 
-            var largeResource = new TrackResourceLargeViewModel
+            var largeResource = new TrackLargeResourceViewModel
             {
                 CreateMode = true,
                 Edit = true
@@ -298,7 +298,7 @@ namespace FoxIDs.Client.Pages.Settings
             largeResources.Add(largeResource);
         }
 
-        private async Task ShowUpdateLargeResourceAsync(TrackResourceLargeViewModel largeResource)
+        private async Task ShowUpdateLargeResourceAsync(TrackLargeResourceViewModel largeResource)
         {
             largeResource.DeleteAcknowledge = false;
             largeResource.ShowAdvanced = false;
@@ -311,7 +311,7 @@ namespace FoxIDs.Client.Pages.Settings
                 if (resourceItem == null)
                 {
                     largeResource.CreateMode = true;
-                    await largeResource.Form.InitAsync(new TrackResourceLargeItemViewModel { Name = largeResource.Name }, afterInit: afterInit =>
+                    await largeResource.Form.InitAsync(new TrackLargeResourceItemViewModel { Name = largeResource.Name }, afterInit: afterInit =>
                     {
                         LargeResourceAfterInit(afterInit);
                     });
@@ -320,7 +320,7 @@ namespace FoxIDs.Client.Pages.Settings
                 {
                     largeResource.CreateMode = false;
                     largeResource.Name = resourceItem.Name;
-                    await largeResource.Form.InitAsync(resourceItem.Map<TrackResourceLargeItemViewModel>(), afterInit: afterInit =>
+                    await largeResource.Form.InitAsync(resourceItem.Map<TrackLargeResourceItemViewModel>(), afterInit: afterInit =>
                     {
                         afterInit.Name = largeResource.Name;
                         LargeResourceAfterInit(afterInit);
@@ -337,7 +337,7 @@ namespace FoxIDs.Client.Pages.Settings
             }
         }
 
-        private void LargeResourceCancel(TrackResourceLargeViewModel largeResource)
+        private void LargeResourceCancel(TrackLargeResourceViewModel largeResource)
         {
             largeResource.Edit = false;
             if (largeResource.CreateMode)
@@ -346,13 +346,13 @@ namespace FoxIDs.Client.Pages.Settings
             }
         }
 
-        private void LargeResourceAfterInit(TrackResourceLargeItemViewModel resourceItem)
+        private void LargeResourceAfterInit(TrackLargeResourceItemViewModel resourceItem)
         {
-            resourceItem.Items ??= new List<TrackResourceLargeCultureItem>();
+            resourceItem.Items ??= new List<TrackLargeResourceCultureItem>();
             EnsureSupportedCultures(resourceItem);
         }
 
-        private async Task OnEditLargeResourceValidSubmitAsync(TrackResourceLargeViewModel largeResource, EditContext editContext)
+        private async Task OnEditLargeResourceValidSubmitAsync(TrackLargeResourceViewModel largeResource, EditContext editContext)
         {
             try
             {
@@ -365,17 +365,17 @@ namespace FoxIDs.Client.Pages.Settings
                     }
                 }
 
-                TrackResourceLargeItem resourceItem;
+                TrackLargeResourceItem resourceItem;
                 if (largeResource.CreateMode)
                 {
-                    resourceItem = await TrackService.CreateTrackLargeResourceAsync(largeResource.Form.Model.Map<TrackResourceLargeItem>());
+                    resourceItem = await TrackService.CreateTrackLargeResourceAsync(largeResource.Form.Model.Map<TrackLargeResourceItem>());
                 }
                 else
                 {
-                    resourceItem = await TrackService.UpdateTrackLargeResourceAsync(largeResource.Form.Model.Map<TrackResourceLargeItem>());
+                    resourceItem = await TrackService.UpdateTrackLargeResourceAsync(largeResource.Form.Model.Map<TrackLargeResourceItem>());
                 }
 
-                var resourceItemViewModel = resourceItem.Map<TrackResourceLargeItemViewModel>();
+                var resourceItemViewModel = resourceItem.Map<TrackLargeResourceItemViewModel>();
                 resourceItemViewModel.Name = resourceItem.Name;
                 EnsureSupportedCultures(resourceItemViewModel);
 
@@ -414,7 +414,7 @@ namespace FoxIDs.Client.Pages.Settings
             }
         }
 
-        private async Task DeleteLargeResourceAsync(TrackResourceLargeViewModel largeResource)
+        private async Task DeleteLargeResourceAsync(TrackLargeResourceViewModel largeResource)
         {
             try
             {
@@ -435,14 +435,14 @@ namespace FoxIDs.Client.Pages.Settings
             }
         }
 
-        private void EnsureSupportedCultures(TrackResourceLargeItemViewModel resourceItem)
+        private void EnsureSupportedCultures(TrackLargeResourceItemViewModel resourceItem)
         {
             if (resourceItem == null)
             {
                 return;
             }
 
-            resourceItem.Items ??= new List<TrackResourceLargeCultureItem>();
+            resourceItem.Items ??= new List<TrackLargeResourceCultureItem>();
 
             if (supportedCultures?.Count > 0)
             {
@@ -450,13 +450,13 @@ namespace FoxIDs.Client.Pages.Settings
                 {
                     if (!resourceItem.Items.Any(i => i.Culture.Equals(culture, StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        resourceItem.Items.Add(new TrackResourceLargeCultureItem { Culture = culture });
+                        resourceItem.Items.Add(new TrackLargeResourceCultureItem { Culture = culture });
                     }
                 }
             }
             else if (!resourceItem.Items.Any())
             {
-                resourceItem.Items.Add(new TrackResourceLargeCultureItem { Culture = Constants.Models.Resource.DefaultLanguage });
+                resourceItem.Items.Add(new TrackLargeResourceCultureItem { Culture = Constants.Models.Resource.DefaultLanguage });
             }
 
             resourceItem.Items = resourceItem.Items.OrderBy(i => i.Culture).ToList();

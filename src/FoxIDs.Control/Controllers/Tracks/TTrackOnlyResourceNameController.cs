@@ -70,6 +70,10 @@ namespace FoxIDs.Controllers
                 {
                     mTrack.ResourceEnvelope.Names = new List<ResourceName>();
                 }
+                if (mTrack.ResourceEnvelope.Resources == null)
+                {
+                    mTrack.ResourceEnvelope.Resources = new List<ResourceItem>();
+                }
 
                 ResourceName resourceName = null;
                 if (trackResourceName.Id > 0)

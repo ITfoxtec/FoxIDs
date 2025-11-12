@@ -6,9 +6,9 @@ namespace FoxIDs.Util
 {
     public static class RandomName
     {
-        public static string GenerateDefaultName()
+        public static string GenerateDefaultName(int length = Constants.Models.DefaultNameLength)
         {
-            return RandomGenerator.GenerateCode(Constants.Models.DefaultNameLength).ToLower();
+            return RandomGenerator.GenerateCode(length).ToLower();
         }
 
         public static string GenerateDefaultName(IEnumerable<string> notNames, int count = 0)

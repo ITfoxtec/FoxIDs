@@ -171,7 +171,9 @@ namespace FoxIDs.MappingProfiles
             CreateMap<ResourceCultureItem, Api.ResourceCultureItem>()
                 .ReverseMap();
             CreateMap<TrackLargeResource, Api.TrackLargeResourceItem>()
-                .ReverseMap();
+                .ReverseMap()
+                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => TrackLargeResource.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
             CreateMap<TrackLargeResourceCultureItem, Api.TrackLargeResourceCultureItem>()
                 .ReverseMap();
 

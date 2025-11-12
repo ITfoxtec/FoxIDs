@@ -66,7 +66,7 @@
                 <ul class="list-group">
                     @foreach (var trackOnlyResource in trackOnlyResources)
                     {
-                        <li class="list-group-item overflow-hidden @(trackOnlyResource.Edit ? "active" : string.Empty)">
+                        <li class="list-group-item @(trackOnlyResource.Edit ? "active" : "overflow-hidden")">
                             @if (!trackOnlyResource.Error.IsNullOrWhiteSpace())
                             {
                                 <div class="alert alert-danger" role="alert">
@@ -76,8 +76,8 @@
                             @if (trackOnlyResource.Edit)
                             {
                                 <PageEditForm @ref="trackOnlyResource.Form" TModel="ResourceItemViewModel" OnAfterInit="@(m => TrackOnlyResourceAfterInit(trackOnlyResource, m))" OnValidSubmit="@(async (editContext) => await OnEditTrackOnlyResourceValidSubmitAsync(trackOnlyResource, editContext))">
-                                    <div class="modal-header">
-                                        Resource @(trackOnlyResource.Form.Model.Id > 0 ? $"(ID: T{trackOnlyResource.Form.Model.Id})" : "")
+                                    <div class="modal-header sticky-header">
+                                        Resource @(trackOnlyResource.Form.Model.Id > 0 ? $"ID: T{trackOnlyResource.Form.Model.Id}" : "")
                                     </div>
                                     <div class="modal-body">
                                         <FInputText @bind-Value="trackOnlyResource.Form.Model.Name" For="@(() => trackOnlyResource.Form.Model.Name)" Focus="trackOnlyResource.CreateMode" />
@@ -167,7 +167,7 @@
                 <ul class="list-group">
                     @foreach (var largeResource in largeResources)
                     {
-                        <li class="list-group-item overflow-hidden @(largeResource.Edit ? "active" : string.Empty)">
+                        <li class="list-group-item @(largeResource.Edit ? "active" : "overflow-hidden")">
                             @if (!string.IsNullOrWhiteSpace(largeResource.Error))
                             {
                                 <div class="alert alert-danger" role="alert">
@@ -177,14 +177,14 @@
                             @if (largeResource.Edit)
                             {
                                 <PageEditForm @ref="largeResource.Form" TModel="TrackLargeResourceItemViewModel" OnAfterInit="LargeResourceAfterInit" OnValidSubmit="@(async (editContext) => await OnEditLargeResourceValidSubmitAsync(largeResource, editContext))">
-                                    <div class="modal-header">
-                                        @if (!largeResource.CreateMode && !string.IsNullOrWhiteSpace(largeResource.Id))
-                                        {
-                                            <span>Resource ID: @largeResource.Id</span>
-                                        }
+                                    <div class="modal-header sticky-header">
+                                        Large Resource @(largeResource.Form.Model.Name.IsNullOrWhiteSpace() ? "" : $"Name: {largeResource.Form.Model.Name}")
                                     </div>
                                     <div class="modal-body">
-                                        <FInputText @bind-Value="largeResource.Form.Model.Name" For="@(() => largeResource.Form.Model.Name)" Focus="largeResource.CreateMode" />
+                                        @if (largeResource.CreateMode)
+                                        {
+                                            <FInputText @bind-Value="largeResource.Form.Model.Name" For="@(() => largeResource.Form.Model.Name)" Focus="true" />
+                                        }
                                         <div class="form-group active-group active">
                                             <label class="label-control">Translations</label>
                                             <div class="card">
@@ -235,13 +235,8 @@
                             else
                             {
                                 <button type="button" class="btn btn-link text-left p-0" @onclick="@(async () => await ShowUpdateLargeResourceAsync(largeResource))">
-                                    @(string.IsNullOrWhiteSpace(largeResource.Name) ? largeResource.Id : largeResource.Name)
+                                    @(largeResource.Name)
                                 </button>
-                                @if (!string.IsNullOrWhiteSpace(largeResource.Id))
-                                {
-                                    <br />
-                                    <span>@largeResource.Id</span>
-                                }
                             }
                         </li>
                     }
@@ -264,7 +259,7 @@
                 <ul class="list-group">
                     @foreach (var resource in resources)
                     {
-                        <li class="list-group-item overflow-hidden @(resource.Edit ? "active" : string.Empty)">
+                        <li class="list-group-item @(resource.Edit ? "active" : "overflow-hidden")">
                             @if (!resource.Error.IsNullOrWhiteSpace())
                             {
                                 <div class="alert alert-danger" role="alert">
@@ -274,7 +269,7 @@
                             @if (resource.Edit)
                             {
                                 <PageEditForm @ref="resource.Form" TModel="ResourceItemViewModel" OnValidSubmit="@(async (editContext) => await OnEditResourceValidSubmitAsync(resource, editContext))">
-                                    <div class="modal-header">
+                                    <div class="modal-header sticky-header">
                                         Resource ID: @resource.Form.Model.Id
                                     </div>
                                     <div class="modal-body">

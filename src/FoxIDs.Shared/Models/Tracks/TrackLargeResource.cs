@@ -14,7 +14,22 @@ namespace FoxIDs.Models
             if (idKey == null) throw new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
 
-            return $"{Constants.Models.DataType.TrackLargeResource}:{idKey.TenantName}:{idKey.TrackName}:{idKey.UniqueId}";
+            return $"{Constants.Models.DataType.TrackLargeResource}:{idKey.TenantName}:{idKey.TrackName}:{idKey.Name}";
+        }
+
+        public static async Task<string> IdFormatAsync(RouteBinding routeBinding, string name)
+        {
+            if (routeBinding == null) new ArgumentNullException(nameof(routeBinding));
+            if (name == null) new ArgumentNullException(nameof(name));
+
+            var idKey = new IdKey
+            {
+                TenantName = routeBinding.TenantName,
+                TrackName = routeBinding.TrackName,
+                Name = name,
+            };
+
+            return await IdFormatAsync(idKey);
         }
 
         [Required]
@@ -24,7 +39,9 @@ namespace FoxIDs.Models
         public override string Id { get; set; }
 
         [Required]
-        [MaxLength(Constants.Models.Resource.NameLength)]
+        [MinLength(Constants.Models.Resource.LargeResource.NameMinLength)]
+        [MaxLength(Constants.Models.Resource.LargeResource.NameMaxLength)]
+        [RegularExpression(Constants.Models.Resource.LargeResource.NameRegExPattern)]
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
@@ -35,9 +52,10 @@ namespace FoxIDs.Models
         public class IdKey : Track.IdKey
         {
             [Required]
-            [MaxLength(Constants.Models.Resource.LargeResource.UniqueIdLength)]
-            [RegularExpression(Constants.Models.Resource.LargeResource.UniqueIdRegExPattern)]
-            public string UniqueId { get; set; }
+            [MinLength(Constants.Models.Resource.LargeResource.NameMinLength)]
+            [MaxLength(Constants.Models.Resource.LargeResource.NameMaxLength)]
+            [RegularExpression(Constants.Models.Resource.LargeResource.NameRegExPattern)]
+            public string Name { get; set; }
         }
     }
 }

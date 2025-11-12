@@ -257,6 +257,7 @@ namespace FoxIDs
             public const string CosmosPartitionKeyPath = "/partition_id";
 
             public const int DefaultNameLength = 8;
+            public const int DefaultLongNameLength = 20;
             public const int DefaultNameMaxAttempts = 3;
 
             public const int MasterPartitionIdLength = 30;
@@ -470,10 +471,11 @@ namespace FoxIDs
 
                 public static class LargeResource
                 {
-                    public const int IdLength = 200;
+                    public const int IdLength = 150;
                     public const string IdRegExPattern = @"^[\w:\-]*$";
-                    public const int UniqueIdLength = 40;
-                    public const string UniqueIdRegExPattern = @"^[a-z0-9]*$";
+                    public const int NameMinLength = 10;
+                    public const int NameMaxLength = 40;
+                    public const string NameRegExPattern = @"^[\w\-]*$";
                     public const int ValueLength = 40000;
                 }
             }

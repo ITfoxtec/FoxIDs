@@ -178,13 +178,13 @@
                             {
                                 <PageEditForm @ref="largeResource.Form" TModel="TrackLargeResourceItemViewModel" OnAfterInit="LargeResourceAfterInit" OnValidSubmit="@(async (editContext) => await OnEditLargeResourceValidSubmitAsync(largeResource, editContext))">
                                     <div class="modal-header">
-                                        @if (!largeResource.CreateMode && !string.IsNullOrWhiteSpace(largeResource.Id))
-                                        {
-                                            <span>Resource ID: @largeResource.Id</span>
-                                        }
+                                        Large Resource @(largeResource.Form.Model.Name.IsNullOrWhiteSpace() ? "" : $"(ID: T{largeResource.Form.Model.Name})")
                                     </div>
                                     <div class="modal-body">
-                                        <FInputText @bind-Value="largeResource.Form.Model.Name" For="@(() => largeResource.Form.Model.Name)" Focus="largeResource.CreateMode" />
+                                        @if (largeResource.CreateMode)
+                                        {
+                                            <FInputText @bind-Value="largeResource.Form.Model.Name" For="@(() => largeResource.Form.Model.Name)" Focus="true" />
+                                        }
                                         <div class="form-group active-group active">
                                             <label class="label-control">Translations</label>
                                             <div class="card">
@@ -235,13 +235,8 @@
                             else
                             {
                                 <button type="button" class="btn btn-link text-left p-0" @onclick="@(async () => await ShowUpdateLargeResourceAsync(largeResource))">
-                                    @(string.IsNullOrWhiteSpace(largeResource.Name) ? largeResource.Id : largeResource.Name)
+                                    @(largeResource.Name)
                                 </button>
-                                @if (!string.IsNullOrWhiteSpace(largeResource.Id))
-                                {
-                                    <br />
-                                    <span>@largeResource.Id</span>
-                                }
                             }
                         </li>
                     }

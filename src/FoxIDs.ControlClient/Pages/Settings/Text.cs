@@ -17,6 +17,7 @@ using Blazored.Toast.Services;
 using FoxIDs.Client.Models.Config;
 using System.Linq;
 using ITfoxtec.Identity;
+using FoxIDs.Util;
 
 namespace FoxIDs.Client.Pages.Settings
 {
@@ -34,7 +35,7 @@ namespace FoxIDs.Client.Pages.Settings
         private PageEditForm<FilterResourceViewModel> resourceFilterForm;
         private List<GeneralResourceViewModel> trackOnlyResources = new List<GeneralResourceViewModel>();
         private List<GeneralResourceViewModel> resources = new List<GeneralResourceViewModel>();
-    private List<TrackLargeResourceViewModel> largeResources = new List<TrackLargeResourceViewModel>();
+        private List<TrackLargeResourceViewModel> largeResources = new List<TrackLargeResourceViewModel>();
 
         private GeneralResourceSettingsViewModel generalTextSettings = new GeneralResourceSettingsViewModel();
         private Modal textSettingsModal;
@@ -307,25 +308,18 @@ namespace FoxIDs.Client.Pages.Settings
 
             try
             {
-                var resourceItem = !largeResource.Id.IsNullOrWhiteSpace() ? await TrackService.GetTrackLargeResourceAsync(largeResource.Id) : null;
+                var resourceItem = !largeResource.Name.IsNullOrWhiteSpace() ? await TrackService.GetTrackLargeResourceAsync(largeResource.Name) : null;
                 if (resourceItem == null)
                 {
                     largeResource.CreateMode = true;
-                    await largeResource.Form.InitAsync(new TrackLargeResourceItemViewModel { Name = largeResource.Name }, afterInit: afterInit =>
-                    {
-                        LargeResourceAfterInit(afterInit);
-                    });
+                    await largeResource.Form.InitAsync(new TrackLargeResourceItemViewModel { Name = RandomName.GenerateDefaultName(Constants.Models.DefaultLongNameLength) });
                 }
                 else
                 {
                     largeResource.CreateMode = false;
-                    largeResource.Name = resourceItem.Name;
-                    await largeResource.Form.InitAsync(resourceItem.Map<TrackLargeResourceItemViewModel>(), afterInit: afterInit =>
-                    {
-                        afterInit.Name = largeResource.Name;
-                        LargeResourceAfterInit(afterInit);
-                    });
+                    await largeResource.Form.InitAsync(resourceItem.Map<TrackLargeResourceItemViewModel>());
                 }
+
             }
             catch (TokenUnavailableException)
             {
@@ -356,15 +350,6 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                if (largeResource.CreateMode)
-                {
-                    var enItem = largeResource.Form.Model.Items?.FirstOrDefault(i => i.Culture.Equals(Constants.Models.Resource.DefaultLanguage, StringComparison.InvariantCultureIgnoreCase));
-                    if (enItem != null && enItem.Value.IsNullOrWhiteSpace())
-                    {
-                        enItem.Value = largeResource.Form.Model.Name;
-                    }
-                }
-
                 TrackLargeResourceItem resourceItem;
                 if (largeResource.CreateMode)
                 {
@@ -379,7 +364,6 @@ namespace FoxIDs.Client.Pages.Settings
                 resourceItemViewModel.Name = resourceItem.Name;
                 EnsureSupportedCultures(resourceItemViewModel);
 
-                largeResource.Id = resourceItem.Id;
                 largeResource.Name = resourceItem.Name;
                 largeResource.Form.UpdateModel(resourceItemViewModel);
 
@@ -418,9 +402,9 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                if (!largeResource.Id.IsNullOrWhiteSpace())
+                if (!largeResource.Name.IsNullOrWhiteSpace())
                 {
-                    await TrackService.DeleteTrackLargeResourceAsync(largeResource.Id);
+                    await TrackService.DeleteTrackLargeResourceAsync(largeResource.Name);
                 }
                 largeResources.Remove(largeResource);
                 toastService.ShowSuccess("Large text deleted.");
@@ -444,19 +428,12 @@ namespace FoxIDs.Client.Pages.Settings
 
             resourceItem.Items ??= new List<TrackLargeResourceCultureItem>();
 
-            if (supportedCultures?.Count > 0)
+            foreach (var culture in supportedCultures)
             {
-                foreach (var culture in supportedCultures)
+                if (!resourceItem.Items.Any(i => i.Culture.Equals(culture, StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    if (!resourceItem.Items.Any(i => i.Culture.Equals(culture, StringComparison.InvariantCultureIgnoreCase)))
-                    {
-                        resourceItem.Items.Add(new TrackLargeResourceCultureItem { Culture = culture });
-                    }
+                    resourceItem.Items.Add(new TrackLargeResourceCultureItem { Culture = culture });
                 }
-            }
-            else if (!resourceItem.Items.Any())
-            {
-                resourceItem.Items.Add(new TrackLargeResourceCultureItem { Culture = Constants.Models.Resource.DefaultLanguage });
             }
 
             resourceItem.Items = resourceItem.Items.OrderBy(i => i.Culture).ToList();

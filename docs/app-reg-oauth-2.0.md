@@ -1,4 +1,19 @@
-﻿# OAuth 2.0 application registration
+<!--
+{
+    "title":  "OAuth 2.0 application registration",
+    "description":  "FoxIDs OAuth 2.0 application registration enable you to connect an APIs as OAuth 2.0 resources. And connect your backend service using Client Credentials Grant.",
+    "ogTitle":  "OAuth 2.0 application registration",
+    "ogDescription":  "FoxIDs OAuth 2.0 application registration enable you to connect an APIs as OAuth 2.0 resources. And connect your backend service using Client Credentials Grant.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "app reg oauth 2.0, FoxIDs docs"
+                       }
+}
+-->
+
+# OAuth 2.0 application registration
 
 FoxIDs OAuth 2.0 application registration enable you to connect an APIs as [OAuth 2.0 resources](#oauth-20-resource). And connect your backend service using [Client Credentials Grant](#client-credentials-grant).
 
@@ -59,4 +74,5 @@ It is important to store client secrets securely, therefor client secrets are ha
 
 ## Resource Owner Password Credentials Grant
 Resource Owner Password Credentials Grant is not supported for security reasons because it is insecure and should not be used.
+
 

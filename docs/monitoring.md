@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Monitoring",
+    "description":  "You can collect logs and do health checks - If deployed in Azure App Service Container the logs are found in Analytics workspace / Application Insights - If deployed using Docker or Kubernetes logs are written to Stdout",
+    "ogTitle":  "Monitoring",
+    "ogDescription":  "You can collect logs and do health checks - If deployed in Azure App Service Container the logs are found in Analytics workspace / Application Insights - If deployed using Docker or Kubernetes logs are written to Stdout",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "monitoring, FoxIDs docs"
+                       }
+}
+-->
+
 # Monitoring
 You can collect logs and do health checks
  - If deployed in Azure App Service Container the logs are found in Analytics workspace / Application Insights 
@@ -26,4 +41,5 @@ Use one or more of the following parameters (case-insensitive):
 | `?all`                         | Automatically checks every component that is enabled in configuration. |                      |
 
 An invalid component name returns `400 Bad Request` with a JSON response describing the issue. If any requested component is unhealthy, the endpoint returns `503 Service Unavailable` and lists the failing checks.
+
 

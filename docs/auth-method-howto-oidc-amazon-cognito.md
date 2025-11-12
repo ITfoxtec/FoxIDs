@@ -1,4 +1,19 @@
-﻿# Connect to Amazon Cognito with OpenID Connect
+<!--
+{
+    "title":  "Connect to Amazon Cognito with OpenID Connect",
+    "description":  "FoxIDs can be connected to Amazon Cognito with OpenID Connect and authenticate users in your Amazon Cognito user pool.",
+    "ogTitle":  "Connect to Amazon Cognito with OpenID Connect",
+    "ogDescription":  "FoxIDs can be connected to Amazon Cognito with OpenID Connect and authenticate users in your Amazon Cognito user pool.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "auth method howto oidc amazon cognito, FoxIDs docs"
+                       }
+}
+-->
+
+# Connect to Amazon Cognito with OpenID Connect
 
 FoxIDs can be connected to Amazon Cognito with OpenID Connect and authenticate users in your Amazon Cognito user pool.
 
@@ -61,3 +76,4 @@ This chapter describes how to configure a connection with OpenID Connect Authori
 That's it, you are done.
  
 Your new Amazon Cognito authentication method can be selected as an allowed authentication method in an application registration.
+

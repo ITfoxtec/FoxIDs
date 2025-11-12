@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Environment Link",
+    "description":  "FoxIDs environments in the same tenant can be connected with environment links. An Environment Link acts mostly like OpenID Connect but it is simpler to configure and the steps it goes through is faster.",
+    "ogTitle":  "Environment Link",
+    "ogDescription":  "FoxIDs environments in the same tenant can be connected with environment links. An Environment Link acts mostly like OpenID Connect but it is simpler to configure and the steps it goes through is faster.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "howto environmentlink foxids, FoxIDs docs"
+                       }
+}
+-->
+
 # Environment Link
 
 FoxIDs environments in the same tenant can be connected with environment links. An Environment Link acts mostly like OpenID Connect but it is simpler to configure and the steps it goes through is faster. 
@@ -33,3 +48,4 @@ That's it, you are done.
 Your new authentication method `Environment X to Y` can now be selected as an allowed authentication method in the application registrations in you `Environment X` environment.  
 
 You can find the application registration `Environment X to Y` in the `Environment Y` environment where authentication method(s) can be selected.
+

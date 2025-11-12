@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "FoxIDs development / code contribution",
+    "description":  "You can run FoxIDs locally in Visual Studio on your development machine.",
+    "ogTitle":  "FoxIDs development / code contribution",
+    "ogDescription":  "You can run FoxIDs locally in Visual Studio on your development machine.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "foxids dev, FoxIDs docs"
+                       }
+}
+-->
+
 # FoxIDs development / code contribution 
 
 You can run FoxIDs locally in Visual Studio on your development machine. 
@@ -74,4 +89,5 @@ It is e.g., possible to generate client code with NSwag:
 - Automatically generating API clients on build with NSwag https://blog.sanderaernouts.com/autogenerate-api-client-with-nswag
 
 > You can find a code sample in [FoxIDs.SampleSeedTool](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/tools/FoxIDs.SampleSeedTool) which automatically generating an API clients on build. When the [GenerateCode](https://github.com/ITfoxtec/FoxIDs.Samples/blob/main/tools/FoxIDs.SampleSeedTool/FoxIDs.SampleSeedTool.csproj#L9C17-L9C22) is true in the project file.
+
 

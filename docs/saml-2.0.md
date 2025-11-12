@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "SAML 2.0",
+    "description":  "FoxIDs support SAML 2.0 as both authentication method and application registration.",
+    "ogTitle":  "SAML 2.0",
+    "ogDescription":  "FoxIDs support SAML 2.0 as both authentication method and application registration.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "saml 2.0, FoxIDs docs"
+                       }
+}
+-->
+
 # SAML 2.0
 
 FoxIDs support SAML 2.0 as both authentication method and application registration.
@@ -39,3 +54,4 @@ Claim mapping between SAML 2.0 claim types and JWT claim types is created automa
 > SAML 2.0 claims are internally [converted to JWT claims](connections.md#jwt-and-saml) between authentication method and application registration.
 
 ![Configure JWT and SAML 2.0 mappings](images/configure-jwt-saml-mappings.png)
+

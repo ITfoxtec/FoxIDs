@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "FoxIDs Frequently Asked Questions",
+    "description":  "Short answers to popular FoxIDs topics including claim pass-through, skipping the \"Pick an account\" dialog, logout issues after certificate changes, and keeping SAML metadata in sync.",
+    "ogTitle":  "FoxIDs Frequently Asked Questions",
+    "ogDescription":  "Short answers to popular FoxIDs topics including claim pass-through, skipping the \"Pick an account\" dialog, logout issues after certificate changes, and keeping SAML metadata in sync.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "FoxIDs FAQ, troubleshooting, claims, logout, SAML metadata"
+                       }
+}
+-->
+
 # FAQ
 
 ## Way is not all claims passed to the application?

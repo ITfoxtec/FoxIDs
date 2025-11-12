@@ -1,3 +1,18 @@
+<!--
+{
+  "title": "Get started with FoxIDs",
+  "description": "Launch your FoxIDs tenant, pick the right environments, and configure your first OpenID Connect application in minutes.",
+  "ogTitle": "Get started with FoxIDs",
+  "ogDescription": "Follow this FoxIDs get started guide to create a tenant, manage environments, and register your first secure application.",
+  "ogType": "article",
+  "ogImage": "/images/foxids_logo.png",
+  "twitterCard": "summary_large_image",
+  "additionalMeta": {
+    "keywords": "FoxIDs get started, FoxIDs docs, identity access management guide"
+  }
+}
+-->
+
 # Get started
 FoxIDs Cloud lets you create a tenant in minutes and start configuring secure identity flows right away. [Create a new tenant](https://www.foxids.com/action/createtenant) or [log in](https://www.foxids.com/action/login) with an existing account to open FoxIDs Control.
 

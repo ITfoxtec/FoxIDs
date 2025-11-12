@@ -1,4 +1,19 @@
-﻿# Deployment
+<!--
+{
+    "title":  "Deployment",
+    "description":  "FoxIDs support multiple deployment options and you can host it yourself both in the cloud or on-premises.",
+    "ogTitle":  "Deployment",
+    "ogDescription":  "FoxIDs support multiple deployment options and you can host it yourself both in the cloud or on-premises.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "deployment, FoxIDs docs"
+                       }
+}
+-->
+
+# Deployment
 
 FoxIDs support multiple deployment options and you can host it yourself both in the cloud or on-premises.
 
@@ -17,4 +32,5 @@ After deployment consider to:
 - Improve the password quality by [uploading risk passwords](risk-passwords.md). 
 - Configure [monitoring](monitoring.md).
 - [Upload your users](users-upload.md) from a SVC file, with or without a password.
+
 

@@ -1,4 +1,10 @@
 ﻿(function () {
+    // ****
+    // Compensating controls for CVE-2024-6531 
+    $('[data-toggle="tooltip"]').tooltip({ html: false });
+    $('[data-toggle="popover"]').popover({ html: false });
+    // ****
+
     var setFocus = true;
 
     $('.input-control').each(function () {

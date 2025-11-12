@@ -38,6 +38,7 @@ namespace FoxIDs.Controllers.Client
                 EnablePayment = settings.Payment?.EnablePayment == true && settings.Usage?.EnableInvoice == true,
                 PaymentTestMode = settings.Payment != null ? settings.Payment.TestMode : true,
                 MollieProfileId = settings.Payment?.MollieProfileId,
+                SettingsAddress = mapper.Map<Api.SettingsAddress>(settings.Address),
             });
         }
     }

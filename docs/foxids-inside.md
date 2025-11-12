@@ -4,7 +4,7 @@
 
 FoxIDs is divided into logical elements.
 
-- **Tenant** contain the company, organization, individual etc. security service. A tenant contains environments.
+- **Tenant** contain the company, organization etc. security service. A tenant contains environments.
 - **Environment** is a production, QA, test etc. environment. Each environment is an Identity Provider with a [user repository](users.md), a unique [certificate](certificates.md) and a environment contains the authentication methods and application registrations.  
 In some cases, it can be an advantage to place external connections in a separate environments to configure connections specific certificates or log levels or just generalize the connections.
 - **Authentication method** is a upwards trust / federation with [OpenID Connect 1.0](auth-method-oidc.md) and [SAML 2.0](auth-method-saml-2.0.md) or [login](login.md) configuration.
@@ -12,7 +12,7 @@ In some cases, it can be an advantage to place external connections in a separat
 
 ![FoxIDs structure](images/structure.svg)
 
-> FoxIDs support unlimited tenants. Unlimited environments in a tenant. Unlimited users and unlimited authentication methods and application registrations in a environment.
+> FoxIDs support unlimited tenants. Unlimited environments in a tenant. Unlimited users in a environment.
 
 ## Limitations
 

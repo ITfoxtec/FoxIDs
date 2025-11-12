@@ -1,14 +1,14 @@
 <!--
 {
-    "title":  "FAQ",
-    "description":  "**Only the sub, sid, acr and amr claims are pass through. I get more claims from the authentication method by using log claims trace. What am I doing wrong?**",
-    "ogTitle":  "FAQ",
-    "ogDescription":  "**Only the sub, sid, acr and amr claims are pass through. I get more claims from the authentication method by using log claims trace. What am I doing wrong?**",
+    "title":  "FoxIDs Frequently Asked Questions",
+    "description":  "Short answers to popular FoxIDs topics including claim pass-through, skipping the \"Pick an account\" dialog, logout issues after certificate changes, and keeping SAML metadata in sync.",
+    "ogTitle":  "FoxIDs Frequently Asked Questions",
+    "ogDescription":  "Short answers to popular FoxIDs topics including claim pass-through, skipping the \"Pick an account\" dialog, logout issues after certificate changes, and keeping SAML metadata in sync.",
     "ogType":  "article",
     "ogImage":  "/images/foxids_logo.png",
     "twitterCard":  "summary_large_image",
     "additionalMeta":  {
-                           "keywords":  "faq, FoxIDs docs"
+                           "keywords":  "FoxIDs FAQ, troubleshooting, claims, logout, SAML metadata"
                        }
 }
 -->

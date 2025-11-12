@@ -250,16 +250,10 @@ namespace FoxIDs.Logic
             yield return UrlCombine.Combine(baseUrl, tenantName, "authentication/logout_callback");
         }
 
-        public async Task CreateDefaultTracksDocmentsAsync(string tenantName, string defaultUserEmail = null, string defaultUserPassword = null)
+        public async Task CreateDefaultTracksDocmentsAsync(string tenantName)
         {
             var testTrackName = await CreateTrackDocumentsAsync(tenantName, Constants.TrackDefaults.DefaultTrackTestDisplayName, RandomName.GenerateDefaultName());
             var prodTrackName = await CreateTrackDocumentsAsync(tenantName, Constants.TrackDefaults.DefaultTrackProductionDisplayName, Constants.TrackDefaults.DefaultTrackProductionName);
-
-            if (!defaultUserEmail.IsNullOrWhiteSpace() && !defaultUserPassword.IsNullOrWhiteSpace())
-            {
-                await CreateDefaultUserDocumentAsync(tenantName, testTrackName, defaultUserEmail, defaultUserPassword);
-                await CreateDefaultUserDocumentAsync(tenantName, prodTrackName, defaultUserEmail, defaultUserPassword);
-            }
         }
 
         private async Task<string> CreateTrackDocumentsAsync(string tenantName, string trackDisplayName, string trackName)
@@ -273,18 +267,6 @@ namespace FoxIDs.Logic
             await CreateTrackDocumentAsync(tenantName, mTrack);
             await CreateLoginDocumentAsync(tenantName, mTrack.Name);
             return mTrack.Name;
-        }
-
-        public async Task CreateDefaultUserDocumentAsync(string tenantName, string trackName, string email, string password)
-        {
-            var claims = new List<Claim> { new Claim("info", "This user can be deleted.") };
-            await accountLogic.CreateUserAsync(new CreateUserObj 
-            {
-                UserIdentifier = new UserIdentifier { Email = email },
-                Password = password, 
-                Claims = claims,
-                EmailVerified = true 
-            }, checkUserAndPasswordPolicy: false, tenantName: tenantName, trackName: trackName);
         }
     }
 }

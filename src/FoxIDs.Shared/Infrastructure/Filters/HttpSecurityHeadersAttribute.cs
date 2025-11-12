@@ -52,6 +52,12 @@ namespace FoxIDs.Infrastructure.Filters
                 if (isHtmlContent)
                 {
                     HeaderXFrameOptions(httpContext);
+
+                    var permissionsPolicy = PermissionsPolicy(httpContext);
+                    if (!permissionsPolicy.IsNullOrEmpty())
+                    {
+                        httpContext.Response.SetHeader("Permissions-Policy", permissionsPolicy);
+                    }
                 }
 
                 var csp = CreateCsp(httpContext).ToSpaceList();
@@ -138,6 +144,11 @@ namespace FoxIDs.Infrastructure.Filters
             protected virtual string CspFrameAncestors(HttpContext httpContext)
             {
                 return "frame-ancestors 'none';";
+            }
+
+            protected virtual string PermissionsPolicy(HttpContext httpContext)
+            {
+                return "interest-cohort=()";
             }
         }
     }

@@ -1,10 +1,12 @@
-using System.Threading.Tasks;
+using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Logic;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Controllers
 {
     [Route(Constants.Routes.HealthController)]
+    [HttpSecurityHeaders]
     public class HealthController : HealthControllerBase
     {
         public HealthController(HealthCheckLogic healthCheckLogic)

@@ -1,4 +1,19 @@
-﻿# SAML 2.0 application registration
+<!--
+{
+    "title":  "SAML 2.0 application registration",
+    "description":  "FoxIDs SAML 2.0 application registration enable you to connect an SAML 2.0 based application.",
+    "ogTitle":  "SAML 2.0 application registration",
+    "ogDescription":  "FoxIDs SAML 2.0 application registration enable you to connect an SAML 2.0 based application.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "app reg saml 2.0, FoxIDs docs"
+                       }
+}
+-->
+
+# SAML 2.0 application registration
 
 FoxIDs SAML 2.0 application registration enable you to connect an SAML 2.0 based application. 
 
@@ -71,5 +86,6 @@ The `AuthnContextClassRef` property can be set in the `Login` method in `SamlCon
 
         return binding.Bind(saml2AuthnRequest).ToActionResult();
     }
+
 
 

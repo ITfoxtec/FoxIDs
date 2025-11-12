@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Languages",
+    "description":  "FoxIDs has multi-language support with support for the following languages:",
+    "ogTitle":  "Languages",
+    "ogDescription":  "FoxIDs has multi-language support with support for the following languages:",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "language, FoxIDs docs"
+                       }
+}
+-->
+
 # Languages
 FoxIDs has multi-language support with support for the following languages:
 
@@ -80,3 +95,4 @@ Add translation to a environment:
 This is an example of a text element translated into two languages; Danish (da) and Spanish (es).
 
 ![Configure text](images/configure-tenant-text.png)
+

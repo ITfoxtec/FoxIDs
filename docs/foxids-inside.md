@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "FoxIDs inside",
+    "description":  "FoxIDs keeps tenants isolated and separates environments, with each environment operating as its own identity provider.",
+    "ogTitle":  "FoxIDs inside",
+    "ogDescription":  "FoxIDs keeps tenants isolated and separates environments, with each environment operating as its own identity provider.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "foxids inside, FoxIDs docs"
+                       }
+}
+-->
+
 # FoxIDs inside
 
 ## Structure

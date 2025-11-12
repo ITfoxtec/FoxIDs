@@ -1,4 +1,19 @@
-﻿# Connections
+<!--
+{
+    "title":  "Connections",
+    "description":  "FoxIDs is configured with authentication methods and application registrations. Authentication methods authenticate the internal users or optionally by trust to an external Identity Provider (IdP). Applications and APIs are connected to ...",
+    "ogTitle":  "Connections",
+    "ogDescription":  "FoxIDs is configured with authentication methods and application registrations. Authentication methods authenticate the internal users or optionally by trust to an external Identity Provider (IdP). Applications and APIs are connected to ...",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "connections, FoxIDs docs"
+                       }
+}
+-->
+
+# Connections
 
 FoxIDs is configured with authentication methods and application registrations. Authentication methods authenticate the internal users or optionally by trust to an external Identity Provider (IdP). Applications and APIs are connected to FoxIDs as application registrations.
 
@@ -40,3 +55,4 @@ OpenID Connect, OAuth 2.0, JWT and JWT claims are first class citizens in FoxIDs
 
 FoxIDs converts between standards where attributes are converted to the same internal representation using JWT claims and OAuth 2.0 / OpenID Connect attributes.  
 Therefor, SAML 2.0 claims is internally converted to JWT claims between authentication method and application registration.
+

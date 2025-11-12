@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Token exchange",
+    "description":  "FoxIDs support two different sceneries of token exchange: token exchange in the same environment and token exchange by trust to external IdP/OP.",
+    "ogTitle":  "Token exchange",
+    "ogDescription":  "FoxIDs support two different sceneries of token exchange: token exchange in the same environment and token exchange by trust to external IdP/OP.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "token exchange, FoxIDs docs"
+                       }
+}
+-->
+
 # Token exchange
 
 FoxIDs support two different sceneries of token exchange: [token exchange in the same environment](#token-exchange-in-the-same-environment) and [token exchange by trust to external IdP/OP](#token-exchange-by-trust). 
@@ -292,3 +307,4 @@ Cache-Control: no-cache, no-store
     "expires_in":600
 }
 ```
+

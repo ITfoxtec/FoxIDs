@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Connect to Context Handler with FoxIDs",
+    "description":  "\u003e By using FoxIDs it become straight forward and easy to connect to Context Handler / F\u0026aelig;lleskommunal Adgangsstyring (Danish identity broker).",
+    "ogTitle":  "Connect to Context Handler with FoxIDs",
+    "ogDescription":  "\u003e By using FoxIDs it become straight forward and easy to connect to Context Handler / F\u0026aelig;lleskommunal Adgangsstyring (Danish identity broker).",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "gs context handler, FoxIDs docs"
+                       }
+}
+-->
+
 # Connect to Context Handler with FoxIDs
 
 > By using FoxIDs it become straight forward and easy to connect to Context Handler / F&aelig;lleskommunal Adgangsstyring (Danish identity broker).

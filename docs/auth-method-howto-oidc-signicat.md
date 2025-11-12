@@ -1,4 +1,19 @@
-﻿# Connect to Signicat with OpenID Connect
+<!--
+{
+    "title":  "Connect to Signicat with OpenID Connect",
+    "description":  "FoxIDs can be connected to Signicat with OpenID Connect and thereby authenticating end users with MitID and all other credentials supported by Signicat.",
+    "ogTitle":  "Connect to Signicat with OpenID Connect",
+    "ogDescription":  "FoxIDs can be connected to Signicat with OpenID Connect and thereby authenticating end users with MitID and all other credentials supported by Signicat.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "auth method howto oidc signicat, FoxIDs docs"
+                       }
+}
+-->
+
+# Connect to Signicat with OpenID Connect
 
 FoxIDs can be connected to Signicat with OpenID Connect and thereby authenticating end users with MitID and all other credentials supported by Signicat.
 
@@ -47,3 +62,4 @@ That's it, you are done.
 
 > The new authentication method can now be selected as an allowed authentication method in a application registration.  
 > The application registration can read the claims from the authentication method. You can optionally add a `*` in the application registration Issue claims list to issue all the claims to your application.
+

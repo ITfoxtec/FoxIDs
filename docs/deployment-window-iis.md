@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Windows Server with IIS",
+    "description":  "Deploy FoxIDs on Windows Server with Internet Information Services (IIS).",
+    "ogTitle":  "Windows Server with IIS",
+    "ogDescription":  "Deploy FoxIDs on Windows Server with Internet Information Services (IIS).",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "deployment window iis, FoxIDs docs"
+                       }
+}
+-->
+
 # Windows Server with IIS
 
 Deploy FoxIDs on Windows Server with Internet Information Services (IIS).
@@ -207,3 +222,4 @@ Then click on the `main` tenant and authenticate once again with the same defaul
 > The default admin user and password are the same for both the `master` tenant and the `main` tenant, but it is two different users. 
 
 You are now logged into the `main` tenant and can start to configure your [applications and authentication methods](connections.md).
+

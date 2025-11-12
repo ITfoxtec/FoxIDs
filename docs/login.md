@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Login, Home Realm Discovery and MFA",
+    "description":  "FoxIDs handle user login in the login authentication method. There can be configured a number of login authentication methods per environment with different configurations and look and feel.",
+    "ogTitle":  "Login, Home Realm Discovery and MFA",
+    "ogDescription":  "FoxIDs handle user login in the login authentication method. There can be configured a number of login authentication methods per environment with different configurations and look and feel.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "login, FoxIDs docs"
+                       }
+}
+-->
+
 # Login, Home Realm Discovery and MFA
 FoxIDs handle user login in the login authentication method. There can be configured a number of login authentication methods per environment with different configurations and [look and feel](customisation.md).
 
@@ -170,3 +185,4 @@ The user session become a persistent session if either the persistent session li
 
 ### Configure claims
 You can change the claims and do claim tasks with [claim transforms and claim tasks](claim-transform-task.md).
+

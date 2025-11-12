@@ -59,11 +59,9 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             services.AddHttpClient(BaseService.HttpClientSecureLogicalName, client => client.BaseAddress = new Uri(hostEnvironment.BaseAddress))
                .AddHttpMessageHandler<AccessTokenMessageHandler>()
                .AddHttpMessageHandler<CheckResponseMessageHandler>();
-            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(BaseService.HttpClientSecureLogicalName));
 
             services.AddHttpClient(BaseService.HttpClientLogicalName, client => client.BaseAddress = new Uri(hostEnvironment.BaseAddress))   
                 .AddHttpMessageHandler<CheckResponseMessageHandler>();
-            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(BaseService.HttpClientLogicalName));
 
             var settings = new ClientSettings();
             configuration.Bind("Settings", settings);

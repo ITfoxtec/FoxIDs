@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "External Password API",
+    "description":  "Use an external password API when you need FoxIDs to (a) delegate password validation to an existing password store or policy engine, (b) notify an external system about password changes performed in FoxIDs, or (c) handle both scenarios.",
+    "ogTitle":  "External Password API",
+    "ogDescription":  "Use an external password API when you need FoxIDs to (a) delegate password validation to an existing password store or policy engine, (b) notify an external system about password changes performed in FoxIDs, or (c) handle both scenarios.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "external password api, FoxIDs docs"
+                       }
+}
+-->
+
 # External Password API
 
 Use an external password API when you need FoxIDs to (a) delegate password validation to an existing password store or policy engine, (b) notify an external system about password changes performed in FoxIDs, or (c) handle both scenarios.

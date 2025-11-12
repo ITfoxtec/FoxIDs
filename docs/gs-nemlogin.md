@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Connect to NemLog-in with FoxIDs",
+    "description":  "\u003e By using FoxIDs it become straight forward and easy to connect to NemLog-in (Danish IdP).",
+    "ogTitle":  "Connect to NemLog-in with FoxIDs",
+    "ogDescription":  "\u003e By using FoxIDs it become straight forward and easy to connect to NemLog-in (Danish IdP).",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "gs nemlogin, FoxIDs docs"
+                       }
+}
+-->
+
 # Connect to NemLog-in with FoxIDs
 
 > By using FoxIDs it become straight forward and easy to connect to NemLog-in (Danish IdP).

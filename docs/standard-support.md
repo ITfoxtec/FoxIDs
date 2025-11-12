@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Supported standards",
+    "description":  "- All tokens are JSON Web Token (JWT) - RFC 7519 - OpenID Connect 1.0 supported in both application registrations and authentication methods - OpenID Connect Core 1.0 - Client Authentication methods: client_secret_basic, client_secret_po...",
+    "ogTitle":  "Supported standards",
+    "ogDescription":  "- All tokens are JSON Web Token (JWT) - RFC 7519 - OpenID Connect 1.0 supported in both application registrations and authentication methods - OpenID Connect Core 1.0 - Client Authentication methods: client_secret_basic, client_secret_po...",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "standard support, FoxIDs docs"
+                       }
+}
+-->
+
 # Supported standards
 
 - All tokens are JSON Web Token (JWT)

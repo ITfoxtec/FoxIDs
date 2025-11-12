@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Logging",
+    "description":  "FoxIDs default log errors and events including the time and the client IP address.",
+    "ogTitle":  "Logging",
+    "ogDescription":  "FoxIDs default log errors and events including the time and the client IP address.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "logging, FoxIDs docs"
+                       }
+}
+-->
+
 # Logging
 
 FoxIDs default log errors and events including the time and the client IP address. 
@@ -50,5 +65,6 @@ It can be configured which logs should be logged to an external repository with 
 Add external Azure Application Insights with a log stream and select which logs should be sent.
 
 ![Log stream - Application Insights](images/configure-log-stream-appinsight.png)
+
 
 

@@ -1,15 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using FoxIDs.Logic;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FoxIDs.Controllers
 {
     [Route(Constants.Routes.HealthController)]
-    public class HealthController : Controller
+    public class HealthController : HealthControllerBase
     {
+        public HealthController(HealthCheckLogic healthCheckLogic)
+            : base(healthCheckLogic)
+        { }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return Ok();
+            return await HandleHealthAsync();
         }
     }
 }

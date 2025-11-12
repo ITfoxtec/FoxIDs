@@ -24,7 +24,7 @@ namespace FoxIDs.UnitTests
             var claimTransformations = new List<ClaimTransform> { new OAuthClaimTransform
             { 
                 Type = ClaimTransformTypes.Constant, 
-                ClaimOut = claimOut, 
+                ClaimsOut = [claimOut], 
                 Transformation = constandValue 
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
@@ -42,7 +42,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.Constant,
                 Action = ClaimTransformActions.Replace,
-                ClaimOut = claimOut,
+                ClaimsOut = [claimOut],
                 Transformation = constandValue
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
@@ -57,7 +57,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.Constant,
                 Action = ClaimTransformActions.AddIfNot,
-                ClaimOut = "some-constant"
+                ClaimsOut = [ "some-constant" ]
             };
             await Assert.ThrowsAsync<NotSupportedException>(async () => await claimTransformation.ValidateObjectAsync());
         }
@@ -69,7 +69,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.Constant,
                 Action = ClaimTransformActions.ReplaceIfNot,
-                ClaimOut = "some-constant"
+                ClaimsOut = [ "some-constant" ]
             };
             await Assert.ThrowsAsync<NotSupportedException>(async () => await claimTransformation.ValidateObjectAsync());
         }
@@ -81,7 +81,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.Constant,
                 Action = ClaimTransformActions.Remove,
-                ClaimOut = "some-constant"
+                ClaimsOut = ["some-constant"]
             };
             await Assert.ThrowsAsync<NotSupportedException>(async () => await claimTransformation.ValidateObjectAsync());
         }
@@ -99,7 +99,7 @@ namespace FoxIDs.UnitTests
                 Type = ClaimTransformTypes.MatchClaim,
                 Action = ClaimTransformActions.Add,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut,
+                ClaimsOut =[claimOut],
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
@@ -120,7 +120,7 @@ namespace FoxIDs.UnitTests
                 Type = ClaimTransformTypes.MatchClaim,
                 Action = ClaimTransformActions.Replace,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut,
+                ClaimsOut =[claimOut],
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
@@ -141,7 +141,7 @@ namespace FoxIDs.UnitTests
                 Type = ClaimTransformTypes.MatchClaim,
                 Action = ClaimTransformActions.AddIfNot,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut,
+                ClaimsOut =[claimOut],
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
@@ -162,7 +162,7 @@ namespace FoxIDs.UnitTests
                 Type = ClaimTransformTypes.MatchClaim,
                 Action = ClaimTransformActions.ReplaceIfNot,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut,
+                ClaimsOut =[claimOut],
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
@@ -181,7 +181,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.MatchClaim,
                 Action = ClaimTransformActions.Remove,
-                ClaimOut = claimOut
+                ClaimsOut =[claimOut]
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
             var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
@@ -201,7 +201,7 @@ namespace FoxIDs.UnitTests
             { 
                 Type = ClaimTransformTypes.Match, 
                 ClaimsIn = claimIn.ToList(), 
-                ClaimOut = claimOut,
+                ClaimsOut =[claimOut],
                 Transformation = transformation, 
                 TransformationExtension = transformationExtension 
             } };
@@ -226,7 +226,7 @@ namespace FoxIDs.UnitTests
                 Type = ClaimTransformTypes.Match,
                 Action = ClaimTransformActions.Replace,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut,
+                ClaimsOut =[claimOut],
                 Transformation = transformation,
                 TransformationExtension = transformationExtension
             } };
@@ -251,7 +251,7 @@ namespace FoxIDs.UnitTests
                 Type = ClaimTransformTypes.Match,
                 Action = ClaimTransformActions.AddIfNot,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut,
+                ClaimsOut =[claimOut],
                 Transformation = transformation,
                 TransformationExtension = transformationExtension
             } };
@@ -277,7 +277,7 @@ namespace FoxIDs.UnitTests
                 Type = ClaimTransformTypes.Match,
                 Action = ClaimTransformActions.ReplaceIfNot,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut,
+                ClaimsOut =[claimOut],
                 Transformation = transformation,
                 TransformationExtension = transformationExtension
             } };
@@ -300,7 +300,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.Match,
                 Action = ClaimTransformActions.Remove,
-                ClaimOut = claimOut,
+                ClaimsOut =[claimOut],
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
@@ -321,7 +321,7 @@ namespace FoxIDs.UnitTests
                 Type = ClaimTransformTypes.RegexMatch,
                 Action = ClaimTransformActions.Add,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut,
+                ClaimsOut =[claimOut],
                 Transformation = transformation,
                 TransformationExtension = transformationExtension
             } };
@@ -344,7 +344,7 @@ namespace FoxIDs.UnitTests
                 Type = ClaimTransformTypes.RegexMatch,
                 Action = ClaimTransformActions.Replace,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut,
+                ClaimsOut =[claimOut],
                 Transformation = transformation,
                 TransformationExtension = transformationExtension
             } };
@@ -368,7 +368,7 @@ namespace FoxIDs.UnitTests
                 Type = ClaimTransformTypes.RegexMatch,
                 Action = ClaimTransformActions.AddIfNot,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut,
+                ClaimsOut =[claimOut],
                 Transformation = transformation,
                 TransformationExtension = transformationExtension
             } };
@@ -392,7 +392,7 @@ namespace FoxIDs.UnitTests
                 Type = ClaimTransformTypes.RegexMatch,
                 Action = ClaimTransformActions.ReplaceIfNot,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut,
+                ClaimsOut =[claimOut],
                 Transformation = transformation,
                 TransformationExtension = transformationExtension
             } };
@@ -415,7 +415,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.RegexMatch,
                 Action = ClaimTransformActions.Remove,
-                ClaimOut = claimOut,
+                ClaimsOut =[claimOut],
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
@@ -434,7 +434,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.Map,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut
+                ClaimsOut =[claimOut]
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
             var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
@@ -454,7 +454,7 @@ namespace FoxIDs.UnitTests
                 Type = ClaimTransformTypes.Map,
                 Action = ClaimTransformActions.Replace,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut
+                ClaimsOut =[claimOut]
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
             var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
@@ -469,7 +469,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.Map,
                 Action = ClaimTransformActions.AddIfNot,
-                ClaimOut = "some-constant"
+                ClaimsOut = [ "some-constant" ]
             };
             await Assert.ThrowsAsync<NotSupportedException>(async () => await claimTransformation.ValidateObjectAsync());
         }
@@ -486,7 +486,7 @@ namespace FoxIDs.UnitTests
                 Type = ClaimTransformTypes.Map,
                 Action = ClaimTransformActions.AddIfNotOut,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut
+                ClaimsOut =[claimOut]
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
             var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
@@ -501,7 +501,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.Map,
                 Action = ClaimTransformActions.ReplaceIfNot,
-                ClaimOut = "some-constant"
+                ClaimsOut = [ "some-constant" ]
             };
             await Assert.ThrowsAsync<NotSupportedException>(async () => await claimTransformation.ValidateObjectAsync());
         }
@@ -513,7 +513,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.Map,
                 Action = ClaimTransformActions.Remove,
-                ClaimOut = "some-constant"
+                ClaimsOut = [ "some-constant" ]
             };
             await Assert.ThrowsAsync<NotSupportedException>(async () => await claimTransformation.ValidateObjectAsync());
         }
@@ -530,7 +530,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.RegexMap,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut,
+                ClaimsOut =[claimOut],
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
@@ -551,7 +551,7 @@ namespace FoxIDs.UnitTests
                 Type = ClaimTransformTypes.RegexMap,
                 Action = ClaimTransformActions.Replace,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut,
+                ClaimsOut =[claimOut],
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
@@ -567,7 +567,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.RegexMap,
                 Action = ClaimTransformActions.AddIfNot,
-                ClaimOut = "some-constant"
+                ClaimsOut = [ "some-constant" ]
             };
             await Assert.ThrowsAsync<NotSupportedException>(async () => await claimTransformation.ValidateObjectAsync());
         }
@@ -585,7 +585,7 @@ namespace FoxIDs.UnitTests
                 Type = ClaimTransformTypes.RegexMap,
                     Action = ClaimTransformActions.AddIfNotOut,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut,
+                ClaimsOut =[claimOut],
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
@@ -601,7 +601,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.RegexMap,
                 Action = ClaimTransformActions.ReplaceIfNot,
-                ClaimOut = "some-constant"
+                ClaimsOut = [ "some-constant" ]
             };
             await Assert.ThrowsAsync<NotSupportedException>(async () => await claimTransformation.ValidateObjectAsync());
         }
@@ -613,7 +613,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.RegexMap,
                 Action = ClaimTransformActions.Remove,
-                ClaimOut = "some-constant"
+                ClaimsOut = [ "some-constant" ]
             };
             await Assert.ThrowsAsync<NotSupportedException>(async () => await claimTransformation.ValidateObjectAsync());
         }
@@ -632,7 +632,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.Concatenate, 
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut, 
+                ClaimsOut =[claimOut], 
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
@@ -656,7 +656,7 @@ namespace FoxIDs.UnitTests
                 Type = ClaimTransformTypes.Concatenate,
                 Action = ClaimTransformActions.Replace,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut,
+                ClaimsOut =[claimOut],
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
@@ -672,7 +672,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.Concatenate,
                 Action = ClaimTransformActions.AddIfNot,
-                ClaimOut = "some-constant"
+                ClaimsOut = [ "some-constant" ]
             };
             await Assert.ThrowsAsync<NotSupportedException>(async () => await claimTransformation.ValidateObjectAsync());
         }
@@ -684,7 +684,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.Concatenate,
                 Action = ClaimTransformActions.ReplaceIfNot,
-                ClaimOut = "some-constant"
+                ClaimsOut = [ "some-constant" ]
             };
             await Assert.ThrowsAsync<NotSupportedException>(async () => await claimTransformation.ValidateObjectAsync());
         }
@@ -696,7 +696,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.Concatenate,
                 Action = ClaimTransformActions.Remove,
-                ClaimOut = "some-constant"
+                ClaimsOut = [ "some-constant" ]
             };
             await Assert.ThrowsAsync<NotSupportedException>(async () => await claimTransformation.ValidateObjectAsync());
         }
@@ -717,7 +717,7 @@ namespace FoxIDs.UnitTests
             {
                 Type = ClaimTransformTypes.DkPrivilege,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut
+                ClaimsOut =[claimOut]
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
             var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
@@ -749,7 +749,7 @@ namespace FoxIDs.UnitTests
                 Type = ClaimTransformTypes.DkPrivilege,
                  Action = ClaimTransformActions.Replace,
                 ClaimsIn = claimIn.ToList(),
-                ClaimOut = claimOut
+                ClaimsOut =[claimOut]
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
             var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);

@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Reverse proxy",
+    "description":  "It is recommended to place both the FoxIDs site and the FoxIDs Control site behind a reverse proxy.",
+    "ogTitle":  "Reverse proxy",
+    "ogDescription":  "It is recommended to place both the FoxIDs site and the FoxIDs Control site behind a reverse proxy.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "reverse proxy, FoxIDs docs"
+                       }
+}
+-->
+
 # Reverse proxy
 It is recommended to place both the FoxIDs site and the FoxIDs Control site behind a reverse proxy. 
 

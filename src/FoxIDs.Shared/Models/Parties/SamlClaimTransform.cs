@@ -1,7 +1,10 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FoxIDs.Models
 {
@@ -12,9 +15,27 @@ namespace FoxIDs.Models
         public override List<string> ClaimsIn { get; set; }
 
         [MaxLength(Constants.Models.Claim.SamlTypeLength)]
-        [RegularExpression(Constants.Models.Claim.SamlTypeRegExPattern)]
+        [RegularExpression(Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
         [JsonProperty(PropertyName = "claim_out")]
-        public override string ClaimOut { get; set; }
+        [Obsolete($"Use {nameof(ClaimsIn)} instead. Delete after 2028-07-01.")]
+        public override string ClaimOut
+        {
+            get
+            {
+                return null;
+            }
+            set
+            {
+                if (!value.IsNullOrWhiteSpace() && !(ClaimsOut?.Count() > 0))
+                {
+                    ClaimsOut = [value];
+                }
+            }
+        }
+
+        [ListLength(Constants.Models.Claim.TransformClaimsOutMin, Constants.Models.Claim.TransformClaimsOutMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
+        [JsonProperty(PropertyName = "claims_out")]
+        public override List<string> ClaimsOut { get; set; }
 
         [MaxLength(Constants.Models.Claim.TransformTransformationLength)]
         [JsonProperty(PropertyName = "transformation")]

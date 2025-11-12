@@ -13,6 +13,7 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using System.Linq;
 using Blazored.Toast.Services;
+using FoxIDs.Util;
 
 namespace FoxIDs.Client.Pages
 {
@@ -332,7 +333,7 @@ namespace FoxIDs.Client.Pages
                 var downPartyTestStartResponse = await HelpersService.StartDownPartyTestAsync(new DownPartyTestStartRequest
                 {
                     UpParties = GetUpParties(upParty),
-                    RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test".ToLower()
+                    RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test#id={RandomName.GenerateDefaultName()}".ToLower()
                 });
 
                 testDownPartyModal.DisplayName = downPartyTestStartResponse.DisplayName;

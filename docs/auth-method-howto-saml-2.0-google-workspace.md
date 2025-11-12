@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Connect to Google Workspace with SAML 2.0",
+    "description":  "Connect Google Workspace to FoxIDs with an SAML 2.0 authentication method. Google Workspace is a SAML 2.0 Identity Provider (IdP) and FoxIDs is acting as an SAML 2.0 Relying Party (RP).",
+    "ogTitle":  "Connect to Google Workspace with SAML 2.0",
+    "ogDescription":  "Connect Google Workspace to FoxIDs with an SAML 2.0 authentication method. Google Workspace is a SAML 2.0 Identity Provider (IdP) and FoxIDs is acting as an SAML 2.0 Relying Party (RP).",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "auth method howto saml 2.0 google workspace, FoxIDs docs"
+                       }
+}
+-->
+
 # Connect to Google Workspace with SAML 2.0
 
 Connect Google Workspace to FoxIDs with an [SAML 2.0 authentication method](auth-method-saml-2.0.md). Google Workspace is a SAML 2.0 Identity Provider (IdP) and FoxIDs is acting as an SAML 2.0 Relying Party (RP).

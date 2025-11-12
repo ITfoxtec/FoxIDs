@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Description",
+    "description":  "FoxIDs is an Identity Service (IDS) that automatically handles OAuth 2.0, OpenID Connect 1.0, and SAML 2.0 so you can deliver secure sign-in flows without running the underlying identity infrastructure yourself.",
+    "ogTitle":  "Description",
+    "ogDescription":  "FoxIDs is an Identity Service (IDS) that automatically handles OAuth 2.0, OpenID Connect 1.0, and SAML 2.0 so you can deliver secure sign-in flows without running the underlying identity infrastructure yourself.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "description, FoxIDs docs"
+                       }
+}
+-->
+
 # Description
 FoxIDs is an Identity Service (IDS) that automatically handles [OAuth 2.0](oauth-2.0.md), [OpenID Connect 1.0](oidc.md), and [SAML 2.0](saml-2.0.md) so you can deliver secure sign-in flows without running the underlying identity infrastructure yourself.
 
@@ -51,3 +66,4 @@ Selecting multiple authentication methods:
 > Configure the permitted authentication methods inside each application registration.
 
 A client using the client credentials grant does not have to specify the authentication method. The same applies when requesting an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.
+

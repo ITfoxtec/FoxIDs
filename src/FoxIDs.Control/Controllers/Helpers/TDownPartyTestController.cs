@@ -247,7 +247,10 @@ namespace FoxIDs.Controllers
                     AccessTokenClaims = mapper.Map<List<Api.ClaimAndValues>>(accessTokenPrincipal.Claims.ToClaimAndValues()),
                     IdToken = tokenResponse.IdToken,
                     AccessToken = tokenResponse.AccessToken,
-                    EndSessionUrl = endSessionUrl
+                    EndSessionUrl = endSessionUrl,
+                    TestUrl = mParty.TestUrl,
+                    TestExpireAt = mParty.TestExpireAt ?? 0,
+                    TestExpireInSeconds = mParty.TestExpireInSeconds ?? 0,
                 };
                 return Ok(testUpPartyResultResponse);
             }

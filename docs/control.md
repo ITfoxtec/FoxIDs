@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "FoxIDs Control",
+    "description":  "FoxIDs is configured through FoxIDs Control which consists of Control Client and Control API. Control Client and API is secured by FoxIDs and Control Client use Control API.",
+    "ogTitle":  "FoxIDs Control",
+    "ogDescription":  "FoxIDs is configured through FoxIDs Control which consists of Control Client and Control API. Control Client and API is secured by FoxIDs and Control Client use Control API.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "control, FoxIDs docs"
+                       }
+}
+-->
+
 # FoxIDs Control
 FoxIDs is configured through FoxIDs Control which consists of [Control Client](#foxids-control-client) and [Control API](#foxids-control-api). Control Client and API is secured by FoxIDs and Control Client use Control API. 
 
@@ -600,3 +615,4 @@ The master tenant access rights is at the same time both scopes and roles.
         <td>read</td>
     </tr>
 </table>
+

@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  ".NET Samples",
+    "description":  "The FoxIDs .NET samples show:",
+    "ogTitle":  ".NET Samples",
+    "ogDescription":  "The FoxIDs .NET samples show:",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "samples, FoxIDs docs"
+                       }
+}
+-->
+
 # .NET Samples
 The FoxIDs .NET samples show:
 
@@ -296,3 +311,4 @@ Run the sample seed tool executable SampleSeedTool.exe or run the seed tool dire
 The sample seed tool will create and delete configurations for all samples.
 
 The sample applications require a login authentication method with the name `login` (handles user login). It is created by the sample seed tool if it do not exists. The login authentication method is not deleted if the sample configuration is deleted.
+

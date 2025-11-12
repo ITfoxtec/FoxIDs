@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Custom domain",
+    "description":  "Each FoxIDs tenant can be configured with a custom domain. A tenant connected to a custom domain does not include the tenant name in the URL like a tenant without a custom domain.",
+    "ogTitle":  "Custom domain",
+    "ogDescription":  "Each FoxIDs tenant can be configured with a custom domain. A tenant connected to a custom domain does not include the tenant name in the URL like a tenant without a custom domain.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "custom domain, FoxIDs docs"
+                       }
+}
+-->
+
 # Custom domain
 
 Each FoxIDs tenant can be configured with a custom domain. A tenant connected to a custom domain does not include the tenant name in the URL like a tenant without a custom domain.
@@ -29,3 +44,4 @@ Custom domains can be configured on tenants in the master tenant using the [Cont
 Where also the domain can be marked as verified at the same time. 
 
 ![Configure reverse proxy secret](images/configure-tenant-custom-domain-environment.png)
+

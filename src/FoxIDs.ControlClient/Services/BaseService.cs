@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace FoxIDs.Client.Services
 {
@@ -14,15 +13,17 @@ namespace FoxIDs.Client.Services
     {
         public const string HttpClientSecureLogicalName = "FoxIDs.ControlAPI.Secure";
         public const string HttpClientLogicalName = "FoxIDs.ControlAPI";
-        protected readonly HttpClient httpClient;
+        protected readonly IHttpClientFactory httpClientFactory;
         protected readonly RouteBindingLogic routeBindingLogic;
         private readonly TrackSelectedLogic trackSelectedLogic;
+        private readonly bool sendAccessToken;
 
         public BaseService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic, bool sendAccessToken = true)
         {
-            httpClient = httpClientFactory.CreateClient(sendAccessToken ? HttpClientSecureLogicalName : HttpClientLogicalName);
+            this.httpClientFactory = httpClientFactory;
             this.routeBindingLogic = routeBindingLogic;
             this.trackSelectedLogic = trackSelectedLogic;
+            this.sendAccessToken = sendAccessToken;
         }
 
         protected async Task<string> GetTenantApiUrlAsync(string url)
@@ -43,7 +44,7 @@ namespace FoxIDs.Client.Services
 
         protected string GetApiUrl(string url, string tenantName, string trackName)
         {
-            url = url.Replace("{tenant}", tenantName);            
+            url = url.Replace("{tenant}", tenantName);
             return GetApiUrl(url, trackName);
         }
 
@@ -58,54 +59,37 @@ namespace FoxIDs.Client.Services
 
         protected async Task<PaginationResponse<T>> GetListAsync<T>(string url, string parmValue1 = null, string parmValue2 = null, string parmValue3 = null, string parmValue4 = null, string parmName1 = "filterName", string parmName2 = null, string parmName3 = null, string parmName4 = null, string paginationToken = null)
         {
-            var parms = new List<string>();
-            if (!parmValue1.IsNullOrWhiteSpace())
-            {
-                parms.Add($"{parmName1}={HttpUtility.UrlEncode(parmValue1)}");
-            }
-            if (!parmValue2.IsNullOrWhiteSpace())
-            {
-                parms.Add($"{parmName2}={HttpUtility.UrlEncode(parmValue2)}");
-            }
-            if (!parmValue3.IsNullOrWhiteSpace())
-            {
-                parms.Add($"{parmName3}={HttpUtility.UrlEncode(parmValue3)}");
-            }
-            if (!parmValue4.IsNullOrWhiteSpace())
-            {
-                parms.Add($"{parmName4}={HttpUtility.UrlEncode(parmValue4)}");
-            }
-            if (!paginationToken.IsNullOrWhiteSpace())
-            {
-                parms.Add($"paginationToken={paginationToken}");
-            }
+            var queryParameters = CreateQueryParameters();
+            TryAddParameter(queryParameters, parmName1, parmValue1);
+            TryAddParameter(queryParameters, parmName2, parmValue2);
+            TryAddParameter(queryParameters, parmName3, parmValue3);
+            TryAddParameter(queryParameters, parmName4, parmValue4);
+            TryAddParameter(queryParameters, "paginationToken", paginationToken);
 
-            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url)}?{string.Join('&', parms)}");
+            var requestUrl = await BuildTenantRequestUrlAsync(url, queryParameters);
+            using var httpClient = GetHttpClient();
+            using var response = await httpClient.GetAsync(requestUrl);
             return await response.ToObjectAsync<PaginationResponse<T>>();
         }
 
         protected async Task<T> GetAsync<T>(string url)
         {
-            using var response = await httpClient.GetAsync(await GetTenantApiUrlAsync(url));
+            var requestUrl = await GetTenantApiUrlAsync(url);
+            using var httpClient = GetHttpClient();
+            using var response = await httpClient.GetAsync(requestUrl);
             return await response.ToObjectAsync<T>();
         }
 
         protected async Task<T> GetAsync<T>(string url, string parmValue1, string parmValue2 = null, string parmValue3 = null, string parmName1 = "name", string parmName2 = null, string parmName3 = null)
         {
-            var parms = new List<string>();
-            if (!parmValue1.IsNullOrWhiteSpace())
-            {
-                parms.Add($"{parmName1}={HttpUtility.UrlEncode(parmValue1)}");
-            }
-            if (!parmValue2.IsNullOrWhiteSpace())
-            {
-                parms.Add($"{parmName2}={HttpUtility.UrlEncode(parmValue2)}");
-            }
-            if (!parmValue3.IsNullOrWhiteSpace())
-            {
-                parms.Add($"{parmName3}={HttpUtility.UrlEncode(parmValue3)}");
-            }
-            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url)}?{string.Join('&', parms)}");
+            var queryParameters = CreateQueryParameters();
+            TryAddParameter(queryParameters, parmName1, parmValue1);
+            TryAddParameter(queryParameters, parmName2, parmValue2);
+            TryAddParameter(queryParameters, parmName3, parmValue3);
+
+            var requestUrl = await BuildTenantRequestUrlAsync(url, queryParameters);
+            using var httpClient = GetHttpClient();
+            using var response = await httpClient.GetAsync(requestUrl);
             return await response.ToObjectAsync<T>();
         }
 
@@ -113,60 +97,87 @@ namespace FoxIDs.Client.Services
         {
             var requestItems = request.ToDictionary();
             var requestUrl = QueryHelpers.AddQueryString(await GetTenantApiUrlAsync(url), requestItems);
+            using var httpClient = GetHttpClient();
             using var response = await httpClient.GetAsync(requestUrl);
             return await response.ToObjectAsync<TResponse>();
         }
 
         protected async Task PostAsync<T>(string url, T data)
         {
+            using var httpClient = GetHttpClient();
             using var response = await httpClient.PostAsFoxIDsApiJsonAsync(await GetTenantApiUrlAsync(url), data);
         }
 
         protected async Task<TResponse> PostResponseAsync<T, TResponse>(string url, T data)
         {
+            using var httpClient = GetHttpClient();
             using var response = await httpClient.PostAsFoxIDsApiJsonAsync(await GetTenantApiUrlAsync(url), data);
             return await response.ToObjectAsync<TResponse>();
         }
 
         protected async Task PutAsync<T>(string url, T data)
         {
+            using var httpClient = GetHttpClient();
             using var response = await httpClient.PutAsFoxIDsApiJsonAsync(await GetTenantApiUrlAsync(url), data);
         }
 
         protected async Task<TResponse> PutResponseAsync<T, TResponse>(string url, T data)
         {
+            using var httpClient = GetHttpClient();
             using var response = await httpClient.PutAsFoxIDsApiJsonAsync(await GetTenantApiUrlAsync(url), data);
             return await response.ToObjectAsync<TResponse>();
         }
 
         protected async Task DeleteAsync(string url)
         {
+            using var httpClient = GetHttpClient();
             using var response = await httpClient.DeleteAsync(await GetTenantApiUrlAsync(url));
         }
 
         protected async Task DeleteAsync(string url, string parmValue1, string parmValue2 = null, string parmValue3 = null, string parmName1 = "name", string parmName2 = null, string parmName3 = null)
         {
-            var parms = new List<string>();
-            if (!parmValue1.IsNullOrWhiteSpace())
-            {
-                parms.Add($"{parmName1}={HttpUtility.UrlEncode(parmValue1)}");
-            }
-            if (!parmValue2.IsNullOrWhiteSpace())
-            {
-                parms.Add($"{parmName2}={HttpUtility.UrlEncode(parmValue2)}");
-            }
-            if (!parmValue3.IsNullOrWhiteSpace())
-            {
-                parms.Add($"{parmName3}={HttpUtility.UrlEncode(parmValue3)}");
-            }
-            using var response = await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(url)}?{string.Join('&', parms)}");
+            var queryParameters = CreateQueryParameters();
+            TryAddParameter(queryParameters, parmName1, parmValue1);
+            TryAddParameter(queryParameters, parmName2, parmValue2);
+            TryAddParameter(queryParameters, parmName3, parmValue3);
+
+            var requestUrl = await BuildTenantRequestUrlAsync(url, queryParameters);
+            using var httpClient = GetHttpClient();
+            using var response = await httpClient.DeleteAsync(requestUrl);
         }
 
         protected async Task DeleteByRequestObjAsync<TRequest>(string url, TRequest request)
         {
             var requestItems = request.ToDictionary();
             var requestUrl = QueryHelpers.AddQueryString(await GetTenantApiUrlAsync(url), requestItems);
+            using var httpClient = GetHttpClient();
             using var response = await httpClient.DeleteAsync(requestUrl);
+        }
+
+        private static Dictionary<string, string> CreateQueryParameters() => new(StringComparer.Ordinal);
+
+        private static void TryAddParameter(IDictionary<string, string> queryParameters, string name, string value)
+        {
+            if (!string.IsNullOrWhiteSpace(name) && !value.IsNullOrWhiteSpace())
+            {
+                queryParameters[name] = value;
+            }
+        }
+
+        private async Task<string> BuildTenantRequestUrlAsync(string url, IDictionary<string, string> queryParameters)
+        {
+            var tenantUrl = await GetTenantApiUrlAsync(url);
+            if (queryParameters == null || queryParameters.Count == 0)
+            {
+                return tenantUrl;
+            }
+
+            return QueryHelpers.AddQueryString(tenantUrl, queryParameters);
+        }
+
+        private HttpClient GetHttpClient()
+        {
+            return httpClientFactory.CreateClient(sendAccessToken ? HttpClientSecureLogicalName : HttpClientLogicalName);
         }
     }
 }

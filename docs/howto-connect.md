@@ -1,4 +1,19 @@
-﻿# How to connect
+<!--
+{
+    "title":  "How to connect",
+    "description":  "FoxIDs become an IdP by registering an application where you can connect applications and APIs. External IdPs is connected with an authentication methods.",
+    "ogTitle":  "How to connect",
+    "ogDescription":  "FoxIDs become an IdP by registering an application where you can connect applications and APIs. External IdPs is connected with an authentication methods.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "howto connect, FoxIDs docs"
+                       }
+}
+-->
+
+# How to connect
 
 FoxIDs become an IdP by [registering an application](connections.md#application-registration) where you can connect applications and APIs. External IdPs is connected with an [authentication methods](connections.md#authentication-method).
 
@@ -94,3 +109,4 @@ Environment Links is fast and secure, but they can only be used in to connect wi
 
 You can connect two environments in the same or different tenants with [OpenID Connect](howto-oidc-foxids.md). The configuration is more complex than if you use a Environment Link. 
 OpenID Connect is secure and you can connect all environments regardless of which tenant they are in. There is basically not different in external OpenID Connect connections and internal connections used between environments.
+

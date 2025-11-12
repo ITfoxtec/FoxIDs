@@ -31,14 +31,14 @@ namespace FoxIDs.Logic
                     {
                         if (claimTransform is OAuthClaimTransform)
                         {
-                            if (replaceClaimOutJwtTypes.Any(rc => claimTransform.ClaimOut.Equals(rc, StringComparison.OrdinalIgnoreCase)))
+                            if (replaceClaimOutJwtTypes.Any(rc => claimTransform.ClaimsOut.First().Equals(rc, StringComparison.OrdinalIgnoreCase)))
                             {
                                 claimTransform.Action = ClaimTransformActions.Replace;
                             }
                         }
                         else if (claimTransform is SamlClaimTransform)
                         {
-                            if (replaceClaimOutSamlTypes.Any(rc => claimTransform.ClaimOut.Equals(rc, StringComparison.OrdinalIgnoreCase)))
+                            if (replaceClaimOutSamlTypes.Any(rc => claimTransform.ClaimsOut.First().Equals(rc, StringComparison.OrdinalIgnoreCase)))
                             {
                                 claimTransform.Action = ClaimTransformActions.Replace;
                             }

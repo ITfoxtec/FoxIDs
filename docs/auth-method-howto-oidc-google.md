@@ -1,4 +1,19 @@
-﻿# Connect to Google with OpenID Connect
+<!--
+{
+    "title":  "Connect to Google with OpenID Connect",
+    "description":  "FoxIDs can be connected to Google with OpenID Connect and authenticate users with Google login.",
+    "ogTitle":  "Connect to Google with OpenID Connect",
+    "ogDescription":  "FoxIDs can be connected to Google with OpenID Connect and authenticate users with Google login.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "auth method howto oidc google, FoxIDs docs"
+                       }
+}
+-->
+
+# Connect to Google with OpenID Connect
 
 FoxIDs can be connected to Google with OpenID Connect and authenticate users with Google login.
 
@@ -62,3 +77,4 @@ This chapter describes how to configure a connection with OpenID Connect Authori
 That's it, you are done.
  
 Your new Google authentication method can be selected as an allowed authentication method in an application registration.
+

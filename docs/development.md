@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Development",
+    "description":  "FoxIds cloud is configured with the test tenant test-corp. The tenant is configured with the .NET samples and connected to multiple OpenID Connect and SAML 2.0 IdPs.",
+    "ogTitle":  "Development",
+    "ogDescription":  "FoxIds cloud is configured with the test tenant test-corp. The tenant is configured with the .NET samples and connected to multiple OpenID Connect and SAML 2.0 IdPs.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "development, FoxIDs docs"
+                       }
+}
+-->
+
 # Development
 
 FoxIds cloud is configured with the test tenant `test-corp`. The tenant is configured with the [.NET samples](samples.md) and connected to multiple [OpenID Connect](auth-method-oidc.md) and [SAML 2.0](auth-method-saml-2.0.md) IdPs.
@@ -12,3 +27,4 @@ Online samples:
   - If you authenticate with the [IdP SAML 2.0 sample](https://aspnetsamlidpsample.itfoxtec.com) in the [OpenID Connect sample](https://aspnetoidcsample.itfoxtec.com) 
     you can find the users session and initiate single logout from the [IdP SAML 2.0 sample](https://aspnetsamlidpsample.itfoxtec.com).  
     See more information in the [sample docs](samples.md#aspnetcoresamlidpsample).
+

@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Claim transforms and claim tasks",
+    "description":  "Each FoxIDs authentication method and application registration handle claims and they support claim transformations and claim tasks. This means that multiple sets of claim transforms and claim tasks can be executed on each user authentic...",
+    "ogTitle":  "Claim transforms and claim tasks",
+    "ogDescription":  "Each FoxIDs authentication method and application registration handle claims and they support claim transformations and claim tasks. This means that multiple sets of claim transforms and claim tasks can be executed on each user authentic...",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "claim transform task, FoxIDs docs"
+                       }
+}
+-->
+
 # Claim transforms and claim tasks
 
 Each FoxIDs authentication method and application registration handle [claims](claim.md) and they support claim transformations and claim tasks. 

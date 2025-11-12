@@ -1,4 +1,19 @@
-﻿# OpenID Connect application registration
+<!--
+{
+    "title":  "OpenID Connect application registration",
+    "description":  "FoxIDs OpenID Connect application registration enable you to connect an OpenID Connect based application.",
+    "ogTitle":  "OpenID Connect application registration",
+    "ogDescription":  "FoxIDs OpenID Connect application registration enable you to connect an OpenID Connect based application.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "app reg oidc, FoxIDs docs"
+                       }
+}
+-->
+
+# OpenID Connect application registration
 
 FoxIDs [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) application registration enable you to connect an OpenID Connect based application. 
 

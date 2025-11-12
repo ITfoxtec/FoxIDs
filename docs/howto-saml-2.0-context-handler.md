@@ -1,8 +1,23 @@
-﻿# Connect to Context Handler / FKA with SAML 2.0
+<!--
+{
+    "title":  "Connect to Context Handler / FKA with SAML 2.0",
+    "description":  "FoxIDs can be connected to Context Handler with a SAML 2.0 authentication method.",
+    "ogTitle":  "Connect to Context Handler / FKA with SAML 2.0",
+    "ogDescription":  "FoxIDs can be connected to Context Handler with a SAML 2.0 authentication method.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "howto saml 2.0 context handler, FoxIDs docs"
+                       }
+}
+-->
+
+# Connect to Context Handler / FKA with SAML 2.0
 
 FoxIDs can be connected to Context Handler with a [SAML 2.0 authentication method](auth-method-saml-2.0.md).
 
-> Context Handler is a Danish identity broker connecting the Danish municipalities in a common federation, in Danish called **Fælleskommunal Adgangsstyring (FKA)**.
+> Context Handler is a Danish identity broker connecting the Danish municipalities in a common federation, in Danish called **F�lleskommunal Adgangsstyring (FKA)**.
 
 [Context Handler is connected](#configuring-context-handler-as-identity-provider) as a SAML 2.0 Identity Provider (IdP) based on OIOSAML 3 and OCES3 (RSASSA-PSS).  
 
@@ -273,3 +288,4 @@ If the user should have the Job function role (DK: Jobfunktionsrolle) `http://fo
             <Privilege>http://foxids.com/roles/jobrole/test-corp-admin_access/1</Privilege>
         </PrivilegeGroup>
     </bpp:PrivilegeList>
+

@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Interconnect FoxIDs with OpenID Connect",
+    "description":  "FoxIDs environments can be connected with OpenID Connect and thereby authenticating end users in another FoxIDs environment or an external Identity Provider (IdP) configured as an authentication method. FoxIDs environments can be interco...",
+    "ogTitle":  "Interconnect FoxIDs with OpenID Connect",
+    "ogDescription":  "FoxIDs environments can be connected with OpenID Connect and thereby authenticating end users in another FoxIDs environment or an external Identity Provider (IdP) configured as an authentication method. FoxIDs environments can be interco...",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "howto oidc foxids, FoxIDs docs"
+                       }
+}
+-->
+
 # Interconnect FoxIDs with OpenID Connect
 
 FoxIDs environments can be connected with OpenID Connect and thereby authenticating end users in another FoxIDs environment or an external Identity Provider (IdP) configured as an authentication method.  
@@ -56,3 +71,4 @@ That's it, you are done.
 
 > Your new authentication method can now be selected as an allowed authentication method in the application registrations in you environment.  
 > The application registrations in you environment can read the claims from your authentication method. It is possible to add the access_token claim to include the parallel FoxIDs environments access token as a claim in the issued access token.
+

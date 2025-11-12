@@ -1,4 +1,19 @@
-﻿# Connect to Nets eID Broker with OpenID Connect
+<!--
+{
+    "title":  "Connect to Nets eID Broker with OpenID Connect",
+    "description":  "FoxIDs can be connected to Nets eID Broker with OpenID Connect and thereby authenticating end users with MitID and other credentials supported by Nets eID Broker.",
+    "ogTitle":  "Connect to Nets eID Broker with OpenID Connect",
+    "ogDescription":  "FoxIDs can be connected to Nets eID Broker with OpenID Connect and thereby authenticating end users with MitID and other credentials supported by Nets eID Broker.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "auth method howto oidc nets eid broker, FoxIDs docs"
+                       }
+}
+-->
+
+# Connect to Nets eID Broker with OpenID Connect
 
 FoxIDs can be connected to Nets eID Broker with OpenID Connect and thereby authenticating end users with MitID and other credentials supported by Nets eID Broker.
 
@@ -164,3 +179,4 @@ The most used Nets eID Broker claims:
 - `mitid.date_of_birth`
 - `mitid.identity_name`
 - `mitid.transaction_id`
+

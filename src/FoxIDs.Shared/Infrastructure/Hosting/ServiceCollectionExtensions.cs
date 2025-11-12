@@ -37,6 +37,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<PlanUsageLogic>();
             services.AddTransient<AuditLogic>();
             services.AddTransient<ContainedKeyLogic>();
+            services.AddTransient<HealthCheckLogic>();
 
             if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
             {

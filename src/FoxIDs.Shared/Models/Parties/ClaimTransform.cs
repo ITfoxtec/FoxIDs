@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using ITfoxtec.Identity;
+using Newtonsoft.Json;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using ITfoxtec.Identity;
+using System.Linq;
 
 namespace FoxIDs.Models
 {
@@ -26,7 +26,11 @@ namespace FoxIDs.Models
         public abstract List<string> ClaimsIn { get; set; }
 
         [JsonProperty(PropertyName = "claim_out")]
+        [Obsolete($"Use {nameof(ClaimsIn)} instead. Delete after 2028-07-01.")]
         public abstract string ClaimOut { get; set; }
+
+        [JsonProperty(PropertyName = "claims_out")]
+        public abstract List<string> ClaimsOut { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "action")]
@@ -81,9 +85,9 @@ namespace FoxIDs.Models
         {
             var results = new List<ValidationResult>();
 
-            if(Task == null && Type != ClaimTransformTypes.ExternalClaims && ClaimOut.IsNullOrWhiteSpace())
+            if(Task == null && Type != ClaimTransformTypes.ExternalClaims && ClaimsOut?.Where(c => !c.IsNullOrWhiteSpace()).Count() != 1)
             {
-                results.Add(new ValidationResult($"The field {nameof(ClaimOut)} is required for claim transformation type '{Type}'.", [nameof(ClaimOut)]));
+                results.Add(new ValidationResult($"Exactly one item in the field {nameof(ClaimsOut)} is required for claim transformation type '{Type}'.", [nameof(ClaimsOut)]));
             }
 
             if (Task != null)
@@ -119,6 +123,13 @@ namespace FoxIDs.Models
                                 results.Add(new ValidationResult($"The fields {nameof(UpPartyType)} and {nameof(UpPartyName)} is required for claim transformation task '{Task}'.", [nameof(UpPartyType), nameof(UpPartyName)]));
                             }
                             break;
+                        case ClaimTransformTasks.LogEvent:
+                            ValidateMatchClaimAddReplace(results);
+                            if (Action != ClaimTransformActions.If)
+                            {
+                                results.Add(new ValidationResult($"Only action '{ClaimTransformActions.If}' is supported for claim transformation task '{Task}'.", [nameof(Action)]));
+                            }
+                            break;
                         default:
                             throw new NotSupportedException($"Claim transformation task '{Task}' is not supported with type '{Type}' and action '{Action}'.");
                     }
@@ -138,15 +149,31 @@ namespace FoxIDs.Models
                     switch (Task)
                     {
                         case ClaimTransformTasks.QueryInternalUser:
+                            ValidateMatchClaimAddReplace(results);
                             if (Transformation.IsNullOrWhiteSpace())
                             {
                                 results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation task '{Task}'.", [nameof(Transformation)]));
                             }
                             break;
                         case ClaimTransformTasks.QueryExternalUser:
+                            ValidateMatchClaimAddReplace(results);
                             if (UpPartyName.IsNullOrWhiteSpace() || Transformation.IsNullOrWhiteSpace())
                             {
                                 results.Add(new ValidationResult($"The fields {nameof(UpPartyName)} and {nameof(Transformation)} is required for claim transformation task '{Task}'.", [nameof(UpPartyName), nameof(Transformation)]));
+                            }
+                            break;
+                        case ClaimTransformTasks.SaveClaimInternalUser:
+                            ValidateMatchClaimAddReplace(results);
+                            if (Transformation.IsNullOrWhiteSpace() || TransformationExtension.IsNullOrWhiteSpace() || ClaimsOut?.Where(c => !c.IsNullOrWhiteSpace()).Count() != 1)
+                            {
+                                results.Add(new ValidationResult($"The fields {nameof(Transformation)} and {nameof(TransformationExtension)} and exactly one item in the field {nameof(ClaimsOut)} is required for claim transformation task '{Task}'.", [nameof(Transformation), nameof(TransformationExtension), nameof(ClaimsOut)]));
+                            }
+                            break;
+                        case ClaimTransformTasks.SaveClaimExternalUser:
+                            ValidateMatchClaimAddReplace(results);
+                            if (UpPartyName.IsNullOrWhiteSpace() || Transformation.IsNullOrWhiteSpace() || TransformationExtension.IsNullOrWhiteSpace() || ClaimsOut?.Where(c => !c.IsNullOrWhiteSpace()).Count() != 1)
+                            {
+                                results.Add(new ValidationResult($"The fields {nameof(UpPartyName)}, {nameof(Transformation)} and {nameof(TransformationExtension)} and exactly one item in the field {nameof(ClaimsOut)} is required for claim transformation task '{Task}'.", [nameof(UpPartyName), nameof(Transformation), nameof(TransformationExtension), nameof(ClaimsOut)]));
                             }
                             break;
                         default:

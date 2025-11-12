@@ -1,4 +1,19 @@
-﻿# Risk passwords
+<!--
+{
+    "title":  "Risk passwords",
+    "description":  "You can achieve higher password quality and a higher level of security by using risk passwords for password validation.",
+    "ogTitle":  "Risk passwords",
+    "ogDescription":  "You can achieve higher password quality and a higher level of security by using risk passwords for password validation.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "risk passwords, FoxIDs docs"
+                       }
+}
+-->
+
+# Risk passwords
 
 You can achieve higher password quality and a higher level of security by using risk passwords for password validation. 
 
@@ -74,4 +89,5 @@ Add your FoxIDs Control API endpoint and the master seed tool **Authority**, **C
 
 ## 3) Test
 You can read the number of risk passwords uploaded to FoxIDs in [FoxIDs Control Client](control.md#foxids-control-client) master tenant on the Settings / Risk Passwords tap. And you can test if a password is okay or has appeared in breaches.
+
 

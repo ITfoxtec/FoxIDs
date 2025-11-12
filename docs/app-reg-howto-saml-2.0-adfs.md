@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Connect AD FS with SAML 2.0 application registration",
+    "description":  "FoxIDs can be connected to AD FS with a SAML 2.0 application registration. Where AD FS is a SAML 2.0 Relying Party (RP) and FoxIDs is acting as an SAML 2.0 Identity Provider (IdP).",
+    "ogTitle":  "Connect AD FS with SAML 2.0 application registration",
+    "ogDescription":  "FoxIDs can be connected to AD FS with a SAML 2.0 application registration. Where AD FS is a SAML 2.0 Relying Party (RP) and FoxIDs is acting as an SAML 2.0 Identity Provider (IdP).",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "app reg howto saml 2.0 adfs, FoxIDs docs"
+                       }
+}
+-->
+
 # Connect AD FS with SAML 2.0 application registration
 
 FoxIDs can be connected to AD FS with a [SAML 2.0 application registration](app-reg-saml-2.0.md). Where AD FS is a SAML 2.0 Relying Party (RP) and FoxIDs is acting as an SAML 2.0 Identity Provider (IdP).
@@ -39,3 +54,4 @@ Alternatively, the Identity Provider (IdP) can be configured manually on the AD 
 FoxIDs default issue the user's identity in the NameID claim with format persistent.
 
 Other claims can optional be transformed and issued by FoxIDs. 
+

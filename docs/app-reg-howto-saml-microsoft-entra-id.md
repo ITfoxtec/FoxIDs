@@ -1,4 +1,19 @@
-ï»¿# Connect to Microsoft Entra ID with SAML 2.0
+<!--
+{
+    "title":  "Connect to Microsoft Entra ID with SAML 2.0",
+    "description":  "Connect FoxIDs as an **external identity provider for Microsoft Entra ID** with SAML 2.0.",
+    "ogTitle":  "Connect to Microsoft Entra ID with SAML 2.0",
+    "ogDescription":  "Connect FoxIDs as an **external identity provider for Microsoft Entra ID** with SAML 2.0.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "app reg howto saml microsoft entra id, FoxIDs docs"
+                       }
+}
+-->
+
+# Connect to Microsoft Entra ID with SAML 2.0
 
 Connect FoxIDs as an **external identity provider for Microsoft Entra ID** with SAML 2.0.
 
@@ -83,9 +98,9 @@ It is not possible to configure an external SAML 2.0 identity provider in the [M
      -FederatedIdpMfaBehavior "acceptIfMfaDoneByFederatedIdp" `
    ```
    **FederatedIdpMfaBehavior** can be set to:
-   - `acceptIfMfaDoneByFederatedIdp` â€“ Entra accepts MFA from FoxIDs; if FoxIDs didnâ€™t do MFA, Entra will do it.
-   - `enforceMfaByFederatedIdp` â€“ If a policy needs MFA, Entra will send the user back to FoxIDs to complete MFA.
-   - `rejectMfaByFederatedIdp` â€“ Entra always does MFA itself; MFA at FoxIDs is ignored.
+   - `acceptIfMfaDoneByFederatedIdp` – Entra accepts MFA from FoxIDs; if FoxIDs didn’t do MFA, Entra will do it.
+   - `enforceMfaByFederatedIdp` – If a policy needs MFA, Entra will send the user back to FoxIDs to complete MFA.
+   - `rejectMfaByFederatedIdp` – Entra always does MFA itself; MFA at FoxIDs is ignored.
 6. Validate the configuration:
    ```powershell
    Get-MgDomainFederationConfiguration -DomainId $domainName
@@ -147,3 +162,4 @@ If the user already has an Immutable ID set, you need to move the user away from
 2. Make a `PATCH` request to set the new Immutable ID.
 3. Make a `PATCH` request to change the `userPrincipalName` back to the federated domain.
 4. Validate the configuration by making a `GET` request to the `/users/{id | userPrincipalName}` endpoint and checking the `onPremisesImmutableId` property in the response.
+

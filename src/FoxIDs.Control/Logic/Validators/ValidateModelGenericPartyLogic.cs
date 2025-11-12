@@ -88,59 +88,59 @@ namespace FoxIDs.Logic
             return isValid;
         }
 
-        public async Task<bool> ValidateModelClaimTransformsAsync<MParty>(ModelStateDictionary modelState, MParty mParty) where MParty : Party
+        public bool ValidateModelClaimTransforms<MParty>(ModelStateDictionary modelState, MParty mParty) where MParty : Party
         {
             if (mParty is LoginUpParty loginUpParty)
             {
-                return await ValidateModelClaimTransformsAsync(modelState, mParty, loginUpParty.ClaimTransforms) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, loginUpParty.ExitClaimTransforms) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, loginUpParty.CreateUser?.ClaimTransforms);
+                return ValidateModelClaimTransforms(modelState, mParty, loginUpParty.ClaimTransforms) &&
+                       ValidateModelClaimTransforms(modelState, mParty, loginUpParty.ExitClaimTransforms) &&
+                       ValidateModelClaimTransforms(modelState, mParty, loginUpParty.CreateUser?.ClaimTransforms);
             }
             else if (mParty is ExternalLoginUpParty externalLoginUpParty)
             {
-                return await ValidateModelClaimTransformsAsync(modelState, mParty, externalLoginUpParty.ClaimTransforms) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, externalLoginUpParty.ExitClaimTransforms) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, externalLoginUpParty.LinkExternalUser?.ClaimTransforms);
+                return ValidateModelClaimTransforms(modelState, mParty, externalLoginUpParty.ClaimTransforms) &&
+                       ValidateModelClaimTransforms(modelState, mParty, externalLoginUpParty.ExitClaimTransforms) &&
+                       ValidateModelClaimTransforms(modelState, mParty, externalLoginUpParty.LinkExternalUser?.ClaimTransforms);
             }
             else if (mParty is OAuthUpParty oauthUpParty)
             {
-                return await ValidateModelClaimTransformsAsync(modelState, mParty, oauthUpParty.ClaimTransforms) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, oauthUpParty.ExitClaimTransforms) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, oauthUpParty.LinkExternalUser?.ClaimTransforms);
+                return ValidateModelClaimTransforms(modelState, mParty, oauthUpParty.ClaimTransforms) &&
+                       ValidateModelClaimTransforms(modelState, mParty, oauthUpParty.ExitClaimTransforms) &&
+                       ValidateModelClaimTransforms(modelState, mParty, oauthUpParty.LinkExternalUser?.ClaimTransforms);
             }
             else if (mParty is OidcUpParty oidchUpParty)
             {
-                return await ValidateModelClaimTransformsAsync(modelState, mParty, oidchUpParty.ClaimTransforms) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, oidchUpParty.ExitClaimTransforms) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, oidchUpParty.LinkExternalUser?.ClaimTransforms);
+                return ValidateModelClaimTransforms(modelState, mParty, oidchUpParty.ClaimTransforms) &&
+                       ValidateModelClaimTransforms(modelState, mParty, oidchUpParty.ExitClaimTransforms) &&
+                       ValidateModelClaimTransforms(modelState, mParty, oidchUpParty.LinkExternalUser?.ClaimTransforms);
             }
             else if (mParty is SamlUpParty samlUpParty)
             {
-                return await ValidateModelClaimTransformsAsync(modelState, mParty, samlUpParty.ClaimTransforms) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, samlUpParty.ExitClaimTransforms) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, samlUpParty.LinkExternalUser?.ClaimTransforms);
+                return ValidateModelClaimTransforms(modelState, mParty, samlUpParty.ClaimTransforms) &&
+                       ValidateModelClaimTransforms(modelState, mParty, samlUpParty.ExitClaimTransforms) &&
+                       ValidateModelClaimTransforms(modelState, mParty, samlUpParty.LinkExternalUser?.ClaimTransforms);
             }
             else if (mParty is TrackLinkUpParty trackLinkUpParty)
             {
-                return await ValidateModelClaimTransformsAsync(modelState, mParty, trackLinkUpParty.ClaimTransforms) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, trackLinkUpParty.ExitClaimTransforms) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, trackLinkUpParty.LinkExternalUser?.ClaimTransforms);
+                return ValidateModelClaimTransforms(modelState, mParty, trackLinkUpParty.ClaimTransforms) &&
+                       ValidateModelClaimTransforms(modelState, mParty, trackLinkUpParty.ExitClaimTransforms) &&
+                       ValidateModelClaimTransforms(modelState, mParty, trackLinkUpParty.LinkExternalUser?.ClaimTransforms);
             }
             else if (mParty is OAuthDownParty oauthDownParty)
             {
-                return await ValidateModelClaimTransformsAsync(modelState, mParty, oauthDownParty.ClaimTransforms);
+                return ValidateModelClaimTransforms(modelState, mParty, oauthDownParty.ClaimTransforms);
             }
             else if (mParty is OidcDownParty oidcDownParty)
             {
-                return await ValidateModelClaimTransformsAsync(modelState, mParty, oidcDownParty.ClaimTransforms);
+                return ValidateModelClaimTransforms(modelState, mParty, oidcDownParty.ClaimTransforms);
             }
             else if (mParty is SamlDownParty samlDownParty)
             {
-                return await ValidateModelClaimTransformsAsync(modelState, mParty, samlDownParty.ClaimTransforms);
+                return ValidateModelClaimTransforms(modelState, mParty, samlDownParty.ClaimTransforms);
             }
             else if (mParty is TrackLinkDownParty trackLinkDownParty)
             {
-                return await ValidateModelClaimTransformsAsync(modelState, mParty, trackLinkDownParty.ClaimTransforms);
+                return ValidateModelClaimTransforms(modelState, mParty, trackLinkDownParty.ClaimTransforms);
             }
             else
             {
@@ -148,7 +148,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<bool> ValidateModelClaimTransformsAsync<MParty, MClaimTransform>(ModelStateDictionary modelState, MParty mParty, List<MClaimTransform> claimTransforms) where MParty : Party where MClaimTransform : ClaimTransform
+        private bool ValidateModelClaimTransforms<MParty, MClaimTransform>(ModelStateDictionary modelState, MParty mParty, List<MClaimTransform> claimTransforms) where MParty : Party where MClaimTransform : ClaimTransform
         {
             if (claimTransforms != null)
             {
@@ -166,7 +166,10 @@ namespace FoxIDs.Logic
                                 break;
 
                             case ClaimTransformTypes.MatchClaim:
-                                claimTransform.TransformationExtension = null;
+                                if (claimTransform.Task != ClaimTransformTasks.SaveClaimInternalUser && claimTransform.Task != ClaimTransformTasks.SaveClaimExternalUser)
+                                {
+                                    claimTransform.TransformationExtension = null;
+                                }
                                 break;
 
                             case ClaimTransformTypes.Match:
@@ -188,7 +191,7 @@ namespace FoxIDs.Logic
                                 break;
 
                             case ClaimTransformTypes.ExternalClaims:
-                                claimTransform.ClaimOut = null;
+                                claimTransform.ClaimsOut = null;
                                 claimTransform.Transformation = null;
                                 claimTransform.TransformationExtension = null;
                                 break;

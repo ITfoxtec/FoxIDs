@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Claims",
+    "description":  "Claims are processed first in the authentication method and then the application registration, where it is possible to decide, which claims are passed to the next step and to do claim transforms and claim tasks.",
+    "ogTitle":  "Claims",
+    "ogDescription":  "Claims are processed first in the authentication method and then the application registration, where it is possible to decide, which claims are passed to the next step and to do claim transforms and claim tasks.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "claim, FoxIDs docs"
+                       }
+}
+-->
+
 # Claims
 
 Claims are processed first in the [authentication method](#authentication-method) and then the [application registration](#application-registration), where it is possible to decide, which claims are passed to the next step and to do [claim transforms and claim tasks](claim-transform-task.md).
@@ -32,3 +47,4 @@ An OpenID Connect application registration can differentiate if a claim is only 
 
 An OpenID Connect and OAuth 2.0 application registration can carry claims forward by a scope as well. This is done by adding the claim or claims to a scope's `Voluntary claims` list. And the claims are then issued if the client application request for the scope.  
 An OpenID Connect application registration can also in the voluntary scope claims differentiate if a claim is only issued in the access token or also in the ID token.
+

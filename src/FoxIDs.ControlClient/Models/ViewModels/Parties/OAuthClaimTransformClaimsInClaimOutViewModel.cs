@@ -1,20 +1,19 @@
-﻿using FoxIDs.Models.Api;
-using ITfoxtec.Identity;
+﻿using FoxIDs.Infrastructure.DataAnnotations;
+using FoxIDs.Models.Api;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class SamlClaimTransformClaimInViewModel : ClaimTransformViewModel, IValidatableObject
+    public class OAuthClaimTransformClaimsInClaimOutViewModel : ClaimTransformViewModel
     {
-        [MaxLength(Constants.Models.Claim.SamlTypeLength)]
-        [RegularExpression(Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
-        [Display(Name = "Select claim")]
-        public override string ClaimIn { get; set; }
+        [ListLength(Constants.Models.Claim.TransformClaimsInMin, Constants.Models.Claim.TransformClaimsInMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
+        [Display(Name = "Select claims")]
+        public override List<string> ClaimsIn { get; set; }
 
-        [MaxLength(Constants.Models.Claim.SamlTypeLength)]
-        [RegularExpression(Constants.Models.Claim.SamlTypeRegExPattern)]
+        [MaxLength(Constants.Models.Claim.JwtTypeLength)]
+        [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
         public override string ClaimOut { get; set; }
 
         [MaxLength(Constants.Models.Claim.TransformTransformationLength)]
@@ -26,11 +25,12 @@ namespace FoxIDs.Client.Models.ViewModels
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (Type != ClaimTransformTypes.Constant && Action != ClaimTransformActions.Remove)
+
+            if (Action == ClaimTransformActions.Add || Action == ClaimTransformActions.Replace)
             {
-                if (ClaimIn.IsNullOrWhiteSpace())
+                if (ClaimsIn?.Count() < 1)
                 {
-                    results.Add(new ValidationResult($"The field is required.", [nameof(ClaimIn)]));
+                    results.Add(new ValidationResult($"At least one is required.", [nameof(ClaimsIn)]));
                 }
             }
 

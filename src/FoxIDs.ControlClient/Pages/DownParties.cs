@@ -18,6 +18,7 @@ using static ITfoxtec.Identity.IdentityConstants;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.JSInterop;
+using FoxIDs.Util;
 
 namespace FoxIDs.Client.Pages
 {
@@ -197,7 +198,7 @@ namespace FoxIDs.Client.Pages
                 var downPartyTestStartResponse = await HelpersService.StartDownPartyTestAsync(new DownPartyTestStartRequest
                 {
                     UpParties = await GetUpPartiesAsync(),
-                    RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test".ToLower()
+                    RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test#id={RandomName.GenerateDefaultName()}".ToLower()
                 });
 
                 testDownPartyModal.DisplayName = downPartyTestStartResponse.DisplayName;
@@ -685,12 +686,9 @@ namespace FoxIDs.Client.Pages
                 return;
             }
 
-            (var authority, _, var clientOidcDiscovery, var clientAuthorize, var clientToken) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, true);
-            if (string.IsNullOrWhiteSpace(model.Authority))
-            {
-                model.Authority = authority;
-            }
-
+            (var authority, var trackIssuer, var clientOidcDiscovery, var clientAuthorize, var clientToken) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, true);
+            model.Authority = authority;
+            model.TrackIssuer = trackIssuer;
             model.OidcDiscovery = clientOidcDiscovery;
             model.AuthorizeUrl = clientAuthorize;
             model.TokenUrl = clientToken;
@@ -718,11 +716,7 @@ namespace FoxIDs.Client.Pages
             }
 
             (var authority, _, var clientOidcDiscovery, _, var clientToken) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, false);
-            if (string.IsNullOrWhiteSpace(model.Authority))
-            {
-                model.Authority = authority;
-            }
-
+            model.Authority = authority;
             model.OidcDiscovery = clientOidcDiscovery;
             model.TokenUrl = clientToken;
         }
@@ -754,11 +748,7 @@ namespace FoxIDs.Client.Pages
             }
 
             (var authority, _, var resourceOidcDiscovery, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, false);
-            if (string.IsNullOrWhiteSpace(model.Authority))
-            {
-                model.Authority = authority;
-            }
-
+            model.Authority = authority;
             model.OidcDiscovery = resourceOidcDiscovery;
         }
 

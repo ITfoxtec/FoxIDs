@@ -1,4 +1,19 @@
-﻿# OpenID Connect authentication method
+<!--
+{
+    "title":  "OpenID Connect authentication method",
+    "description":  "FoxIDs OpenID Connect authentication method which trust an external OpenID Provider (OP) / Identity Provider (IdP).",
+    "ogTitle":  "OpenID Connect authentication method",
+    "ogDescription":  "FoxIDs OpenID Connect authentication method which trust an external OpenID Provider (OP) / Identity Provider (IdP).",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "auth method oidc, FoxIDs docs"
+                       }
+}
+-->
+
+# OpenID Connect authentication method
 
 FoxIDs [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) authentication method which trust an external OpenID Provider (OP) / Identity Provider (IdP).
 
@@ -53,3 +68,4 @@ FoxIDs default use the brackets connection pattern `.../(auth-method)/...`. If n
 If necessary, a custom client ID can be configured, otherwise the authentication method name is used as the client ID.
 
 Optionally the issuer can be changed. Otherwise read from the OpenID Configuration endpoint. Furthermore, multiple issuers can be configured to trust tokens form multiple issuers signed with the same key (often used with Microsoft Entra ID).
+

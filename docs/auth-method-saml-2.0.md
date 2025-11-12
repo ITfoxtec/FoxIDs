@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "SAML 2.0 authentication method",
+    "description":  "FoxIDs SAML 2.0 authentication method which trust an external SAML 2.0 Identity Provider (IdP).",
+    "ogTitle":  "SAML 2.0 authentication method",
+    "ogDescription":  "FoxIDs SAML 2.0 authentication method which trust an external SAML 2.0 Identity Provider (IdP).",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "auth method saml 2.0, FoxIDs docs"
+                       }
+}
+-->
+
 # SAML 2.0 authentication method
 
 FoxIDs SAML 2.0 authentication method which trust an external SAML 2.0 Identity Provider (IdP).

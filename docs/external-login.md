@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "External Login - API",
+    "description":  "With external login you can authenticate users in an existing user database through an API call. You implement the API; FoxIDs calls it with a username and password, and the API validates the combination and returns success or failure. U...",
+    "ogTitle":  "External Login - API",
+    "ogDescription":  "With external login you can authenticate users in an existing user database through an API call. You implement the API; FoxIDs calls it with a username and password, and the API validates the combination and returns success or failure. U...",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "external login, FoxIDs docs"
+                       }
+}
+-->
+
 # External Login - API
 
 With external login you can authenticate users in an existing user database through an [API call](#implement-api). You implement the API; FoxIDs calls it with a username and password, and the API validates the combination and returns success or failure.  
@@ -117,3 +132,4 @@ Configure an external API login authentication method in [FoxIDs Control Client]
  9. Click **Create**
 
  Optionally click **Show advanced** in the top right corner of the configuration section to [customised](customisation.md) the login UI.
+

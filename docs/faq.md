@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "FAQ",
+    "description":  "**Only the sub, sid, acr and amr claims are pass through. I get more claims from the authentication method by using log claims trace. What am I doing wrong?**",
+    "ogTitle":  "FAQ",
+    "ogDescription":  "**Only the sub, sid, acr and amr claims are pass through. I get more claims from the authentication method by using log claims trace. What am I doing wrong?**",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "faq, FoxIDs docs"
+                       }
+}
+-->
+
 # FAQ
 
 ## Way is not all claims passed to the application?

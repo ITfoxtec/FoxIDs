@@ -170,6 +170,10 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap();
             CreateMap<ResourceCultureItem, Api.ResourceCultureItem>()
                 .ReverseMap();
+            CreateMap<TrackLargeResource, Api.TrackLargeResourceItem>()
+                .ReverseMap();
+            CreateMap<TrackLargeResourceCultureItem, Api.TrackLargeResourceCultureItem>()
+                .ReverseMap();
 
             CreateMap<Api.SendEmail, SendEmail>()
                 .ReverseMap();

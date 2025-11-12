@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Connect to Microsoft AD FS with SAML 2.0",
+    "description":  "FoxIDs can be connected to AD FS with a SAML 2.0 authentication method. Where AD FS is a SAML 2.0 Identity Provider (IdP) and FoxIDs is acting as an SAML 2.0 Relying Party (RP).",
+    "ogTitle":  "Connect to Microsoft AD FS with SAML 2.0",
+    "ogDescription":  "FoxIDs can be connected to AD FS with a SAML 2.0 authentication method. Where AD FS is a SAML 2.0 Identity Provider (IdP) and FoxIDs is acting as an SAML 2.0 Relying Party (RP).",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "auth method howto saml 2.0 adfs, FoxIDs docs"
+                       }
+}
+-->
+
 # Connect to Microsoft AD FS with SAML 2.0
 
 FoxIDs can be connected to AD FS with a [SAML 2.0 authentication method](auth-method-saml-2.0.md). Where AD FS is a SAML 2.0 Identity Provider (IdP) and FoxIDs is acting as an SAML 2.0 Relying Party (RP).
@@ -56,4 +71,5 @@ FoxIDs require AD FS to issue the users identity in either the NameID or at leas
 - Name `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name`
 
 Other claims is optional and can be received and transformed in FoxIDs.
+
 

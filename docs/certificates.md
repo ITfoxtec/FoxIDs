@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Certificates",
+    "description":  "When a environment is created it is default equipped with a automatically renewed self-signed certificate. You can optionally change the certificate container type.",
+    "ogTitle":  "Certificates",
+    "ogDescription":  "When a environment is created it is default equipped with a automatically renewed self-signed certificate. You can optionally change the certificate container type.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "certificates, FoxIDs docs"
+                       }
+}
+-->
+
 # Certificates
 
 When a environment is created it is default equipped with a automatically renewed self-signed certificate. You can optionally change the certificate container type.
@@ -11,4 +26,5 @@ There are two different certificate container types:
 **Self-signed or your certificates**
 - Automatically created self-signed certificates or upload your one certificates.
 - NOT automatically renewed.
+
 

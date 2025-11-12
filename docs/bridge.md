@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "SAML 2.0 / OpenID Connect bridge",
+    "description":  "By default, FoxIDs is a bridge between SAML 2.0 and OpenID Connect / OAuth 2.0 without any additional configuration.",
+    "ogTitle":  "SAML 2.0 / OpenID Connect bridge",
+    "ogDescription":  "By default, FoxIDs is a bridge between SAML 2.0 and OpenID Connect / OAuth 2.0 without any additional configuration.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "bridge, FoxIDs docs"
+                       }
+}
+-->
+
 # SAML 2.0 / OpenID Connect bridge
 
 By default, FoxIDs is a bridge between [SAML 2.0](saml-2.0.md) and [OpenID Connect](oidc.md) / [OAuth 2.0](oauth-2.0.md) without any additional configuration. 

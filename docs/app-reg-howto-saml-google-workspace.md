@@ -1,4 +1,19 @@
-﻿# Connect to Google Workspace with SAML 2.0
+<!--
+{
+    "title":  "Connect to Google Workspace with SAML 2.0",
+    "description":  "Connect FoxIDs as an **external identity provider for Google Workspace** with SAML 2.0.",
+    "ogTitle":  "Connect to Google Workspace with SAML 2.0",
+    "ogDescription":  "Connect FoxIDs as an **external identity provider for Google Workspace** with SAML 2.0.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "app reg howto saml google workspace, FoxIDs docs"
+                       }
+}
+-->
+
+# Connect to Google Workspace with SAML 2.0
 
 Connect FoxIDs as an **external identity provider for Google Workspace** with SAML 2.0.
 

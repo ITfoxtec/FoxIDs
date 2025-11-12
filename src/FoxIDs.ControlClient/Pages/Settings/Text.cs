@@ -312,7 +312,7 @@ namespace FoxIDs.Client.Pages.Settings
                 if (resourceItem == null)
                 {
                     largeResource.CreateMode = true;
-                    await largeResource.Form.InitAsync(new TrackLargeResourceItemViewModel { Name = RandomName.GenerateDefaultName(Constants.Models.DefaultLongNameLength) });
+                    await largeResource.Form.InitAsync(new TrackLargeResourceItemViewModel());
                 }
                 else
                 {
@@ -342,7 +342,10 @@ namespace FoxIDs.Client.Pages.Settings
 
         private void LargeResourceAfterInit(TrackLargeResourceItemViewModel resourceItem)
         {
-            resourceItem.Items ??= new List<TrackLargeResourceCultureItem>();
+            if (resourceItem.Name.IsNullOrWhiteSpace())
+            {
+                resourceItem.Name = RandomName.GenerateDefaultName(Constants.Models.DefaultLongNameLength);
+            }
             EnsureSupportedCultures(resourceItem);
         }
 

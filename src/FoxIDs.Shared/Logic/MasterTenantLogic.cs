@@ -66,6 +66,7 @@ namespace FoxIDs.Logic
                 Name = Constants.DefaultLogin.Name,
                 EnableCreateUser = false,
                 EnableCancelLogin = false,
+                DeleteRefreshTokenGrantsOnChangePassword = true,
                 SessionLifetime = 36000, // 10 hours
                 SessionAbsoluteLifetime = 36000, // 10 hours
                 PersistentSessionLifetimeUnlimited = false,

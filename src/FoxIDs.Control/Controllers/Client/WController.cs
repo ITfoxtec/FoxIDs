@@ -14,7 +14,7 @@ using System.Reflection;
 
 namespace FoxIDs.Controllers.Client
 {
-   // [HttpSecurityHeaders]
+    [FoxIDsControlHttpSecurityHeaders]
     public class WController : Controller
     {
         private static string indexFile;

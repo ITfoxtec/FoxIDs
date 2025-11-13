@@ -1,16 +1,20 @@
-﻿using ITfoxtec.Identity.Util;
+﻿using FoxIDs.Infrastructure.Filters;
+using FoxIDs.Models.Config;
+using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.OpenApi.Models;
-using System.Collections.Generic;
-using System;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 using Microsoft.OpenApi.Writers;
-using System.Text;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -62,6 +66,29 @@ namespace FoxIDs.Infrastructure.Hosting
                 {
                     await next();
                 }
+            });
+
+            builder.Use(async (context, next) =>
+            {
+                var applySecurityHeaders = context.Request.Path.StartsWithSegments("/api/swagger", StringComparison.OrdinalIgnoreCase);
+
+                if (applySecurityHeaders)
+                {
+                    context.Response.OnStarting(() =>
+                    {
+                        var settings = context.RequestServices.GetRequiredService<FoxIDsControlSettings>();
+                        var environment = context.RequestServices.GetRequiredService<IWebHostEnvironment>();
+                        var securityHeaders = new FoxIDsControlHttpSecurityHeadersAttribute.FoxIDsControlHttpSecurityHeadersActionAttribute(settings, environment);
+
+                        var contentType = context.Response.ContentType;
+                        var isHtml = !string.IsNullOrEmpty(contentType) && contentType.Contains("text/html", StringComparison.OrdinalIgnoreCase);
+                        securityHeaders.ApplyFromMiddleware(context, isHtml);
+
+                        return Task.CompletedTask;
+                    });
+                }
+
+                await next();
             });
 
             builder.Use((context, next) =>

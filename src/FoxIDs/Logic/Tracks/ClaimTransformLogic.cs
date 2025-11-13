@@ -817,6 +817,7 @@ namespace FoxIDs.Logic
 
         private (List<ClaimAndValues>, bool isChanged) UpdateUsersClaimValues(List<ClaimAndValues> claims, string targetClaimType, List<string> targetValues, ClaimTransformActions action)
         {
+            claims ??= new List<ClaimAndValues>();
             var targetClaim = claims.FirstOrDefault(c => c.Claim == targetClaimType);
             var isChanged = false;
 

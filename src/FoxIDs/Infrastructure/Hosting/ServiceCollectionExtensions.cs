@@ -22,6 +22,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSharedLogic(settings);
 
             services.AddSingleton<LocalizationLogic>();
+            services.AddSingleton<LargeLocalizationLogic>();
             services.AddSingleton<CountryCodesLogic>();
 
             services.AddTransient<SequenceLogic>();

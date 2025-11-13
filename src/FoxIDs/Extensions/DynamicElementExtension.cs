@@ -1,4 +1,5 @@
-﻿using ITfoxtec.Identity;
+﻿using FoxIDs.Logic;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace FoxIDs
 {
@@ -64,6 +66,25 @@ namespace FoxIDs
             return html.GetControl("text", name, html.GetLocalizerValue(displayName), value, maxLength, validation: validation, isRequired: isRequired);
         }
 
+        public static IHtmlContent GetCheckboxControl(this IHtmlHelper html, string name, string value, string displayName, bool isRequired)
+        {
+            (var hasError, var errorMessage) = GetError(html, name);
+
+            var localizedDisplayName = html.GetLocalizerValue(displayName);
+            var id = name.Replace('.', '_').Replace('[', '_').Replace(']', '_');
+            var hiddenId = $"{id}_hidden";
+            var isChecked = string.Equals(value, bool.TrueString, StringComparison.OrdinalIgnoreCase);
+
+            var contentBuilder = new HtmlContentBuilder();
+            contentBuilder.AppendHtml($"<input type=\"hidden\" id=\"{hiddenId}\" name=\"{name}\" value=\"{(isChecked ? "true" : "false")}\" data-val=\"true\"{(isRequired ? $" data-val-required=\"{html.GetErrorAttributeLocalizerMessage<RequiredAttribute>(localizedDisplayName)}\"" : string.Empty)} />");
+            contentBuilder.AppendHtml("<div class=\"custom-control custom-checkbox\">");
+            contentBuilder.AppendHtml($"<input type=\"checkbox\" class=\"custom-control-input{(hasError ? " input-validation-error" : string.Empty)}\" id=\"{id}\" value=\"true\" {(isChecked ? "checked" : string.Empty)} onchange=\"document.getElementById('{hiddenId}').value = this.checked ? 'true' : 'false';\" />");
+            contentBuilder.AppendHtml($"<label class=\"custom-control-label\" for=\"{id}\">{localizedDisplayName}</label>");
+            contentBuilder.AppendHtml("</div>");
+            contentBuilder.AppendHtml($"<span class=\"{(hasError ? "field-validation-error" : "field-validation-valid")}\" data-valmsg-for=\"{name}\" data-valmsg-replace=\"true\">{errorMessage}</span>");
+            return contentBuilder;
+        }
+
         public static IHtmlContent GetTextControl(this IHtmlHelper html, string content, IStringLocalizer stringLocalizer)
         {
             return html.GetContentControl(content, stringLocalizer, false);
@@ -71,6 +92,15 @@ namespace FoxIDs
         public static IHtmlContent GetHtmlControl(this IHtmlHelper html, string content, IStringLocalizer stringLocalizer)
         {
             return html.GetContentControl(content, stringLocalizer, true);
+        }
+
+        public static async Task<IHtmlContent> GetLargeTextControlAsync(this IHtmlHelper html, string content, LargeLocalizationLogic largeLocalizationLogic)
+        {
+            return await html.GetLargeContentControlAsync(content, largeLocalizationLogic, false);
+        }
+        public static async Task<IHtmlContent> GetLargeHtmlControlAsync(this IHtmlHelper html, string content, LargeLocalizationLogic largeLocalizationLogic)
+        {
+            return await html.GetLargeContentControlAsync(content, largeLocalizationLogic, true);
         }
 
         private static IHtmlContent GetControl(this IHtmlHelper html, string type, string name, string displayName, string value, int maxLength, string validation = null, string autocomplete = null, bool isRequired = false)
@@ -105,6 +135,24 @@ namespace FoxIDs
             {
                 contentBuilder.Append(stringLocalizer.GetString(content));
             }
+            return contentBuilder;
+        }
+
+        private static async Task<IHtmlContent> GetLargeContentControlAsync(this IHtmlHelper html, string content, LargeLocalizationLogic largeLocalizationLogic, bool isHtml)
+        {
+            var contentBuilder = new HtmlContentBuilder();
+            var resourceContent = await largeLocalizationLogic.GetStringAsync(content);
+            if (isHtml)
+            {
+                var cleanedContent = RemoveHtmlComments(resourceContent);
+                contentBuilder.AppendHtml(cleanedContent);
+            }
+            else
+            {
+                var markdownContent = resourceContent.ConvertMarkdownToHtml();
+                contentBuilder.AppendHtml(markdownContent);
+            }
+
             return contentBuilder;
         }
 

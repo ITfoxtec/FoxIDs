@@ -1,6 +1,8 @@
-﻿@using Microsoft.AspNetCore.Mvc.Localization
+﻿@using System.Net
+@using Microsoft.AspNetCore.Mvc.Localization
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer StringLocalizer
+@inject FoxIDs.Logic.LargeLocalizationLogic LargeLocalizationLogic
 @model DynamicElementBase
 
 @if (Model != null)
@@ -8,14 +10,31 @@
     if (Model is ContentDElement contentDElement)
     {
         var cssName = Model.Name.IsNullOrWhiteSpace() ? string.Empty : $"name-{Model.Name}";
-        <div class="form-group active-group @cssName">
-            @if (contentDElement.IsHtml) 
+        var containerClass = $"form-group active-group {cssName}{(contentDElement.IsLarge ? " large-content" : string.Empty)}";
+        <div class="@containerClass">
+            @if (!contentDElement.IsLarge)
             {
-                @Html.GetHtmlControl(contentDElement.DContent, StringLocalizer)
+                if (contentDElement.IsHtml)
+                {
+                    @Html.GetHtmlControl(contentDElement.DContent, StringLocalizer)
+                }
+                else
+                {
+                    @Html.GetTextControl(contentDElement.DContent, StringLocalizer)
+                }
             }
             else
             {
-                @Html.GetTextControl(contentDElement.DContent, StringLocalizer)
+                <div class="large-content-inner">
+                    @if (contentDElement.IsHtml)
+                    {
+                        @(await Html.GetLargeHtmlControlAsync(contentDElement.DContent, LargeLocalizationLogic))
+                    }
+                    else
+                    {
+                        @(await Html.GetLargeTextControlAsync(contentDElement.DContent, LargeLocalizationLogic))
+                    }
+                </div>
             }
         </div>
     }

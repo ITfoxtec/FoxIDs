@@ -142,13 +142,23 @@ namespace FoxIDs.Logic
                 if (elements?.Count() > 0)
                 {
                     AddDefaultNames(elements);
+                    TrimValues(elements);
                     ValidateRegEx(elements);
                     ValidateHtml(elements);
                     ValidateDuplicatedOrderNumber(elements);
 
-                    if (elements.Any(e => e.Type != Api.DynamicElementTypes.Text && e.Type != Api.DynamicElementTypes.Html && e.Type != Api.DynamicElementTypes.LoginInput && e.Type != Api.DynamicElementTypes.LoginButton && e.Type != Api.DynamicElementTypes.LoginLink && e.Type != Api.DynamicElementTypes.LoginHrd))
+                    if (elements.Any(e =>
+                        e.Type != Api.DynamicElementTypes.Text &&
+                        e.Type != Api.DynamicElementTypes.Html &&
+                        e.Type != Api.DynamicElementTypes.LargeText &&
+                        e.Type != Api.DynamicElementTypes.LargeHtml &&
+                        e.Type != Api.DynamicElementTypes.Checkbox &&
+                        e.Type != Api.DynamicElementTypes.LoginInput &&
+                        e.Type != Api.DynamicElementTypes.LoginButton &&
+                        e.Type != Api.DynamicElementTypes.LoginLink &&
+                        e.Type != Api.DynamicElementTypes.LoginHrd))
                     {
-                        throw new ValidationException($"Only dynamic elements of type '{nameof(Api.DynamicElementTypes.LoginInput)}', '{nameof(Api.DynamicElementTypes.LoginButton)}', '{nameof(Api.DynamicElementTypes.LoginLink)}', '{nameof(Api.DynamicElementTypes.LoginHrd)}', '{nameof(Api.DynamicElementTypes.Text)}' and '{nameof(Api.DynamicElementTypes.Html)}' are supported in the login UI.");
+                        throw new ValidationException($"Only dynamic elements of type '{nameof(Api.DynamicElementTypes.LoginInput)}', '{nameof(Api.DynamicElementTypes.LoginButton)}', '{nameof(Api.DynamicElementTypes.LoginLink)}', '{nameof(Api.DynamicElementTypes.LoginHrd)}', '{nameof(Api.DynamicElementTypes.Text)}', '{nameof(Api.DynamicElementTypes.Html)}', '{nameof(Api.DynamicElementTypes.LargeText)}', '{nameof(Api.DynamicElementTypes.LargeHtml)}' and '{nameof(Api.DynamicElementTypes.Checkbox)}' are supported in the login UI.");
                     }
 
                     if (elements.Where(e => e.Type == Api.DynamicElementTypes.LoginInput).Count() > 1)
@@ -196,6 +206,7 @@ namespace FoxIDs.Logic
                 if (extendedUiElements?.Count() > 0)
                 {
                     AddDefaultNames(extendedUiElements);
+                    TrimValues(extendedUiElements);
                     ValidateRegEx(extendedUiElements);
                     ValidateHtml(extendedUiElements);
                     ValidateDuplicatedOrderNumber(extendedUiElements);
@@ -244,6 +255,18 @@ namespace FoxIDs.Logic
             return name;
         }
 
+        private void TrimValues(List<Api.DynamicElement> elements)
+        {
+            foreach (var element in elements)
+            {
+                element.Content = element.Content?.Trim();
+                element.DisplayName = element.DisplayName?.Trim();
+                element.RegEx = element.RegEx?.Trim();
+                element.ErrorMessage = element.ErrorMessage?.Trim();
+                element.ClaimOut = element.ClaimOut?.Trim();
+            }
+        }
+
         private static void ValidateDuplicatedOrderNumber(List<Api.DynamicElement> dynamicElement)
         {
             var duplicatedOrderNumber = dynamicElement.GroupBy(ct => ct.Order as int?).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
@@ -255,7 +278,7 @@ namespace FoxIDs.Logic
 
         private static void ValidateDuplicatedElementType(List<Api.DynamicElement> dynamicElement)
         {
-            var duplicatedElementType = dynamicElement.Where(ct => ct.Type != Api.DynamicElementTypes.Custom && ct.Type != Api.DynamicElementTypes.Text && ct.Type != Api.DynamicElementTypes.Html)
+            var duplicatedElementType = dynamicElement.Where(ct => ct.Type != Api.DynamicElementTypes.Custom && ct.Type != Api.DynamicElementTypes.Text && ct.Type != Api.DynamicElementTypes.Html && ct.Type != Api.DynamicElementTypes.LargeText && ct.Type != Api.DynamicElementTypes.LargeHtml && ct.Type != Api.DynamicElementTypes.Checkbox)
                 .GroupBy(ct => ct.Type).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
             if (duplicatedElementType > 0)
             {

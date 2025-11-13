@@ -1,3 +1,4 @@
+@using FoxIDs
 @using FoxIDs.Client.Models.ViewModels
 @using FoxIDs.Models.Api
 @using FoxIDs.Util
@@ -42,6 +43,25 @@
                             else if (element.Type == DynamicElementTypes.Html)
                             {
                                 <div class="p-0 alert alert-light font-weight-bold small" role="alert">HTML element</div>
+                            }
+                            else if (element.Type == DynamicElementTypes.LargeText)
+                            {
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Large text element</div>
+                            }
+                            else if (element.Type == DynamicElementTypes.LargeHtml)
+                            {
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Large HTML element</div>
+                            }
+                            else if (element.Type == DynamicElementTypes.Checkbox)
+                            {
+                                if (element.ClaimOut.IsNullOrWhiteSpace())
+                                {
+                                    <div class="p-0 alert alert-light font-weight-bold small" role="alert">Checkbox element</div>
+                                }
+                                else
+                                {
+                                    <div class="p-0 alert alert-light font-weight-bold small" role="alert">Checkbox element (claim: <code>@element.ClaimOut</code>)</div>
+                                }
                             }
                             else
                             {
@@ -91,6 +111,25 @@
                             </div>
                         </div>
                     }
+                    @if (element.Type == DynamicElementTypes.Checkbox)
+                    {
+                        <div class="row">
+                            <div class="col-12">
+                                <FInputText @bind-Value="element.DisplayName" For="@(() => element.DisplayName)" />
+                                <div class="info-text">Add an output claim to include the checkbox state.</div>
+                                <FInputText @bind-Value="element.ClaimOut" For="@(() => element.ClaimOut)" />
+                            </div>
+                        </div>
+                    }
+                    @if (element.Type == DynamicElementTypes.LargeText || element.Type == DynamicElementTypes.LargeHtml)
+                    {
+                        <div class="row">
+                            <div class="col-12">
+                                <FInputText @bind-Value="element.Content" For="@(() => element.Content)" LabelText="Large resource name" />
+                                <div class="info-text">Large texts@(element.Type == DynamicElementTypes.LargeHtml ? " (HTML)" : "(plain text or markdown)") is managed under Settings in the Texts tab.</div>
+                            </div>
+                        </div>
+                    }
                 </li>
             }
         }
@@ -105,8 +144,12 @@
             <span class="oi oi-plus" aria-hidden="true"></span> Add element
         </button>
         <div class="dropdown-menu" aria-labelledby="btnLoginUiElements">
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Checkbox))">Checkbox element</button>
+            <div class="dropdown-divider"></div>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Text))">Text element</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Html))">HTML element</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.LargeText))">Large text element</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.LargeHtml))">Large HTML element</button>
         </div>
     </div>
 </div>
@@ -126,6 +169,11 @@
         {
             Type = type
         };
+
+        if (type == DynamicElementTypes.LargeText || type == DynamicElementTypes.LargeHtml)
+        {
+            element.Content = RandomName.GenerateDefaultName(Constants.Models.DefaultLongNameLength);
+        }
         element.Name = RandomName.GenerateDefaultName(Model.Select(e => e.Name));
         Model.Add(element);
         StateHasChanged();

@@ -68,7 +68,7 @@ namespace FoxIDs.Models
                 results.Add(new ValidationResult($"The field {nameof(Type)}='{Type}' can not be a user identifier'.", [nameof(Type), nameof(IsUserIdentifier)]));
             }
 
-            if (Type == DynamicElementTypes.Text || Type == DynamicElementTypes.Html)
+            if (Type == DynamicElementTypes.Text || Type == DynamicElementTypes.Html || Type == DynamicElementTypes.LargeText || Type == DynamicElementTypes.LargeHtml)
             {
                 if (Content.IsNullOrWhiteSpace())
                 {
@@ -95,6 +95,14 @@ namespace FoxIDs.Models
                 if (!RegEx.IsNullOrWhiteSpace() && ErrorMessage.IsNullOrWhiteSpace())
                 {
                     results.Add(new ValidationResult($"The field {nameof(ErrorMessage)} is required in connection with the field {nameof(RegEx)}.", [nameof(ErrorMessage)]));
+                }
+            }
+
+            if (Type == DynamicElementTypes.Checkbox)
+            {
+                if (DisplayName.IsNullOrWhiteSpace())
+                {
+                    results.Add(new ValidationResult($"The field {nameof(DisplayName)} is required for dynamic element type '{Type}'.", [nameof(DisplayName)]));
                 }
             }
 

@@ -21,12 +21,10 @@ namespace FoxIDs.Infrastructure.Filters
         public class HttpSecurityHeadersActionAttribute : IAsyncActionFilter
         {
             protected bool isHtmlContent;
-            private readonly TelemetryScopedLogger logger;
             private readonly IWebHostEnvironment environment;
 
-            public HttpSecurityHeadersActionAttribute(TelemetryScopedLogger logger, IWebHostEnvironment environment)
+            public HttpSecurityHeadersActionAttribute(IWebHostEnvironment environment)
             {
-                this.logger = logger;
                 this.environment = environment;
             }
 
@@ -88,7 +86,12 @@ namespace FoxIDs.Infrastructure.Filters
                         yield return cspImgSrc;
                     }
 
-                    yield return "script-src 'self' 'unsafe-inline';";
+                    var cspScriptSrc = CspScriptSrc(httpContext);
+                    if (!cspScriptSrc.IsNullOrEmpty())
+                    {
+                        yield return cspScriptSrc;
+                    }
+
                     yield return "style-src 'self' 'unsafe-inline';";
 
                     yield return "base-uri 'self';";
@@ -129,6 +132,11 @@ namespace FoxIDs.Infrastructure.Filters
             protected virtual string CspImgSrc(HttpContext httpContext)
             {
                 return "img-src 'self' data: 'unsafe-inline';";
+            }
+
+            protected virtual string CspScriptSrc(HttpContext httpContext)
+            {
+                return "script-src 'self' 'unsafe-inline';";
             }
 
             protected virtual string CspFormAction(HttpContext httpContext)

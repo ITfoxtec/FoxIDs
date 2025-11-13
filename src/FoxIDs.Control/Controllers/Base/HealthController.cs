@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace FoxIDs.Controllers
 {
     [Route(Constants.Routes.HealthController)]
-    [HttpSecurityHeaders]
+    [FoxIDsControlHttpSecurityHeaders]
     public class HealthController : HealthControllerBase
     {
         public HealthController(HealthCheckLogic healthCheckLogic)

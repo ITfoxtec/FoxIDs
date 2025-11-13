@@ -1,5 +1,4 @@
 using ITfoxtec.Identity;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -19,6 +18,11 @@ namespace FoxIDs
 
         public static string ConvertMarkdownToHtml(this string markdown)
         {
+            if (markdown.IsNullOrWhiteSpace())
+            {
+                return string.Empty;
+            }
+
             var normalized = markdown.Replace("\r\n", "\n");
             var lines = normalized.Split('\n');
             var builder = new StringBuilder();
@@ -67,6 +71,36 @@ namespace FoxIDs
                 {
                     FlushList();
                     FlushParagraph();
+                    continue;
+                }
+
+                if (trimmedStart.StartsWith("### "))
+                {
+                    FlushList();
+                    FlushParagraph();
+                    builder.Append("<h3 class=\"h5\">");
+                    builder.Append(EncodeInlineMarkdown(trimmedStart.Substring(4)));
+                    builder.Append("</h3>");
+                    continue;
+                }
+
+                if (trimmedStart.StartsWith("## "))
+                {
+                    FlushList();
+                    FlushParagraph();
+                    builder.Append("<h2 class=\"h4\">");
+                    builder.Append(EncodeInlineMarkdown(trimmedStart.Substring(3)));
+                    builder.Append("</h2>");
+                    continue;
+                }
+
+                if (trimmedStart.StartsWith("# "))
+                {
+                    FlushList();
+                    FlushParagraph();
+                    builder.Append("<h1 class=\"h3\">");
+                    builder.Append(EncodeInlineMarkdown(trimmedStart.Substring(2)));
+                    builder.Append("</h1>");
                     continue;
                 }
 

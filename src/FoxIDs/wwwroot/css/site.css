@@ -322,6 +322,10 @@ img.qr-code {
     margin: -12px 0;
 }
 
+.content p:last-child {
+    margin-bottom: 0;
+}
+
 .large-content {
     min-height: 8rem;
     max-height: 20rem;

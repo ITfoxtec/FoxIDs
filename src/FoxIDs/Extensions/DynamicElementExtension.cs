@@ -133,7 +133,8 @@ namespace FoxIDs
             }
             else
             {
-                contentBuilder.Append(stringLocalizer.GetString(content));
+                var markdownContent = stringLocalizer.GetString(content)?.Value.ConvertMarkdownToHtml();
+                contentBuilder.AppendHtml(markdownContent);
             }
             return contentBuilder;
         }

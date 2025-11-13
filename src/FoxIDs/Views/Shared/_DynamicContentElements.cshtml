@@ -10,7 +10,7 @@
     if (Model is ContentDElement contentDElement)
     {
         var cssName = Model.Name.IsNullOrWhiteSpace() ? string.Empty : $"name-{Model.Name}";
-        var containerClass = $"form-group active-group {cssName}{(contentDElement.IsLarge ? " large-content" : string.Empty)}";
+        var containerClass = $"form-group active-group {cssName} {(contentDElement.IsLarge ? "large-content" : "content")}";
         <div class="@containerClass">
             @if (!contentDElement.IsLarge)
             {

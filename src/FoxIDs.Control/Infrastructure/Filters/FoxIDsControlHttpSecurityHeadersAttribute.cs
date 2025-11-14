@@ -3,6 +3,7 @@ using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
 
 namespace FoxIDs.Infrastructure.Filters
 {
@@ -25,6 +26,16 @@ namespace FoxIDs.Infrastructure.Filters
             {
                 isHtmlContent = isHtml;
                 SetHeaders(httpContext);
+            }
+
+            protected override IEnumerable<string> GetAdditionalConnectSrc(HttpContext httpContext)
+            {
+                var connectSrc = base.GetAdditionalConnectSrc(httpContext) ?? Array.Empty<string>();
+                if (!settings.FoxIDsEndpoint.IsNullOrWhiteSpace())
+                {
+                    connectSrc = connectSrc.ConcatOnce(settings.FoxIDsEndpoint.UrlToOrigin());
+                }
+                return connectSrc;
             }
 
             protected override string CspScriptSrc(HttpContext httpContext)

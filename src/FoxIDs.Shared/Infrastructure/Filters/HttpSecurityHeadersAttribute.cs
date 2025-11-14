@@ -78,7 +78,12 @@ namespace FoxIDs.Infrastructure.Filters
                     yield return "block-all-mixed-content;";
 
                     yield return "default-src 'self';";
-                    yield return $"connect-src 'self'{GetConnectSrc(httpContext)};"; 
+                    
+                    var cspConnectSrc = CspConnectSrc(httpContext);
+                    if (!cspConnectSrc.IsNullOrEmpty())
+                    {
+                        yield return cspConnectSrc;
+                    }
 
                     var cspImgSrc = CspImgSrc(httpContext);
                     if (!cspImgSrc.IsNullOrEmpty())
@@ -118,15 +123,22 @@ namespace FoxIDs.Infrastructure.Filters
                 }
             }
 
-            private string GetConnectSrc(HttpContext httpContext)
+            protected virtual string CspConnectSrc(HttpContext httpContext)
+            {
+                var connectSrc = new List<string> { "'self'" };
+                connectSrc = connectSrc.ConcatOnce(GetAdditionalConnectSrc(httpContext));
+                return $"connect-src {connectSrc.ToSpaceList()};";
+            }
+
+            protected virtual IEnumerable<string> GetAdditionalConnectSrc(HttpContext httpContext)
             {
 #if DEBUG
                 if (environment.IsDevelopment())
                 {
-                    return $" *";
+                    return new[] { "*" };
                 }
 #endif
-                return string.Empty;
+                return Array.Empty<string>();
             }
 
             protected virtual string CspImgSrc(HttpContext httpContext)

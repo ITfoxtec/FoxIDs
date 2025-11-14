@@ -1,4 +1,19 @@
-﻿# Connect to IdentityServer with OpenID Connect
+<!--
+{
+    "title":  "Connect to IdentityServer with OpenID Connect",
+    "description":  "FoxIDs can be connected to an IdentityServer with OpenID Connect and thereby authenticating end users in an IdentityServer.",
+    "ogTitle":  "Connect to IdentityServer with OpenID Connect",
+    "ogDescription":  "FoxIDs can be connected to an IdentityServer with OpenID Connect and thereby authenticating end users in an IdentityServer.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "auth method howto oidc identityserver, FoxIDs docs"
+                       }
+}
+-->
+
+# Connect to IdentityServer with OpenID Connect
 
 FoxIDs can be connected to an IdentityServer with OpenID Connect and thereby authenticating end users in an IdentityServer.
 
@@ -98,4 +113,5 @@ You can remove the `AlwaysIncludeUserClaimsInIdToken = true` from the client.
 
 1. Add the API scope `some.api.access` as a scope in the FoxIDs authentication method client
 2. Read claims from access token by not selecting to use claims from ID token
+
 

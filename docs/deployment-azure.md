@@ -1,4 +1,19 @@
-ï»¿# Azure App Service Container
+<!--
+{
+    "title":  "Azure App Service Container",
+    "description":  "Deploy FoxIDs in your Azure tenant as your own private cloud.",
+    "ogTitle":  "Azure App Service Container",
+    "ogDescription":  "Deploy FoxIDs in your Azure tenant as your own private cloud.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "deployment azure, FoxIDs docs"
+                       }
+}
+-->
+
+# Azure App Service Container
 
 Deploy FoxIDs in your Azure tenant as your own private cloud.  
 
@@ -10,7 +25,7 @@ FoxIDs is deployed in the resource group `FoxIDs` (optional name) where you need
 
 [Deploy to Azure](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Fmaster%2Fazuredeploy.json)
 
-> You can do a [small deployment to Azure](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Fmaster%2Fazuredeploy-small.json) with low resource consumption at an Azure price of around â‚¬80 to â‚¬100 per month.
+> You can do a [small deployment to Azure](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Fmaster%2Fazuredeploy-small.json) with low resource consumption at an Azure price of around €80 to €100 per month.
 
 The Azure container deployment include:
 
@@ -157,3 +172,4 @@ If you have deleted a previous deployment the Key Vault is only soft deleted and
 In this case you can experience getting a 'ConflictError' with the error message 'Exist soft deleted vault with the same name.'.
 
 The solution is to delete (purge) the old Key Vault, which will release the name.
+

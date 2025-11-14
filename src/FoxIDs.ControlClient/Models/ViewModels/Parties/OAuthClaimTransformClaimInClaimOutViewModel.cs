@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class OAuthClaimTransformClaimInViewModel : ClaimTransformViewModel
+    public class OAuthClaimTransformClaimInClaimOutViewModel : ClaimTransformViewModel
     {
         [MaxLength(Constants.Models.Claim.JwtTypeLength)]
         [RegularExpression(Constants.Models.Claim.JwtTypeWildcardRegExPattern)]

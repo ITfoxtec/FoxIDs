@@ -1,4 +1,19 @@
-﻿# OpenID Connect
+<!--
+{
+    "title":  "OpenID Connect",
+    "description":  "FoxIDs support OpenID Connect as both authentication method and application registration.",
+    "ogTitle":  "OpenID Connect",
+    "ogDescription":  "FoxIDs support OpenID Connect as both authentication method and application registration.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "oidc, FoxIDs docs"
+                       }
+}
+-->
+
+# OpenID Connect
 
 FoxIDs support OpenID Connect as both authentication method and application registration.
 
@@ -29,4 +44,5 @@ Configure your application as a [OpenID Connect application registration](app-re
 
 Besides receiving an ID token the client can request an access token for multiple APIs defined as [OAuth 2.0 application registration resources](app-reg-oauth-2.0.md#oauth-20-resource).  
 An OAuth 2.0 resource can optionally be defined in a OpenID Connect application registration or a OAuth 2.0 application registration.
+
 

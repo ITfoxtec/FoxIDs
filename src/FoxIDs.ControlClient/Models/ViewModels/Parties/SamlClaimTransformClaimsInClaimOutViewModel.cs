@@ -6,14 +6,14 @@ using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class OAuthClaimTransformClaimsInViewModel : ClaimTransformViewModel
+    public class SamlClaimTransformClaimsInClaimOutViewModel : ClaimTransformViewModel
     {
-        [ListLength(Constants.Models.Claim.TransformClaimsInMin, Constants.Models.Claim.TransformClaimsInMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
-        [Display(Name = "Select claims")]
+        [ListLength(Constants.Models.Claim.TransformClaimsInMin, Constants.Models.Claim.TransformClaimsInMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
+        [Display(Name = "Select claim")]
         public override List<string> ClaimsIn { get; set; }
 
-        [MaxLength(Constants.Models.Claim.JwtTypeLength)]
-        [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
+        [MaxLength(Constants.Models.Claim.SamlTypeLength)]
+        [RegularExpression(Constants.Models.Claim.SamlTypeRegExPattern)]
         public override string ClaimOut { get; set; }
 
         [MaxLength(Constants.Models.Claim.TransformTransformationLength)]

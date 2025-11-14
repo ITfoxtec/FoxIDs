@@ -17,7 +17,7 @@ namespace FoxIDs.Controllers
 {
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     [Log]
-    [HttpSecurityHeaders]
+    [FoxIDsControlHttpSecurityHeaders]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

@@ -15,6 +15,10 @@ namespace FoxIDs.Models.Api
 
         Text = 200,
         Html = 210,
+        LargeText = 220,
+        LargeHtml = 230,
+
+        Checkbox = 300,
 
         Custom = 1000,
 

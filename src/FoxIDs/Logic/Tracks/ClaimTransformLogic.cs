@@ -1,4 +1,5 @@
-﻿using FoxIDs.Infrastructure;
+﻿using AspNetCoreGeneratedDocument;
+using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Models.Logic;
 using FoxIDs.Repository;
@@ -149,7 +150,7 @@ namespace FoxIDs.Logic
                     }
                     else
                     {
-                        throw new Exception($"Claim transform type '{claimTransform.Type}' with output claim '{claimTransform.ClaimOut}' failed.", ex);
+                        throw new Exception($"Claim transform type '{claimTransform.Type}' with output claim '{claimTransform.ClaimsOut.First()}' failed.", ex);
                     }
                 }
 
@@ -169,11 +170,19 @@ namespace FoxIDs.Logic
                 var claimIn = claimTransform.ClaimsIn.Single();
                 if (claimTransform.Action == ClaimTransformActions.If || claimTransform.Action == ClaimTransformActions.IfNot)
                 {
-                    var exist = claims.Where(c => c.Type.Equals(claimIn, StringComparison.Ordinal)).Any();
-                    var doAction = (exist && claimTransform.Action == ClaimTransformActions.If) || (!exist && claimTransform.Action == ClaimTransformActions.IfNot);
-                    if (doAction)
+                    var existClaim = claims.Where(c => c.Type.Equals(claimIn, StringComparison.Ordinal));
+                    var exist = existClaim.Any();
+                    if (claimTransform.Task == ClaimTransformTasks.LogEvent && exist && claimTransform.Action == ClaimTransformActions.If)
                     {
-                        return await HandleIfAndIfNotTaskAsync(claims, claimTransform, loginRequest);
+                        HandleLogEventTask(existClaim.Select(c => c.Value));
+                    }
+                    else
+                    {
+                        var doAction = (exist && claimTransform.Action == ClaimTransformActions.If) || (!exist && claimTransform.Action == ClaimTransformActions.IfNot);
+                        if (doAction)
+                        {
+                            return await HandleIfAndIfNotTaskAsync(claims, claimTransform, loginRequest);
+                        }
                     }
                 }
                 else
@@ -193,7 +202,7 @@ namespace FoxIDs.Logic
                         {
                             if (claim.Type.Equals(claimIn, StringComparison.Ordinal))
                             {
-                                newClaims.Add(new Claim(claimTransform.ClaimOut, claimTransform.Transformation));
+                                newClaims.Add(new Claim(claimTransform.ClaimsOut.First(), claimTransform.Transformation));
                             }
                         }
 
@@ -203,14 +212,14 @@ namespace FoxIDs.Logic
                         }
                         else if (newClaims.Count() <= 0 && (claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot))
                         {
-                            AddOrReplaceClaims(claims, claimTransform.Action, new Claim(claimTransform.ClaimOut, claimTransform.Transformation));
+                            AddOrReplaceClaims(claims, claimTransform.Action, new Claim(claimTransform.ClaimsOut.First(), claimTransform.Transformation));
                         }
                     }
                 }
             }
             else
             {
-                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal));
+                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimsOut.First(), StringComparison.Ordinal));
             }
             return null;
         }
@@ -236,7 +245,7 @@ namespace FoxIDs.Logic
                     {
                         if (claim.Type.Equals(claimIn, StringComparison.Ordinal) && claim.Value.Equals(claimTransform.Transformation, StringComparison.Ordinal))
                         {
-                            newClaims.Add(new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
+                            newClaims.Add(new Claim(claimTransform.ClaimsOut.First(), claimTransform.TransformationExtension));
                         }
                     }
 
@@ -246,13 +255,13 @@ namespace FoxIDs.Logic
                     }
                     else if (newClaims.Count() <= 0 && (claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot))
                     {
-                        AddOrReplaceClaims(claims, claimTransform.Action, new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
+                        AddOrReplaceClaims(claims, claimTransform.Action, new Claim(claimTransform.ClaimsOut.First(), claimTransform.TransformationExtension));
                     }
                 }
             }
             else
             {
-                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal) && c.Value.Equals(claimTransform.Transformation, StringComparison.Ordinal));
+                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimsOut.First(), StringComparison.Ordinal) && c.Value.Equals(claimTransform.Transformation, StringComparison.Ordinal));
             }
             return null;
         }
@@ -280,7 +289,7 @@ namespace FoxIDs.Logic
                     {
                         if (claim.Type.Equals(claimIn, StringComparison.Ordinal) && regex.Match(claim.Value).Success)
                         {
-                            newClaims.Add(new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
+                            newClaims.Add(new Claim(claimTransform.ClaimsOut.First(), claimTransform.TransformationExtension));
                         }
                     }
 
@@ -290,13 +299,13 @@ namespace FoxIDs.Logic
                     }
                     else if (newClaims.Count() <= 0 && (claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot))
                     {
-                        AddOrReplaceClaims(claims, claimTransform.Action, new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
+                        AddOrReplaceClaims(claims, claimTransform.Action, new Claim(claimTransform.ClaimsOut.First(), claimTransform.TransformationExtension));
                     }
                 }
             }
             else
             {
-                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal) && regex.Match(c.Value).Success);
+                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimsOut.First(), StringComparison.Ordinal) && regex.Match(c.Value).Success);
             }
             return null;
         }
@@ -309,7 +318,7 @@ namespace FoxIDs.Logic
             {
                 if (claim.Type.Equals(claimIn, StringComparison.Ordinal))
                 {
-                    newClaims.Add(new Claim(claimTransform.ClaimOut, claim.Value));
+                    newClaims.Add(new Claim(claimTransform.ClaimsOut.First(), claim.Value));
                 }
             }
 
@@ -319,7 +328,7 @@ namespace FoxIDs.Logic
             }
             else if (claimTransform.Action == ClaimTransformActions.AddIfNotOut)
             {
-                if (!(claims.Where(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal)).Count() > 0))
+                if (!(claims.Where(c => c.Type.Equals(claimTransform.ClaimsOut.First(), StringComparison.Ordinal)).Count() > 0))
                 {
                     AddOrReplaceClaims(claims, claimTransform.Action, newClaims);
                 }                
@@ -338,7 +347,7 @@ namespace FoxIDs.Logic
                     var match = regex.Match(claim.Value);
                     if (match.Success && match.Groups.ContainsKey("map"))
                     {
-                        newClaims.Add(new Claim(claimTransform.ClaimOut, match.Groups["map"].Value));
+                        newClaims.Add(new Claim(claimTransform.ClaimsOut.First(), match.Groups["map"].Value));
                     }
                 }
             }
@@ -349,7 +358,7 @@ namespace FoxIDs.Logic
             }
             else if (claimTransform.Action == ClaimTransformActions.AddIfNotOut)
             {
-                if (!(claims.Where(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal)).Count() > 0))
+                if (!(claims.Where(c => c.Type.Equals(claimTransform.ClaimsOut.First(), StringComparison.Ordinal)).Count() > 0))
                 {
                     AddOrReplaceClaims(claims, claimTransform.Action, newClaims);
                 }
@@ -379,7 +388,7 @@ namespace FoxIDs.Logic
             if(addTransformationClaim)
             {
                 var transformationValue = string.Format(claimTransform.Transformation, values);
-                newClaims.Add(new Claim(claimTransform.ClaimOut, transformationValue));
+                newClaims.Add(new Claim(claimTransform.ClaimsOut.First(), transformationValue));
             }
             AddOrReplaceClaims(claims, claimTransform.Action, newClaims);
         }
@@ -475,12 +484,25 @@ namespace FoxIDs.Logic
                             dkPrivilegeGroupResult.Privilege.Add(privilegeXmlNode.InnerText);
                         }
 
-                        newClaims.Add(new Claim(claimTransform.ClaimOut, dkPrivilegeGroupResult.ToJson()));
+                        newClaims.Add(new Claim(claimTransform.ClaimsOut.First(), dkPrivilegeGroupResult.ToJson()));
                     }                    
                 }
             }
 
             AddOrReplaceClaims(claims, claimTransform.Action, newClaims);
+        }
+
+        private void HandleLogEventTask(IEnumerable<string> eventMessages) 
+        {
+            var cleanEventMessages = eventMessages
+                .Where(em => !em.IsNullOrWhiteSpace())
+                .Distinct()
+                .Take(10);
+
+            foreach (var eventMessage in cleanEventMessages)
+            {
+                logger.Event(eventMessage);
+            }   
         }
 
         private async Task<IActionResult> HandleIfAndIfNotTaskAsync(List<Claim> claims, ClaimTransform claimTransform, ILoginRequest loginRequest)
@@ -580,7 +602,7 @@ namespace FoxIDs.Logic
                     var user = await FindInternalUserAsync(tenantDataRepository, idKey, claimTransform.Transformation, lookupUserClaimValue);
                     if (user != null)
                     {
-                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(user, claimIn, claimTransform.Transformation, lookupUserClaimValue));
+                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(user, claimIn, claimTransform.Transformation, lookupUserClaimValue, claimTransform.ClaimsOut));
                         return;
                     }
                     break;
@@ -588,7 +610,7 @@ namespace FoxIDs.Logic
                     var externalUser = await FindExternalUserAsync(tenantDataRepository, idKey, claimTransform.Transformation, lookupUserClaimValue, claimTransform.UpPartyName);
                     if (externalUser != null)
                     {
-                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(externalUser, claimIn, claimTransform.Transformation, lookupUserClaimValue));
+                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(externalUser, claimIn, claimTransform.Transformation, lookupUserClaimValue, claimTransform.ClaimsOut));
                         return;
                     }
                     break;
@@ -599,11 +621,11 @@ namespace FoxIDs.Logic
                         var userSaveClaims = await FindInternalUserAsync(tenantDataRepository, idKey, claimTransform.Transformation, lookupUserClaimValue);
                         if (userSaveClaims != null)
                         {
-                            (userSaveClaims.Claims, var isChanged) = UpdateUsersClaimValues(userSaveClaims.Claims, claimTransform.ClaimOut, userUpdateSourceValues, claimTransform.Action);
+                            (userSaveClaims.Claims, var isChanged) = UpdateUsersClaimValues(userSaveClaims.Claims, claimTransform.ClaimsOut.First(), userUpdateSourceValues, claimTransform.Action);
                             if (isChanged)
                             {
                                 await tenantDataRepository.UpdateAsync(userSaveClaims);
-                                logger.ScopeTrace(() => $"Claims transformation, Internal user '{userSaveClaims.UserId}' claim '{claimTransform.ClaimOut}' was not updated.");
+                                logger.ScopeTrace(() => $"Claims transformation, Internal user '{userSaveClaims.UserId}' claim '{claimTransform.ClaimsOut.First()}' was not updated.");
                             }
                         }
                     }
@@ -615,11 +637,11 @@ namespace FoxIDs.Logic
                         var externalUserSaveClaims = await FindExternalUserAsync(tenantDataRepository, idKey, claimTransform.Transformation, lookupUserClaimValue, claimTransform.UpPartyName);
                         if (externalUserSaveClaims != null)
                         {
-                            (externalUserSaveClaims.Claims, var isChanged) = UpdateUsersClaimValues(externalUserSaveClaims.Claims, claimTransform.ClaimOut, externalUserUpdateSourceValues, claimTransform.Action);
+                            (externalUserSaveClaims.Claims, var isChanged) = UpdateUsersClaimValues(externalUserSaveClaims.Claims, claimTransform.ClaimsOut.First(), externalUserUpdateSourceValues, claimTransform.Action);
                             if (isChanged)
                             {
                                 await tenantDataRepository.UpdateAsync(externalUserSaveClaims);
-                                logger.ScopeTrace(() => $"Claims transformation, External user '{externalUserSaveClaims.UserId}' claim '{claimTransform.ClaimOut}' was not updated.");
+                                logger.ScopeTrace(() => $"Claims transformation, External user '{externalUserSaveClaims.UserId}' claim '{claimTransform.ClaimsOut.First()}' was not updated.");
                             }
                         }
                     }
@@ -629,7 +651,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private List<Claim> GetClaims(User user, string claimIn, string selectUserClaim, string selectUserClaimValue)
+        private List<Claim> GetClaims(User user, string claimIn, string selectUserClaim, string selectUserClaimValue, IEnumerable<string> claimTypesOutLimit)
         {
             var claims = new List<Claim>();
             claims.AddClaim(JwtClaimTypes.Subject, user.UserId);
@@ -656,11 +678,12 @@ namespace FoxIDs.Logic
             {
                 claims = claims.Where(c => !(c.Type.Equals(selectUserClaim, StringComparison.CurrentCulture) && c.Value.Equals(selectUserClaimValue, StringComparison.CurrentCulture))).ToList();
             }
+            claims = LimitClaimsOut(claims, claimTypesOutLimit);
             logger.ScopeTrace(() => $"Claims transformation, Internal users JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return claims;
         }
 
-        private List<Claim> GetClaims(ExternalUser externalUser, string claimIn, string selectUserClaim, string selectUserClaimValue)
+        private List<Claim> GetClaims(ExternalUser externalUser, string claimIn, string selectUserClaim, string selectUserClaimValue, IEnumerable<string> claimTypesOutLimit)
         {
             var claims = new List<Claim>();
             claims.AddClaim(JwtClaimTypes.Subject, externalUser.UserId);
@@ -673,8 +696,28 @@ namespace FoxIDs.Logic
             {
                 claims = claims.Where(c => !(c.Type.Equals(selectUserClaim, StringComparison.CurrentCulture) && c.Value.Equals(selectUserClaimValue, StringComparison.CurrentCulture))).ToList();
             }
+            claims = LimitClaimsOut(claims, claimTypesOutLimit);
             logger.ScopeTrace(() => $"Claims transformation, External users JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return claims;
+        }
+
+        private List<Claim> LimitClaimsOut(List<Claim> claims, IEnumerable<string> claimTypesOutLimit)
+        {
+            if (claimTypesOutLimit == null)
+            {
+                return claims;
+            }
+
+            var filteredClaimTypes = claimTypesOutLimit
+                .Where(c => !c.IsNullOrWhiteSpace())
+                .ToHashSet();
+
+            if (filteredClaimTypes.Count == 0 || filteredClaimTypes.Any(c => c == "*"))
+            {
+                return claims;
+            }
+
+            return claims.Where(c => filteredClaimTypes.Contains(c.Type)).ToList();
         }
 
         private async Task<User> FindInternalUserAsync(ITenantDataRepository tenantDataRepository, Track.IdKey idKey, string lookupClaimTypeOnUser, string lookupUserClaimValue)
@@ -774,6 +817,7 @@ namespace FoxIDs.Logic
 
         private (List<ClaimAndValues>, bool isChanged) UpdateUsersClaimValues(List<ClaimAndValues> claims, string targetClaimType, List<string> targetValues, ClaimTransformActions action)
         {
+            claims ??= new List<ClaimAndValues>();
             var targetClaim = claims.FirstOrDefault(c => c.Claim == targetClaimType);
             var isChanged = false;
 
@@ -873,7 +917,7 @@ namespace FoxIDs.Logic
 
         private void ConstantTransformation(List<Claim> claims, ClaimTransform claimTransform)
         {
-            var newClaim = new Claim(claimTransform.ClaimOut, claimTransform.Transformation);
+            var newClaim = new Claim(claimTransform.ClaimsOut.First(), claimTransform.Transformation);
             AddOrReplaceClaims(claims, claimTransform.Action, newClaim);
         }
     }

@@ -56,34 +56,70 @@
                 <div class="row">
                     <div class="col-md-8">
                         <FInputText @bind-Value="trackSettingsForm.Model.CompanyName" For="@(() => trackSettingsForm.Model.CompanyName)" />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-8">
                         <FInputText @bind-Value="trackSettingsForm.Model.AddressLine1" For="@(() => trackSettingsForm.Model.AddressLine1)" />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-8">
                         <FInputText @bind-Value="trackSettingsForm.Model.AddressLine2" For="@(() => trackSettingsForm.Model.AddressLine2)" />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-6">
-                        <FInputText @bind-Value="trackSettingsForm.Model.PostalCode" For="@(() => trackSettingsForm.Model.PostalCode)" />
-                    </div>
-                    <div class="col-6">
-                        <FInputText @bind-Value="trackSettingsForm.Model.City" For="@(() => trackSettingsForm.Model.City)" />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-6">
+                                <FInputText @bind-Value="trackSettingsForm.Model.PostalCode" For="@(() => trackSettingsForm.Model.PostalCode)" />
+                            </div>
+                            <div class="col-6">
+                                <FInputText @bind-Value="trackSettingsForm.Model.City" For="@(() => trackSettingsForm.Model.City)" />
+                            </div>
+                        </div>
                         <FInputText @bind-Value="trackSettingsForm.Model.StateRegion" For="@(() => trackSettingsForm.Model.StateRegion)" />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-8">
                         <FInputText @bind-Value="trackSettingsForm.Model.Country" For="@(() => trackSettingsForm.Model.Country)" />
+                    </div>
+                    <div class="col-md-4 mt-3 mt-md-0">
+                        @if (ClientSettings.SettingsAddress is { } address && (!string.IsNullOrWhiteSpace(address.CompanyName)
+                            || !string.IsNullOrWhiteSpace(address.AddressLine1)
+                            || !string.IsNullOrWhiteSpace(address.AddressLine2)
+                            || !string.IsNullOrWhiteSpace(address.PostalCode)
+                            || !string.IsNullOrWhiteSpace(address.City)
+                            || !string.IsNullOrWhiteSpace(address.StateRegion)
+                            || !string.IsNullOrWhiteSpace(address.Country)))
+                        {
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">Configured address</h6>
+                                    @if (!string.IsNullOrWhiteSpace(address.CompanyName))
+                                    {
+                                        <div class="pb-2">@address.CompanyName</div>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(address.AddressLine1))
+                                    {
+                                        <div>@address.AddressLine1</div>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(address.AddressLine2))
+                                    {
+                                        <div>@address.AddressLine2</div>
+                                    }
+
+                                    @if (!string.IsNullOrWhiteSpace(address.PostalCode) && !string.IsNullOrWhiteSpace(address.City))
+                                    {
+                                        <div>
+                                            <span class="pr-2" >@address.PostalCode</span><span>@address.City</span>
+                                        </div>                                        
+                                    }
+                                    else if (!string.IsNullOrWhiteSpace(address.PostalCode))
+                                    {
+                                        <div>@address.PostalCode</div>
+                                    }
+                                    else if (!string.IsNullOrWhiteSpace(address.City))
+                                    {
+                                        <div>@address.City</div>
+                                    }
+
+                                    @if (!string.IsNullOrWhiteSpace(address.StateRegion))
+                                    {
+                                        <div>@address.StateRegion</div>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(address.Country))
+                                    {
+                                        <div>@address.Country</div>
+                                    }
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
 

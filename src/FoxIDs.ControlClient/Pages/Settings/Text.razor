@@ -66,7 +66,7 @@
                 <ul class="list-group">
                     @foreach (var trackOnlyResource in trackOnlyResources)
                     {
-                        <li class="list-group-item overflow-hidden @(trackOnlyResource.Edit ? "active" : string.Empty)">
+                        <li class="list-group-item @(trackOnlyResource.Edit ? "active" : "overflow-hidden")">
                             @if (!trackOnlyResource.Error.IsNullOrWhiteSpace())
                             {
                                 <div class="alert alert-danger" role="alert">
@@ -76,8 +76,8 @@
                             @if (trackOnlyResource.Edit)
                             {
                                 <PageEditForm @ref="trackOnlyResource.Form" TModel="ResourceItemViewModel" OnAfterInit="@(m => TrackOnlyResourceAfterInit(trackOnlyResource, m))" OnValidSubmit="@(async (editContext) => await OnEditTrackOnlyResourceValidSubmitAsync(trackOnlyResource, editContext))">
-                                    <div class="modal-header">
-                                        Resource @(trackOnlyResource.Form.Model.Id > 0 ? $"(ID: T{trackOnlyResource.Form.Model.Id})" : "")
+                                    <div class="modal-header sticky-header">
+                                        Resource @(trackOnlyResource.Form.Model.Id > 0 ? $"ID: T{trackOnlyResource.Form.Model.Id}" : "")
                                     </div>
                                     <div class="modal-body">
                                         <FInputText @bind-Value="trackOnlyResource.Form.Model.Name" For="@(() => trackOnlyResource.Form.Model.Name)" Focus="trackOnlyResource.CreateMode" />
@@ -134,7 +134,7 @@
                                     @trackOnlyResource.Name
                                 </button>
                                 <br />
-                                <span>@($"(ID: T{trackOnlyResource.Id})")</span>
+                                <span>@($"ID: T{trackOnlyResource.Id}")</span>
                             }
                         </li>
                     }
@@ -154,10 +154,112 @@
     <div class="active-group active">
         <div class="card">
             <div class="card-body py-3">
+                <div class="d-flex pt-2">
+                    <div class="info-text mr-auto pb-4">
+                        Manage large texts (documents) defined in this environment.
+                    </div>
+                    <div class="d-block">
+                        <button type="button" class="btn btn-primary" @onclick="ShowCreateLargeResource">
+                            <span class="oi oi-plus" aria-hidden="true"></span> New large text
+                        </button>
+                    </div>
+                </div>
+                <ul class="list-group">
+                    @foreach (var largeResource in largeResources)
+                    {
+                        <li class="list-group-item @(largeResource.Edit ? "active" : "overflow-hidden")">
+                            @if (!string.IsNullOrWhiteSpace(largeResource.Error))
+                            {
+                                <div class="alert alert-danger" role="alert">
+                                    @largeResource.Error
+                                </div>
+                            }
+                            @if (largeResource.Edit)
+                            {
+                                <PageEditForm @ref="largeResource.Form" TModel="TrackLargeResourceItemViewModel" OnAfterInit="LargeResourceAfterInit" OnValidSubmit="@(async (editContext) => await OnEditLargeResourceValidSubmitAsync(largeResource, editContext))">
+                                    <div class="modal-header sticky-header">
+                                        Large Resource @(largeResource.Form.Model.Name.IsNullOrWhiteSpace() ? "" : $"Name: {largeResource.Form.Model.Name}")
+                                    </div>
+                                    <div class="modal-body">
+                                        @if (largeResource.CreateMode)
+                                        {
+                                            <FInputText @bind-Value="largeResource.Form.Model.Name" For="@(() => largeResource.Form.Model.Name)" Focus="true" />
+                                        }
+                                        <div class="form-group active-group active">
+                                            <label class="label-control">Translations</label>
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    @foreach (var item in largeResource.Form.Model.Items)
+                                                    {
+                                                        <div class="pt-2">
+                                                            <div class="active-group active pb-0">
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                        <FInputTextArea Class="pb-0" @bind-Value="item.Value" For="@(() => item.Value)" LabelText="Custom translation" />
+                                                                    </div>
+                                                                </div>
+                                                                <label class="label-control">@($"({item.Culture})")</label>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <ValidationMessage For="@(() => largeResource.Form.Model.Items)" />
+                                        </div>
+                                    </div>
+                                    @if (!largeResource.CreateMode && largeResource.DeleteAcknowledge)
+                                    {
+                                        <div class="modal-footer">
+                                            <div class="alert alert-danger" role="alert">
+                                                <div>
+                                                    You are about to delete the large text "@largeResource.Name", are you sure?
+                                                </div>
+
+                                                <div class="mt-3">
+                                                    <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteLargeResourceAsync(largeResource))">Yes delete text</button>
+                                                    <button type="button" class="btn btn-secondary" @onclick="@(() => largeResource.DeleteAcknowledge = false)">No</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    <div class="modal-footer">
+                                        @if (!largeResource.CreateMode)
+                                        {
+                                            <button type="button" class="btn btn-link" @onclick="@(() => largeResource.DeleteAcknowledge = true)">Delete</button>
+                                        }
+                                        <button type="submit" class="btn btn-primary">@(largeResource.CreateMode ? "Create" : "Update")</button>
+                                        <button type="button" class="btn btn-secondary" @onclick="@(() => LargeResourceCancel(largeResource))">Cancel</button>
+                                    </div>
+                                </PageEditForm>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-link text-left p-0" @onclick="@(async () => await ShowUpdateLargeResourceAsync(largeResource))">
+                                    @(largeResource.Name)
+                                </button>
+                            }
+                        </li>
+                    }
+                    @if (largeResources.Count <= 0)
+                    {
+                        <li class="list-group-item">
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <label class="label-control">Large texts defined in this environment</label>
+    </div>
+</div>
+
+<div class="pt-2">
+    <div class="active-group active">
+        <div class="card">
+            <div class="card-body py-3">
                 <ul class="list-group">
                     @foreach (var resource in resources)
                     {
-                        <li class="list-group-item overflow-hidden @(resource.Edit ? "active" : string.Empty)">
+                        <li class="list-group-item @(resource.Edit ? "active" : "overflow-hidden")">
                             @if (!resource.Error.IsNullOrWhiteSpace())
                             {
                                 <div class="alert alert-danger" role="alert">
@@ -167,7 +269,7 @@
                             @if (resource.Edit)
                             {
                                 <PageEditForm @ref="resource.Form" TModel="ResourceItemViewModel" OnValidSubmit="@(async (editContext) => await OnEditResourceValidSubmitAsync(resource, editContext))">
-                                    <div class="modal-header">
+                                    <div class="modal-header sticky-header">
                                         Resource ID: @resource.Form.Model.Id
                                     </div>
                                     <div class="modal-body">

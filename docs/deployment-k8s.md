@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Kubernetes",
+    "description":  "Deploy FoxIDs in your Kubernetes (K8s) cluster or Docker Desktop with Kubernetes enabled.",
+    "ogTitle":  "Kubernetes",
+    "ogDescription":  "Deploy FoxIDs in your Kubernetes (K8s) cluster or Docker Desktop with Kubernetes enabled.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "deployment k8s, FoxIDs docs"
+                       }
+}
+-->
+
 # Kubernetes
 
 Deploy FoxIDs in your Kubernetes (K8s) cluster or Docker Desktop with Kubernetes enabled.

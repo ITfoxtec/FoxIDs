@@ -1,4 +1,19 @@
-﻿# Connect to Microsoft Entra ID with OpenID Connect
+<!--
+{
+    "title":  "Connect to Microsoft Entra ID with OpenID Connect",
+    "description":  "FoxIDs can be connected to Microsoft Entra ID (Azure AD) with OpenID Connect and thereby authenticating end users in a Microsoft Entra ID tenant.",
+    "ogTitle":  "Connect to Microsoft Entra ID with OpenID Connect",
+    "ogDescription":  "FoxIDs can be connected to Microsoft Entra ID (Azure AD) with OpenID Connect and thereby authenticating end users in a Microsoft Entra ID tenant.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "auth method howto oidc microsoft entra id, FoxIDs docs"
+                       }
+}
+-->
+
+# Connect to Microsoft Entra ID with OpenID Connect
 
 FoxIDs can be connected to Microsoft Entra ID (Azure AD) with OpenID Connect and thereby authenticating end users in a Microsoft Entra ID tenant.
 
@@ -107,3 +122,4 @@ Write `role` in new claim, set action to replace claim and write `roles` in sele
 2. Add the `role` claim to the claims which will be transferred from the authentication method to the application registrations
 
 > Remember to also add the `role` claim in the application registration for it to be issued to the application.
+

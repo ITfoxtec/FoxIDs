@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FoxIDs.Logic;
 using FoxIDs.Models;
+using FoxIDs.Models.Logic.Health;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

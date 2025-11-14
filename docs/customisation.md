@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Customisation",
+    "description":  "FoxIDs can be customised to support your needs.",
+    "ogTitle":  "Customisation",
+    "ogDescription":  "FoxIDs can be customised to support your needs.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "customisation, FoxIDs docs"
+                       }
+}
+-->
+
 # Customisation
 
 FoxIDs can be customised to support your needs. 

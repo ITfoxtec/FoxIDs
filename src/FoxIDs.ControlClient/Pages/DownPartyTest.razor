@@ -14,6 +14,11 @@
             </div>
         </div>
 
+        @if (!string.IsNullOrWhiteSpace(TestValidityText))
+        {
+            <div class="text-muted font-italic pt-2">@TestValidityText</div>
+        }
+
         <h5 class="pt-4 pb-3">ID Token</h5>
 
         <div class="pb-3">
@@ -88,6 +93,22 @@
         <h3>Test application</h3>
 
         <div class="pt-4">You are logged off!</div>
+
+        @if (CanRetryLogin)
+        {
+            <div class="pt-5">
+                <a class="btn btn-primary" href="@RetryTestUrl">Log in again</a>
+            </div>
+        }
+        else if (TestSessionExpired)
+        {
+            <div class="pt-3 text-muted">The test application has expired. Start a new test from FoxIDs Control to continue.</div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(TestValidityText))
+        {
+            <div class="pt-2 font-italic text-muted">@TestValidityText</div>
+        }
     }
 }
 else

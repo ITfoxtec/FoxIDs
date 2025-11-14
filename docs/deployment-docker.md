@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Docker",
+    "description":  "Deploy FoxIDs in Docker Desktop on a dev or test machine.",
+    "ogTitle":  "Docker",
+    "ogDescription":  "Deploy FoxIDs in Docker Desktop on a dev or test machine.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "deployment docker, FoxIDs docs"
+                       }
+}
+-->
+
 # Docker
 
 Deploy FoxIDs in Docker Desktop on a dev or test machine.

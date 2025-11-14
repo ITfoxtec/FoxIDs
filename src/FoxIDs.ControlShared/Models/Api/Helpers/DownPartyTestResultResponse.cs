@@ -39,5 +39,19 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.DownParty.UrlLengthMax)]
         [Display(Name = "End session URL")]
         public string EndSessionUrl { get; set; }
+
+        [MaxLength(Constants.Models.DownParty.UrlLengthMax)]
+        [Display(Name = "Test URL")]
+        public string TestUrl { get; set; }
+
+        /// <summary>
+        /// Test expiration time in Unix time seconds.
+        /// </summary>
+        public long TestExpireAt { get; set; }
+
+        /// <summary>
+        /// 0 to disable expiration.
+        /// </summary>
+        public int TestExpireInSeconds { get; set; }
     }
 }

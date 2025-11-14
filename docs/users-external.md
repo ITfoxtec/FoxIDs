@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "External users",
+    "description":  "You can use just-in-time (JIT) provisioning to create external users and associate them with an external identity. An external user is associated with one authentication method (OpenID Connect, SAML 2.0, External Login, or Environment Li...",
+    "ogTitle":  "External users",
+    "ogDescription":  "You can use just-in-time (JIT) provisioning to create external users and associate them with an external identity. An external user is associated with one authentication method (OpenID Connect, SAML 2.0, External Login, or Environment Li...",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "users external, FoxIDs docs"
+                       }
+}
+-->
+
 # External users
 You can use just-in-time (JIT) provisioning to create external users and associate them with an external identity. 
 An external user is associated with one authentication method (OpenID Connect, SAML 2.0, External Login, or Environment Link) and can only be authenticated using that authentication method.   
@@ -48,3 +63,4 @@ And users are added with their known email as the redemption claim value.
 In this example the user is connected to Google Workspace with an OpenID Connect authentication method and an `app_user_id` claim is added with an internal user ID.
 
 > You can reset a redeemed user by deleting the link claim value and, if necessary, also changing the redemption claim value. The external user is then redeemed again next time the user logs in.
+

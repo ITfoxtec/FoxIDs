@@ -1,4 +1,19 @@
-﻿# Connect to Azure AD B2C with OpenID Connect
+<!--
+{
+    "title":  "Connect to Azure AD B2C with OpenID Connect",
+    "description":  "FoxIDs can be connected to Azure AD B2C with OpenID Connect and thereby authenticating end users in an Azure AD B2C tenant.",
+    "ogTitle":  "Connect to Azure AD B2C with OpenID Connect",
+    "ogDescription":  "FoxIDs can be connected to Azure AD B2C with OpenID Connect and thereby authenticating end users in an Azure AD B2C tenant.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "auth method howto oidc azure ad b2c, FoxIDs docs"
+                       }
+}
+-->
+
+# Connect to Azure AD B2C with OpenID Connect
 
 FoxIDs can be connected to Azure AD B2C with OpenID Connect and thereby authenticating end users in an Azure AD B2C tenant.
 

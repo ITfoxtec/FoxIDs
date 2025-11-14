@@ -79,7 +79,7 @@ namespace FoxIDs
                     builder
                     .AllowAnyOrigin()
                     .AllowAnyMethod()
-                    .WithHeaders(HeaderNames.ContentType, HeaderNames.Authorization);
+                    .AllowAnyHeader();
                 });
 
                 app.UseRouting();

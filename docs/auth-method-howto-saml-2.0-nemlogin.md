@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Connect to NemLog-in with SAML 2.0",
+    "description":  "You can connect FoxIDs to NemLog-in (Danish IdP) with a SAML 2.0 authentication method and let the users authenticate with MitID. NemLog-in is connected as a SAML 2.0 Identity Provider (IdP).",
+    "ogTitle":  "Connect to NemLog-in with SAML 2.0",
+    "ogDescription":  "You can connect FoxIDs to NemLog-in (Danish IdP) with a SAML 2.0 authentication method and let the users authenticate with MitID. NemLog-in is connected as a SAML 2.0 Identity Provider (IdP).",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "auth method howto saml 2.0 nemlogin, FoxIDs docs"
+                       }
+}
+-->
+
 # Connect to NemLog-in with SAML 2.0
 
 You can connect FoxIDs to NemLog-in (Danish IdP) with a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and let the users authenticate with MitID. NemLog-in is connected as a SAML 2.0 Identity Provider (IdP).
@@ -214,3 +229,4 @@ And possible credential types:
 
 You can configure authn context class references in profiles on the authentication method. In the case you need to provide different sets of authn context class references.  
 E.g., if you need to support step-up authentication. Then you would create one profile with authn context class reference `https://data.gov.dk/concept/core/nsis/loa/Substantial` and another profile with authn context class reference `https://data.gov.dk/concept/core/nsis/loa/High`.
+

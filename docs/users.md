@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Users",
+    "description":  "Users are saved in the environment\u0027s user repository. To achieve multiple user stores, you create additional environments and thus achieve more user stores.",
+    "ogTitle":  "Users",
+    "ogDescription":  "Users are saved in the environment\u0027s user repository. To achieve multiple user stores, you create additional environments and thus achieve more user stores.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "users, FoxIDs docs"
+                       }
+}
+-->
+
 # Users
 Users are saved in the environment's user repository. To achieve multiple user stores, you create additional environments and thus achieve more user stores.
 

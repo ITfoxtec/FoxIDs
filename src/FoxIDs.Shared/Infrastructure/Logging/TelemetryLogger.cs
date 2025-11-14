@@ -13,7 +13,7 @@ namespace FoxIDs.Infrastructure
         private readonly Settings settings;
         private readonly IServiceProvider serviceProvider;
 
-        public TelemetryClient ApplicationInsightsTelemetryClient { private get; set; }
+        public TelemetryClient ApplicationInsightsTelemetryClient { get; set; }
 
         public TelemetryLogger(Settings settings, IServiceProvider serviceProvider)
         {

@@ -257,6 +257,7 @@ namespace FoxIDs
             public const string CosmosPartitionKeyPath = "/partition_id";
 
             public const int DefaultNameLength = 8;
+            public const int DefaultLongNameLength = 20;
             public const int DefaultNameMaxAttempts = 3;
 
             public const int MasterPartitionIdLength = 30;
@@ -289,6 +290,7 @@ namespace FoxIDs
                 public const string Used = "used";
                 public const string UsageSettings = "uset";
                 public const string SmsPrices = "smsp";
+                public const string TrackLargeResource = "tlres";
 
                 // data type used for cache
                 public const string Cache = "cache";
@@ -466,6 +468,16 @@ namespace FoxIDs
                 public const int CultureLength = 5;
                 public const int NameLength = 500;
                 public const int ValueLength = 500;
+
+                public static class LargeResource
+                {
+                    public const int IdLength = 150;
+                    public const string IdRegExPattern = @"^[\w:\-]*$";
+                    public const int NameMinLength = 10;
+                    public const int NameMaxLength = 40;
+                    public const string NameRegExPattern = @"^[\w\-]*$";
+                    public const int ValueLength = 40000;
+                }
             }
 
             public static class Tenant
@@ -661,6 +673,8 @@ namespace FoxIDs
                 public const int TransformTransformationLength = 300;
                 public const int TransformClaimsInMin = 0;
                 public const int TransformClaimsInMax = 10;
+                public const int TransformClaimsOutMin = 0;
+                public const int TransformClaimsOutMax = 10;
                 public const int TransformOrderMin = 0;
                 public const int TransformOrderMax = 1000;
             }

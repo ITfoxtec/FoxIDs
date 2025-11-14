@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Connect to PingIdentity / PingOne with SAML 2.0",
+    "description":  "FoxIDs can be connected to PingOne with a SAML 2.0 authentication method. Where PingOne is a SAML 2.0 Identity Provider (IdP) and FoxIDs is acting as an SAML 2.0 Relying Party (RP).",
+    "ogTitle":  "Connect to PingIdentity / PingOne with SAML 2.0",
+    "ogDescription":  "FoxIDs can be connected to PingOne with a SAML 2.0 authentication method. Where PingOne is a SAML 2.0 Identity Provider (IdP) and FoxIDs is acting as an SAML 2.0 Relying Party (RP).",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "auth method howto saml 2.0 pingone, FoxIDs docs"
+                       }
+}
+-->
+
 # Connect to PingIdentity / PingOne with SAML 2.0
 
 FoxIDs can be connected to PingOne with a [SAML 2.0 authentication method](auth-method-saml-2.0.md). Where PingOne is a SAML 2.0 Identity Provider (IdP) and FoxIDs is acting as an SAML 2.0 Relying Party (RP).
@@ -31,3 +46,4 @@ FoxIDs can be connected to PingOne with a [SAML 2.0 authentication method](auth-
 2. Click Create
 
 You are done. The SAML 2.0 authentication method can now be used as an authentication method for application registrations in the environment.
+

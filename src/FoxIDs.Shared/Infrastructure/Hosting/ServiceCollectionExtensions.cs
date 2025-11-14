@@ -30,6 +30,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<MasterTenantDocumentsSeedLogic>();
             services.AddTransient<MainTenantDocumentsSeedLogic>();
+            services.AddTransient<DataProtectionSeedLogic>();
             services.AddTransient<SeedLogic>();
 
             services.AddTransient<SendSmsLogic>();

@@ -107,7 +107,7 @@
                     {
                         <div class="row">
                             <div class="col-12">
-                                <FInputTextArea @bind-Value="element.Content" For="@(() => element.Content)" LabelText="@(element.Type == DynamicElementTypes.Text ? "Text" : "HTML")" />
+                                <FInputTextArea @bind-Value="element.Content" For="@(() => element.Content)" LabelText="@(element.Type == DynamicElementTypes.Text ? "Plain text or Markdown" : "HTML")" />
                             </div>
                         </div>
                     }
@@ -126,7 +126,7 @@
                         <div class="row">
                             <div class="col-12">
                                 <FInputText @bind-Value="element.Content" For="@(() => element.Content)" LabelText="Large resource name" />
-                                <div class="info-text">Large texts@(element.Type == DynamicElementTypes.LargeHtml ? " (HTML)" : "(plain text or markdown)") is managed under Settings in the Texts tab.</div>
+                                <div class="info-text">Large @(element.Type == DynamicElementTypes.LargeHtml ? "HTML" : "plain text or Markdown") is managed under Settings in the Texts tab.</div>
                             </div>
                         </div>
                     }
@@ -146,9 +146,9 @@
         <div class="dropdown-menu" aria-labelledby="btnLoginUiElements">
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Checkbox))">Checkbox element</button>
             <div class="dropdown-divider"></div>
-            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Text))">Text element</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Text))">Text or Markdown element</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Html))">HTML element</button>
-            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.LargeText))">Large text element</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.LargeText))">Large text or Markdown element</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.LargeHtml))">Large HTML element</button>
         </div>
     </div>

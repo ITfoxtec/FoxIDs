@@ -20,8 +20,12 @@ namespace FoxIDs.Infrastructure
                 switch (scopeStreamLogger.Type)
                 {
                     case ScopedStreamLoggerTypes.ApplicationInsights:
-                        GetTelemetryLogger(scopeStreamLogger).Warning(exception, message, properties: properties);
+                    {
+                        var telemetryLogger = GetTelemetryLogger(scopeStreamLogger);
+                        telemetryLogger.Warning(exception, message, properties: properties);
+                        ApplicationInsightsFlush(telemetryLogger);
                         break;
+                    }
                     default:
                         throw new NotSupportedException($"Scoped stream logger type '{scopeStreamLogger.Type}' not supported.");
                 }
@@ -41,8 +45,12 @@ namespace FoxIDs.Infrastructure
                 switch (scopeStreamLogger.Type)
                 {
                     case ScopedStreamLoggerTypes.ApplicationInsights:
-                        GetTelemetryLogger(scopeStreamLogger).Error(exception, message, properties: properties);
+                    {
+                        var telemetryLogger = GetTelemetryLogger(scopeStreamLogger);
+                        telemetryLogger.Error(exception, message, properties: properties);
+                        ApplicationInsightsFlush(telemetryLogger);
                         break;
+                    }
                     default:
                         throw new NotSupportedException($"Scoped stream logger type '{scopeStreamLogger.Type}' not supported.");
                 }
@@ -62,8 +70,12 @@ namespace FoxIDs.Infrastructure
                 switch (scopeStreamLogger.Type)
                 {
                     case ScopedStreamLoggerTypes.ApplicationInsights:
-                        GetTelemetryLogger(scopeStreamLogger).CriticalError(exception, message, properties: properties);
+                    {
+                        var telemetryLogger = GetTelemetryLogger(scopeStreamLogger);
+                        telemetryLogger.CriticalError(exception, message, properties: properties);
+                        ApplicationInsightsFlush(telemetryLogger);
                         break;
+                    }
                     default:
                         throw new NotSupportedException($"Scoped stream logger type '{scopeStreamLogger.Type}' not supported.");
                 }
@@ -80,8 +92,12 @@ namespace FoxIDs.Infrastructure
                 switch (scopeStreamLogger.Type)
                 {
                     case ScopedStreamLoggerTypes.ApplicationInsights:
-                        GetTelemetryLogger(scopeStreamLogger).Event(eventName, properties: properties);
+                    {
+                        var telemetryLogger = GetTelemetryLogger(scopeStreamLogger);
+                        telemetryLogger.Event(eventName, properties: properties);
+                        ApplicationInsightsFlush(telemetryLogger);
                         break;
+                    }
                     default:
                         throw new NotSupportedException($"Scoped stream logger type '{scopeStreamLogger.Type}' not supported.");
                 }
@@ -98,8 +114,12 @@ namespace FoxIDs.Infrastructure
                 switch (scopeStreamLogger.Type)
                 {
                     case ScopedStreamLoggerTypes.ApplicationInsights:
-                        GetTelemetryLogger(scopeStreamLogger).Trace(traceMessages, properties: properties);
+                    {
+                        var telemetryLogger = GetTelemetryLogger(scopeStreamLogger);
+                        telemetryLogger.Trace(traceMessages, properties: properties);
+                        ApplicationInsightsFlush(telemetryLogger);
                         break;
+                    }
                     default:
                         throw new NotSupportedException($"Scoped stream logger type '{scopeStreamLogger.Type}' not supported.");
                 }
@@ -115,8 +135,12 @@ namespace FoxIDs.Infrastructure
                 switch (scopeStreamLogger.Type)
                 {
                     case ScopedStreamLoggerTypes.ApplicationInsights:
-                        GetTelemetryLogger(scopeStreamLogger).Metric(message, value, properties: properties);
+                    {
+                        var telemetryLogger = GetTelemetryLogger(scopeStreamLogger);
+                        telemetryLogger.Metric(message, value, properties: properties);
+                        ApplicationInsightsFlush(telemetryLogger);
                         break;
+                    }
                     default:
                         throw new NotSupportedException($"Scoped stream logger type '{scopeStreamLogger.Type}' not supported.");
                 }
@@ -134,6 +158,14 @@ namespace FoxIDs.Infrastructure
 
             var telemetryClient = new TelemetryClient(new TelemetryConfiguration { ConnectionString = scopeStreamLogger.ApplicationInsightsSettings.ConnectionString });
             return new TelemetryLogger(new Settings { Options = new OptionsSettings { Log = LogOptions.ApplicationInsights } }, null) { ApplicationInsightsTelemetryClient = telemetryClient };
+        }
+
+        private static void ApplicationInsightsFlush(TelemetryLogger telemetryLogger)
+        {
+            if (telemetryLogger.ApplicationInsightsTelemetryClient != null)
+            {
+                telemetryLogger.ApplicationInsightsTelemetryClient.Flush();
+            }
         }
     }
 }

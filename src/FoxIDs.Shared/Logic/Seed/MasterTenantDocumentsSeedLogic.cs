@@ -2,7 +2,6 @@
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -33,8 +32,6 @@ namespace FoxIDs.Logic.Seed
                 {
                     return false;
                 }
-
-                SeedDataProtectorKeyData();
 
                 var masterTenantLogic = serviceProvider.GetService<MasterTenantLogic>();
                 await masterTenantLogic.CreateMasterTrackDocumentAsync(Constants.Routes.MasterTenantName);
@@ -82,12 +79,6 @@ namespace FoxIDs.Logic.Seed
             }
 
             return (false, masterTenant);
-        }
-
-        private void SeedDataProtectorKeyData()
-        {
-            var dataProtection = serviceProvider.GetService<IDataProtectionProvider>();
-            var initData = dataProtection.CreateProtector(nameof(MasterTenantDocumentsSeedLogic)).Protect(nameof(MasterTenantDocumentsSeedLogic));
         }
     }
 }

@@ -23,9 +23,9 @@ namespace FoxIDs.Logic
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly SingleLogoutLogic singleLogoutLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
-        private readonly AccessTokenSessionLogic accessTokenSessionLogic;
+        private readonly OAuthAccessTokenSessionLogic oauthAccessTokenSessionLogic;
 
-        public OidcFrontChannelLogoutUpLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, SecurityHeaderLogic securityHeaderLogic, AuditLogic auditLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, AccessTokenSessionLogic accessTokenSessionLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcFrontChannelLogoutUpLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, SecurityHeaderLogic securityHeaderLogic, AuditLogic auditLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, OAuthAccessTokenSessionLogic oauthAccessTokenSessionLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantDataRepository = tenantDataRepository;
@@ -35,7 +35,7 @@ namespace FoxIDs.Logic
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.singleLogoutLogic = singleLogoutLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
-            this.accessTokenSessionLogic = accessTokenSessionLogic;
+            this.oauthAccessTokenSessionLogic = oauthAccessTokenSessionLogic;
         }
 
         public async Task<IActionResult> FrontChannelLogoutAsync(string partyId)
@@ -82,7 +82,7 @@ namespace FoxIDs.Logic
 
                 _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
                 await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(session.SessionIdClaim);
-                await accessTokenSessionLogic.DeleteSessionAsync(session.SessionIdClaim);
+                await oauthAccessTokenSessionLogic.DeleteSessionAsync(session.SessionIdClaim);
 
                 if (party.DisableSingleLogout)
                 {

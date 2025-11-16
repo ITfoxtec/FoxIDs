@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class AccessTokenSessionLogic : LogicBase
+    public class OAuthAccessTokenSessionLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantDataRepository tenantDataRepository;
 
-        public AccessTokenSessionLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthAccessTokenSessionLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantDataRepository = tenantDataRepository;

@@ -19,16 +19,16 @@ namespace FoxIDs.Logic
         private readonly TrackIssuerLogic trackIssuerLogic;
         private readonly ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic;
         private readonly OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic;
-        private readonly AccessTokenSessionLogic accessTokenSessionLogic;
+        private readonly OAuthAccessTokenSessionLogic oauthAccessTokenSessionLogic;
 
-        public OAuthJwtDownLogic(TelemetryScopedLogger logger, TrackKeyLogic trackKeyLogic, TrackIssuerLogic trackIssuerLogic, ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, AccessTokenSessionLogic accessTokenSessionLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthJwtDownLogic(TelemetryScopedLogger logger, TrackKeyLogic trackKeyLogic, TrackIssuerLogic trackIssuerLogic, ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, OAuthAccessTokenSessionLogic oauthAccessTokenSessionLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.trackKeyLogic = trackKeyLogic;
             this.trackIssuerLogic = trackIssuerLogic;
             this.claimsOAuthDownLogic = claimsOAuthDownLogic;
             this.oauthResourceScopeDownLogic = oauthResourceScopeDownLogic;
-            this.accessTokenSessionLogic = accessTokenSessionLogic;
+            this.oauthAccessTokenSessionLogic = oauthAccessTokenSessionLogic;
         }
 
         public async Task<string> CreateAccessTokenAsync(TClient client, string routeUrl, IEnumerable<Claim> claims, IEnumerable<string> selectedScopes, string algorithm)
@@ -58,7 +58,7 @@ namespace FoxIDs.Logic
 
             var adjustedClaims = claimsOAuthDownLogic.AdjustClaims(accessTokenClaims);
             logger.ScopeTrace(() => $"AppReg, JWT access token claims '{adjustedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            await accessTokenSessionLogic.SaveSessionAsync(adjustedClaims);
+            await oauthAccessTokenSessionLogic.SaveSessionAsync(adjustedClaims);
             var token = JwtHandler.CreateToken(await trackKeyLogic.GetPrimarySecurityKeyAsync(RouteBinding.Key), trackIssuerLogic.GetIssuer(routeUrl), audiences, adjustedClaims, expiresIn: client.AccessTokenLifetime, algorithm: algorithm, typ: IdentityConstants.JwtHeaders.MediaTypes.AtJwt);
             return await token.ToJwtString();
         }
@@ -107,7 +107,7 @@ namespace FoxIDs.Logic
                 throw new Exception("JWT not valid", ex);
             }
 
-            await accessTokenSessionLogic.ValidateSessionAsync(claimsPrincipal.Claims);
+            await oauthAccessTokenSessionLogic.ValidateSessionAsync(claimsPrincipal.Claims);
 
             return claimsPrincipal;
         }

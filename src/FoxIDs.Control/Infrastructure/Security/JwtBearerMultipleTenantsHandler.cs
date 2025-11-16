@@ -1,5 +1,6 @@
 ﻿using ITfoxtec.Identity;
 using ITfoxtec.Identity.Discovery;
+using FoxIDs.Logic;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -61,6 +62,12 @@ namespace FoxIDs.Infrastructure.Security
                     Logger.LogWarning(isex, $"Invalid signature reload OIDC discovery keys, URI '{oidcDiscoveryUri}'.");
                     oidcDiscoveryKeySet = await oidcDiscoveryHandler.GetOidcDiscoveryKeysAsync(oidcDiscoveryUri, refreshCache: true);
                     (principal, _) = JwtHandler.ValidateToken(accessToken, oidcDiscovery.Issuer, oidcDiscoveryKeySet.Keys, Options.DownParty);
+                }
+
+                if (principal.HasClaim(c => c.Type == JwtClaimTypes.SessionId))
+                {
+                    var oauthAccessTokenSessionLogic = Context.RequestServices.GetService<OAuthAccessTokenSessionLogic>();
+                    await oauthAccessTokenSessionLogic.ValidateSessionAsync(principal.Claims);
                 }
 
                 scopedLogger.SetUserScopeProperty(principal.Claims);

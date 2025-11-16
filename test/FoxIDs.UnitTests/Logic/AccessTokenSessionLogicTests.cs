@@ -59,14 +59,14 @@ namespace FoxIDs.UnitTests.Logic
             tenantDataRepositoryMock.Verify(r => r.GetAsync<AccessTokenSessionTtl>(expectedId, false, true, false, It.IsAny<TelemetryScopedLogger>()), Times.Once);
         }
 
-        private static (AccessTokenSessionLogic logic, Mock<ITenantDataRepository> repositoryMock, RouteBinding routeBinding) CreateLogic()
+        private static (OAuthAccessTokenSessionLogic logic, Mock<ITenantDataRepository> repositoryMock, RouteBinding routeBinding) CreateLogic()
         {
             var routeBinding = new RouteBinding { TenantName = "tenant1", TrackName = "track1" };
             var httpContextAccessor = HttpContextAccessorHelper.MockObject(routeBinding);
             var telemetryScopedLogger = TelemetryLoggerHelper.ScopedLoggerObject(httpContextAccessor);
             var repositoryMock = new Mock<ITenantDataRepository>();
 
-            var logic = new AccessTokenSessionLogic(telemetryScopedLogger, repositoryMock.Object, httpContextAccessor);
+            var logic = new OAuthAccessTokenSessionLogic(telemetryScopedLogger, repositoryMock.Object, httpContextAccessor);
             return (logic, repositoryMock, routeBinding);
         }
     }

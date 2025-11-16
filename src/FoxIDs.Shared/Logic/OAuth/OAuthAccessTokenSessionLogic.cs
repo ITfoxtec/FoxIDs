@@ -41,7 +41,7 @@ namespace FoxIDs.Logic
             await tenantDataRepository.SaveAsync(session);
         }
 
-        public async Task ValidateSessionAsync(IEnumerable<Claim> claims)
+        public async Task ValidateSessionAsync(IEnumerable<Claim> claims, string trackName = null)
         {
             var sessionId = GetSessionId(claims);
             if (sessionId.IsNullOrWhiteSpace())
@@ -51,7 +51,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                var id = await AccessTokenSessionTtl.IdFormatAsync(new AccessTokenSessionTtl.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, SessionIdHash = await sessionId.HashIdStringAsync() });
+                var id = await AccessTokenSessionTtl.IdFormatAsync(new AccessTokenSessionTtl.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackName ?? RouteBinding.TrackName, SessionIdHash = await sessionId.HashIdStringAsync() });
                 var session = await tenantDataRepository.GetAsync<AccessTokenSessionTtl>(id, required: false);
                 if (session == null)
                 {

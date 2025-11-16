@@ -1,15 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using FoxIDs.Client.Infrastructure.Security;
+using FoxIDs.Infrastructure;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using FoxIDs.Infrastructure;
 
 namespace FoxIDs.Client.Infrastructure
 {
     public class CheckResponseMessageHandler : DelegatingHandler
     {
+        private readonly OpenidConnectPkce openidConnectPkce;
+
+        public CheckResponseMessageHandler(OpenidConnectPkce openidConnectPkce)
+        {
+            this.openidConnectPkce = openidConnectPkce;
+        }
+
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var response = await base.SendAsync(request, cancellationToken);
@@ -17,7 +26,7 @@ namespace FoxIDs.Client.Infrastructure
             {
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    throw new FoxIDsApiException("Unauthorized", response.StatusCode, await GetResponseTextAsync(response), GetHeaders(response));
+                    await (openidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();                    
                 }
                 else if (response.StatusCode == HttpStatusCode.Forbidden)
                 {

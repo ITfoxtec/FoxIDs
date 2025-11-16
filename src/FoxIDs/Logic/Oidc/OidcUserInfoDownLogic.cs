@@ -95,11 +95,11 @@ namespace FoxIDs.Logic
             }
             catch (SessionException sex)
             {
-                throw new OAuthRequestException($"The access token's session is not active.", sex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
+                throw new OAuthRequestException("The access token session is missing or no longer valid.", sex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
             }
             catch (Exception ex)
             {
-                throw new OAuthRequestException($"The access token is not valid.", ex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
+                throw new OAuthRequestException("The access token is not valid.", ex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
             }
         }
     }

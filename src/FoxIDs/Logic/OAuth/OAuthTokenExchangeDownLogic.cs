@@ -209,7 +209,7 @@ namespace FoxIDs.Logic
             }
             catch (SessionException sex)
             {
-                throw new OAuthRequestException($"The subject token's session is not active. Client id (required audience) '{party.Client.ClientId}'.", sex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
+                throw new OAuthRequestException($"The subject token session is missing or no longer valid. Client id (required audience) '{party.Client.ClientId}'.", sex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
             }
             catch (Exception ex)
             {

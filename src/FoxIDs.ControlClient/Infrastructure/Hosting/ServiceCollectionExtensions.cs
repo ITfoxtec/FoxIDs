@@ -81,7 +81,7 @@ namespace FoxIDs.Client.Infrastructure.Hosting
 
             services.AddBlazoredSessionStorageAsSingleton();
 
-            services.AddSingleton<OpenidConnectPkceSettings>(sp => new OpenidConnectPkceSettings { SessionValidationIntervalSeconds = 5 });
+            services.AddSingleton<OpenidConnectPkceSettings>();
             services.AddSingleton<OpenidConnectPkce, TenantOpenidConnectPkce>();
             services.AddSingleton(sp => new OidcDiscoveryHandler(sp.GetService<IHttpClientFactory>()));
             services.AddSingleton(sp => new OidcHelper(sp.GetService<IHttpClientFactory>(), sp.GetService<OidcDiscoveryHandler>()));

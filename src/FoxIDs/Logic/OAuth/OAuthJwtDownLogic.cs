@@ -94,23 +94,26 @@ namespace FoxIDs.Logic
                 issuerSigningKeys.Add(RouteBinding.Key.SecondaryKey.Key);
             }
 
+            ClaimsPrincipal claimsPrincipal;
             try
             {
-                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(token, trackIssuerLogic.GetIssuer(routeUrl), issuerSigningKeys, audience: audience, validateAudience: !audience.IsNullOrWhiteSpace(), validateLifetime: validateLifetime));
-                return claimsPrincipal;
+                (claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(token, trackIssuerLogic.GetIssuer(routeUrl), issuerSigningKeys, audience: audience, validateAudience: !audience.IsNullOrWhiteSpace(), validateLifetime: validateLifetime));
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"JWT not valid. Route '{RouteBinding.Route}'.");
-                return null;
+                throw new Exception("JWT not valid", ex);
             }
+
+            //TODO call method to validate access token session based on claimsPrincipal.Claims and JwtClaimTypes.SessionId (sid). 
+            // throw new SessionException("Session in JWT not valid", ex);
+
+            return claimsPrincipal;
         }
 
         public async Task<ClaimsPrincipal> ValidateClientAssertionAsync(string clientAssertion, string issuer, List<JsonWebKey> clientKeys, string audience)
         {
             (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(clientAssertion, issuer, clientKeys, audience));
             return claimsPrincipal;
-
         }
     }
 }

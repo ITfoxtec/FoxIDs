@@ -1168,6 +1168,7 @@ namespace FoxIDs
             /// </summary>
             public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken.ConcatOnce(
                 [
+                    FoxI.JwtClaimTypes.SessionId, 
                     JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthProfileMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, 
                     JwtClaimTypes.AuthMethodIssuer, JwtClaimTypes.SubFormat, FoxI.JwtClaimTypes.Actor, JwtClaimTypes.LocalSub
                 ]).ToArray();

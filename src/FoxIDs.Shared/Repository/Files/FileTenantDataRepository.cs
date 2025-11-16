@@ -307,6 +307,10 @@ namespace FoxIDs.Repository
             {
                 return Constants.Models.DataType.ExternalUser;
             }
+            else if (type == typeof(TrackLargeResource))
+            {
+                return Constants.Models.DataType.TrackLargeResource;
+            }
             else if (type == typeof(AuthCodeTtlGrant))
             {
                 return Constants.Models.DataType.AuthCodeTtlGrant;
@@ -315,6 +319,10 @@ namespace FoxIDs.Repository
             {
                 return Constants.Models.DataType.RefreshTokenGrant;
             }           
+            else if (type == typeof(AccessTokenSessionTtl))
+            {
+                return Constants.Models.DataType.AccessTokenSession;
+            }
             else
             { 
                 throw new NotSupportedException($"Type '{type}'.");

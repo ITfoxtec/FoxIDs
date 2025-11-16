@@ -283,6 +283,7 @@ namespace FoxIDs
                 public const string ExternalUser = "extu";
                 public const string AuthCodeTtlGrant = "acgrant";
                 public const string RefreshTokenGrant = "rtgrant";
+                public const string AccessTokenSession = "atses";
                 public const string SamlUpPartyIdPInitiatedTtlGrant = "idpigrant";
                 public const string RiskPassword = "prisk";
                 public const string Plan = "plan";
@@ -726,6 +727,14 @@ namespace FoxIDs
                     public const string RefreshTokenRegExPattern = @"^[\w-_]*$";
                     public const int ClaimsMin = 1;
                     public const int ClaimsMax = 1000;
+                }
+
+                public static class AccessTokenSession
+                {
+                    public const int IdLength = 170;
+                    public const string IdRegExPattern = @"^[\w:\-_]*$";
+                    public const int SessionIdHashLength = 50;
+                    public const int AdditionalLifetimeMax = 300; // 5 minutes
                 }
 
                 public static class Client

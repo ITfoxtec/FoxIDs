@@ -28,8 +28,9 @@ namespace FoxIDs.Logic
         private readonly SingleLogoutLogic singleLogoutLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
+        private readonly AccessTokenSessionLogic accessTokenSessionLogic;
 
-        public OidcRpInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, AuditLogic auditLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, StateUpPartyLogic stateUpPartyLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, SecurityHeaderLogic securityHeaderLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcRpInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, AuditLogic auditLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, StateUpPartyLogic stateUpPartyLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, SecurityHeaderLogic securityHeaderLogic, AccessTokenSessionLogic accessTokenSessionLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -42,6 +43,7 @@ namespace FoxIDs.Logic
             this.singleLogoutLogic = singleLogoutLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
             this.securityHeaderLogic = securityHeaderLogic;
+            this.accessTokenSessionLogic = accessTokenSessionLogic;
         }
 
         public async Task<IActionResult> EndSessionRequestRedirectAsync(UpPartyLink partyLink, LogoutRequest logoutRequest, bool isSingleLogout = false)
@@ -109,6 +111,7 @@ namespace FoxIDs.Logic
             await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
             _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(sequenceData.SessionId);
+            await accessTokenSessionLogic.DeleteSessionAsync(sequenceData.SessionId);
 
             try
             {

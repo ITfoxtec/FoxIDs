@@ -22,34 +22,34 @@ namespace FoxIDs.Client.Infrastructure.Hosting
     {
         public static IServiceCollection AddLogic(this IServiceCollection services)
         {
-            services.AddSingleton<RouteBindingLogic>();
-            services.AddSingleton<ControlClientSettingLogic>();
-            services.AddSingleton<UserProfileLogic>();
-            services.AddSingleton<NotificationLogic>();
-            services.AddSingleton<TrackSelectedLogic>();
-            services.AddSingleton<MetadataLogic>();
-            services.AddSingleton<ClipboardLogic>();
-            services.AddSingleton<ServerErrorLogic>();
+            services.AddScoped<RouteBindingLogic>();
+            services.AddScoped<ControlClientSettingLogic>();
+            services.AddScoped<UserProfileLogic>();
+            services.AddScoped<NotificationLogic>();
+            services.AddScoped<TrackSelectedLogic>();
+            services.AddScoped<MetadataLogic>();
+            services.AddScoped<ClipboardLogic>();
+            services.AddScoped<ServerErrorLogic>();
 
             return services;
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            services.AddSingleton<ClientService>();
-            services.AddSingleton<TenantService>();
-            services.AddSingleton<MyTenantService>();
-            services.AddSingleton<TrackService>();
-            services.AddSingleton<DownPartyService>();
-            services.AddSingleton<UpPartyService>();
-            services.AddSingleton<UserService>();
-            services.AddSingleton<ExternalUserService>();
-            services.AddSingleton<HelpersService>();
-            services.AddSingleton<HelpersNoAccessTokenService>();
-            
-            services.AddSingleton<PlanService>();
-            services.AddSingleton<SmsPriceService>();
-            services.AddSingleton<RiskPasswordService>();
+            services.AddScoped<ClientService>();
+            services.AddScoped<TenantService>();
+            services.AddScoped<MyTenantService>();
+            services.AddScoped<TrackService>();
+            services.AddScoped<DownPartyService>();
+            services.AddScoped<UpPartyService>();
+            services.AddScoped<UserService>();
+            services.AddScoped<ExternalUserService>();
+            services.AddScoped<HelpersService>();
+            services.AddScoped<HelpersNoAccessTokenService>();
+
+            services.AddScoped<PlanService>();
+            services.AddScoped<SmsPriceService>();
+            services.AddScoped<RiskPasswordService>();
 
             return services;
         }
@@ -79,15 +79,16 @@ namespace FoxIDs.Client.Infrastructure.Hosting
         {
             IdentityModelEventSource.ShowPII = true;
 
-            services.AddBlazoredSessionStorageAsSingleton();
+            services.AddBlazoredSessionStorage();
 
             services.AddSingleton<OpenidConnectPkceSettings>();
-            services.AddSingleton<OpenidConnectPkce, TenantOpenidConnectPkce>();
+            services.AddScoped<OpenidConnectPkce, TenantOpenidConnectPkce>();
             services.AddSingleton(sp => new OidcDiscoveryHandler(sp.GetService<IHttpClientFactory>()));
-            services.AddSingleton(sp => new OidcHelper(sp.GetService<IHttpClientFactory>(), sp.GetService<OidcDiscoveryHandler>()));
+            services.AddScoped(sp => new OidcHelper(sp.GetService<IHttpClientFactory>(), sp.GetService<OidcDiscoveryHandler>()));
 
-            services.AddSingleton<AuthenticationStateProvider, OidcAuthenticationStateProvider>();
-            services.AddSingleton<AccessTokenMessageHandler>();
+            services.AddSingleton<OidcSessionValidationService>();
+            services.AddScoped<AuthenticationStateProvider, OidcAuthenticationStateProvider>();
+            services.AddScoped<AccessTokenMessageHandler>();
 
             services.AddOptions();
             services.AddAuthorizationCore();

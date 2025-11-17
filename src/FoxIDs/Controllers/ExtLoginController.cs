@@ -30,11 +30,11 @@ namespace FoxIDs.Controllers
         private readonly SequenceLogic sequenceLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly ExternalLoginConnectLogic externalLoginConnectLogic;
-        private readonly DynamicElementLogic dynamicElementLogic;
         private readonly SingleLogoutLogic singleLogoutLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
+        private readonly OAuthAccessTokenSessionLogic oauthAccessTokenSessionLogic;
 
-        public ExtLoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, ExternalLoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ExternalLoginConnectLogic externalLoginConnectLogic, DynamicElementLogic dynamicElementLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
+        public ExtLoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, ExternalLoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ExternalLoginConnectLogic externalLoginConnectLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, OAuthAccessTokenSessionLogic oauthAccessTokenSessionLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -45,9 +45,9 @@ namespace FoxIDs.Controllers
             this.sequenceLogic = sequenceLogic;
             this.securityHeaderLogic = securityHeaderLogic;
             this.externalLoginConnectLogic = externalLoginConnectLogic;
-            this.dynamicElementLogic = dynamicElementLogic;
             this.singleLogoutLogic = singleLogoutLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
+            this.oauthAccessTokenSessionLogic = oauthAccessTokenSessionLogic;
         }
 
         public async Task<IActionResult> ExtLogin()
@@ -353,6 +353,7 @@ namespace FoxIDs.Controllers
                 if (logoutChoice == LogoutChoice.Logout)
                 {
                     await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(sequenceData.SessionId);
+                    await oauthAccessTokenSessionLogic.DeleteSessionAsync(sequenceData.SessionId);
 
                     if (loginUpParty.DisableSingleLogout)
                     {

@@ -18,7 +18,7 @@ namespace FoxIDs.Logic
         private readonly TrackIssuerLogic trackIssuerLogic;
         private readonly ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic;
 
-        public OidcJwtDownLogic(TelemetryScopedLogger logger, TrackKeyLogic trackKeyLogic, TrackIssuerLogic trackIssuerLogic, ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(logger, trackKeyLogic, trackIssuerLogic, claimsOAuthDownLogic, oauthResourceScopeDownLogic, httpContextAccessor)
+        public OidcJwtDownLogic(TelemetryScopedLogger logger, TrackKeyLogic trackKeyLogic, TrackIssuerLogic trackIssuerLogic, ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, OAuthAccessTokenSessionLogic oauthAccessTokenSessionLogic, IHttpContextAccessor httpContextAccessor) : base(logger, trackKeyLogic, trackIssuerLogic, claimsOAuthDownLogic, oauthResourceScopeDownLogic, oauthAccessTokenSessionLogic, httpContextAccessor)
         {
             this.logger = logger;
             this.trackKeyLogic = trackKeyLogic;

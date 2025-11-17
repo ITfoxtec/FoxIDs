@@ -202,10 +202,18 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, OAuth validate same environment token exchange subject token.");
 
-            var claimsPrincipal = await oauthJwtDownLogic.ValidateTokenAsync(party.UsePartyIssuer ? RouteBinding.RouteUrl : null, subjectToken, audience: party.Name);
-            if (claimsPrincipal == null)
+            ClaimsPrincipal claimsPrincipal;
+            try
             {
-                throw new OAuthRequestException($"Subject token not accepted in the same environment, perhaps due to incorrect audience. Client id (required audience) '{party.Client.ClientId}'") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
+                claimsPrincipal = await oauthJwtDownLogic.ValidateTokenAsync(party.UsePartyIssuer ? RouteBinding.RouteUrl : null, subjectToken, audience: party.Name);
+            }
+            catch (SessionException sex)
+            {
+                throw new OAuthRequestException($"The subject token session is missing or no longer valid. Client id (required audience) '{party.Client.ClientId}'.", sex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
+            }
+            catch (Exception ex)
+            {
+                throw new OAuthRequestException($"Subject token not accepted in the same environment, perhaps due to incorrect audience. Client id (required audience) '{party.Client.ClientId}'.", ex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
             }
 
             var claims = claimsPrincipal.Claims?.ToList();

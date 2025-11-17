@@ -45,17 +45,17 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Require password change")]
         public bool ChangePassword { get; set; }
 
-        [Display(Name = "User can set / reset password (SMS confirmation)")]
+        [Display(Name = "User can set / reset password with SMS confirmation")]
         public bool DisableSetPasswordSms { get; set; }
 
-        [Display(Name = "User can set / reset password (email confirmation)")]
+        [Display(Name = "User can set / reset password with email confirmation")]
 
         public bool DisableSetPasswordEmail { get; set; }
 
-        [Display(Name = "Require user to set password at next log-in (SMS confirmation)")]
+        [Display(Name = "Require user to set password at next log-in with SMS confirmation")]
         public bool SetPasswordSms { get; set; }
 
-        [Display(Name = "Require user to set password at next log-in (email confirmation)")]
+        [Display(Name = "Require user to set password at next log-in with email confirmation")]
         public bool SetPasswordEmail { get; set; }
 
         [Display(Name = "Account status")]

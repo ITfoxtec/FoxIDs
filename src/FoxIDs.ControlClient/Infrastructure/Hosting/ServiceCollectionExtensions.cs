@@ -86,7 +86,6 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             services.AddSingleton(sp => new OidcDiscoveryHandler(sp.GetService<IHttpClientFactory>()));
             services.AddScoped(sp => new OidcHelper(sp.GetService<IHttpClientFactory>(), sp.GetService<OidcDiscoveryHandler>()));
 
-            services.AddSingleton<OidcSessionValidationService>();
             services.AddScoped<AuthenticationStateProvider, OidcAuthenticationStateProvider>();
             services.AddScoped<AccessTokenMessageHandler>();
 

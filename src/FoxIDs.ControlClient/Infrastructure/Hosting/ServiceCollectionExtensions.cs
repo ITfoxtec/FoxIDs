@@ -81,11 +81,15 @@ namespace FoxIDs.Client.Infrastructure.Hosting
 
             services.AddBlazoredSessionStorage();
 
-            services.AddSingleton<OpenidConnectPkceSettings>();
+            services.AddSingleton(new OpenidConnectPkceSettings
+            {
+                SessionValidationIntervalSeconds = 900 // 15 minutes
+            });
             services.AddScoped<OpenidConnectPkce, TenantOpenidConnectPkce>();
             services.AddSingleton(sp => new OidcDiscoveryHandler(sp.GetService<IHttpClientFactory>()));
             services.AddScoped(sp => new OidcHelper(sp.GetService<IHttpClientFactory>(), sp.GetService<OidcDiscoveryHandler>()));
 
+            services.AddSingleton<OidcSessionValidationService>();
             services.AddScoped<AuthenticationStateProvider, OidcAuthenticationStateProvider>();
             services.AddScoped<AccessTokenMessageHandler>();
 

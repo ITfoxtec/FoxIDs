@@ -34,7 +34,8 @@ NemLog-in documentation:
   - [test](https://tu.nemlog-in.dk/oprettelse-og-administration-af-it-systemer/log-in/dokumentation-og-guides/integrationstestmiljo/), where you can find the NemLog-in IdP-metadata for test and download the OCES3 test certificate
   - [production](https://tu.nemlog-in.dk/oprettelse-og-administration-af-it-systemer/log-in/dokumentation-og-guides/produktionsmiljo/), where you can find the NemLog-in IdP-metadata for production
 - Create OCES3 production certificate in the [certificate administration](https://erhvervsadministration.nemlog-in.dk/certificates) 
-- The [NemLog-in administration portal](https://administration.nemlog-in.dk/) where you configure IT-systems
+- You must be [connected to NemLog-in](https://tu.nemlog-in.dk/tilslutning/) in order to create IT systems.
+- The [NemLog-in administration portal](https://administration.nemlog-in.dk/) where you configure IT-systems 
 - Test environment
   - Create citizens test users in [MitID emulator](https://pp.mitid.dk/test-tool/frontend/#/create-identity) 
   - Create citizens and employee test users in [MitID simulator](https://mitidsimulator.test-nemlog-in.dk/Home/Create) (login with username and password)

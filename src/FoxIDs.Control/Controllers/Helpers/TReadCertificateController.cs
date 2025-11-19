@@ -34,11 +34,13 @@ namespace FoxIDs.Controllers
 
             try
             {
+                var certificateBytes = WebEncoders.Base64UrlDecode(certificateAndPassword.EncodeCertificate);
+                var keyStorageFlags = X509KeyStorageFlags.Exportable | X509KeyStorageFlags.EphemeralKeySet;
                 var certificate = certificateAndPassword.Password.IsNullOrWhiteSpace() switch
                 {
                     //Can not be change to X509CertificateLoader LoadPkcs12 or LoadCertificate because it should automatically select between the two methods.
-                    true => new X509Certificate2(WebEncoders.Base64UrlDecode(certificateAndPassword.EncodeCertificate), string.Empty, keyStorageFlags: X509KeyStorageFlags.Exportable),
-                    false => new X509Certificate2(WebEncoders.Base64UrlDecode(certificateAndPassword.EncodeCertificate), certificateAndPassword.Password, keyStorageFlags: X509KeyStorageFlags.Exportable),
+                    true => new X509Certificate2(certificateBytes, string.Empty, keyStorageFlags),
+                    false => new X509Certificate2(certificateBytes, certificateAndPassword.Password, keyStorageFlags),
                 };
 
                 if (!certificateAndPassword.Password.IsNullOrWhiteSpace() && !certificate.HasPrivateKey)

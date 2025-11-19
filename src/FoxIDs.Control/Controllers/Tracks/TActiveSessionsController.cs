@@ -42,7 +42,7 @@ namespace FoxIDs.Controllers
         public async Task<ActionResult<Api.PaginationResponse<Api.ActiveSession>>> GetActiveSessions(string filterUserIdentifier, string filterSub, string filterUpPartyName, string filterDownPartyName, string filterSessionId, string paginationToken = null)
         {
             filterUserIdentifier = filterUserIdentifier?.Trim().ToLower();
-            filterSub = filterSub?.Trim().ToLower();
+            filterSub = filterSub?.Trim();
             filterUpPartyName = filterUpPartyName?.Trim().ToLower();
             filterDownPartyName = filterDownPartyName?.Trim().ToLower();
             filterSessionId = filterSessionId?.Trim();
@@ -83,7 +83,7 @@ namespace FoxIDs.Controllers
                 }
 
                 userIdentifier = userIdentifier?.Trim().ToLower();
-                sub = sub?.Trim().ToLower();
+                sub = sub?.Trim();
                 upPartyName = upPartyName?.Trim().ToLower();
                 downPartyName = downPartyName?.Trim().ToLower();
                 sessionId = sessionId?.Trim();

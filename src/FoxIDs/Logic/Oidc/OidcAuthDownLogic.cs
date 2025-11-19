@@ -13,12 +13,12 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
-using FoxIDs.Models.Session;
 using Microsoft.AspNetCore.WebUtilities;
+using FoxIDs.Models.Session;
 
 namespace FoxIDs.Logic
 {
-    public class OidcAuthDownLogic<TParty, TClient, TScope, TClaim> : LogicSequenceBase where TParty : OidcDownParty where TClient : OidcDownClient<TScope, TClaim> where TScope : OidcDownScope<TClaim> where TClaim : OidcDownClaim
+    public class OidcAuthDownLogic<TParty, TClient, TScope, TClaim> : LogicSequenceBase where TParty : OidcDownParty<TClient, TScope, TClaim> where TClient : OidcDownClient<TScope, TClaim> where TScope : OidcDownScope<TClaim> where TClaim : OidcDownClaim
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
@@ -26,11 +26,11 @@ namespace FoxIDs.Logic
         private readonly SequenceLogic sequenceLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
-        private readonly OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic;
+        private readonly OidcJwtDownLogic<TParty, TClient, TScope, TClaim> oidcJwtDownLogic;
         private readonly OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic;
         private readonly OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic;
 
-        public OidcAuthDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ClaimTransformLogic claimTransformLogic, OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic, OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcAuthDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ClaimTransformLogic claimTransformLogic, OidcJwtDownLogic<TParty, TClient, TScope, TClaim> oidcJwtDownLogic, OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -185,7 +185,7 @@ namespace FoxIDs.Logic
             return LoginAction.ReadSessionOrLogin;
         }
 
-        private void ValidateAuthenticationRequest(OidcDownClient client, AuthenticationRequest authenticationRequest, CodeChallengeSecret codeChallengeSecret)
+        private void ValidateAuthenticationRequest(TClient client, AuthenticationRequest authenticationRequest, CodeChallengeSecret codeChallengeSecret)
         {
             try
             {
@@ -215,7 +215,7 @@ namespace FoxIDs.Logic
                 {
                     throw new OAuthRequestException($"Require '{IdentityConstants.DefaultOidcScopes.OpenId}' scope.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidScope };
                 }
-                var resourceScopes = oauthResourceScopeDownLogic.GetResourceScopes(client as TClient);
+                var resourceScopes = oauthResourceScopeDownLogic.GetResourceScopes(client);
                 var invalidScope = authenticationRequest.Scope.ToSpaceList().Where(s => !(resourceScopes.Select(rs => rs).Contains(s) || (client.Scopes != null && client.Scopes.Select(ps => ps.Scope).Contains(s))) && IdentityConstants.DefaultOidcScopes.OpenId != s);
                 if (invalidScope.Count() > 0)
                 {
@@ -244,7 +244,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private void ValidateResponseType(OidcDownClient client, AuthenticationRequest authenticationRequest, string[] responseTypes)
+        private void ValidateResponseType(TClient client, AuthenticationRequest authenticationRequest, string[] responseTypes)
         {
             foreach(var partyResponseTypes in client.ResponseTypes.Select(rt => rt.ToSpaceList()))
             {
@@ -373,7 +373,7 @@ namespace FoxIDs.Logic
                 if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Token)).Any())
                 {
                     authenticationResponse.TokenType = IdentityConstants.TokenTypes.Bearer;
-                    authenticationResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(party.Client as TClient, sequenceData.RouteUrl, claims, sequenceData.Scope?.ToSpaceList(), algorithm);
+                    authenticationResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(party, sequenceData.RouteUrl, claims, sequenceData.Scope?.ToSpaceList(), algorithm, saveActiveSession: false);
                 }
                 if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.IdToken)).Any())
                 {

@@ -1,21 +1,13 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
-using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class RefreshTokenGrant
+    public class ActiveSession
     {
-        [MaxLength(Constants.Models.OAuthDownParty.Grant.RefreshTokenLength)]
-        [RegularExpression(Constants.Models.OAuthDownParty.Grant.RefreshTokenRegExPattern)]
-        public string RefreshToken { get; set; }
-
-        [MaxLength(Constants.Models.Party.NameLength)]
-        [Display(Name = "Application (technical name / client ID)")]
-        public string ClientId { get; set; }
-
+        [Required]
         [MaxLength(IdentityConstants.MessageLength.SessionIdMax)]
         [Display(Name = "Session ID")]
         public string SessionId { get; set; }
@@ -23,6 +15,10 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.Claim.ValueLength)]
         [Display(Name = "SUB claim")]
         public string Sub { get; set; }
+
+        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [Display(Name = "SUB claim format")]
+        public string SubFormat { get; set; }
 
         [MaxLength(Constants.Models.Claim.ValueLength)]
         [Display(Name = "Email")]
@@ -36,22 +32,31 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Username")]
         public string Username { get; set; }
 
-        [MaxLength(Constants.Models.Claim.ValueLength)]
-        [Display(Name = "Authentication method (technical name)")]
-        public string UpPartyName { get; set; }
+        [Display(Name = "Authentication methods")]
+        public List<PartyNameSessionLink> UpPartyLinks { get; set; }
+
+        [Display(Name = "Authentication session method")]
+        public PartyNameSessionLink SessionUpParty { get; set; }
+
+        [Display(Name = "Applications")]
+        public List<PartyNameSessionLink> DownPartyLinks { get; set; }
 
         [MaxLength(Constants.Models.Claim.ValueLength)]
-        [Display(Name = "Authentication method type")]
-        public string UpPartyType { get; set; }
+        [Display(Name = "Client IP")]
+        public string ClientIp { get; set; }
+
+        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [Display(Name = "User agent")]
+        public string UserAgent { get; set; }
 
         [Required]
         [Display(Name = "Create time")]
         public long CreateTime { get; set; }
 
-        [Display(Name = "Time to live")]
-        public int? TimeToLive { get; set; }
+        [Display(Name = "Last updated")]
+        public long LastUpdated { get; set; }
 
-        [ListLength(Constants.Models.OAuthDownParty.Grant.ClaimsMin, Constants.Models.OAuthDownParty.Grant.ClaimsMax)]
-        public List<ClaimAndValues> Claims { get; set; }
+        [Display(Name = "Time to live")]
+        public int TimeToLive { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly UpPartyCookieRepository<StateUpPartyCookie> stateCookieRepository;
 
-        public StateUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, UpPartyCookieRepository<StateUpPartyCookie> stateCookieRepository, TrackCookieRepository<SessionTrackCookie> sessionTrackCookieRepository, IHttpContextAccessor httpContextAccessor) : base(settings, sessionTrackCookieRepository, httpContextAccessor)
+        public StateUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, UpPartyCookieRepository<StateUpPartyCookie> stateCookieRepository, TrackCookieRepository<SessionTrackCookie> sessionTrackCookieRepository, ActiveSessionLogic activeSessionLogic, IHttpContextAccessor httpContextAccessor) : base(settings, sessionTrackCookieRepository, activeSessionLogic, httpContextAccessor)
         {
             this.logger = logger;
             this.stateCookieRepository = stateCookieRepository;

@@ -1,25 +1,25 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using ITfoxtec.Identity;
-using FoxIDs.Infrastructure;
+﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Repository;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class OidcUserInfoDownLogic<TParty, TClient, TScope, TClaim> : LogicSequenceBase where TParty : OidcDownParty where TClient : OidcDownClient<TScope, TClaim> where TScope : OidcDownScope<TClaim> where TClaim : OidcDownClaim
+    public class OidcUserInfoDownLogic<TParty, TClient, TScope, TClaim> : LogicSequenceBase where TParty : OidcDownParty<TClient, TScope, TClaim> where TClient : OidcDownClient<TScope, TClaim> where TScope : OidcDownScope<TClaim> where TClaim : OidcDownClaim
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanUsageLogic planUsageLogic;
-        private readonly OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic;
+        private readonly OidcJwtDownLogic<TParty, TClient, TScope, TClaim> oidcJwtDownLogic;
 
-        public OidcUserInfoDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, PlanUsageLogic planUsageLogic, OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcUserInfoDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, PlanUsageLogic planUsageLogic, OidcJwtDownLogic<TParty, TClient, TScope, TClaim> oidcJwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantDataRepository = tenantDataRepository;
@@ -81,25 +81,25 @@ namespace FoxIDs.Logic
 
         private async Task<IEnumerable<Claim>> GetAccessTokenClaims(TParty party)
         {
+            var accessToken = HttpContext.Request.Headers.GetAuthorizationHeaderBearer();
+            if (accessToken.IsNullOrWhiteSpace())
+            {
+                throw new OAuthRequestException("The access token is not found in the Bearer header.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
+            }
+            logger.ScopeTrace(() => $"Access token '{accessToken}'.");
+
             try
             {
-                var accessToken = HttpContext.Request.Headers.GetAuthorizationHeaderBearer();
-                if (accessToken.IsNullOrWhiteSpace())
-                {
-                    throw new Exception("The access token is not found in the Bearer header.");
-                }
-                logger.ScopeTrace(() => $"Access token '{accessToken}'.");
-
                 var claimsPrincipal = await oidcJwtDownLogic.ValidateTokenAsync(party.UsePartyIssuer ? RouteBinding.RouteUrl : null, accessToken);
-                if (claimsPrincipal == null)
-                {
-                    throw new Exception("Access token not valid.");
-                }
                 return claimsPrincipal.Claims;
+            }
+            catch (SessionException sex)
+            {
+                throw new OAuthRequestException("The access token session is missing or no longer valid.", sex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
             }
             catch (Exception ex)
             {
-                throw new OAuthRequestException(ex.Message, ex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
+                throw new OAuthRequestException("The access token is not valid.", ex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
             }
         }
     }

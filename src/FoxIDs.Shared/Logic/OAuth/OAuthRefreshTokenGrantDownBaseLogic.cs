@@ -156,12 +156,17 @@ namespace FoxIDs.Logic
             var queryByUpPartyType = upPartyType.HasValue;
             var upPartyTypeValue = upPartyType.HasValue ? upPartyType.Value.GetPartyTypeValue() : null;
 
-            return d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) &&
-                            (!queryByUserIdentifier || d.Email == userIdentifier || d.Phone == userIdentifier || d.Username == userIdentifier) &&
-                            (!queryBySub || d.Sub == sub) &&
-                            (!queryByClientId || d.ClientId == clientId) &&
-                            (!queryByUpPartyName || d.UpPartyName == upPartyName) &&
-                            (!queryByUpPartyType || d.UpPartyType == upPartyTypeValue);   
+            return d =>
+                d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) &&
+                (
+                    (!queryByUserIdentifier && !queryBySub) || // none provided
+                    (queryByUserIdentifier && !queryBySub && (d.Email == userIdentifier || d.Phone == userIdentifier || d.Username == userIdentifier)) || // only userIdentifier
+                    (!queryByUserIdentifier && queryBySub && d.Sub == sub) || // only sub
+                    (queryByUserIdentifier && queryBySub && (d.Email == userIdentifier || d.Phone == userIdentifier || d.Username == userIdentifier || d.Sub == sub)) // both => OR
+                ) &&
+                (!queryByClientId || d.ClientId == clientId) &&
+                (!queryByUpPartyName || d.UpPartyName == upPartyName) &&
+                (!queryByUpPartyType || d.UpPartyType == upPartyTypeValue);
         }
     }
 }

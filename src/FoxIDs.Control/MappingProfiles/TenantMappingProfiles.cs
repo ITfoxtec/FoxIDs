@@ -98,6 +98,9 @@ namespace FoxIDs.MappingProfiles
             CreateMap<RefreshTokenTtlGrant, Api.RefreshTokenGrant>();
             CreateMap<RefreshTokenGrant, Api.RefreshTokenGrant>();
 
+            CreateMap<ActiveSessionTtl, Api.ActiveSession>();
+            CreateMap<PartyNameSessionLink, Api.PartyNameSessionLink>().ReverseMap();
+
             CreateMap<User, Api.User>()
                 .ForMember(d => d.ActiveTwoFactorApp, opt => opt.MapFrom(s => !s.TwoFactorAppSecret.IsNullOrEmpty() || !s.TwoFactorAppSecretExternalName.IsNullOrEmpty()))
                 .ForMember(d => d.HasPassword, opt => opt.MapFrom(s => !s.Hash.IsNullOrEmpty()))

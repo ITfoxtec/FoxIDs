@@ -31,8 +31,9 @@ namespace FoxIDs.Logic
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
         private readonly SingleLogoutLogic singleLogoutLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
+        private readonly ActiveSessionLogic activeSessionLogic;
 
-        public SamlLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, AuditLogic auditLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, AuditLogic auditLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, ActiveSessionLogic activeSessionLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -45,6 +46,7 @@ namespace FoxIDs.Logic
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
             this.singleLogoutLogic = singleLogoutLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
+            this.activeSessionLogic = activeSessionLogic;
         }
 
         public async Task<IActionResult> LogoutRequestRedirectAsync(UpPartyLink partyLink, LogoutRequest logoutRequest, bool isSingleLogout = false)
@@ -183,6 +185,7 @@ namespace FoxIDs.Logic
             await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
             _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(sequenceData.SessionId);
+            await activeSessionLogic.DeleteSessionAsync(sequenceData.SessionId);
 
             securityHeaderLogic.AddFormActionAllowAll();
 
@@ -440,6 +443,7 @@ namespace FoxIDs.Logic
 
             var session = await sessionUpPartyLogic.DeleteSessionAsync(party);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(session?.SessionIdClaim);
+            await activeSessionLogic.DeleteSessionAsync(session?.SessionIdClaim);
 
             if (party.DisableSingleLogout)
             {

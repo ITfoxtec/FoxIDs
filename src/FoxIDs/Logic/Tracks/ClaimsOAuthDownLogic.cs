@@ -1,6 +1,4 @@
 ﻿using ITfoxtec.Identity;
-using ITfoxtec.Identity.Saml2.Claims;
-using ITfoxtec.Identity.Saml2.Schemas;
 using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using System;

@@ -28,6 +28,7 @@ namespace FoxIDs.Client.Pages.Users
         private string internalUsersHref;
         private string externalUsersHref;
         private string failingLoginsHref;
+        private string activeSessionsHref;
 
         [Inject]
         public IToastService toastService { get; set; }
@@ -46,6 +47,7 @@ namespace FoxIDs.Client.Pages.Users
             internalUsersHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/internalusers";
             externalUsersHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/externalusers";
             failingLoginsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/failingloginlocks";
+            activeSessionsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/activesessions";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)
@@ -73,7 +75,7 @@ namespace FoxIDs.Client.Pages.Users
             refreshTokenGrantFilterForm?.ClearError();
             try
             {
-                SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(null, null, null));
+                SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(null, null, null, null));
             }
             catch (TokenUnavailableException)
             {
@@ -92,7 +94,7 @@ namespace FoxIDs.Client.Pages.Users
 
             try
             {
-                SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterClientId, refreshTokenGrantFilterForm.Model.FilterAuthMethod));
+                SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterClientId, refreshTokenGrantFilterForm.Model.FilterAuthMethod));
 
                 if (refreshTokenGrants.Count() > 0 && 
                       (!refreshTokenGrantFilterForm.Model.FilterUserIdentifier.IsNullOrWhiteSpace() || !refreshTokenGrantFilterForm.Model.FilterClientId.IsNullOrWhiteSpace() || !refreshTokenGrantFilterForm.Model.FilterAuthMethod.IsNullOrWhiteSpace()))
@@ -125,7 +127,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             try
             {
-                SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterClientId, refreshTokenGrantFilterForm.Model.FilterAuthMethod, paginationToken: paginationToken), addUsers: true);
+                SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterClientId, refreshTokenGrantFilterForm.Model.FilterAuthMethod, paginationToken: paginationToken), addUsers: true);
             }
             catch (TokenUnavailableException)
             {
@@ -217,7 +219,7 @@ namespace FoxIDs.Client.Pages.Users
 
             try
             {
-                await UserService.DeleteRefreshTokenGrantsAsync(deleteRtGrantFilter.FilterUserIdentifier, deleteRtGrantFilter.FilterClientId, deleteRtGrantFilter.FilterAuthMethod);
+                await UserService.DeleteRefreshTokenGrantsAsync(deleteRtGrantFilter.FilterUserIdentifier, deleteRtGrantFilter.FilterUserIdentifier, deleteRtGrantFilter.FilterClientId, deleteRtGrantFilter.FilterAuthMethod);
 
                 refreshTokenGrantFilterForm.Model.FilterUserIdentifier = deleteRtGrantFilter.FilterUserIdentifier;
                 refreshTokenGrantFilterForm.Model.FilterClientId = deleteRtGrantFilter.FilterClientId;

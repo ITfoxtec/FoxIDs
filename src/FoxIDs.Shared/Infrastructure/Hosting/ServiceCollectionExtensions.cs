@@ -40,7 +40,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<AuditLogic>();
             services.AddTransient<ContainedKeyLogic>();
             services.AddTransient<HealthCheckLogic>();
-            services.AddTransient<OAuthAccessTokenSessionLogic>();
+            services.AddTransient<ActiveSessionLogic>();
 
             if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
             {

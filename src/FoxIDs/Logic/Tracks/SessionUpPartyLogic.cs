@@ -20,7 +20,7 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly UpPartyCookieRepository<SessionUpPartyCookie> sessionCookieRepository;
 
-        public SessionUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, UpPartyCookieRepository<SessionUpPartyCookie> sessionCookieRepository, TrackCookieRepository<SessionTrackCookie> sessionTrackCookieRepository, IHttpContextAccessor httpContextAccessor) : base(settings, sessionTrackCookieRepository, httpContextAccessor)
+        public SessionUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, UpPartyCookieRepository<SessionUpPartyCookie> sessionCookieRepository, TrackCookieRepository<SessionTrackCookie> sessionTrackCookieRepository, ActiveSessionLogic activeSessionLogic, IHttpContextAccessor httpContextAccessor) : base(settings, sessionTrackCookieRepository, activeSessionLogic, httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -86,9 +86,10 @@ namespace FoxIDs.Logic
             if (session != null && session.Claims?.Count() > 0)
             {
                 var sessionValid = SessionValid(session, upParty);
+                var activeSessionExists = sessionValid && await ActiveSessionExistsAsync(session.Claims);
 
                 logger.ScopeTrace(() => $"User id '{session.UserIdClaim}' session for authentication method exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionIdClaim}', Route '{RouteBinding.Route}'.");
-                if (sessionEnabled && sessionValid)
+                if (sessionEnabled && sessionValid && activeSessionExists)
                 {
                     if (session.IsMarkerSession)
                     {
@@ -109,7 +110,7 @@ namespace FoxIDs.Logic
                         updateAction(session);
                     }
 
-                    await AddOrUpdateSessionTrackWithClaimsAsync(upParty, session.Claims);
+                    await AddOrUpdateSessionTrackWithClaimsAsync(upParty, session.Claims, updateDbActiveSession: false);
                     session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                     await sessionCookieRepository.SaveAsync(upParty, session, null);
                     logger.ScopeTrace(() => $"Session updated authentication method, Session id '{session.SessionIdClaim}'.", GetSessionScopeProperties(session));
@@ -118,7 +119,7 @@ namespace FoxIDs.Logic
                 }
 
                 SetScopeProperty(session, includeSessionId: false);
-                if (!sessionEnabled)
+                if (!sessionEnabled || !activeSessionExists)
                 {
                     await sessionCookieRepository.DeleteAsync(upParty);
                     logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionIdClaim}'.");
@@ -132,7 +133,7 @@ namespace FoxIDs.Logic
                 updateAction(session);
                 session.LastUpdated = session.CreateTime;
 
-                await AddOrUpdateSessionTrackWithClaimsAsync(upParty, session.Claims);
+                await AddOrUpdateSessionTrackWithClaimsAsync(upParty, session.Claims, updateDbActiveSession: true);
                 await sessionCookieRepository.SaveAsync(upParty, session, null);
                 logger.ScopeTrace(() => $"Session for authentication method created, User id '{session.UserIdClaim}', Session id '{session.SessionIdClaim}', External Session id '{externalSessionId}'.", GetSessionScopeProperties(session));
 
@@ -161,9 +162,10 @@ namespace FoxIDs.Logic
             {
                 var sessionEnabled = SessionEnabled(upParty);
                 var sessionValid = SessionValid(session, upParty);
+                var activeSessionExists = sessionValid && await ActiveSessionExistsAsync(session.Claims);
 
-                logger.ScopeTrace(() => $"User id '{session.UserIdClaim}' session for authentication method exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionIdClaim}', Route '{RouteBinding.Route}'.");
-                if (sessionEnabled && sessionValid)
+                logger.ScopeTrace(() => $"User id '{session.UserIdClaim}' session for authentication method exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Active '{activeSessionExists}', Session id '{session.SessionIdClaim}', Route '{RouteBinding.Route}'.");
+                if (sessionEnabled && sessionValid && activeSessionExists)
                 {
                     SetScopeProperty(session);
                     return session;

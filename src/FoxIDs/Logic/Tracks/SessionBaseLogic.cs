@@ -16,11 +16,13 @@ namespace FoxIDs.Logic
     {
         private readonly FoxIDsSettings settings;
         private readonly TrackCookieRepository<SessionTrackCookie> sessionTrackCookieRepository;
+        private readonly ActiveSessionLogic activeSessionLogic;
 
-        public SessionBaseLogic(FoxIDsSettings settings, TrackCookieRepository<SessionTrackCookie> sessionTrackCookieRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SessionBaseLogic(FoxIDsSettings settings, TrackCookieRepository<SessionTrackCookie> sessionTrackCookieRepository, ActiveSessionLogic activeSessionLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.sessionTrackCookieRepository = sessionTrackCookieRepository;
+            this.activeSessionLogic = activeSessionLogic;
         }
 
         public async Task<string> GetSessionIdAsync<T>(T upParty) where T : IUpParty
@@ -60,7 +62,7 @@ namespace FoxIDs.Logic
             return upParty.SessionLifetime > 0 || upParty.PersistentSessionAbsoluteLifetime > 0 || upParty.PersistentSessionLifetimeUnlimited;
         }
 
-        public async Task AddOrUpdateSessionTrackAsync<T>(T upParty, DownPartySessionLink downPartyLink) where T : IUpParty
+        public async Task AddOrUpdateSessionTrackAsync<T>(T upParty, DownPartySessionLink downPartyLink, bool updateDbActiveSession = false) where T : IUpParty
         {
             (var session, var sessionGroups) = await LoadSessionTrackAsync(upParty, downPartyLink);
             foreach (var sessionGroup in sessionGroups)
@@ -72,9 +74,14 @@ namespace FoxIDs.Logic
                 }
             }
             await sessionTrackCookieRepository.SaveAsync(session);
+
+            if (updateDbActiveSession)
+            {
+                await activeSessionLogic.SaveSessionAsync(sessionGroups, session.CreateTime, session.LastUpdated);
+            }
         }
 
-        protected async Task AddOrUpdateSessionTrackWithClaimsAsync<T>(T upParty, IEnumerable<ClaimAndValues> claims) where T : IUpParty
+        protected async Task AddOrUpdateSessionTrackWithClaimsAsync<T>(T upParty, IEnumerable<ClaimAndValues> claims, bool updateDbActiveSession = false) where T : IUpParty
         {
             (var session, var sessionGroups) = await LoadSessionTrackAsync(upParty, null);
             foreach (var sessionGroup in sessionGroups)
@@ -83,10 +90,15 @@ namespace FoxIDs.Logic
                 if (sessionGroup.SessionUpParty == null && claims?.Count() > 0)
                 {
                     sessionGroup.SessionUpParty = new UpPartySessionLink { Id = upParty.Id, Type = upParty.Type };
-                    sessionGroup.Claims = claims.Where(c => c.Claim == JwtClaimTypes.SessionId || c.Claim == JwtClaimTypes.Email || c.Claim == JwtClaimTypes.Subject || c.Claim == JwtClaimTypes.Name || c.Claim == Constants.JwtClaimTypes.Upn || c.Claim == Constants.JwtClaimTypes.SubFormat);
+                    sessionGroup.Claims = claims.Where(c => c.Claim == JwtClaimTypes.SessionId || c.Claim == JwtClaimTypes.Email || c.Claim == JwtClaimTypes.PreferredUsername || c.Claim == JwtClaimTypes.PhoneNumber || c.Claim == JwtClaimTypes.Subject || c.Claim == Constants.JwtClaimTypes.SubFormat);
                 }
             }
             await sessionTrackCookieRepository.SaveAsync(session);
+
+            if (updateDbActiveSession && claims?.Any() == true)
+            {
+                await activeSessionLogic.SaveSessionAsync(sessionGroups, session.CreateTime, session.LastUpdated);
+            }
         }
 
         private async Task<(SessionTrackCookie, IEnumerable<SessionTrackCookieGroup>)> LoadSessionTrackAsync<T>(T upParty, DownPartySessionLink downPartyLink) where T : IUpParty
@@ -110,6 +122,23 @@ namespace FoxIDs.Logic
             }
         }
 
+        protected async Task<bool> ActiveSessionExistsAsync(IEnumerable<ClaimAndValues> claims)
+        {
+            try
+            {
+                await activeSessionLogic.ValidateSessionAsync(claims.ToClaimList());
+                return true;
+            }
+            catch (SessionException)
+            {
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private IEnumerable<SessionTrackCookieGroup> AddNewSessionTrackCookieSequenceGroups(SessionTrackCookie session)
         {
             if (session.Groups == null)
@@ -117,7 +146,10 @@ namespace FoxIDs.Logic
                 session.Groups = new List<SessionTrackCookieGroup>();
             }
             var sessionGroup = new SessionTrackCookieGroup { SequenceId = Sequence?.Id };
-            session.Groups.Add(sessionGroup);
+            if (session.Groups.Count < Constants.Models.Session.GroupsMax)
+            {
+                session.Groups.Add(sessionGroup);
+            }
             return [sessionGroup];
         }
 
@@ -126,12 +158,13 @@ namespace FoxIDs.Logic
             var session = await sessionTrackCookieRepository.GetAsync();
             if (session != null && session.Groups?.Count() > 0)
             {
-                var sessionGroup = session.Groups.Where(g => g.UpPartyLinks?.Any(u => u.Id == upParty.Id) == true).FirstOrDefault();
-                if (sessionGroup != null)
+                var removedGroups = session.Groups.Where(g => g.UpPartyLinks?.Any(u => u.Id == upParty.Id) == true).ToList();
+                if (removedGroups.Count > 0)
                 {
                     session.Groups.RemoveAll(g => g.UpPartyLinks?.Any(u => u.Id == upParty.Id) == true);
                     await sessionTrackCookieRepository.SaveAsync(session);
-                    return sessionGroup;
+                    await DeleteActiveSessionsAsync(removedGroups);
+                    return removedGroups.First();
                 }
             }
             return null;
@@ -142,9 +175,30 @@ namespace FoxIDs.Logic
             var session = await sessionTrackCookieRepository.GetAsync();
             if (session != null && session.Groups?.Count() > 0)
             {
-                if (session.Groups.RemoveAll(g => g.UpPartyLinks?.Any(u => u.Id == upParty.Id) == true) > 0)
+                var removedGroups = session.Groups.Where(g => g.UpPartyLinks?.Any(u => u.Id == upParty.Id) == true).ToList();
+                if (removedGroups.Count > 0)
                 {
+                    session.Groups.RemoveAll(g => g.UpPartyLinks?.Any(u => u.Id == upParty.Id) == true);
                     await sessionTrackCookieRepository.SaveAsync(session);
+                    await DeleteActiveSessionsAsync(removedGroups);
+                }
+            }
+        }
+
+        private async Task DeleteActiveSessionsAsync(IEnumerable<SessionTrackCookieGroup> sessionGroups)
+        {
+            var sessionIds = sessionGroups?
+                .Where(g => g?.Claims != null)
+                .SelectMany(g => g.Claims.Where(c => c.Claim == JwtClaimTypes.SessionId && c.Values != null))
+                .SelectMany(c => c.Values)
+                .Where(id => !id.IsNullOrWhiteSpace())
+                .Distinct(StringComparer.Ordinal);
+
+            if (sessionIds?.Any() == true)
+            {
+                foreach (var sessionId in sessionIds)
+                {
+                    await activeSessionLogic.DeleteSessionAsync(sessionId);
                 }
             }
         }

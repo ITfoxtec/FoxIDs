@@ -12,14 +12,14 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class OidcUserInfoDownLogic<TParty, TClient, TScope, TClaim> : LogicSequenceBase where TParty : OidcDownParty where TClient : OidcDownClient<TScope, TClaim> where TScope : OidcDownScope<TClaim> where TClaim : OidcDownClaim
+    public class OidcUserInfoDownLogic<TParty, TClient, TScope, TClaim> : LogicSequenceBase where TParty : OidcDownParty<TClient, TScope, TClaim> where TClient : OidcDownClient<TScope, TClaim> where TScope : OidcDownScope<TClaim> where TClaim : OidcDownClaim
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanUsageLogic planUsageLogic;
-        private readonly OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic;
+        private readonly OidcJwtDownLogic<TParty, TClient, TScope, TClaim> oidcJwtDownLogic;
 
-        public OidcUserInfoDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, PlanUsageLogic planUsageLogic, OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcUserInfoDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, PlanUsageLogic planUsageLogic, OidcJwtDownLogic<TParty, TClient, TScope, TClaim> oidcJwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantDataRepository = tenantDataRepository;

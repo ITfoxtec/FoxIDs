@@ -24,9 +24,9 @@ namespace FoxIDs.Logic
         private readonly HrdLogic hrdLogic;
         private readonly SingleLogoutLogic singleLogoutLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
-        private readonly OAuthAccessTokenSessionLogic oauthAccessTokenSessionLogic;
+        private readonly ActiveSessionLogic activeSessionLogic;
 
-        public TrackLinkFrontChannelLogoutUpLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, SecurityHeaderLogic securityHeaderLogic, SequenceLogic sequenceLogic, AuditLogic auditLogic, SessionUpPartyLogic sessionUpPartyLogic, HrdLogic hrdLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, OAuthAccessTokenSessionLogic oauthAccessTokenSessionLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLinkFrontChannelLogoutUpLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, SecurityHeaderLogic securityHeaderLogic, SequenceLogic sequenceLogic, AuditLogic auditLogic, SessionUpPartyLogic sessionUpPartyLogic, HrdLogic hrdLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, ActiveSessionLogic activeSessionLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantDataRepository = tenantDataRepository;
@@ -37,7 +37,7 @@ namespace FoxIDs.Logic
             this.hrdLogic = hrdLogic;
             this.singleLogoutLogic = singleLogoutLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
-            this.oauthAccessTokenSessionLogic = oauthAccessTokenSessionLogic;
+            this.activeSessionLogic = activeSessionLogic;
         }
 
         public async Task<IActionResult> FrontChannelLogoutAsync(string partyId)
@@ -57,7 +57,7 @@ namespace FoxIDs.Logic
             await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
             var session = await sessionUpPartyLogic.DeleteSessionAsync(party);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(session.SessionIdClaim);
-            await oauthAccessTokenSessionLogic.DeleteSessionAsync(session.SessionIdClaim);
+            await activeSessionLogic.DeleteSessionAsync(session.SessionIdClaim);
             logger.ScopeTrace(() => "AuthMethod, Successful environment link front channel logout request.", triggerEvent: true);
 
             auditLogic.LogLogoutEvent(PartyTypes.TrackLink, party.Id, session.SessionIdClaim);

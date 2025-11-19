@@ -37,9 +37,9 @@ namespace FoxIDs.Controllers
         private readonly CountryCodesLogic countryCodesLogic;
         private readonly SingleLogoutLogic singleLogoutLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
-        private readonly OAuthAccessTokenSessionLogic oauthAccessTokenSessionLogic;
+        private readonly ActiveSessionLogic activeSessionLogic;
 
-        public LoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, AuditLogic auditLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, DynamicElementLogic dynamicElementLogic, CountryCodesLogic countryCodesLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, OAuthAccessTokenSessionLogic oauthAccessTokenSessionLogic) : base(logger)
+        public LoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, AuditLogic auditLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, DynamicElementLogic dynamicElementLogic, CountryCodesLogic countryCodesLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, ActiveSessionLogic activeSessionLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -55,7 +55,7 @@ namespace FoxIDs.Controllers
             this.countryCodesLogic = countryCodesLogic;
             this.singleLogoutLogic = singleLogoutLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
-            this.oauthAccessTokenSessionLogic = oauthAccessTokenSessionLogic;
+            this.activeSessionLogic = activeSessionLogic;
         }
 
         public async Task<IActionResult> Login(bool passwordAuth = false, bool passwordLessEmail = false, bool passwordLessSms = false, bool newCode = false)
@@ -1079,7 +1079,7 @@ namespace FoxIDs.Controllers
                 if (logoutChoice == LogoutChoice.Logout)
                 {
                     await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(sequenceData.SessionId);
-                    await oauthAccessTokenSessionLogic.DeleteSessionAsync(sequenceData.SessionId);
+                    await activeSessionLogic.DeleteSessionAsync(sequenceData.SessionId);
 
                     if (loginUpParty.DisableSingleLogout)
                     {

@@ -64,8 +64,8 @@ namespace FoxIDs.Infrastructure.Security
                     (principal, _) = JwtHandler.ValidateToken(accessToken, oidcDiscovery.Issuer, oidcDiscoveryKeySet.Keys, Options.DownParty);
                 }
 
-                var oauthAccessTokenSessionLogic = Context.RequestServices.GetService<OAuthAccessTokenSessionLogic>();
-                await oauthAccessTokenSessionLogic.ValidateSessionAsync(principal.Claims, trackName: Constants.Routes.MasterTrackName);
+                var activeSessionLogic = Context.RequestServices.GetService<ActiveSessionLogic>();
+                await activeSessionLogic.ValidateSessionAsync(principal.Claims, trackName: Constants.Routes.MasterTrackName);
 
                 scopedLogger.SetUserScopeProperty(principal.Claims);
                 var ticket = new AuthenticationTicket(principal, Scheme.Name);

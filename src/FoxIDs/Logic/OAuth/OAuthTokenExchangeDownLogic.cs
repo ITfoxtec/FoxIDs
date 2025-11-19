@@ -18,18 +18,16 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
-        private readonly PlanUsageLogic planUsageLogic;
-        private readonly OAuthJwtDownLogic<TClient, TScope, TClaim> oauthJwtDownLogic;
+        private readonly OAuthJwtDownLogic<TParty, TClient, TScope, TClaim> oauthJwtDownLogic;
         private readonly TrackIssuerLogic trackIssuerLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly ClaimValidationLogic claimValidationLogic;
         private readonly OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic;
 
-        public OAuthTokenExchangeDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, PlanUsageLogic planUsageLogic, OAuthJwtDownLogic<TClient, TScope, TClaim> oauthJwtDownLogic, TrackIssuerLogic trackIssuerLogic, ClaimTransformLogic claimTransformLogic, ClaimValidationLogic claimValidationLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthTokenExchangeDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, OAuthJwtDownLogic<TParty, TClient, TScope, TClaim> oauthJwtDownLogic, TrackIssuerLogic trackIssuerLogic, ClaimTransformLogic claimTransformLogic, ClaimValidationLogic claimValidationLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
-            this.planUsageLogic = planUsageLogic;
             this.oauthJwtDownLogic = oauthJwtDownLogic;
             this.trackIssuerLogic = trackIssuerLogic;
             this.claimTransformLogic = claimTransformLogic;
@@ -95,7 +93,7 @@ namespace FoxIDs.Logic
                 logger.SetUserScopeProperty(transformedClaims);
 
                 var scopes = tokenExchangeRequest.Scope.ToSpaceList();
-                tokenExchangeResponse.AccessToken = await oauthJwtDownLogic.CreateAccessTokenAsync(party.Client, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, transformedClaims, scopes, algorithm);
+                tokenExchangeResponse.AccessToken = await oauthJwtDownLogic.CreateAccessTokenAsync(party, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, transformedClaims, scopes, algorithm, saveActiveSession: true);
 
                 logger.ScopeTrace(() => $"Token response '{tokenExchangeResponse.ToJson()}'.", traceType: TraceTypes.Message);
                 logger.ScopeTrace(() => "AppReg, OAuth Token response.", triggerEvent: true);

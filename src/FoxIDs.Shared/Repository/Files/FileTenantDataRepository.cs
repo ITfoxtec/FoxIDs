@@ -319,9 +319,9 @@ namespace FoxIDs.Repository
             {
                 return Constants.Models.DataType.RefreshTokenGrant;
             }           
-            else if (type == typeof(AccessTokenSessionTtl))
+            else if (type == typeof(ActiveSessionTtl))
             {
-                return Constants.Models.DataType.AccessTokenSession;
+                return Constants.Models.DataType.ActiveSession;
             }
             else
             { 

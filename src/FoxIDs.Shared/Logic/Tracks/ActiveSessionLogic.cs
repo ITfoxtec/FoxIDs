@@ -131,7 +131,7 @@ namespace FoxIDs.Logic
             }
 
             var username = GetTruncatedClaimValue(claims, JwtClaimTypes.PreferredUsername);
-            if (!username.IsNullOrWhiteSpace())
+            if (!username.IsNullOrWhiteSpace() && (email.IsNullOrWhiteSpace() || username != email))
             {
                 session.Username = username;
             }
@@ -164,7 +164,7 @@ namespace FoxIDs.Logic
             }
 
             var username = GetTruncatedClaimValue(claims, JwtClaimTypes.PreferredUsername);
-            if (!username.IsNullOrWhiteSpace())
+            if (!username.IsNullOrWhiteSpace() && (email.IsNullOrWhiteSpace() || username != email))
             {
                 session.Username = username;
             }
@@ -317,11 +317,15 @@ namespace FoxIDs.Logic
             var queryBySessionId = !sessionIdHash.IsNullOrWhiteSpace();
 
             return s => s.DataType.Equals(Constants.Models.DataType.ActiveSession) &&
-                        (!queryByUserIdentifier || s.Email == userIdentifier || s.Phone == userIdentifier || s.Username == userIdentifier) &&
-                        (!queryBySub || s.Sub == sub) &&
-                        (!queryByUpPartyName || s.UpPartyLinks.Any(u => u.Name == upPartyName)) &&
-                        (!queryByDownPartyName || s.DownPartyLinks.Any(d => d.Name == downPartyName)) &&
-                        (!queryBySessionId || s.SessionId == sessionIdHash);
+                (
+                    (!queryByUserIdentifier && !queryBySub) || // none provided
+                    (queryByUserIdentifier && !queryBySub && (s.Email == userIdentifier || s.Phone == userIdentifier || s.Username == userIdentifier)) || // only userIdentifier
+                    (!queryByUserIdentifier && queryBySub && s.Sub == sub) || // only sub
+                    (queryByUserIdentifier && queryBySub && (s.Email == userIdentifier || s.Phone == userIdentifier || s.Username == userIdentifier || s.Sub == sub)) // both => OR
+                ) &&
+                (!queryByUpPartyName || s.UpPartyLinks.Any(u => u.Name == upPartyName)) &&
+                (!queryByDownPartyName || s.DownPartyLinks.Any(d => d.Name == downPartyName)) &&
+                (!queryBySessionId || s.SessionId == sessionIdHash);
         }
     }
 }

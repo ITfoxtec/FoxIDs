@@ -2,6 +2,7 @@ using FoxIDs;
 using FoxIDs.Infrastructure;
 using FoxIDs.Logic;
 using FoxIDs.Models;
+using FoxIDs.Models.Session;
 using FoxIDs.Repository;
 using FoxIDs.UnitTests.Helpers;
 using FoxIDs.UnitTests.MockHelpers;
@@ -29,80 +30,100 @@ namespace FoxIDs.UnitTests.Logic
                 .Callback<ActiveSessionTtl, TelemetryScopedLogger>((session, _) => savedSession = session)
                 .Returns(ValueTask.CompletedTask);
 
+            var sessionId = CreateSessionId("sid123");
+            var downPartyLink = new DownPartySessionLink { Id = CreatePartyId(routeBinding, "app1"), Type = PartyTypes.Oidc };
             var claims = new[]
             {
-                new Claim(JwtClaimTypes.SessionId, "sid123"),
+                new Claim(JwtClaimTypes.SessionId, sessionId),
                 new Claim(JwtClaimTypes.Subject, "sub1"),
+                new Claim(Constants.JwtClaimTypes.SubFormat, "sub-format"),
                 new Claim(JwtClaimTypes.Email, "user@example.com"),
                 new Claim(JwtClaimTypes.PhoneNumber, "12345678"),
-                new Claim(JwtClaimTypes.PreferredUsername, "user1"),
-                new Claim(JwtClaimTypes.ClientId, "client1"),
-                new Claim(Constants.JwtClaimTypes.AuthMethod, "login"),
-                new Claim(Constants.JwtClaimTypes.AuthMethodType, PartyTypes.Login.GetPartyTypeValue())
+                new Claim(JwtClaimTypes.PreferredUsername, "user1")
             };
 
-            await logic.SaveSessionAsync(claims);
+            await logic.SaveSessionAsync(downPartyLink, claims);
 
             tenantDataRepositoryMock.Verify(r => r.SaveAsync(It.IsAny<ActiveSessionTtl>(), It.IsAny<TelemetryScopedLogger>()), Times.Once);
             Assert.NotNull(savedSession);
-            var sessionIdHash = await "sid123".HashIdStringAsync();
+            var sessionIdHash = await sessionId.HashIdStringAsync();
             var expectedId = await ActiveSessionTtl.IdFormatAsync(new ActiveSessionTtl.IdKey { TenantName = routeBinding.TenantName, TrackName = routeBinding.TrackName, SessionIdHash = sessionIdHash });
             Assert.Equal(expectedId, savedSession.Id);
             Assert.Equal(sessionIdHash, savedSession.SessionId);
             Assert.Equal(ActiveSessionTtl.DefaultTimeToLive, savedSession.TimeToLive);
-            Assert.Equal("client1", savedSession.ClientId);
             Assert.Equal("sub1", savedSession.Sub);
+            Assert.Equal("sub-format", savedSession.SubFormat);
             Assert.Equal("user@example.com", savedSession.Email);
             Assert.Equal("12345678", savedSession.Phone);
             Assert.Equal("user1", savedSession.Username);
-            Assert.Equal("login", savedSession.UpPartyName);
-            Assert.Equal(PartyTypes.Login.GetPartyTypeValue(), savedSession.UpPartyType);
+            Assert.Single(savedSession.DownPartyLinks);
+            var downLink = savedSession.DownPartyLinks.Single();
+            Assert.Equal("app1", downLink.Name);
+            Assert.Equal(PartyTypes.Oidc, downLink.Type);
             Assert.True(savedSession.CreateTime > 0);
         }
 
         [Fact]
-        public async Task SaveSessionAsync_WithAdditionalSessionIds_SavesAllSessions()
+        public async Task SaveSessionAsync_WithSessionGroups_SavesEachSession()
         {
-            var (logic, tenantDataRepositoryMock, _) = CreateLogic();
-            IReadOnlyCollection<ActiveSessionTtl> savedSessions = null;
+            var (logic, tenantDataRepositoryMock, routeBinding) = CreateLogic();
+            var savedSessions = new List<ActiveSessionTtl>();
 
-            tenantDataRepositoryMock.Setup(r => r.SaveManyAsync(It.IsAny<IReadOnlyCollection<ActiveSessionTtl>>(), It.IsAny<TelemetryScopedLogger>()))
-                .Callback<IReadOnlyCollection<ActiveSessionTtl>, TelemetryScopedLogger>((sessions, _) => savedSessions = sessions)
+            tenantDataRepositoryMock.Setup(r => r.SaveAsync(It.IsAny<ActiveSessionTtl>(), It.IsAny<TelemetryScopedLogger>()))
+                .Callback<ActiveSessionTtl, TelemetryScopedLogger>((session, _) => savedSessions.Add(session))
                 .Returns(ValueTask.CompletedTask);
 
-            await logic.SaveSessionAsync([new Claim(JwtClaimTypes.Subject, "sub1")], ["sid1", "sid2"]);
+            var sessionOneId = CreateSessionId("sid1");
+            var sessionTwoId = CreateSessionId("sid2");
+            var sessionGroups = new List<SessionTrackCookieGroup>
+            {
+                CreateSessionGroup(routeBinding, sessionOneId, "login1", "app1"),
+                CreateSessionGroup(routeBinding, sessionTwoId, "login2", "app2")
+            };
 
-            tenantDataRepositoryMock.Verify(r => r.SaveManyAsync(It.IsAny<IReadOnlyCollection<ActiveSessionTtl>>(), It.IsAny<TelemetryScopedLogger>()), Times.Once);
-            Assert.NotNull(savedSessions);
+            await logic.SaveSessionAsync(sessionGroups, createTime: 1234, lastUpdated: 5678);
+
             Assert.Equal(2, savedSessions.Count);
-            var expectedHashes = new HashSet<string> { await "sid1".HashIdStringAsync(), await "sid2".HashIdStringAsync() };
-            Assert.Equal(expectedHashes, savedSessions.Select(s => s.SessionId).ToHashSet());
+            Assert.All(savedSessions, session =>
+            {
+                Assert.Equal(ActiveSessionTtl.DefaultTimeToLive, session.TimeToLive);
+                Assert.Equal(1234, session.CreateTime);
+                Assert.Equal(5678, session.LastUpdated);
+                Assert.NotEmpty(session.UpPartyLinks);
+                Assert.NotNull(session.SessionUpParty);
+                Assert.NotEmpty(session.DownPartyLinks);
+            });
+            var hashedIds = savedSessions.Select(s => s.SessionId).ToHashSet();
+            Assert.Contains(await sessionOneId.HashIdStringAsync(), hashedIds);
+            Assert.Contains(await sessionTwoId.HashIdStringAsync(), hashedIds);
         }
 
         [Fact]
         public async Task ValidateSessionAsync_WhenSessionMissing_ThrowsSessionException()
         {
             var (logic, tenantDataRepositoryMock, routeBinding) = CreateLogic();
-            var sessionIdHash = await "sid123".HashIdStringAsync();
+            var sessionId = CreateSessionId("sid123");
+            var sessionIdHash = await sessionId.HashIdStringAsync();
             var expectedId = await ActiveSessionTtl.IdFormatAsync(new ActiveSessionTtl.IdKey { TenantName = routeBinding.TenantName, TrackName = routeBinding.TrackName, SessionIdHash = sessionIdHash });
 
             tenantDataRepositoryMock.Setup(r => r.GetAsync<ActiveSessionTtl>(expectedId, false, false, false, It.IsAny<TelemetryScopedLogger>()))
                 .ReturnsAsync((ActiveSessionTtl)null);
 
-            await Assert.ThrowsAsync<SessionException>(() => logic.ValidateSessionAsync([new Claim(JwtClaimTypes.SessionId, "sid123")]));
+            await Assert.ThrowsAsync<SessionException>(() => logic.ValidateSessionAsync(new[] { new Claim(JwtClaimTypes.SessionId, sessionId) }));
         }
 
         [Fact]
-        public async Task ValidateSessionAsync_WithAdditionalSessionId_ValidatesAgainstAny()
+        public async Task ValidateSessionAsync_WhenSessionExists_DoesNotThrow()
         {
             var (logic, tenantDataRepositoryMock, routeBinding) = CreateLogic();
-            var sessionIdHash = await "sidB".HashIdStringAsync();
+            var sessionId = CreateSessionId("sid123");
+            var sessionIdHash = await sessionId.HashIdStringAsync();
             var expectedId = await ActiveSessionTtl.IdFormatAsync(new ActiveSessionTtl.IdKey { TenantName = routeBinding.TenantName, TrackName = routeBinding.TrackName, SessionIdHash = sessionIdHash });
 
             tenantDataRepositoryMock.Setup(r => r.GetAsync<ActiveSessionTtl>(expectedId, false, false, false, It.IsAny<TelemetryScopedLogger>()))
                 .ReturnsAsync(new ActiveSessionTtl { Id = expectedId, SessionId = sessionIdHash });
 
-            await logic.ValidateSessionAsync([], sessionIds: ["sidA", "sidB"]);
+            await logic.ValidateSessionAsync(new[] { new Claim(JwtClaimTypes.SessionId, sessionId) });
 
             tenantDataRepositoryMock.Verify(r => r.GetAsync<ActiveSessionTtl>(expectedId, false, false, false, It.IsAny<TelemetryScopedLogger>()), Times.Once);
         }
@@ -111,12 +132,14 @@ namespace FoxIDs.UnitTests.Logic
         public async Task DeleteSessionAsync_DeletesStoredSession()
         {
             var (logic, tenantDataRepositoryMock, routeBinding) = CreateLogic();
-            var sessionIdHash = await "sid123".HashIdStringAsync();
+            var sessionId = CreateSessionId("sid123");
+            var sessionIdHash = await sessionId.HashIdStringAsync();
             var expectedId = await ActiveSessionTtl.IdFormatAsync(new ActiveSessionTtl.IdKey { TenantName = routeBinding.TenantName, TrackName = routeBinding.TrackName, SessionIdHash = sessionIdHash });
+
             tenantDataRepositoryMock.Setup(r => r.GetAsync<ActiveSessionTtl>(expectedId, false, true, false, It.IsAny<TelemetryScopedLogger>()))
                 .ReturnsAsync(new ActiveSessionTtl { Id = expectedId, SessionId = sessionIdHash, TimeToLive = ActiveSessionTtl.DefaultTimeToLive });
 
-            await logic.DeleteSessionAsync("sid123");
+            await logic.DeleteSessionAsync(sessionId);
 
             tenantDataRepositoryMock.Verify(r => r.GetAsync<ActiveSessionTtl>(expectedId, false, true, false, It.IsAny<TelemetryScopedLogger>()), Times.Once);
         }
@@ -128,22 +151,24 @@ namespace FoxIDs.UnitTests.Logic
             Expression<Func<ActiveSessionTtl, bool>> filter = null;
 
             tenantDataRepositoryMock.Setup(r => r.GetManyAsync(It.IsAny<Track.IdKey>(), It.IsAny<Expression<Func<ActiveSessionTtl, bool>>>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<TelemetryScopedLogger>()))
-                .Callback<Track.IdKey, Expression<Func<ActiveSessionTtl, bool>>, int, string, TelemetryScopedLogger>((idKey, f, _, __, ___) => filter = f)
+                .Callback<Track.IdKey, Expression<Func<ActiveSessionTtl, bool>>, int, string, TelemetryScopedLogger>((_, f, __, ___, ____) => filter = f)
                 .ReturnsAsync(((IReadOnlyCollection<ActiveSessionTtl>)new List<ActiveSessionTtl>(), "token1"));
 
-            var sessionIdHash = await "sid123".HashIdStringAsync();
-            await logic.ListSessionsAsync("user@example.com", "sub1", "client1", "login", upPartyType: PartyTypes.Login, sessionId: "sid123");
+            var sessionId = CreateSessionId("sid123");
+            var sessionIdHash = await sessionId.HashIdStringAsync();
+            await logic.ListSessionsAsync("user@example.com", "sub1", "login", "app1", sessionIdHash);
 
             Assert.NotNull(filter);
-            var matches = filter.Compile()(new ActiveSessionTtl { DataType = Constants.Models.DataType.AccessTokenSession, Email = "user@example.com", Sub = "sub1", ClientId = "client1", UpPartyName = "login", UpPartyType = PartyTypes.Login.GetPartyTypeValue(), SessionId = sessionIdHash });
+            var matches = filter.Compile()(new ActiveSessionTtl
+            {
+                DataType = Constants.Models.DataType.ActiveSession,
+                Email = "user@example.com",
+                Sub = "sub1",
+                UpPartyLinks = new List<PartyNameSessionLink> { new PartyNameSessionLink { Name = "login", Type = PartyTypes.Login } },
+                DownPartyLinks = new List<PartyNameSessionLink> { new PartyNameSessionLink { Name = "app1", Type = PartyTypes.Oidc } },
+                SessionId = sessionIdHash
+            });
             Assert.True(matches);
-        }
-
-        [Fact]
-        public async Task DeleteSessionsAsync_ThrowsIfNoFilters()
-        {
-            var (logic, _, _) = CreateLogic();
-            await Assert.ThrowsAsync<ArgumentException>(() => logic.DeleteSessionsAsync(null));
         }
 
         [Fact]
@@ -161,12 +186,19 @@ namespace FoxIDs.UnitTests.Logic
                 })
                 .ReturnsAsync(1);
 
-            await logic.DeleteSessionsAsync("user@example.com", sessionId: "sid123", clientId: "client1");
+            var sessionId = CreateSessionId("sid123");
+            var sessionIdHash = await sessionId.HashIdStringAsync();
+            await logic.DeleteSessionsAsync("user@example.com", downPartyName: "app1", sessionId: sessionIdHash);
 
             Assert.Equal(routeBinding.TenantName, usedIdKey.TenantName);
             Assert.Equal(routeBinding.TrackName, usedIdKey.TrackName);
-            var sessionIdHash = await "sid123".HashIdStringAsync();
-            var matches = filter.Compile()(new ActiveSessionTtl { DataType = Constants.Models.DataType.AccessTokenSession, Email = "user@example.com", ClientId = "client1", SessionId = sessionIdHash });
+            var matches = filter.Compile()(new ActiveSessionTtl
+            {
+                DataType = Constants.Models.DataType.ActiveSession,
+                Email = "user@example.com",
+                DownPartyLinks = new List<PartyNameSessionLink> { new PartyNameSessionLink { Name = "app1", Type = PartyTypes.Oidc } },
+                SessionId = sessionIdHash
+            });
             Assert.True(matches);
         }
 
@@ -180,5 +212,22 @@ namespace FoxIDs.UnitTests.Logic
             var logic = new ActiveSessionLogic(telemetryScopedLogger, repositoryMock.Object, httpContextAccessor);
             return (logic, repositoryMock, routeBinding);
         }
+
+        private static SessionTrackCookieGroup CreateSessionGroup(RouteBinding routeBinding, string sessionId, string upPartyName, string downPartyName) => new SessionTrackCookieGroup
+        {
+            Claims = new List<ClaimAndValues>
+            {
+                new ClaimAndValues { Claim = JwtClaimTypes.SessionId, Values = new List<string> { sessionId } },
+                new ClaimAndValues { Claim = JwtClaimTypes.Subject, Values = new List<string> { "sub1" } },
+                new ClaimAndValues { Claim = JwtClaimTypes.Email, Values = new List<string> { $"{sessionId}@example.com" } }
+            },
+            UpPartyLinks = new List<UpPartySessionLink> { new UpPartySessionLink { Id = CreatePartyId(routeBinding, upPartyName), Type = PartyTypes.Login } },
+            SessionUpParty = new UpPartySessionLink { Id = CreatePartyId(routeBinding, upPartyName), Type = PartyTypes.Login },
+            DownPartyLinks = new List<DownPartySessionLink> { new DownPartySessionLink { Id = CreatePartyId(routeBinding, downPartyName), Type = PartyTypes.Oidc } }
+        };
+
+        private static string CreatePartyId(RouteBinding routeBinding, string partyName) => $"{routeBinding.TenantName}:{routeBinding.TrackName}:{partyName}";
+
+        private static string CreateSessionId(string baseValue) => $"{baseValue}{Constants.Models.Session.ShortSessionPostKey}";
     }
 }

@@ -57,13 +57,14 @@ namespace FoxIDs.Client.Services
             return url;
         }
 
-        protected async Task<PaginationResponse<T>> GetListAsync<T>(string url, string parmValue1 = null, string parmValue2 = null, string parmValue3 = null, string parmValue4 = null, string parmName1 = "filterName", string parmName2 = null, string parmName3 = null, string parmName4 = null, string paginationToken = null)
+        protected async Task<PaginationResponse<T>> GetListAsync<T>(string url, string parmValue1 = null, string parmValue2 = null, string parmValue3 = null, string parmValue4 = null, string parmValue5 = null, string parmName1 = "filterName", string parmName2 = null, string parmName3 = null, string parmName4 = null, string parmName5 = null, string paginationToken = null)
         {
             var queryParameters = CreateQueryParameters();
             TryAddParameter(queryParameters, parmName1, parmValue1);
             TryAddParameter(queryParameters, parmName2, parmValue2);
             TryAddParameter(queryParameters, parmName3, parmValue3);
             TryAddParameter(queryParameters, parmName4, parmValue4);
+            TryAddParameter(queryParameters, parmName5, parmValue5);
             TryAddParameter(queryParameters, "paginationToken", paginationToken);
 
             var requestUrl = await BuildTenantRequestUrlAsync(url, queryParameters);
@@ -134,25 +135,14 @@ namespace FoxIDs.Client.Services
             using var response = await httpClient.DeleteAsync(await GetTenantApiUrlAsync(url));
         }
 
-        protected async Task DeleteAsync(string url, string parmValue1, string parmValue2 = null, string parmValue3 = null, string parmName1 = "name", string parmName2 = null, string parmName3 = null)
-        {
-            var queryParameters = CreateQueryParameters();
-            TryAddParameter(queryParameters, parmName1, parmValue1);
-            TryAddParameter(queryParameters, parmName2, parmValue2);
-            TryAddParameter(queryParameters, parmName3, parmValue3);
-
-            var requestUrl = await BuildTenantRequestUrlAsync(url, queryParameters);
-            using var httpClient = GetHttpClient();
-            using var response = await httpClient.DeleteAsync(requestUrl);
-        }
-
-        protected async Task DeleteAsync(string url, string parmValue1, string parmValue2, string parmValue3, string parmValue4, string parmName1 = "name", string parmName2 = null, string parmName3 = null, string parmName4 = null)
+        protected async Task DeleteAsync(string url, string parmValue1, string parmValue2 = null, string parmValue3 = null, string parmValue4 = null, string parmValue5 = null, string parmName1 = "name", string parmName2 = null, string parmName3 = null, string parmName4 = null, string parmName5 = null)
         {
             var queryParameters = CreateQueryParameters();
             TryAddParameter(queryParameters, parmName1, parmValue1);
             TryAddParameter(queryParameters, parmName2, parmValue2);
             TryAddParameter(queryParameters, parmName3, parmValue3);
             TryAddParameter(queryParameters, parmName4, parmValue4);
+            TryAddParameter(queryParameters, parmName5, parmValue5);
 
             var requestUrl = await BuildTenantRequestUrlAsync(url, queryParameters);
             using var httpClient = GetHttpClient();

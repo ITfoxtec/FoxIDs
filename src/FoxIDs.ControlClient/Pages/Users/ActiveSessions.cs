@@ -75,7 +75,7 @@ namespace FoxIDs.Client.Pages.Users
             activeSessionFilterForm?.ClearError();
             try
             {
-                SetGeneralActiveSessions(await UserService.GetActiveSessionsAsync(null, null, null, null));
+                SetGeneralActiveSessions(await UserService.GetActiveSessionsAsync(null, null, null, null, null));
             }
             catch (TokenUnavailableException)
             {
@@ -94,10 +94,10 @@ namespace FoxIDs.Client.Pages.Users
 
             try
             {
-                SetGeneralActiveSessions(await UserService.GetActiveSessionsAsync(activeSessionFilterForm.Model.FilterUserIdentifier, activeSessionFilterForm.Model.FilterClientId, activeSessionFilterForm.Model.FilterAuthMethod, activeSessionFilterForm.Model.FilterSessionId));
+                SetGeneralActiveSessions(await UserService.GetActiveSessionsAsync(activeSessionFilterForm.Model.FilterUserIdentifier, activeSessionFilterForm.Model.FilterUserIdentifier, activeSessionFilterForm.Model.FilterUpParty, activeSessionFilterForm.Model.FilterDownParty, activeSessionFilterForm.Model.FilterSessionId));
 
                 if (activeSessions.Count() > 0 &&
-                    (!activeSessionFilterForm.Model.FilterUserIdentifier.IsNullOrWhiteSpace() || !activeSessionFilterForm.Model.FilterClientId.IsNullOrWhiteSpace() || !activeSessionFilterForm.Model.FilterAuthMethod.IsNullOrWhiteSpace() || !activeSessionFilterForm.Model.FilterSessionId.IsNullOrWhiteSpace()))
+                    (!activeSessionFilterForm.Model.FilterUserIdentifier.IsNullOrWhiteSpace() || !activeSessionFilterForm.Model.FilterUpParty.IsNullOrWhiteSpace() || !activeSessionFilterForm.Model.FilterDownParty.IsNullOrWhiteSpace() || !activeSessionFilterForm.Model.FilterSessionId.IsNullOrWhiteSpace()))
                 {
                     deleteActiveSessionFilter = activeSessionFilterForm.Model.Map<FilterActiveSessionViewModel>();
                 }
@@ -111,10 +111,6 @@ namespace FoxIDs.Client.Pages.Users
                 if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
                     activeSessionFilterForm.SetFieldError(nameof(activeSessionFilterForm.Model.FilterUserIdentifier), ex.Message);
-                    if (!activeSessionFilterForm.Model.FilterClientId.IsNullOrWhiteSpace())
-                    {
-                        activeSessionFilterForm.SetFieldError(nameof(activeSessionFilterForm.Model.FilterClientId), ex.Message);
-                    }
                 }
                 else
                 {
@@ -136,7 +132,7 @@ namespace FoxIDs.Client.Pages.Users
             deleteActiveSessionError = null;
             try
             {
-                SetGeneralActiveSessions(await UserService.GetActiveSessionsAsync(activeSessionFilterForm.Model.FilterUserIdentifier, activeSessionFilterForm.Model.FilterClientId, activeSessionFilterForm.Model.FilterAuthMethod, activeSessionFilterForm.Model.FilterSessionId, paginationToken: paginationToken), addSessions: true);
+                SetGeneralActiveSessions(await UserService.GetActiveSessionsAsync(activeSessionFilterForm.Model.FilterUserIdentifier, activeSessionFilterForm.Model.FilterUserIdentifier, activeSessionFilterForm.Model.FilterUpParty, activeSessionFilterForm.Model.FilterDownParty, activeSessionFilterForm.Model.FilterSessionId, paginationToken: paginationToken), addSessions: true);
             }
             catch (TokenUnavailableException)
             {
@@ -197,13 +193,13 @@ namespace FoxIDs.Client.Pages.Users
         private IEnumerable<string> GetDeleteText()
         {
             yield return deleteActiveSessionFilter.FilterUserIdentifier.IsNullOrWhiteSpace() ? "all active sessions" : $"active sessions for users with '{deleteActiveSessionFilter.FilterUserIdentifier}'";
-            if (!deleteActiveSessionFilter.FilterAuthMethod.IsNullOrWhiteSpace())
+            if (!deleteActiveSessionFilter.FilterUpParty.IsNullOrWhiteSpace())
             {
-                yield return $"authenticated via '{deleteActiveSessionFilter.FilterAuthMethod}'";
+                yield return $"authenticated via '{deleteActiveSessionFilter.FilterUpParty}'";
             }
-            if (!deleteActiveSessionFilter.FilterClientId.IsNullOrWhiteSpace())
+            if (!deleteActiveSessionFilter.FilterDownParty.IsNullOrWhiteSpace())
             {
-                yield return $"in application '{deleteActiveSessionFilter.FilterClientId}'";
+                yield return $"in application '{deleteActiveSessionFilter.FilterDownParty}'";
             }
             if (!deleteActiveSessionFilter.FilterSessionId.IsNullOrWhiteSpace())
             {
@@ -217,11 +213,11 @@ namespace FoxIDs.Client.Pages.Users
 
             try
             {
-                await UserService.DeleteActiveSessionsAsync(deleteActiveSessionFilter.FilterUserIdentifier, deleteActiveSessionFilter.FilterClientId, deleteActiveSessionFilter.FilterAuthMethod, deleteActiveSessionFilter.FilterSessionId);
+                await UserService.DeleteActiveSessionsAsync(deleteActiveSessionFilter.FilterUserIdentifier, deleteActiveSessionFilter.FilterUserIdentifier, deleteActiveSessionFilter.FilterUpParty, deleteActiveSessionFilter.FilterDownParty, deleteActiveSessionFilter.FilterSessionId);
 
                 activeSessionFilterForm.Model.FilterUserIdentifier = deleteActiveSessionFilter.FilterUserIdentifier;
-                activeSessionFilterForm.Model.FilterClientId = deleteActiveSessionFilter.FilterClientId;
-                activeSessionFilterForm.Model.FilterAuthMethod = deleteActiveSessionFilter.FilterAuthMethod;
+                activeSessionFilterForm.Model.FilterUpParty = deleteActiveSessionFilter.FilterUpParty;
+                activeSessionFilterForm.Model.FilterDownParty = deleteActiveSessionFilter.FilterDownParty;
                 activeSessionFilterForm.Model.FilterSessionId = deleteActiveSessionFilter.FilterSessionId;
                 await OnActiveSessionsFilterValidSubmitAsync(null);
             }

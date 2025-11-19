@@ -75,7 +75,7 @@ namespace FoxIDs.Client.Pages.Users
             refreshTokenGrantFilterForm?.ClearError();
             try
             {
-                SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(null, null, null));
+                SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(null, null, null, null));
             }
             catch (TokenUnavailableException)
             {
@@ -94,7 +94,7 @@ namespace FoxIDs.Client.Pages.Users
 
             try
             {
-                SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterClientId, refreshTokenGrantFilterForm.Model.FilterAuthMethod));
+                SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterClientId, refreshTokenGrantFilterForm.Model.FilterAuthMethod));
 
                 if (refreshTokenGrants.Count() > 0 && 
                       (!refreshTokenGrantFilterForm.Model.FilterUserIdentifier.IsNullOrWhiteSpace() || !refreshTokenGrantFilterForm.Model.FilterClientId.IsNullOrWhiteSpace() || !refreshTokenGrantFilterForm.Model.FilterAuthMethod.IsNullOrWhiteSpace()))
@@ -127,7 +127,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             try
             {
-                SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterClientId, refreshTokenGrantFilterForm.Model.FilterAuthMethod, paginationToken: paginationToken), addUsers: true);
+                SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterClientId, refreshTokenGrantFilterForm.Model.FilterAuthMethod, paginationToken: paginationToken), addUsers: true);
             }
             catch (TokenUnavailableException)
             {

@@ -44,7 +44,7 @@ namespace FoxIDs.Controllers
             try
             {
                 filterUserIdentifier = filterUserIdentifier?.Trim().ToLower();
-                filterSub = filterSub?.Trim();
+                filterSub = filterSub?.Trim().ToLower();
                 filterClientId = filterClientId?.Trim().ToLower();
                 filterUpPartyName = filterUpPartyName?.Trim().ToLower();
 
@@ -100,7 +100,7 @@ namespace FoxIDs.Controllers
                     return BadRequest(ModelState);
                 }
                 userIdentifier = userIdentifier?.Trim().ToLower();
-                sub = sub?.Trim();
+                sub = sub?.Trim().ToLower();
                 clientId = clientId?.Trim().ToLower();
                 upPartyName = upPartyName?.Trim().ToLower();
 

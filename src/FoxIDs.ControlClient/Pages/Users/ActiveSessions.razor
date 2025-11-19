@@ -29,13 +29,13 @@
     <FInputText @bind-Value="activeSessionFilterForm.Model.FilterUserIdentifier" For="@(() => activeSessionFilterForm.Model.FilterUserIdentifier)" />
     <div class="row">
         <div class="col-6">
-            <FInputText @bind-Value="activeSessionFilterForm.Model.FilterAuthMethod" For="@(() => activeSessionFilterForm.Model.FilterAuthMethod)" />
+            <FInputText @bind-Value="activeSessionFilterForm.Model.FilterUpParty" For="@(() => activeSessionFilterForm.Model.FilterUpParty)" />
         </div>
         <div class="col-6">
-            <FInputTextFilter @bind-Value="activeSessionFilterForm.Model.FilterClientId" For="@(() => activeSessionFilterForm.Model.FilterClientId)" />
+            <FInputText @bind-Value="activeSessionFilterForm.Model.FilterDownParty" For="@(() => activeSessionFilterForm.Model.FilterDownParty)" />
         </div>
     </div>
-    <FInputText @bind-Value="activeSessionFilterForm.Model.FilterSessionId" For="@(() => activeSessionFilterForm.Model.FilterSessionId)" />
+    <FInputTextFilter @bind-Value="activeSessionFilterForm.Model.FilterSessionId" For="@(() => activeSessionFilterForm.Model.FilterSessionId)" />
 </PageEditForm>
 
 @if (activeSessions.Count() > 0)
@@ -113,10 +113,6 @@
                         </div>
                         <FFieldText @bind-Value="activeSession.Details.Sub" For="@(() => activeSession.Details.Sub)" />
                         <FFieldText @bind-Value="activeSession.Details.SessionId" For="@(() => activeSession.Details.SessionId)" />
-                        @if (!activeSession.Details.UpPartyLinksDisplay.IsNullOrWhiteSpace())
-                        {
-                            <FFieldText @bind-Value="activeSession.Details.UpPartyLinksDisplay" For="@(() => activeSession.Details.UpPartyLinksDisplay)" />
-                        }
                         @if (!activeSession.Details.UpPartyLinksDisplay.IsNullOrWhiteSpace())
                         {
                             <FFieldText @bind-Value="activeSession.Details.UpPartyLinksDisplay" For="@(() => activeSession.Details.UpPartyLinksDisplay)" />

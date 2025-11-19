@@ -8,10 +8,10 @@ namespace FoxIDs.Client.Models.ViewModels
         public string FilterUserIdentifier { get; set; }
 
         [Display(Name = "Authentication method (technical name)")]
-        public string FilterAuthMethod { get; set; }
+        public string FilterUpParty { get; set; }
 
         [Display(Name = "Application (technical name / client ID)")]
-        public string FilterClientId { get; set; }
+        public string FilterDownParty { get; set; }
 
         [Display(Name = "Session ID")]
         public string FilterSessionId { get; set; }

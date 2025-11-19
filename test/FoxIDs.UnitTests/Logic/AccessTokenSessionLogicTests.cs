@@ -49,7 +49,7 @@ namespace FoxIDs.UnitTests.Logic
             var sessionIdHash = await sessionId.HashIdStringAsync();
             var expectedId = await ActiveSessionTtl.IdFormatAsync(new ActiveSessionTtl.IdKey { TenantName = routeBinding.TenantName, TrackName = routeBinding.TrackName, SessionIdHash = sessionIdHash });
             Assert.Equal(expectedId, savedSession.Id);
-            Assert.Equal(sessionIdHash, savedSession.SessionId);
+            Assert.Equal(sessionId, savedSession.SessionId);
             Assert.Equal(ActiveSessionTtl.DefaultTimeToLive, savedSession.TimeToLive);
             Assert.Equal("sub1", savedSession.Sub);
             Assert.Equal("sub-format", savedSession.SubFormat);
@@ -93,9 +93,9 @@ namespace FoxIDs.UnitTests.Logic
                 Assert.NotNull(session.SessionUpParty);
                 Assert.NotEmpty(session.DownPartyLinks);
             });
-            var hashedIds = savedSessions.Select(s => s.SessionId).ToHashSet();
-            Assert.Contains(await sessionOneId.HashIdStringAsync(), hashedIds);
-            Assert.Contains(await sessionTwoId.HashIdStringAsync(), hashedIds);
+            var storedIds = savedSessions.Select(s => s.SessionId).ToHashSet();
+            Assert.Contains(sessionOneId, storedIds);
+            Assert.Contains(sessionTwoId, storedIds);
         }
 
         [Fact]
@@ -155,8 +155,7 @@ namespace FoxIDs.UnitTests.Logic
                 .ReturnsAsync(((IReadOnlyCollection<ActiveSessionTtl>)new List<ActiveSessionTtl>(), "token1"));
 
             var sessionId = CreateSessionId("sid123");
-            var sessionIdHash = await sessionId.HashIdStringAsync();
-            await logic.ListSessionsAsync("user@example.com", "sub1", "login", "app1", sessionIdHash);
+            await logic.ListSessionsAsync("user@example.com", "sub1", "login", "app1", sessionId);
 
             Assert.NotNull(filter);
             var matches = filter.Compile()(new ActiveSessionTtl
@@ -166,7 +165,7 @@ namespace FoxIDs.UnitTests.Logic
                 Sub = "sub1",
                 UpPartyLinks = new List<PartyNameSessionLink> { new PartyNameSessionLink { Name = "login", Type = PartyTypes.Login } },
                 DownPartyLinks = new List<PartyNameSessionLink> { new PartyNameSessionLink { Name = "app1", Type = PartyTypes.Oidc } },
-                SessionId = sessionIdHash
+                SessionId = sessionId
             });
             Assert.True(matches);
         }
@@ -187,8 +186,7 @@ namespace FoxIDs.UnitTests.Logic
                 .ReturnsAsync(1);
 
             var sessionId = CreateSessionId("sid123");
-            var sessionIdHash = await sessionId.HashIdStringAsync();
-            await logic.DeleteSessionsAsync("user@example.com", downPartyName: "app1", sessionId: sessionIdHash);
+            await logic.DeleteSessionsAsync("user@example.com", downPartyName: "app1", sessionId: sessionId);
 
             Assert.Equal(routeBinding.TenantName, usedIdKey.TenantName);
             Assert.Equal(routeBinding.TrackName, usedIdKey.TrackName);
@@ -197,7 +195,7 @@ namespace FoxIDs.UnitTests.Logic
                 DataType = Constants.Models.DataType.ActiveSession,
                 Email = "user@example.com",
                 DownPartyLinks = new List<PartyNameSessionLink> { new PartyNameSessionLink { Name = "app1", Type = PartyTypes.Oidc } },
-                SessionId = sessionIdHash
+                SessionId = sessionId
             });
             Assert.True(matches);
         }

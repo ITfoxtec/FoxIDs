@@ -603,6 +603,7 @@ namespace FoxIDs
                 public const int LinksMin = 0;
                 public const int LinksMax = 50;
 
+                public const int sessionShortLongThreshold = 86400; // 24 hours
                 public const string ShortSessionPostKey = "_s"; // Used for short lived sessions max 24 hours
                 public const string LongSessionPostKey = "_l"; // Used for long lived sessions more than 24 hours
             }

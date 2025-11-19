@@ -82,7 +82,6 @@ namespace FoxIDs.Models
             if (idKey == null) throw new ArgumentNullException(nameof(idKey));
 
             Id = await IdFormatAsync(idKey);
-            SessionId = idKey.SessionIdHash;
         }
 
         public class IdKey : Track.IdKey

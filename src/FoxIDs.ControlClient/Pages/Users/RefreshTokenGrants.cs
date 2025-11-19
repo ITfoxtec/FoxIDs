@@ -219,7 +219,7 @@ namespace FoxIDs.Client.Pages.Users
 
             try
             {
-                await UserService.DeleteRefreshTokenGrantsAsync(deleteRtGrantFilter.FilterUserIdentifier, deleteRtGrantFilter.FilterClientId, deleteRtGrantFilter.FilterAuthMethod);
+                await UserService.DeleteRefreshTokenGrantsAsync(deleteRtGrantFilter.FilterUserIdentifier, deleteRtGrantFilter.FilterUserIdentifier, deleteRtGrantFilter.FilterClientId, deleteRtGrantFilter.FilterAuthMethod);
 
                 refreshTokenGrantFilterForm.Model.FilterUserIdentifier = deleteRtGrantFilter.FilterUserIdentifier;
                 refreshTokenGrantFilterForm.Model.FilterClientId = deleteRtGrantFilter.FilterClientId;

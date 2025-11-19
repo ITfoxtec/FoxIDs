@@ -36,7 +36,7 @@ namespace FoxIDs.Logic
             var session = await GetExistingSessionAsync(sessionIdHash);
             if (session == null)
             {
-                await CreateActiveSessionAsync(sessionIdHash, downPartyLink, claims);
+                await CreateActiveSessionAsync(sessionId, sessionIdHash, downPartyLink, claims);
                 logger.ScopeTrace(() => $"Created active session, Route '{RouteBinding.Route}', Session ID '{sessionId}'.");
             }
             else
@@ -62,17 +62,20 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<ActiveSessionTtl> GetExistingSessionAsync(string sessionIdHash)
+        private async Task<ActiveSessionTtl> GetExistingSessionAsync(string sessionIdHash, string trackName = null)
         {
-            var id = await ActiveSessionTtl.IdFormatAsync(new ActiveSessionTtl.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, SessionIdHash = sessionIdHash });
+            var id = await ActiveSessionTtl.IdFormatAsync(new ActiveSessionTtl.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackName ?? RouteBinding.TrackName, SessionIdHash = sessionIdHash });
             return await tenantDataRepository.GetAsync<ActiveSessionTtl>(id, required: false);
         }
 
-        private async Task CreateActiveSessionAsync(string sessionIdHash, DownPartySessionLink downPartyLink, IEnumerable<Claim> claims)
+        private async Task CreateActiveSessionAsync(string sessionId, string sessionIdHash, DownPartySessionLink downPartyLink, IEnumerable<Claim> claims)
         {
-            var session = new ActiveSessionTtl();
+            var session = new ActiveSessionTtl 
+            {
+                TimeToLive = ActiveSessionTtl.DefaultTimeToLive,
+                SessionId = sessionId 
+            };
             await session.SetIdAsync(new ActiveSessionTtl.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, SessionIdHash = sessionIdHash });
-            session.TimeToLive = ActiveSessionTtl.DefaultTimeToLive;
             session.CreateTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             ApplyClaimValues(session, claims);
             ApplyDownPartyLink(session, [downPartyLink]);
@@ -82,7 +85,6 @@ namespace FoxIDs.Logic
 
         private async Task UpdateActiveSessionAsync(ActiveSessionTtl session, DownPartySessionLink downPartyLink, IEnumerable<Claim> claims)
         {
-            session.TimeToLive = ActiveSessionTtl.DefaultTimeToLive;
             session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             ApplyClaimValues(session, claims);
             ApplyClientIpAndUserAgent(session);
@@ -91,9 +93,12 @@ namespace FoxIDs.Logic
 
         private async Task SaveActiveSessionAsync(string sessionId, SessionTrackCookieGroup sessionGroup, long createTime, long lastUpdated)
         {
-            var session = new ActiveSessionTtl();
+            var session = new ActiveSessionTtl
+            {
+                TimeToLive = ActiveSessionTtl.DefaultTimeToLive,
+                SessionId = sessionId
+            };
             await session.SetIdAsync(new ActiveSessionTtl.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, SessionIdHash = await sessionId.HashIdStringAsync() });
-            session.TimeToLive = ActiveSessionTtl.DefaultTimeToLive;
             session.CreateTime = createTime;
             session.LastUpdated = lastUpdated;
             ApplyClaimValues(session, sessionGroup.Claims);
@@ -232,7 +237,7 @@ namespace FoxIDs.Logic
 
             var sessionIdHash = await sessionId.HashIdStringAsync();
 
-            var session = await GetExistingSessionAsync(sessionIdHash);
+            var session = await GetExistingSessionAsync(sessionIdHash, trackName);
             if (session != null)
             {
                 return;
@@ -275,16 +280,22 @@ namespace FoxIDs.Logic
         private string GetSessionId(IEnumerable<Claim> claims)
         {
             var sessionId = claims?.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.SessionId);
+            return GetShortSessionId(sessionId);
+        }
+
+        private string GetSessionId(IEnumerable<ClaimAndValues> claims)
+        {
+            var sessionId = claims?.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.SessionId);
+            return GetShortSessionId(sessionId);
+        }
+
+        private static string GetShortSessionId(string sessionId)
+        {
             if (!sessionId.IsNullOrWhiteSpace() && sessionId.EndsWith(Constants.Models.Session.ShortSessionPostKey, StringComparison.Ordinal))
             {
                 return sessionId;
             }
             return null;
-        }
-
-        private string GetSessionId(IEnumerable<ClaimAndValues> claims)
-        {
-            return claims?.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.SessionId);
         }
 
         private string GetTruncatedValue(string value)

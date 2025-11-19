@@ -40,7 +40,8 @@ namespace FoxIDs.Logic
                     }
                 }
             }
-            return RandomGenerator.Generate(24);
+
+            return CreatSessionId(upParty);
         }
 
         public async Task<(List<UpPartyLink>, bool isSession)> GetSessionOrRouteBindingUpParty(List<UpPartyLink> upPartyLinks)
@@ -55,6 +56,19 @@ namespace FoxIDs.Logic
                 }
             }
             return (upPartyLinks, false);
+        }
+
+        private string CreatSessionId<T>(T upParty) where T : IUpParty
+        {
+            var baseSessionId = RandomGenerator.Generate(24);
+            if (upParty.SessionLifetime > Constants.Models.Session.sessionShortLongThreshold || upParty.PersistentSessionAbsoluteLifetime > Constants.Models.Session.sessionShortLongThreshold || upParty.PersistentSessionLifetimeUnlimited)
+            {
+                return $"{baseSessionId}{Constants.Models.Session.LongSessionPostKey}";
+            }
+            else
+            {
+                return $"{baseSessionId}{Constants.Models.Session.ShortSessionPostKey}";
+            }
         }
 
         protected bool SessionEnabled<T>(T upParty) where T : IUpParty

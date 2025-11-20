@@ -91,36 +91,68 @@
                                     Configure certificate
                                 </div>
                                 <div class="modal-body">
-                                    <FInputPassword @bind-Value="certificate.Form.Model.Password" For="@(() => certificate.Form.Model.Password)" />
                                     <div class="form-group active-group active">
-                                        <div class="drag-drop-zone input-control">
-                                            <InputFile OnChange="@(async (e) => await OnCertificateFileSelectedAsync(certificate, e))" />
-                                            @certificate.CertificateFileStatus
+                                        <label class="label-control">Certificate source</label>
+                                        <select class="form-control" value="@certificate.CertificateSource" @onchange="@((ChangeEventArgs e) => OnCertificateSourceChanged(certificate, e.Value?.ToString()))">
+                                            <option value="@GeneralTrackCertificateViewModel.CertificateSourcePfx">PFX (.pfx or .p12)</option>
+                                            <option value="@GeneralTrackCertificateViewModel.CertificateSourcePem">PEM (.crt + .key)</option>
+                                        </select>
+                                    </div>
+
+                                    @if (certificate.CertificateSource == GeneralTrackCertificateViewModel.CertificateSourcePfx)
+                                    {
+                                        <FInputPassword @bind-Value="certificate.Form.Model.Password" For="@(() => certificate.Form.Model.Password)" LabelText="PFX password (optional)" />
+
+                                        <div class="form-group active-group active">
+                                            <div class="drag-drop-zone input-control">
+                                                <InputFile @key="certificate.PfxInputFileKey" OnChange="@(async (e) => await OnPfxSelectedAsync(certificate, e))" />
+                                                @certificate.CertificateFileStatus
+                                            </div>
+                                            <label class="label-control">PFX certificate</label>
+                                            <button type="button" class="btn btn-outline-dark @(certificate.PfxBytes == null ? "disabled" : string.Empty) mt-3" @onclick="@(async () => await ConvertPfxToJwkAsync(certificate))">Read certificate</button>
+                                            <ValidationMessage For="@(() => certificate.Form.Model.Key)" />
                                         </div>
-                                        <label class="label-control">Certificate</label>
-                                        <ValidationMessage For="@(() => certificate.Form.Model.Key)" />
+                                    }
+                                    else
+                                    {
+                                        <div class="form-group active-group active">
+                                            <div class="drag-drop-zone input-control">
+                                                <InputFile @key="certificate.PemCrtInputFileKey" OnChange="@(async (e) => await OnPemCrtSelectedAsync(certificate, e))" />
+                                                @certificate.PemCertificateFileStatus
+                                            </div>
+                                            <label class="label-control">PEM certificate (.crt or .cer)</label>
+                                        </div>
+                                        <div class="form-group active-group active">
+                                            <div class="drag-drop-zone input-control">
+                                                <InputFile @key="certificate.PemKeyInputFileKey" OnChange="@(async (e) => await OnPemKeySelectedAsync(certificate, e))" />
+                                                @certificate.PemKeyFileStatus
+                                            </div>
+                                            <label class="label-control">PEM private key (.key)</label>
+                                            <button type="button" class="btn btn-outline-dark @((certificate.PemCrt.IsNullOrWhiteSpace() || certificate.PemKey.IsNullOrWhiteSpace()) ? "disabled" : string.Empty) mt-3" @onclick="@(async () => await ConvertPemToJwkAsync(certificate))">Read certificate</button>
+                                            <ValidationMessage For="@(() => certificate.Form.Model.Key)" />
+                                        </div>
+                                    }
+                                    @if (!certificate.Form.Model.Subject.IsNullOrWhiteSpace())
+                                    {
                                         <ul class="list-group">
                                             <li class="list-group-item p-0">
-                                                @if (!certificate.Form.Model.Subject.IsNullOrWhiteSpace())
-                                                {
-                                                    <div class="d-flex">
-                                                        <div class="mr-auto p-2">
-                                                            <strong>@certificate.Form.Model.Subject</strong><br />
-                                                            <span class="@(certificate.Form.Model.IsValid ? "" : "text-danger")">Valid from @certificate.Form.Model.ValidFrom.ToShortDateString() to @certificate.Form.Model.ValidTo.ToShortDateString()</span><br />
-                                                            <span>Thumbprint: @certificate.Form.Model.Thumbprint</span>
-                                                        </div>
+                                                <div class="d-flex">
+                                                    <div class="mr-auto p-2">
+                                                        <strong>@certificate.Form.Model.Subject</strong><br />
+                                                        <span class="@(certificate.Form.Model.IsValid ? "" : "text-danger")">Valid from @certificate.Form.Model.ValidFrom.ToShortDateString() to @certificate.Form.Model.ValidTo.ToShortDateString()</span><br />
+                                                        <span>Thumbprint: @certificate.Form.Model.Thumbprint</span>
                                                     </div>
-                                                }
+                                                </div>
                                             </li>
                                         </ul>
-                                        @if (!certificate.Form.Model.CertificateBase64.IsNullOrWhiteSpace())
-                                        {
-                                            <div class="mt-4">
-                                                <FFieldTextClipboard Class="pb-0" @bind-Value="certificate.Form.Model.CertificateBase64" For="@(() => certificate.Form.Model.CertificateBase64)" />
-                                                <button type="button" class="btn btn-link btn-xs py-2 pl-0" @onclick="@(async () => await DownloadCertificateAsync(certificate.Form.Model.Subject, certificate.Form.Model.CertificateBase64))"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download certificate</button>
-                                            </div>
-                                        }
-                                    </div>
+                                    }
+                                    @if (!certificate.Form.Model.CertificateBase64.IsNullOrWhiteSpace())
+                                    {
+                                        <div class="mt-4">
+                                            <FFieldTextClipboard Class="pb-0" @bind-Value="certificate.Form.Model.CertificateBase64" For="@(() => certificate.Form.Model.CertificateBase64)" />
+                                            <button type="button" class="btn btn-link btn-xs py-2 pl-0" @onclick="@(async () => await DownloadCertificateAsync(certificate.Form.Model.Subject, certificate.Form.Model.CertificateBase64))"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download certificate</button>
+                                        </div>
+                                    }
                                 </div>
                                 @if (!certificate.IsPrimary && !certificate.CreateMode && certificate.DeleteAcknowledge)
                                 {

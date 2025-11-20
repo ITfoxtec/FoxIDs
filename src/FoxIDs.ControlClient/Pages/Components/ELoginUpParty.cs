@@ -434,6 +434,34 @@ label {{
     color: {primaryHex};
 }}
 
+.custom-checkbox .custom-control-label::before {{
+    border-color: {primaryHex} !important;
+}}
+
+.custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {{
+    background-color: {primaryHex} !important;
+    border-color: {primaryHex} !important;
+}}
+
+.custom-checkbox .custom-control-input:focus ~ .custom-control-label::before {{
+    box-shadow: 0 0 0 .2rem {focusRgba} !important;
+    border-color: {primaryHex} !important;
+}}
+
+.custom-checkbox .custom-control-input:not(:disabled):active ~ .custom-control-label::before,
+.custom-checkbox .custom-control-input:not(:disabled):not(.disabled):active ~ .custom-control-label::before {{
+    background-color: {activeHex} !important;
+    border-color: {activeHex} !important;
+}}
+
+.custom-checkbox .custom-control-label {{
+    color: {primaryHex};
+}}
+
+.large-content {{
+    border-color: {primaryHex};
+}}
+
 .btn:focus,
 .form-control:focus {{
     border-color: {primaryHex};

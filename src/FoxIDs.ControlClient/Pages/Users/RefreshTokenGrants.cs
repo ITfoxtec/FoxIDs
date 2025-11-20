@@ -75,7 +75,7 @@ namespace FoxIDs.Client.Pages.Users
             refreshTokenGrantFilterForm?.ClearError();
             try
             {
-                SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(null, null, null, null));
+                SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(null, null, null, null, null));
             }
             catch (TokenUnavailableException)
             {
@@ -94,10 +94,10 @@ namespace FoxIDs.Client.Pages.Users
 
             try
             {
-                SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterClientId, refreshTokenGrantFilterForm.Model.FilterAuthMethod));
+                SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterClientId, refreshTokenGrantFilterForm.Model.FilterAuthMethod, refreshTokenGrantFilterForm.Model.FilterSessionId));
 
                 if (refreshTokenGrants.Count() > 0 && 
-                      (!refreshTokenGrantFilterForm.Model.FilterUserIdentifier.IsNullOrWhiteSpace() || !refreshTokenGrantFilterForm.Model.FilterClientId.IsNullOrWhiteSpace() || !refreshTokenGrantFilterForm.Model.FilterAuthMethod.IsNullOrWhiteSpace()))
+                      (!refreshTokenGrantFilterForm.Model.FilterUserIdentifier.IsNullOrWhiteSpace() || !refreshTokenGrantFilterForm.Model.FilterClientId.IsNullOrWhiteSpace() || !refreshTokenGrantFilterForm.Model.FilterAuthMethod.IsNullOrWhiteSpace() || !refreshTokenGrantFilterForm.Model.FilterSessionId.IsNullOrWhiteSpace()))
                 { 
                     deleteRtGrantFilter = refreshTokenGrantFilterForm.Model.Map<FilterRefreshTokenGrantViewModel>();
                 }
@@ -115,6 +115,10 @@ namespace FoxIDs.Client.Pages.Users
                     {
                         refreshTokenGrantFilterForm.SetFieldError(nameof(refreshTokenGrantFilterForm.Model.FilterClientId), ex.Message);
                     }
+                    if (!refreshTokenGrantFilterForm.Model.FilterSessionId.IsNullOrWhiteSpace())
+                    {
+                        refreshTokenGrantFilterForm.SetFieldError(nameof(refreshTokenGrantFilterForm.Model.FilterSessionId), ex.Message);
+                    }
                 }
                 else
                 {
@@ -127,7 +131,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             try
             {
-                SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterClientId, refreshTokenGrantFilterForm.Model.FilterAuthMethod, paginationToken: paginationToken), addUsers: true);
+                SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterUserIdentifier, refreshTokenGrantFilterForm.Model.FilterClientId, refreshTokenGrantFilterForm.Model.FilterAuthMethod, refreshTokenGrantFilterForm.Model.FilterSessionId, paginationToken: paginationToken), addUsers: true);
             }
             catch (TokenUnavailableException)
             {
@@ -141,6 +145,10 @@ namespace FoxIDs.Client.Pages.Users
                     if (!refreshTokenGrantFilterForm.Model.FilterClientId.IsNullOrWhiteSpace())
                     {
                         refreshTokenGrantFilterForm.SetFieldError(nameof(refreshTokenGrantFilterForm.Model.FilterClientId), ex.Message);
+                    }
+                    if (!refreshTokenGrantFilterForm.Model.FilterSessionId.IsNullOrWhiteSpace())
+                    {
+                        refreshTokenGrantFilterForm.SetFieldError(nameof(refreshTokenGrantFilterForm.Model.FilterSessionId), ex.Message);
                     }
                 }
                 else
@@ -211,6 +219,10 @@ namespace FoxIDs.Client.Pages.Users
             {
                 yield return $"in application '{deleteRtGrantFilter.FilterClientId}'";
             }
+            if (!deleteRtGrantFilter.FilterSessionId.IsNullOrWhiteSpace())
+            {
+                yield return $"with session id '{deleteRtGrantFilter.FilterSessionId}'";
+            }
         }
 
         private async Task DeleteRefreshTokenGrantsAsync()
@@ -219,11 +231,12 @@ namespace FoxIDs.Client.Pages.Users
 
             try
             {
-                await UserService.DeleteRefreshTokenGrantsAsync(deleteRtGrantFilter.FilterUserIdentifier, deleteRtGrantFilter.FilterUserIdentifier, deleteRtGrantFilter.FilterClientId, deleteRtGrantFilter.FilterAuthMethod);
+                await UserService.DeleteRefreshTokenGrantsAsync(deleteRtGrantFilter.FilterUserIdentifier, deleteRtGrantFilter.FilterUserIdentifier, deleteRtGrantFilter.FilterClientId, deleteRtGrantFilter.FilterAuthMethod, deleteRtGrantFilter.FilterSessionId);
 
                 refreshTokenGrantFilterForm.Model.FilterUserIdentifier = deleteRtGrantFilter.FilterUserIdentifier;
                 refreshTokenGrantFilterForm.Model.FilterClientId = deleteRtGrantFilter.FilterClientId;
                 refreshTokenGrantFilterForm.Model.FilterAuthMethod = deleteRtGrantFilter.FilterAuthMethod;
+                refreshTokenGrantFilterForm.Model.FilterSessionId = deleteRtGrantFilter.FilterSessionId;
                 await OnRefreshTokenGrantsFilterValidSubmitAsync(null);
             }
             catch (TokenUnavailableException)

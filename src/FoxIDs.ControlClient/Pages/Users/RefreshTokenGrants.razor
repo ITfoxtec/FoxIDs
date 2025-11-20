@@ -32,9 +32,10 @@
             <FInputText @bind-Value="refreshTokenGrantFilterForm.Model.FilterAuthMethod" For="@(() => refreshTokenGrantFilterForm.Model.FilterAuthMethod)" />
         </div>
         <div class="col-6">
-            <FInputTextFilter @bind-Value="refreshTokenGrantFilterForm.Model.FilterClientId" For="@(() => refreshTokenGrantFilterForm.Model.FilterClientId)" />
+            <FInputText @bind-Value="refreshTokenGrantFilterForm.Model.FilterClientId" For="@(() => refreshTokenGrantFilterForm.Model.FilterClientId)" />
         </div>
     </div>
+    <FInputTextFilter @bind-Value="refreshTokenGrantFilterForm.Model.FilterSessionId" For="@(() => refreshTokenGrantFilterForm.Model.FilterSessionId)" />
 </PageEditForm>
 
 @if (refreshTokenGrants.Count() > 0)

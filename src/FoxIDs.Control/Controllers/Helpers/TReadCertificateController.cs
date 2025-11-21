@@ -35,7 +35,8 @@ namespace FoxIDs.Controllers
             try
             {
                 var certificateBytes = WebEncoders.Base64UrlDecode(certificateAndPassword.EncodeCertificate);
-                var keyStorageFlags = X509KeyStorageFlags.Exportable | X509KeyStorageFlags.EphemeralKeySet;
+                var keyStorageFlags = X509KeyStorageFlags.Exportable;
+                keyStorageFlags |= OperatingSystem.IsWindows() ? X509KeyStorageFlags.PersistKeySet : X509KeyStorageFlags.EphemeralKeySet;
                 var certificate = certificateAndPassword.Password.IsNullOrWhiteSpace() switch
                 {
                     //Can not be change to X509CertificateLoader LoadPkcs12 or LoadCertificate because it should automatically select between the two methods.

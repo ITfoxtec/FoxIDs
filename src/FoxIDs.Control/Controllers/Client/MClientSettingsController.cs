@@ -25,13 +25,15 @@ namespace FoxIDs.Controllers.Client
         [ProducesResponseType(typeof(Api.ControlClientSettings), StatusCodes.Status200OK)]
         public ActionResult<Api.ControlClientSettings> GetClientSettings()
         {
-            var version = GetType().Assembly.GetName().Version;
+            var assembly = System.Reflection.Assembly.GetEntryAssembly() ?? GetType().Assembly;
+            var displayVersion = assembly.GetDisplayVersion();
+            var majorMinorVersion = assembly.GetName().Version?.ToString(2) ?? string.Empty;
 
             return Ok(new Api.ControlClientSettings 
             {
                 FoxIDsEndpoint = settings.FoxIDsEndpoint,
-                Version = version.ToString(2),
-                FullVersion = version.ToString(3),
+                Version = majorMinorVersion,
+                FullVersion = displayVersion ?? majorMinorVersion,
                 LogOption = mapper.Map<Api.LogOptions>(settings.Options.Log),
                 KeyStorageOption = mapper.Map<Api.KeyStorageOptions>(settings.Options.KeyStorage),
                 EnableCreateNewTenant = !settings.MainTenantSeedEnabled,

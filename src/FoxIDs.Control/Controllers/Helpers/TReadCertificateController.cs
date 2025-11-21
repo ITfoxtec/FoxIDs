@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using ITfoxtec.Identity;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.WebUtilities;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -35,14 +36,7 @@ namespace FoxIDs.Controllers
             try
             {
                 var certificateBytes = WebEncoders.Base64UrlDecode(certificateAndPassword.EncodeCertificate);
-                var keyStorageFlags = X509KeyStorageFlags.Exportable;
-                keyStorageFlags |= OperatingSystem.IsWindows() ? X509KeyStorageFlags.PersistKeySet : X509KeyStorageFlags.EphemeralKeySet;
-                var certificate = certificateAndPassword.Password.IsNullOrWhiteSpace() switch
-                {
-                    //Can not be change to X509CertificateLoader LoadPkcs12 or LoadCertificate because it should automatically select between the two methods.
-                    true => new X509Certificate2(certificateBytes, string.Empty, keyStorageFlags),
-                    false => new X509Certificate2(certificateBytes, certificateAndPassword.Password, keyStorageFlags),
-                };
+                var certificate = LoadCertificate(certificateBytes, certificateAndPassword.Password);
 
                 if (!certificateAndPassword.Password.IsNullOrWhiteSpace() && !certificate.HasPrivateKey)
                 {
@@ -59,6 +53,32 @@ namespace FoxIDs.Controllers
             catch (Exception ex)
             {
                 throw new ValidationException("Unable to read certificate.", ex);
+            }
+        }
+
+        private static X509Certificate2 LoadCertificate(byte[] certificateBytes, string password)
+        {
+            // Cannot be changed to X509CertificateLoader LoadPkcs12 or LoadCertificate because it should automatically select between the two methods.
+            try
+            {
+                // MachineKeySet ensures the key is kept in the machine store so IIS app pool identities without user profiles can access it.
+                var keyStorageFlags = X509KeyStorageFlags.Exportable;
+                keyStorageFlags |= OperatingSystem.IsWindows() ? X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.MachineKeySet : X509KeyStorageFlags.EphemeralKeySet;
+                return password.IsNullOrWhiteSpace() switch
+                {
+                    true => new X509Certificate2(certificateBytes, string.Empty, keyStorageFlags),
+                    false => new X509Certificate2(certificateBytes, password, keyStorageFlags),
+                };
+            }
+            catch (CryptographicException) when (OperatingSystem.IsWindows())
+            {
+                // Fall back to ephemeral key set if machine store access fails (e.g., locked-down environments).
+                var keyStorageFlags = X509KeyStorageFlags.Exportable | X509KeyStorageFlags.EphemeralKeySet;
+                return password.IsNullOrWhiteSpace() switch
+                {
+                    true => new X509Certificate2(certificateBytes, string.Empty, keyStorageFlags),
+                    false => new X509Certificate2(certificateBytes, password, keyStorageFlags),
+                };
             }
         }
     }

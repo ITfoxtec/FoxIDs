@@ -27,7 +27,7 @@ namespace FoxIDs
             var lines = normalized.Split('\n');
             var builder = new StringBuilder();
             var paragraphLines = new List<string>();
-            var listItems = new List<string>();
+            var listStack = new Stack<ListState>();
 
             void FlushParagraph()
             {
@@ -43,40 +43,102 @@ namespace FoxIDs
                 paragraphLines.Clear();
             }
 
-            void FlushList()
+            void CloseCurrentListItem()
             {
-                if (listItems.Count == 0)
+                if (listStack.Count == 0)
                 {
                     return;
                 }
 
-                builder.Append("<ul>");
-                foreach (var item in listItems)
+                var current = listStack.Peek();
+                if (current.ItemOpen)
                 {
-                    builder.Append("<li>");
-                    builder.Append(EncodeInlineMarkdown(item));
                     builder.Append("</li>");
+                    current.ItemOpen = false;
+                }
+            }
+
+            void FlushListStack()
+            {
+                while (listStack.Count > 0)
+                {
+                    var state = listStack.Pop();
+                    if (state.ItemOpen)
+                    {
+                        builder.Append("</li>");
+                        state.ItemOpen = false;
+                    }
+
+                    builder.Append(state.Ordered ? "</ol>" : "</ul>");
+                }
+            }
+
+            void EnsureList(int indent, bool ordered)
+            {
+                while (listStack.Count > 0 && indent < listStack.Peek().Indent)
+                {
+                    FlushListStackLevel();
                 }
 
-                builder.Append("</ul>");
-                listItems.Clear();
+                if (listStack.Count > 0 && indent == listStack.Peek().Indent && listStack.Peek().Ordered != ordered)
+                {
+                    FlushListStackLevel();
+                }
+
+                if (listStack.Count > 0 && indent == listStack.Peek().Indent)
+                {
+                    CloseCurrentListItem();
+                    return;
+                }
+
+                if (listStack.Count == 0 || indent > listStack.Peek().Indent)
+                {
+                    builder.Append(ordered ? "<ol>" : "<ul>");
+                    listStack.Push(new ListState { Indent = indent, Ordered = ordered });
+                }
+            }
+
+            void FlushListStackLevel()
+            {
+                if (listStack.Count == 0)
+                {
+                    return;
+                }
+
+                var state = listStack.Pop();
+                if (state.ItemOpen)
+                {
+                    builder.Append("</li>");
+                    state.ItemOpen = false;
+                }
+
+                builder.Append(state.Ordered ? "</ol>" : "</ul>");
             }
 
             foreach (var rawLine in lines)
             {
                 var line = rawLine.TrimEnd();
-                var trimmedStart = line.TrimStart();
+                var indent = GetIndent(rawLine);
+                var trimmedStart = rawLine.TrimStart(' ', '\t');
 
                 if (trimmedStart.Length == 0)
                 {
-                    FlushList();
+                    FlushListStack();
                     FlushParagraph();
+                    continue;
+                }
+
+                if (trimmedStart == "---")
+                {
+                    FlushListStack();
+                    FlushParagraph();
+                    builder.Append("<hr />");
                     continue;
                 }
 
                 if (trimmedStart.StartsWith("### "))
                 {
-                    FlushList();
+                    FlushListStack();
                     FlushParagraph();
                     builder.Append("<h3 class=\"h5\">");
                     builder.Append(EncodeInlineMarkdown(trimmedStart.Substring(4)));
@@ -86,7 +148,7 @@ namespace FoxIDs
 
                 if (trimmedStart.StartsWith("## "))
                 {
-                    FlushList();
+                    FlushListStack();
                     FlushParagraph();
                     builder.Append("<h2 class=\"h4\">");
                     builder.Append(EncodeInlineMarkdown(trimmedStart.Substring(3)));
@@ -96,7 +158,7 @@ namespace FoxIDs
 
                 if (trimmedStart.StartsWith("# "))
                 {
-                    FlushList();
+                    FlushListStack();
                     FlushParagraph();
                     builder.Append("<h1 class=\"h3\">");
                     builder.Append(EncodeInlineMarkdown(trimmedStart.Substring(2)));
@@ -107,15 +169,30 @@ namespace FoxIDs
                 if (trimmedStart.StartsWith("- ") || trimmedStart.StartsWith("* "))
                 {
                     FlushParagraph();
-                    listItems.Add(trimmedStart.Substring(2));
+                    EnsureList(indent, ordered: false);
+                    var current = listStack.Peek();
+                    builder.Append("<li>");
+                    builder.Append(EncodeInlineMarkdown(trimmedStart.Substring(2)));
+                    current.ItemOpen = true;
                     continue;
                 }
 
-                FlushList();
+                if (TryGetOrderedListItem(trimmedStart, out var orderedItem))
+                {
+                    FlushParagraph();
+                    EnsureList(indent, ordered: true);
+                    var current = listStack.Peek();
+                    builder.Append("<li>");
+                    builder.Append(EncodeInlineMarkdown(orderedItem));
+                    current.ItemOpen = true;
+                    continue;
+                }
+
+                FlushListStack();
                 paragraphLines.Add(line);
             }
 
-            FlushList();
+            FlushListStack();
             FlushParagraph();
 
             return builder.ToString();
@@ -144,6 +221,52 @@ namespace FoxIDs
             encoded = markdownCodeRegex.Replace(encoded, match => $"<code>{match.Groups[1].Value}</code>");
 
             return encoded;
+        }
+
+        private static bool TryGetOrderedListItem(string line, out string content)
+        {
+            content = default;
+            if (line.Length < 3 || !char.IsDigit(line[0]))
+            {
+                return false;
+            }
+
+            var index = 0;
+            while (index < line.Length && char.IsDigit(line[index]))
+            {
+                index++;
+            }
+
+            if (index == 0 || index + 1 >= line.Length)
+            {
+                return false;
+            }
+
+            if (line[index] != '.' || line[index + 1] != ' ')
+            {
+                return false;
+            }
+
+            content = line.Substring(index + 2);
+            return true;
+        }
+
+        private static int GetIndent(string line)
+        {
+            var index = 0;
+            while (index < line.Length && (line[index] == ' ' || line[index] == '\t'))
+            {
+                index++;
+            }
+
+            return index;
+        }
+
+        private sealed class ListState
+        {
+            public int Indent { get; set; }
+            public bool Ordered { get; set; }
+            public bool ItemOpen { get; set; }
         }
     }
 }

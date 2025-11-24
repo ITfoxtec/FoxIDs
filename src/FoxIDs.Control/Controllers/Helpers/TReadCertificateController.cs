@@ -23,25 +23,22 @@ namespace FoxIDs.Controllers
             this.mapper = mapper;
         }
 
-    /// <summary>
-    /// Read JWK with certificate information from PFX.
-    /// </summary>
-    /// <param name="certificateAndPassword">Base64 URL encode certificate and optionally password.</param>
-    [ProducesResponseType(typeof(Api.JwkWithCertificateInfo), StatusCodes.Status200OK)]
-    public async Task<ActionResult<Api.JwkWithCertificateInfo>> PostReadCertificate([FromBody] Api.CertificateAndPassword certificateAndPassword)
+        /// <summary>
+        /// Read JWK with certificate information from PFX.
+        /// </summary>
+        /// <param name="certificateAndPassword">Base64 URL encode certificate and optionally password.</param>
+        [ProducesResponseType(typeof(Api.JwkWithCertificateInfo), StatusCodes.Status200OK)]
+        public async Task<ActionResult<Api.JwkWithCertificateInfo>> PostReadCertificate([FromBody] Api.CertificateAndPassword certificateAndPassword)
         {
             if (!await ModelState.TryValidateObjectAsync(certificateAndPassword)) return BadRequest(ModelState);
 
             try
             {
-                var certificateBytes = WebEncoders.Base64UrlDecode(certificateAndPassword.EncodeCertificate);
-                var keyStorageFlags = X509KeyStorageFlags.Exportable;
-                keyStorageFlags |= OperatingSystem.IsWindows() ? X509KeyStorageFlags.PersistKeySet : X509KeyStorageFlags.EphemeralKeySet;
                 var certificate = certificateAndPassword.Password.IsNullOrWhiteSpace() switch
                 {
                     //Can not be change to X509CertificateLoader LoadPkcs12 or LoadCertificate because it should automatically select between the two methods.
-                    true => new X509Certificate2(certificateBytes, string.Empty, keyStorageFlags),
-                    false => new X509Certificate2(certificateBytes, certificateAndPassword.Password, keyStorageFlags),
+                    true => new X509Certificate2(WebEncoders.Base64UrlDecode(certificateAndPassword.EncodeCertificate), string.Empty, keyStorageFlags: X509KeyStorageFlags.Exportable),
+                    false => new X509Certificate2(WebEncoders.Base64UrlDecode(certificateAndPassword.EncodeCertificate), certificateAndPassword.Password, keyStorageFlags: X509KeyStorageFlags.Exportable),
                 };
 
                 if (!certificateAndPassword.Password.IsNullOrWhiteSpace() && !certificate.HasPrivateKey)

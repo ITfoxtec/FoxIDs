@@ -70,9 +70,9 @@
     <footer class="footer-container">
         <div class="container">
             @{
-                var version = GetType().Assembly.GetName().Version;
+                var displayVersion = System.Reflection.Assembly.GetEntryAssembly()?.GetDisplayVersion() ?? GetType().Assembly.GetDisplayVersion();
             }
-            <span class="footer-content">&copy; @DateTime.Now.Year FoxIDs<small class="footer-version">, version @(version.ToString(3))</small></span>
+            <span class="footer-content">&copy; @DateTime.Now.Year FoxIDs<small class="footer-version">, version @displayVersion</small></span>
         </div>
     </footer>
 

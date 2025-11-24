@@ -48,7 +48,6 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Create time")]
         public long CreateTime { get; set; }
 
-        [Required]
         [Display(Name = "Time to live")]
         public int? TimeToLive { get; set; }
 

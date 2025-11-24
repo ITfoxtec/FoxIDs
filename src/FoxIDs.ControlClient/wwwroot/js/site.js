@@ -1,4 +1,10 @@
 ﻿(function () {
+    // ****
+    // Compensating controls for CVE-2024-6531 - keep Bootstrap 4.6.0 safely
+    $('[data-toggle="tooltip"]').tooltip({ html: false });
+    $('[data-toggle="popover"]').popover({ html: false });
+    // ****
+
     window.SetElementFocus = (element) => {
         element.focus();
     };

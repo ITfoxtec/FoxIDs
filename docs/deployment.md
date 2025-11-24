@@ -1,4 +1,19 @@
-﻿# Deployment
+<!--
+{
+    "title":  "Deployment",
+    "description":  "FoxIDs support multiple deployment options and you can host it yourself both in the cloud or on-premises.",
+    "ogTitle":  "Deployment",
+    "ogDescription":  "FoxIDs support multiple deployment options and you can host it yourself both in the cloud or on-premises.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "deployment, FoxIDs docs"
+                       }
+}
+-->
+
+# Deployment
 
 FoxIDs support multiple deployment options and you can host it yourself both in the cloud or on-premises.
 
@@ -7,7 +22,7 @@ FoxIDs support multiple deployment options and you can host it yourself both in 
 - Deploy on [Windows Server with IIS](deployment-window-iis.md)
 - Deploy in [Azure App Service Container](deployment-azure.md) 
 
-or use [FoxIDs Cloud](https://www.foxids.com/action/signup).
+or use [FoxIDs Cloud](https://www.foxids.com/action/createtenant).
 
 > New [releases of FoxIDs](https://github.com/ITfoxtec/FoxIDs/releases) are continuously published to [Docker Hub](https://hub.docker.com/u/foxids), so make sure to update your installation at appropriate intervals.
 
@@ -17,4 +32,5 @@ After deployment consider to:
 - Improve the password quality by [uploading risk passwords](risk-passwords.md). 
 - Configure [monitoring](monitoring.md).
 - [Upload your users](users-upload.md) from a SVC file, with or without a password.
+
 

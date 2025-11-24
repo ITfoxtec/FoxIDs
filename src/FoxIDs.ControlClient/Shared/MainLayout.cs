@@ -45,6 +45,7 @@ namespace FoxIDs.Client.Shared
         private IEnumerable<Claim> myProfileClaims;
         private string myProfileError;
         private Modal notAccessModal;
+        private bool showFullVersion;
 
         [CascadingParameter]
         private Task<AuthenticationState> authenticationStateTask { get; set; }
@@ -487,6 +488,11 @@ namespace FoxIDs.Client.Shared
                 await UserProfileLogic.UpdateTrackAsync(track.Name);
             }
             await TrackSelectedLogic.TrackSelectedAsync(track);
+        }
+
+        private void ToggleVersionDisplay()
+        {
+            showFullVersion = !showFullVersion;
         }
 
         public async Task ChangeMyPasswordAsync()

@@ -1,4 +1,19 @@
-﻿# How to connect
+<!--
+{
+    "title":  "How to connect",
+    "description":  "FoxIDs become an IdP by registering an application where you can connect applications and APIs. External IdPs is connected with an authentication methods.",
+    "ogTitle":  "How to connect",
+    "ogDescription":  "FoxIDs become an IdP by registering an application where you can connect applications and APIs. External IdPs is connected with an authentication methods.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "howto connect, FoxIDs docs"
+                       }
+}
+-->
+
+# How to connect
 
 FoxIDs become an IdP by [registering an application](connections.md#application-registration) where you can connect applications and APIs. External IdPs is connected with an [authentication methods](connections.md#authentication-method).
 
@@ -70,12 +85,17 @@ You would most often connect applications and APIs. But an application registrat
 ### OpenID Connect and OAuth 2.0
 It is recommended to secure applications and APIs with [OpenID Connect](app-reg-oidc.md) and [OAuth 2.0](app-reg-oauth-2.0.md). Please see the [samples](samples.md).
 
+How to guides:
+
+- Connect [Tailscale](app-reg-howto-oidc-tailscale.md)
+
 ### SAML 2.0
 Configure [SAML 2.0](app-reg-saml-2.0.md) to be an Identity Provider (IdP).
 
 How to guides:
 
 - Connect [Amazon IAM Identity Center](app-reg-howto-saml-amazon-iam-identity-center.md)
+- Connect [Google Workspace](app-reg-howto-saml-google-workspace.md)
 - Connect [Microsoft Entra ID](app-reg-howto-saml-microsoft-entra-id.md)
 - Connect [Context Handler test IdP (Danish identity broker)](howto-saml-2.0-context-handler#configuring-test-identity-provider-for-context-handler)
 
@@ -89,3 +109,4 @@ Environment Links is fast and secure, but they can only be used in to connect wi
 
 You can connect two environments in the same or different tenants with [OpenID Connect](howto-oidc-foxids.md). The configuration is more complex than if you use a Environment Link. 
 OpenID Connect is secure and you can connect all environments regardless of which tenant they are in. There is basically not different in external OpenID Connect connections and internal connections used between environments.
+

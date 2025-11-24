@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Connect to NemLog-in with FoxIDs",
+    "description":  "\u003e By using FoxIDs it become straight forward and easy to connect to NemLog-in (Danish IdP).",
+    "ogTitle":  "Connect to NemLog-in with FoxIDs",
+    "ogDescription":  "\u003e By using FoxIDs it become straight forward and easy to connect to NemLog-in (Danish IdP).",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "gs nemlogin, FoxIDs docs"
+                       }
+}
+-->
+
 # Connect to NemLog-in with FoxIDs
 
 > By using FoxIDs it become straight forward and easy to connect to NemLog-in (Danish IdP).
@@ -11,7 +26,7 @@ By default, FoxIDs is a [bridge](bridge.md) between [SAML 2.0](saml-2.0.md) and 
 
 ## About FoxIDs
 FoxIDs is developed in Denmark and hosted in Netherlands, ownership and data is kept in Europe.  
-You can [get started](https://www.foxids.com/action/signup) for free and optionally continue to use a Free plan.
+You can [get started](https://www.foxids.com/action/createtenant) for free and optionally continue to use a Free plan.
 
 ## Online test
 Test NemLog-in with the <a href="https://aspnetoidcsample.itfoxtec.com/auth/login" target="_blank">online test app</a>, select `Danish NemLog-in` or `Danish NemLog-in TEST` for the test environment.  

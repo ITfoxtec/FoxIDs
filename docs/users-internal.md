@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Internal users",
+    "description":  "Internal users can be authenticated in one or more login authentication methods in an environment, making it possible to customise the login experience, e.g. depending on different application requirements.",
+    "ogTitle":  "Internal users",
+    "ogDescription":  "Internal users can be authenticated in one or more login authentication methods in an environment, making it possible to customise the login experience, e.g. depending on different application requirements.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "users internal, FoxIDs docs"
+                       }
+}
+-->
+
 # Internal users
 Internal users can be authenticated in one or more [login](login.md) authentication methods in an environment, making it possible to [customise](customisation.md) the login experience, e.g. depending on different [application](connections.md#application-registration) requirements.
 
@@ -81,3 +96,4 @@ Currently supported hash algorithm `P2HS512:10` (definition):
 - Derived key length: 80 bytes
 
 Standard .NET libraries are used to compute the hash.
+

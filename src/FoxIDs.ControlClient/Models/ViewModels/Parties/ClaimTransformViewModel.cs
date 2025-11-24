@@ -26,6 +26,8 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public virtual string ClaimOut { get; set; }
 
+        public virtual List<string> ClaimsOut { get; set; }
+
         [Required]
         [Display(Name = "Action")]
         public ClaimTransformActions Action { get; set; } = ClaimTransformActions.Replace;
@@ -127,6 +129,13 @@ namespace FoxIDs.Client.Models.ViewModels
                             break;
                         case ClaimTransformTasks.UpPartyAction:
                             break;
+                        case ClaimTransformTasks.LogEvent:
+                            ValidateMatchClaimAddReplace(results);
+                            if (Action != ClaimTransformActions.If)
+                            {
+                                results.Add(new ValidationResult($"Only action '{ClaimTransformActions.If}' is supported.", [nameof(Action)]));
+                            }
+                            break;
                         default:
                             throw new NotSupportedException($"Claim transformation task '{Task}' is not supported with type '{Type}' and action '{Action}'.");
                     }
@@ -146,10 +155,55 @@ namespace FoxIDs.Client.Models.ViewModels
                     switch (Task)
                     {
                         case ClaimTransformTasks.QueryInternalUser:
-                        case ClaimTransformTasks.QueryExternalUser:
+                            ValidateMatchClaimAddReplace(results);
                             if (Transformation.IsNullOrWhiteSpace())
                             {
                                 results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
+                            }
+                            break;
+                        case ClaimTransformTasks.QueryExternalUser:
+                            ValidateMatchClaimAddReplace(results);
+                            if (Transformation.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
+                            }
+                            if (UpPartyName.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(UpPartyName)]));
+                            }
+                            break;
+                        case ClaimTransformTasks.SaveClaimInternalUser:
+                            ValidateMatchClaimAddReplace(results);
+                            if (Transformation.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
+                            }
+                            if (TransformationExtension.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(TransformationExtension)]));
+                            }
+                            if (ClaimOut.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(ClaimOut)]));
+                            }
+                            break;
+                        case ClaimTransformTasks.SaveClaimExternalUser:
+                            ValidateMatchClaimAddReplace(results);
+                            if (Transformation.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
+                            }
+                            if (TransformationExtension.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(TransformationExtension)]));
+                            }
+                            if (ClaimOut.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(ClaimOut)]));
+                            }
+                            if (UpPartyName.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(UpPartyName)]));
                             }
                             break;
                         default:

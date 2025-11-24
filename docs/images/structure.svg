@@ -2,19 +2,21 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Oprettet af Microsoft Visio, SVG-eksport structure.svg Side-1 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
-		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="5.06715in" height="4.56888in"
-		viewBox="0 0 364.835 328.959" xml:space="preserve" color-interpolation-filters="sRGB" class="st7">
+		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="7.06942in" height="6.62227in"
+		viewBox="0 0 508.999 476.803" xml:space="preserve" color-interpolation-filters="sRGB" class="st9">
 	<v:documentProperties v:langID="1033" v:metric="true" v:viewMarkup="false"/>
 
 	<style type="text/css">
 	<![CDATA[
-		.st1 {fill:none;stroke:#f78f1e;stroke-width:1}
+		.st1 {fill:#f2f2f2;stroke:#000000;stroke-width:1}
 		.st2 {fill:#000000;font-family:Calibri;font-size:1.00001em}
-		.st3 {font-size:1em}
-		.st4 {fill:none;stroke:none;stroke-width:0.25}
-		.st5 {fill:none;stroke:#7f7f7f;stroke-width:1}
-		.st6 {fill:none;stroke:#bfbfbf;stroke-width:1}
-		.st7 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+		.st3 {fill:#ffffff;stroke:#f78f1e;stroke-width:1}
+		.st4 {font-size:1em}
+		.st5 {fill:none;stroke:none;stroke-width:0.25}
+		.st6 {fill:none;stroke:#7f7f7f;stroke-width:1}
+		.st7 {fill:none;stroke:#a5a5a5;stroke-width:1}
+		.st8 {fill:#f2f2f2;stroke:#7f7f7f;stroke-width:1}
+		.st9 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
 	]]>
 	</style>
 
@@ -22,116 +24,175 @@
 		<title>Side-1</title>
 		<v:pageProperties v:drawingScale="0.0393701" v:pageScale="0.0393701" v:drawingUnits="24" v:shadowOffsetX="8.50394"
 				v:shadowOffsetY="-8.50394"/>
-		<g id="shape1-1" v:mID="1" v:groupContext="shape" transform="translate(1,-109.847)">
-			<title>Rectangle</title>
-			<desc>Environment: Company X</desc>
+		<g id="shape20-1" v:mID="20" v:groupContext="shape" transform="translate(1,-1)">
+			<title>Rectangle.20</title>
+			<desc>Master tenant &#38; master environment</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
-			<v:textRect cx="181.417" cy="219.903" width="362.84" height="218.112"/>
-			<rect x="0" y="110.847" width="362.835" height="218.112" class="st1"/>
-			<text x="4" y="125.65" class="st2" v:langID="2057"><v:paragraph/><v:tabList/>Environment<tspan class="st3"
-						v:langID="1033">: Company X</tspan></text>		</g>
-		<g id="shape2-5" v:mID="2" v:groupContext="shape" transform="translate(1,-62.2548)">
+			<v:textRect cx="253.499" cy="239.402" width="507" height="474.803"/>
+			<rect x="0" y="2.00001" width="506.999" height="474.803" class="st1"/>
+			<text x="4" y="16.8" class="st2" v:langID="2057"><v:paragraph/><v:tabList/>Master tenant &#38; master environment</text>		</g>
+		<g id="shape1-4" v:mID="1" v:groupContext="shape" transform="translate(11.9356,-124.222)">
+			<title>Rectangle</title>
+			<desc>Tenant: Company X</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+			<v:textRect cx="181.417" cy="336.154" width="362.84" height="281.299"/>
+			<rect x="0" y="195.504" width="362.835" height="281.299" class="st3"/>
+			<text x="4" y="210.3" class="st2" v:langID="2057"><v:paragraph/><v:tabList/>Tenant<tspan class="st4" v:langID="1033">: Company X</tspan></text>		</g>
+		<g id="shape2-8" v:mID="2" v:groupContext="shape" transform="translate(11.9356,-74.4269)">
 			<title>Rectangle.2</title>
 			<desc>Tenant: Company Y</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
-			<v:textRect cx="181.417" cy="308.065" width="362.84" height="41.7891"/>
-			<rect x="0" y="287.17" width="362.835" height="41.7891" class="st1"/>
-			<text x="4" y="301.97" class="st2" v:langID="1033"><v:paragraph/><v:tabList/>Tenant: Company Y</text>		</g>
-		<g id="shape3-8" v:mID="3" v:groupContext="shape" transform="translate(1,-1)">
+			<v:textRect cx="181.417" cy="455.909" width="362.84" height="41.7891"/>
+			<rect x="0" y="435.014" width="362.835" height="41.7891" class="st3"/>
+			<text x="4" y="449.81" class="st2" v:langID="1033"><v:paragraph/><v:tabList/>Tenant: Company Y</text>		</g>
+		<g id="shape3-11" v:mID="3" v:groupContext="shape" transform="translate(11.9356,-13.1721)">
 			<title>Rectangle.3</title>
 			<desc>Tenant: Company Z (unlimited)</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
-			<v:textRect cx="181.417" cy="308.065" width="362.84" height="41.7891"/>
-			<rect x="0" y="287.17" width="362.835" height="41.7891" class="st1"/>
-			<text x="4" y="301.97" class="st2" v:langID="1033"><v:paragraph/><v:tabList/>Tenant: Company Z (unlimited)</text>		</g>
-		<g id="shape4-11" v:mID="4" v:groupContext="shape" transform="translate(1,-44.0075)">
+			<v:textRect cx="181.417" cy="455.909" width="362.84" height="41.7891"/>
+			<rect x="0" y="435.014" width="362.835" height="41.7891" class="st3"/>
+			<text x="4" y="449.81" class="st2" v:langID="1033"><v:paragraph/><v:tabList/>Tenant: Company Z (unlimited)</text>		</g>
+		<g id="shape4-14" v:mID="4" v:groupContext="shape" transform="translate(11.9356,-56.1796)">
 			<title>Ark.4</title>
 			<desc>...</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="44.7109" cy="316.809" width="89.43" height="24.3013"/>
-			<rect x="0" y="304.658" width="89.4218" height="24.3013" class="st4"/>
-			<text x="4" y="320.41" class="st2" v:langID="1033"><v:paragraph/><v:tabList/>...</text>		</g>
-		<g id="shape6-14" v:mID="6" v:groupContext="shape" transform="translate(11.6742,-205.87)">
+			<v:textRect cx="44.7109" cy="464.652" width="89.43" height="24.3013"/>
+			<rect x="0" y="452.502" width="89.4218" height="24.3013" class="st5"/>
+			<text x="4" y="468.25" class="st2" v:langID="1033"><v:paragraph/><v:tabList/>...</text>		</g>
+		<g id="shape6-17" v:mID="6" v:groupContext="shape" transform="translate(22.6098,-220.744)">
 			<title>Rectangle.6</title>
 			<desc>Environment: Production</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
-			<v:textRect cx="170.69" cy="283.386" width="341.39" height="91.1468"/>
-			<rect x="0" y="237.813" width="341.38" height="91.1468" class="st5"/>
-			<text x="4" y="252.61" class="st2" v:langID="2057"><v:paragraph/><v:tabList/>Environment<tspan class="st3"
+			<v:textRect cx="170.69" cy="431.23" width="341.39" height="91.1468"/>
+			<rect x="0" y="385.656" width="341.38" height="91.1468" class="st6"/>
+			<text x="4" y="400.46" class="st2" v:langID="2057"><v:paragraph/><v:tabList/>Environment<tspan class="st4"
 						v:langID="1033">: Production</tspan></text>		</g>
-		<g id="shape7-18" v:mID="7" v:groupContext="shape" transform="translate(11.3733,-169.613)">
+		<g id="shape7-21" v:mID="7" v:groupContext="shape" transform="translate(22.6098,-184.487)">
 			<title>Rectangle.7</title>
 			<desc>Environment: Test</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
-			<v:textRect cx="170.84" cy="314.161" width="341.69" height="29.5975"/>
-			<rect x="0" y="299.362" width="341.681" height="29.5975" class="st5"/>
-			<text x="4" y="314.16" class="st2" v:langID="2057"><v:paragraph/><v:tabList/>Environment<tspan class="st3"
+			<v:textRect cx="170.69" cy="462.004" width="341.39" height="29.5975"/>
+			<rect x="0" y="447.206" width="341.38" height="29.5975" class="st6"/>
+			<text x="4" y="462.01" class="st2" v:langID="2057"><v:paragraph/><v:tabList/>Environment<tspan class="st4"
 						v:langID="1033">: Test</tspan></text>		</g>
-		<g id="shape8-22" v:mID="8" v:groupContext="shape" transform="translate(11.3733,-120.104)">
+		<g id="shape8-25" v:mID="8" v:groupContext="shape" transform="translate(22.3088,-134.978)">
 			<title>Rectangle.8</title>
 			<desc>Environment: Environment Z (unlimited)</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
-			<v:textRect cx="170.84" cy="314.161" width="341.69" height="29.5975"/>
-			<rect x="0" y="299.362" width="341.681" height="29.5975" class="st5"/>
-			<text x="4" y="314.16" class="st2" v:langID="2057"><v:paragraph/><v:tabList/>Environment<tspan class="st3"
+			<v:textRect cx="170.69" cy="462.004" width="341.39" height="29.5975"/>
+			<rect x="0" y="447.206" width="341.38" height="29.5975" class="st6"/>
+			<text x="4" y="462.01" class="st2" v:langID="2057"><v:paragraph/><v:tabList/>Environment<tspan class="st4"
 						v:langID="1033">: Environment Z (unlimited)</tspan></text>		</g>
-		<g id="shape9-26" v:mID="9" v:groupContext="shape" transform="translate(11.3733,-151.298)">
+		<g id="shape9-29" v:mID="9" v:groupContext="shape" transform="translate(22.3088,-166.172)">
 			<title>Ark.9</title>
 			<desc>...</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="44.7109" cy="316.809" width="89.43" height="24.3013"/>
-			<rect x="0" y="304.658" width="89.4218" height="24.3013" class="st4"/>
-			<text x="4" y="320.41" class="st2" v:langID="1033"><v:paragraph/><v:tabList/>...</text>		</g>
-		<g id="shape10-29" v:mID="10" v:groupContext="shape" transform="translate(233.504,-214.532)">
+			<v:textRect cx="44.7109" cy="464.652" width="89.43" height="24.3013"/>
+			<rect x="0" y="452.502" width="89.4218" height="24.3013" class="st5"/>
+			<text x="4" y="468.25" class="st2" v:langID="1033"><v:paragraph/><v:tabList/>...</text>		</g>
+		<g id="shape10-32" v:mID="10" v:groupContext="shape" transform="translate(244.44,-229.405)">
 			<title>Rectangle.10</title>
 			<desc>User repository (unlimited users)</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
-			<v:textRect cx="55.0662" cy="294.149" width="110.14" height="69.6213"/>
-			<rect x="0" y="259.338" width="110.132" height="69.6213" class="st6"/>
-			<text x="4" y="274.14" class="st2" v:langID="1033"><v:paragraph/><v:tabList/>User repository<v:newlineChar/><tspan
-						x="4" dy="1.2em" class="st3">(unlimited users)</tspan></text>		</g>
-		<g id="shape14-33" v:mID="14" v:groupContext="shape" transform="translate(20.0826,-243.793)">
+			<v:textRect cx="55.0662" cy="441.992" width="110.14" height="69.6213"/>
+			<rect x="0" y="407.182" width="110.132" height="69.6213" class="st7"/>
+			<text x="4" y="421.98" class="st2" v:langID="1033"><v:paragraph/><v:tabList/>User repository<v:newlineChar/><tspan
+						x="4" dy="1.2em" class="st4">(unlimited users)</tspan></text>		</g>
+		<g id="shape14-36" v:mID="14" v:groupContext="shape" transform="translate(31.0181,-258.666)">
 			<title>Rectangle.14</title>
-			<desc>Authentication methods (unlimited)</desc>
+			<desc>Authentications (unlimited)</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
-			<v:textRect cx="102.582" cy="316.809" width="205.17" height="24.3013"/>
-			<rect x="0" y="304.658" width="205.164" height="24.3013" class="st6"/>
-			<text x="4" y="319.46" class="st2" v:langID="2057"><v:paragraph/><v:tabList/>Authentication methods<tspan class="st3"
-						v:langID="1033"> </tspan><tspan class="st3" v:langID="1033">(unlimited)</tspan></text>		</g>
-		<g id="shape15-38" v:mID="15" v:groupContext="shape" transform="translate(20.0826,-214.278)">
+			<v:textRect cx="102.582" cy="464.652" width="205.17" height="24.3013"/>
+			<rect x="0" y="452.502" width="205.164" height="24.3013" class="st7"/>
+			<text x="4" y="467.3" class="st2" v:langID="2057"><v:paragraph/><v:tabList/>Authentications<tspan class="st4"
+						v:langID="1033"> </tspan><tspan class="st4" v:langID="1033">(unlimited)</tspan></text>		</g>
+		<g id="shape15-41" v:mID="15" v:groupContext="shape" transform="translate(31.0181,-229.152)">
 			<title>Rectangle.15</title>
 			<desc>Applications (unlimited)</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
-			<v:textRect cx="102.582" cy="316.809" width="205.17" height="24.3013"/>
-			<rect x="0" y="304.658" width="205.164" height="24.3013" class="st6"/>
-			<text x="4" y="319.46" class="st2" v:langID="2057"><v:paragraph/><v:tabList/>Applications<tspan class="st3"
-						v:langID="1033"> </tspan><tspan class="st3" v:langID="1033">(unlimited)</tspan></text>		</g>
+			<v:textRect cx="102.582" cy="464.652" width="205.17" height="24.3013"/>
+			<rect x="0" y="452.502" width="205.164" height="24.3013" class="st7"/>
+			<text x="4" y="467.3" class="st2" v:langID="2057"><v:paragraph/><v:tabList/>Applications<tspan class="st4"
+						v:langID="1033"> </tspan><tspan class="st4" v:langID="1033">(unlimited)</tspan></text>		</g>
+		<g id="shape16-46" v:mID="16" v:groupContext="shape" transform="translate(22.6629,-318.395)">
+			<title>Rectangle.16</title>
+			<desc>Master environment</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+			<v:textRect cx="170.69" cy="445.875" width="341.39" height="61.8554"/>
+			<rect x="0" y="414.948" width="341.38" height="61.8554" class="st8"/>
+			<text x="4" y="429.75" class="st2" v:langID="2057"><v:paragraph/><v:tabList/>Master environment</text>		</g>
+		<g id="shape17-49" v:mID="17" v:groupContext="shape" transform="translate(244.493,-327.026)">
+			<title>Rectangle.17</title>
+			<desc>Admin users</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+			<v:textRect cx="55.0662" cy="456.623" width="110.14" height="40.3602"/>
+			<rect x="0" y="436.443" width="110.132" height="40.3602" class="st7"/>
+			<text x="4" y="451.24" class="st2" v:langID="2057"><v:paragraph/><v:tabList/>Admin users</text>		</g>
+		<g id="shape18-52" v:mID="18" v:groupContext="shape" transform="translate(31.0712,-327.026)">
+			<title>Rectangle.18</title>
+			<desc>Master configuration</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+			<v:textRect cx="102.582" cy="464.652" width="205.17" height="24.3013"/>
+			<rect x="0" y="452.502" width="205.164" height="24.3013" class="st7"/>
+			<text x="4" y="467.3" class="st2" v:langID="2057"><v:paragraph/><v:tabList/>Master configuration</text>		</g>
+		<g id="shape21-55" v:mID="21" v:groupContext="shape" transform="translate(386.109,-422.675)">
+			<title>Rectangle.21</title>
+			<desc>Admin users</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+			<v:textRect cx="55.0662" cy="455.909" width="110.14" height="41.7891"/>
+			<rect x="0" y="435.014" width="110.132" height="41.7891" class="st7"/>
+			<text x="4" y="449.81" class="st2" v:langID="2057"><v:paragraph/><v:tabList/>Admin users</text>		</g>
+		<g id="shape22-58" v:mID="22" v:groupContext="shape" transform="translate(11.9356,-422.675)">
+			<title>Rectangle.22</title>
+			<desc>Master configuration</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+			<v:textRect cx="181.417" cy="464.652" width="362.84" height="24.3013"/>
+			<rect x="0" y="452.502" width="362.835" height="24.3013" class="st7"/>
+			<text x="4" y="467.3" class="st2" v:langID="2057"><v:paragraph/><v:tabList/>Master configuration</text>		</g>
 	</g>
 </svg>

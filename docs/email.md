@@ -1,4 +1,19 @@
-﻿# Email provider
+<!--
+{
+    "title":  "Email provider",
+    "description":  "FoxIDs supports sending email with SendGrid and SMTP. Both can be configured as an email provider in each environment or generally in the FoxIDs site configuration. FoxIDs sends emails to the users for e.g., account verification and to s...",
+    "ogTitle":  "Email provider",
+    "ogDescription":  "FoxIDs supports sending email with SendGrid and SMTP. Both can be configured as an email provider in each environment or generally in the FoxIDs site configuration. FoxIDs sends emails to the users for e.g., account verification and to s...",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "email, FoxIDs docs"
+                       }
+}
+-->
+
+# Email provider
 
 FoxIDs supports sending email with [SendGrid](#sendgrid) and SMTP. Both can be configured as an email provider in [each environment](#configure-email-provider-in-environment) or [generally](#configure-email-provider-generally) in the FoxIDs site configuration.  
 FoxIDs sends emails to the users for e.g., account verification and to set a new password.  

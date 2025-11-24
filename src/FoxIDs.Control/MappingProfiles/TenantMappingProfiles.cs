@@ -98,6 +98,9 @@ namespace FoxIDs.MappingProfiles
             CreateMap<RefreshTokenTtlGrant, Api.RefreshTokenGrant>();
             CreateMap<RefreshTokenGrant, Api.RefreshTokenGrant>();
 
+            CreateMap<ActiveSessionTtl, Api.ActiveSession>();
+            CreateMap<PartyNameSessionLink, Api.PartyNameSessionLink>().ReverseMap();
+
             CreateMap<User, Api.User>()
                 .ForMember(d => d.ActiveTwoFactorApp, opt => opt.MapFrom(s => !s.TwoFactorAppSecret.IsNullOrEmpty() || !s.TwoFactorAppSecretExternalName.IsNullOrEmpty()))
                 .ForMember(d => d.HasPassword, opt => opt.MapFrom(s => !s.Hash.IsNullOrEmpty()))
@@ -169,6 +172,12 @@ namespace FoxIDs.MappingProfiles
             CreateMap<ResourceItem, Api.TrackResourceItem>()
                 .ReverseMap();
             CreateMap<ResourceCultureItem, Api.ResourceCultureItem>()
+                .ReverseMap();
+            CreateMap<TrackLargeResource, Api.TrackLargeResourceItem>()
+                .ReverseMap()
+                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => TrackLargeResource.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
+            CreateMap<TrackLargeResourceCultureItem, Api.TrackLargeResourceCultureItem>()
                 .ReverseMap();
 
             CreateMap<Api.SendEmail, SendEmail>()

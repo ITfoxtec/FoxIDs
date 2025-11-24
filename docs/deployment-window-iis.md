@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Windows Server with IIS",
+    "description":  "Deploy FoxIDs on Windows Server with Internet Information Services (IIS).",
+    "ogTitle":  "Windows Server with IIS",
+    "ogDescription":  "Deploy FoxIDs on Windows Server with Internet Information Services (IIS).",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "deployment window iis, FoxIDs docs"
+                       }
+}
+-->
+
 # Windows Server with IIS
 
 Deploy FoxIDs on Windows Server with Internet Information Services (IIS).
@@ -139,6 +154,18 @@ Configure both the FoxIDs site and the FoxIDs Control site in the `appsettings.j
     ```
 5. Optionally configure to send emails with SMTP.
 
+### Patching and update strategy
+Updating FoxIDs follows the same mechanics as the [Xcopy deployment](#xcopy-deploy-foxids-to-websites), but a bit of extra structure keeps downtime low and provides an easy rollback path.
+
+1. **Plan the window** – Review the newest release notes, FoxIDs is backward compatible (unless otherwise specified in the release notes), and schedule a short maintenance window. If the two sites sit behind a load balancer, drain traffic from one node at a time.
+2. **Stage the binaries** – Download the newest `FoxIDs-x.x.x-win-x64.zip`, unpack it to temporary folders such as `C:\temp\FoxIDs.new` and `C:\temp\FoxIDs.Control.new`, and copy over your existing `appsettings*.json`.
+3. **Snapshot the current install** – Stop the two IIS sites (or their App Pools). Xcopy or rename the live folders, e.g. `C:\inetpub\FoxIDs` → `C:\inetpub\FoxIDs.2025-11-11.bak`. Do the same for the Control site. A compressed backup or VM snapshot works as well, but quick folder copies are often sufficient.
+4. **Swap in the update** – Xcopy the staged folders into the live paths (`C:\inetpub\FoxIDs` and `C:\inetpub\FoxIDs.Control`) and double-check that inherited NTFS permissions still include the matching App Pool identities. Start the App Pools/sites again to warm up the applications.
+5. **Verify and monitor** – Open the Control site, complete a login round-trip, run a quick tenant/track lookup and watch the log folder (`C:\inetpub\logs\LogFiles\foxids`) for errors. If you use OpenSearch, check logs in and errors in OpenSearch.
+6. **Rollback if needed** – If anything misbehaves, stop the sites, rename the freshly deployed folders to `.failed`, restore the `.bak` folders to their original names and start IIS again. Because the database schema is backward compatible, the previous binaries will pick up immediately.
+
+Repeat the process for every release; on multi-server setups patch one server at a time to retain service availability.
+
 ### FoxIDs log files
 FoxIDs log files are default saved in the `C:\inetpub\logs\LogFiles\foxids\` folder. You can change the path in the `web.config` file in the two websites.
 
@@ -169,7 +196,7 @@ Download [OpenSearch](https://docs.opensearch.org/docs/latest/install-and-config
 16. Set **Startup type:** to `Automatic` and click **OK**
 17. Run `opensearch-service.bat start` to start the OpenSearch Windows Service
 
-OpenSearch is default started with a self-signed certificate. You can configure a domain and a certificate but, in this guide, the self-signed certificate is retained and FoxIDs is configured to accept the certificate.
+OpenSearch is default started with a self-signed certificate. You can configure a domain and a certificate, but in this guide, the self-signed certificate is retained and FoxIDs is configured to accept the certificate.
 
 Configure OpenSearch in both the FoxIDs site and the FoxIDs Control site in the `appsettings.json` files, located in e.g. `C:\inetpub\FoxIDs\appsettings.json` and `C:\inetpub\FoxIDs.Control\appsettings.json`
 
@@ -195,3 +222,4 @@ Then click on the `main` tenant and authenticate once again with the same defaul
 > The default admin user and password are the same for both the `master` tenant and the `main` tenant, but it is two different users. 
 
 You are now logged into the `main` tenant and can start to configure your [applications and authentication methods](connections.md).
+

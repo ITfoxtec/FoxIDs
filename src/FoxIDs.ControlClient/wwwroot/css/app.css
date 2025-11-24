@@ -265,11 +265,14 @@ img.logo {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        font-size: 1.2rem;
+        line-height: 1.3;
     }
 
         .env-dropdown .env-dropdown-label small {
             margin-left: 0.35rem;
             flex-shrink: 0;
+            font-size: 0.65em;
         }
 
 .dropdown-item.track-option {

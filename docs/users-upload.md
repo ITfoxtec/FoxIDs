@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Upload many users",
+    "description":  "Provisioning your users in an environment as internal users, with or without a password:",
+    "ogTitle":  "Upload many users",
+    "ogDescription":  "Provisioning your users in an environment as internal users, with or without a password:",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "users upload, FoxIDs docs"
+                       }
+}
+-->
+
 # Upload many users
 
 Provisioning your users in an environment as [internal users](users-internal.md), with or without a password:
@@ -146,3 +161,4 @@ Add your FoxIDs Control API endpoint and **tenant** and **environment** and the 
 3. Click `U` to start uploading users  
 
 > The upload can take a while depending on the number of users.
+

@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "FoxIDs Frequently Asked Questions",
+    "description":  "Short answers to popular FoxIDs topics including claim pass-through, skipping the \"Pick an account\" dialog, logout issues after certificate changes, and keeping SAML metadata in sync.",
+    "ogTitle":  "FoxIDs Frequently Asked Questions",
+    "ogDescription":  "Short answers to popular FoxIDs topics including claim pass-through, skipping the \"Pick an account\" dialog, logout issues after certificate changes, and keeping SAML metadata in sync.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "FoxIDs FAQ, troubleshooting, claims, logout, SAML metadata"
+                       }
+}
+-->
+
 # FAQ
 
 ## Way is not all claims passed to the application?
@@ -11,7 +26,7 @@ Navigating to the application registration then click Show advanced and add a `*
 
 ## Is it possible to avoid the "Pick an account" dialog?
 Yes FoxIDs support to forward the login hint from an authentication method to an external IdP or another FoxIDs application registration. In OpenID Connect the login hint is forwarded in the `login_hint` parameter. 
-In SAML 2.0 the login hint is forwarded as a `NameID` in the `Subject` element and otherwise accepts a `login_hint`/`LoginHint`/`username` query parameter from the SAML relying party.
+In SAML 2.0 the login hint is forwarded as a `NameID` in the `Subject` element and otherwise accepts a `login_hint`/`LoginHint`/`username` query / form parameter from the SAML relying party.
 
 ## Way can I not logout if the certificate container type is changed?
 **I am unable to logout of a client using OIDC if I login and thereafter changed the certificate container type.**

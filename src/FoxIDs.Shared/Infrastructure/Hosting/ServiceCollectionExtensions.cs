@@ -30,13 +30,17 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<MasterTenantDocumentsSeedLogic>();
             services.AddTransient<MainTenantDocumentsSeedLogic>();
+            services.AddTransient<DataProtectionSeedLogic>();
             services.AddTransient<SeedLogic>();
 
             services.AddTransient<SendSmsLogic>();
             services.AddTransient<SendEmailLogic>();
+
             services.AddTransient<PlanUsageLogic>();
             services.AddTransient<AuditLogic>();
             services.AddTransient<ContainedKeyLogic>();
+            services.AddTransient<HealthCheckLogic>();
+            services.AddTransient<ActiveSessionLogic>();
 
             if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
             {

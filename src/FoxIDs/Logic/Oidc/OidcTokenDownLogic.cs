@@ -17,12 +17,12 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanUsageLogic planUsageLogic;
-        private readonly OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic;
+        private readonly OidcJwtDownLogic<TParty, TClient, TScope, TClaim> oidcJwtDownLogic;
         private readonly OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantDownLogic;
         private readonly OAuthTokenExchangeDownLogic<TParty, TClient, TScope, TClaim> oauthTokenExchangeDownLogic;
 
-        public OidcTokenDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, PlanUsageLogic planUsageLogic, OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic, OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic, OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantDownLogic, SecretHashLogic secretHashLogic, ClaimTransformLogic claimTransformLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, OAuthTokenExchangeDownLogic<TParty, TClient, TScope, TClaim> oauthTokenExchangeDownLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantDataRepository, planUsageLogic, oidcJwtDownLogic, secretHashLogic, claimTransformLogic, oauthResourceScopeDownLogic, oauthTokenExchangeDownLogic, httpContextAccessor)
+        public OidcTokenDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, PlanUsageLogic planUsageLogic, OidcJwtDownLogic<TParty, TClient, TScope, TClaim> oidcJwtDownLogic, OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic, OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantDownLogic, SecretHashLogic secretHashLogic, ClaimTransformLogic claimTransformLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, OAuthTokenExchangeDownLogic<TParty, TClient, TScope, TClaim> oauthTokenExchangeDownLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantDataRepository, planUsageLogic, oidcJwtDownLogic, secretHashLogic, claimTransformLogic, oauthResourceScopeDownLogic, oauthTokenExchangeDownLogic, httpContextAccessor)
         {
             this.logger = logger;
             this.tenantDataRepository = tenantDataRepository;
@@ -130,7 +130,7 @@ namespace FoxIDs.Logic
                 logger.SetUserScopeProperty(claims);
                 var scopes = authCodeGrant.Scope.ToSpaceList();
 
-                tokenResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(party.Client, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, algorithm);
+                tokenResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(party, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, algorithm, saveActiveSession: false);
                 var responseTypes = new[] { IdentityConstants.ResponseTypes.IdToken, IdentityConstants.ResponseTypes.Token };
                 tokenResponse.IdToken = await oidcJwtDownLogic.CreateIdTokenAsync(party.Client, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, authCodeGrant.Nonce, responseTypes, null, tokenResponse.AccessToken, algorithm);
 
@@ -180,7 +180,7 @@ namespace FoxIDs.Logic
                 var claims = refreshTokenGrant.Claims.ToClaimList();
                 logger.SetUserScopeProperty(claims);
 
-                tokenResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(party.Client, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, algorithm);
+                tokenResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(party, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, algorithm, saveActiveSession: true);
                 var responseTypes = new[] { IdentityConstants.ResponseTypes.IdToken, IdentityConstants.ResponseTypes.Token };
                 tokenResponse.IdToken = await oidcJwtDownLogic.CreateIdTokenAsync(party.Client, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, null, responseTypes, null, tokenResponse.AccessToken, algorithm);
 

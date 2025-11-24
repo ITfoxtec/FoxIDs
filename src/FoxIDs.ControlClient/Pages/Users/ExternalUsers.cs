@@ -29,6 +29,7 @@ namespace FoxIDs.Client.Pages.Users
         private string internalUsersHref;
         private string failingLoginsHref;
         private string refreshTokenGrantsHref;
+        private string activeSessionsHref;
 
         [Inject]
         public IToastService toastService { get; set; }
@@ -50,6 +51,7 @@ namespace FoxIDs.Client.Pages.Users
             internalUsersHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/internalusers";
             failingLoginsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/failingloginlocks";
             refreshTokenGrantsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/refreshtokengrants";
+            activeSessionsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/activesessions";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)

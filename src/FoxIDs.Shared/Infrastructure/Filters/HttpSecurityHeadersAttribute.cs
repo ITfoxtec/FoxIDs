@@ -21,12 +21,10 @@ namespace FoxIDs.Infrastructure.Filters
         public class HttpSecurityHeadersActionAttribute : IAsyncActionFilter
         {
             protected bool isHtmlContent;
-            private readonly TelemetryScopedLogger logger;
             private readonly IWebHostEnvironment environment;
 
-            public HttpSecurityHeadersActionAttribute(TelemetryScopedLogger logger, IWebHostEnvironment environment)
+            public HttpSecurityHeadersActionAttribute(IWebHostEnvironment environment)
             {
-                this.logger = logger;
                 this.environment = environment;
             }
 
@@ -52,6 +50,12 @@ namespace FoxIDs.Infrastructure.Filters
                 if (isHtmlContent)
                 {
                     HeaderXFrameOptions(httpContext);
+
+                    var permissionsPolicy = PermissionsPolicy(httpContext);
+                    if (!permissionsPolicy.IsNullOrEmpty())
+                    {
+                        httpContext.Response.SetHeader("Permissions-Policy", permissionsPolicy);
+                    }
                 }
 
                 var csp = CreateCsp(httpContext).ToSpaceList();
@@ -74,7 +78,12 @@ namespace FoxIDs.Infrastructure.Filters
                     yield return "block-all-mixed-content;";
 
                     yield return "default-src 'self';";
-                    yield return $"connect-src 'self'{GetConnectSrc(httpContext)};"; 
+                    
+                    var cspConnectSrc = CspConnectSrc(httpContext);
+                    if (!cspConnectSrc.IsNullOrEmpty())
+                    {
+                        yield return cspConnectSrc;
+                    }
 
                     var cspImgSrc = CspImgSrc(httpContext);
                     if (!cspImgSrc.IsNullOrEmpty())
@@ -82,7 +91,12 @@ namespace FoxIDs.Infrastructure.Filters
                         yield return cspImgSrc;
                     }
 
-                    yield return "script-src 'self' 'unsafe-inline';";
+                    var cspScriptSrc = CspScriptSrc(httpContext);
+                    if (!cspScriptSrc.IsNullOrEmpty())
+                    {
+                        yield return cspScriptSrc;
+                    }
+
                     yield return "style-src 'self' 'unsafe-inline';";
 
                     yield return "base-uri 'self';";
@@ -109,20 +123,32 @@ namespace FoxIDs.Infrastructure.Filters
                 }
             }
 
-            private string GetConnectSrc(HttpContext httpContext)
+            protected virtual string CspConnectSrc(HttpContext httpContext)
+            {
+                var connectSrc = new List<string> { "'self'" };
+                connectSrc = connectSrc.ConcatOnce(GetAdditionalConnectSrc(httpContext));
+                return $"connect-src {connectSrc.ToSpaceList()};";
+            }
+
+            protected virtual IEnumerable<string> GetAdditionalConnectSrc(HttpContext httpContext)
             {
 #if DEBUG
                 if (environment.IsDevelopment())
                 {
-                    return $" *";
+                    return new[] { "*" };
                 }
 #endif
-                return string.Empty;
+                return Array.Empty<string>();
             }
 
             protected virtual string CspImgSrc(HttpContext httpContext)
             {
                 return "img-src 'self' data: 'unsafe-inline';";
+            }
+
+            protected virtual string CspScriptSrc(HttpContext httpContext)
+            {
+                return "script-src 'self' 'unsafe-inline';";
             }
 
             protected virtual string CspFormAction(HttpContext httpContext)
@@ -138,6 +164,11 @@ namespace FoxIDs.Infrastructure.Filters
             protected virtual string CspFrameAncestors(HttpContext httpContext)
             {
                 return "frame-ancestors 'none';";
+            }
+
+            protected virtual string PermissionsPolicy(HttpContext httpContext)
+            {
+                return "interest-cohort=()";
             }
         }
     }

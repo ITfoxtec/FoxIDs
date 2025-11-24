@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Extended UI",
+    "description":  "You can extend the login user interface (UI) flow with custom login pages build with dynamic elements. The extended UIs have full support for culture / multi language. It is possible to create multiple custom UIs with different dynamic e...",
+    "ogTitle":  "Extended UI",
+    "ogDescription":  "You can extend the login user interface (UI) flow with custom login pages build with dynamic elements. The extended UIs have full support for culture / multi language. It is possible to create multiple custom UIs with different dynamic e...",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "extended ui, FoxIDs docs"
+                       }
+}
+-->
+
 # Extended UI
 
 You can extend the login user interface (UI) flow with custom login pages build with dynamic elements. The extended UIs have full support for culture / multi language. 
@@ -162,3 +177,4 @@ Navigate the **Authentication** tab and select the authentication method, then s
 - Add the base API URL without the `validate` folder in **API URL**
 - Add the **API secret**
 - Add a generic error message which is displayed for the user if the API returns an error without a `UiErrorMessage`
+

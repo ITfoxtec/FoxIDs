@@ -1,4 +1,19 @@
-﻿# OAuth 2.0
+<!--
+{
+    "title":  "OAuth 2.0",
+    "description":  "FoxIDs support OAuth 2.0 as a application registration. OAuth 2.0 is not supported as an authentication method.",
+    "ogTitle":  "OAuth 2.0",
+    "ogDescription":  "FoxIDs support OAuth 2.0 as a application registration. OAuth 2.0 is not supported as an authentication method.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "oauth 2.0, FoxIDs docs"
+                       }
+}
+-->
+
+# OAuth 2.0
 
 FoxIDs support OAuth 2.0 as a application registration. OAuth 2.0 is not supported as an authentication method.
 
@@ -11,5 +26,6 @@ FoxIDs support OAuth 2.0 resource (API) as a application registration.
 ## Application registration
 
 Configure your application as a [OAuth 2.0 application registration](app-reg-oauth-2.0.md).
+
 
 

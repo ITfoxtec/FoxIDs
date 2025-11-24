@@ -28,6 +28,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Authority")]
         public string Authority { get; set; }
 
+        [Display(Name = "IdP Issuer")]
+        public string TrackIssuer { get; set; }
+
         [Display(Name = "Client secret (only visible during creation)")]
         public string Secret { get; set; } 
         

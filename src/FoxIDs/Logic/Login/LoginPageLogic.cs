@@ -368,7 +368,7 @@ namespace FoxIDs.Logic
         {
             if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, session))
             {
-                await sessionLogic.AddOrUpdateSessionTrackAsync(loginUpParty, sequenceData.DownPartyLink);
+                await sessionLogic.AddOrUpdateSessionTrackAsync(loginUpParty, sequenceData.DownPartyLink, updateDbActiveSession: true);
                 (var transformedClaims, var actionResult) = await TransformClaimsAsync(loginUpParty, sequenceData, session.Claims.ToClaimList());
                 if (actionResult != null)
                 {

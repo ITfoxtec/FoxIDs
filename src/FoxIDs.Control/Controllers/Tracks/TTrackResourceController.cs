@@ -74,6 +74,7 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(trackResourceItem)) return BadRequest(ModelState);
+                trackResourceItem.Items.ForEach(item => item.Culture = item.Culture.ToLower());
                 try
                 {
                     var duplicatedCulture = trackResourceItem.Items.GroupBy(i => i.Culture).Where(g => g.Count() > 1).FirstOrDefault();

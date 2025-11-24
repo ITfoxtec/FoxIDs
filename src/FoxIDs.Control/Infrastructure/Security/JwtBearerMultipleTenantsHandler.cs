@@ -1,5 +1,6 @@
 ﻿using ITfoxtec.Identity;
 using ITfoxtec.Identity.Discovery;
+using FoxIDs.Logic;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -38,7 +39,7 @@ namespace FoxIDs.Infrastructure.Security
                 var oidcDiscovery = await oidcDiscoveryHandler.GetOidcDiscoveryAsync(oidcDiscoveryUri);
                 var oidcDiscoveryKeySet = await oidcDiscoveryHandler.GetOidcDiscoveryKeysAsync(oidcDiscoveryUri);
 
-                if(oidcDiscoveryKeySet.Keys?.Count() < 1)
+                if (oidcDiscoveryKeySet.Keys?.Count() < 1)
                 {
                     try
                     {
@@ -62,6 +63,9 @@ namespace FoxIDs.Infrastructure.Security
                     oidcDiscoveryKeySet = await oidcDiscoveryHandler.GetOidcDiscoveryKeysAsync(oidcDiscoveryUri, refreshCache: true);
                     (principal, _) = JwtHandler.ValidateToken(accessToken, oidcDiscovery.Issuer, oidcDiscoveryKeySet.Keys, Options.DownParty);
                 }
+
+                var activeSessionLogic = Context.RequestServices.GetService<ActiveSessionLogic>();
+                await activeSessionLogic.ValidateSessionAsync(principal.Claims, trackName: Constants.Routes.MasterTrackName);
 
                 scopedLogger.SetUserScopeProperty(principal.Claims);
                 var ticket = new AuthenticationTicket(principal, Scheme.Name);

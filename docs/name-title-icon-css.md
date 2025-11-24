@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Name, browser title, browser icon and CSS",
+    "description":  "Name and address for you company, organisation or system can be configured on each environment. When FoxIDs send an SMS or email to a user the SMS and email text is customised by adding the information.",
+    "ogTitle":  "Name, browser title, browser icon and CSS",
+    "ogDescription":  "Name and address for you company, organisation or system can be configured on each environment. When FoxIDs send an SMS or email to a user the SMS and email text is customised by adding the information.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "name title icon css, FoxIDs docs"
+                       }
+}
+-->
+
 # Name, browser title, browser icon and CSS
 
 ## Display name
@@ -179,3 +194,4 @@ Find the login authentication method in [FoxIDs Control Client](control.md#foxid
 The login page now include your license link. To customise further you can add a CSS class on the HTML element and add a CSS class in the CSS input field.
 
 ![Configure login box with CSS](images/configure-login-css-sample-html-test.png)
+

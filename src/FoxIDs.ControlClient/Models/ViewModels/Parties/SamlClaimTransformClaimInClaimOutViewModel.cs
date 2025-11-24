@@ -1,16 +1,17 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
-using FoxIDs.Models.Api;
+﻿using FoxIDs.Models.Api;
+using ITfoxtec.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class SamlClaimTransformClaimsInViewModel : ClaimTransformViewModel
+    public class SamlClaimTransformClaimInClaimOutViewModel : ClaimTransformViewModel, IValidatableObject
     {
-        [ListLength(Constants.Models.Claim.TransformClaimsInMin, Constants.Models.Claim.TransformClaimsInMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
+        [MaxLength(Constants.Models.Claim.SamlTypeLength)]
+        [RegularExpression(Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
         [Display(Name = "Select claim")]
-        public override List<string> ClaimsIn { get; set; }
+        public override string ClaimIn { get; set; }
 
         [MaxLength(Constants.Models.Claim.SamlTypeLength)]
         [RegularExpression(Constants.Models.Claim.SamlTypeRegExPattern)]
@@ -25,12 +26,11 @@ namespace FoxIDs.Client.Models.ViewModels
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-
-            if (Action == ClaimTransformActions.Add || Action == ClaimTransformActions.Replace)
+            if (Type != ClaimTransformTypes.Constant && Action != ClaimTransformActions.Remove)
             {
-                if (ClaimsIn?.Count() < 1)
+                if (ClaimIn.IsNullOrWhiteSpace())
                 {
-                    results.Add(new ValidationResult($"At least one is required.", [nameof(ClaimsIn)]));
+                    results.Add(new ValidationResult($"The field is required.", [nameof(ClaimIn)]));
                 }
             }
 

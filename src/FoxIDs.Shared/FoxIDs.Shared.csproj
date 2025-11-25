@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-		<Version>2.9.8</Version>
+		<TargetFramework>net10.0</TargetFramework>
+		<Version>2.10.0</Version>
 		<RootNamespace>FoxIDs</RootNamespace>
 		<Authors>Anders Revsgaard</Authors>
 		<Company>FoxIDs</Company>
@@ -34,11 +34,10 @@
 		<PackageReference Include="OpenSearch.Client" Version="1.8.0" />
 		<PackageReference Include="PgKeyValueDB" Version="1.6.0" />
 		<PackageReference Include="RSAKeyVaultProvider" Version="2.1.1" />
-		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.7" />
-		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="9.0.7" />
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="10.0.0" />
 		<PackageReference Include="SendGrid" Version="9.29.3" />
 		<PackageReference Include="MailKit" Version="4.13.0" />
-		<PackageReference Include="System.Linq.Async" Version="6.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>

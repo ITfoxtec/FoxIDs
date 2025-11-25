@@ -162,6 +162,7 @@
                         </div>
                     }
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.DeleteRefreshTokenGrantsOnChangePassword" For="@(() => loginUpParty.Form.Model.DeleteRefreshTokenGrantsOnChangePassword)" TextType="e.d" />
+                    <FInputToggle @bind-Value="loginUpParty.Form.Model.DeleteActiveSessionOnChangePassword" For="@(() => loginUpParty.Form.Model.DeleteActiveSessionOnChangePassword)" TextType="e.d" />
                 }
                 @if (loginUpParty.ShowAdvanced)
                 {

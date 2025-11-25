@@ -155,7 +155,7 @@ namespace FoxIDs.UnitTests.Logic
                 .ReturnsAsync(((IReadOnlyCollection<ActiveSessionTtl>)new List<ActiveSessionTtl>(), "token1"));
 
             var sessionId = CreateSessionId("sid123");
-            await logic.ListSessionsAsync("user@example.com", "sub1", "login", "app1", sessionId);
+            await logic.ListSessionsAsync("user@example.com", "sub1", sessionId, "app1", "login");
 
             Assert.NotNull(filter);
             var matches = filter.Compile()(new ActiveSessionTtl

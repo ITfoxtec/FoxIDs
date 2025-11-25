@@ -94,7 +94,7 @@ namespace FoxIDs.Client.Pages.Users
 
             try
             {
-                SetGeneralActiveSessions(await UserService.GetActiveSessionsAsync(activeSessionFilterForm.Model.FilterUserIdentifier, activeSessionFilterForm.Model.FilterUserIdentifier, activeSessionFilterForm.Model.FilterUpParty, activeSessionFilterForm.Model.FilterDownParty, activeSessionFilterForm.Model.FilterSessionId));
+                SetGeneralActiveSessions(await UserService.GetActiveSessionsAsync(activeSessionFilterForm.Model.FilterUserIdentifier, activeSessionFilterForm.Model.FilterUserIdentifier, activeSessionFilterForm.Model.FilterDownParty, activeSessionFilterForm.Model.FilterUpParty, activeSessionFilterForm.Model.FilterSessionId));
 
                 if (activeSessions.Count() > 0 &&
                     (!activeSessionFilterForm.Model.FilterUserIdentifier.IsNullOrWhiteSpace() || !activeSessionFilterForm.Model.FilterUpParty.IsNullOrWhiteSpace() || !activeSessionFilterForm.Model.FilterDownParty.IsNullOrWhiteSpace() || !activeSessionFilterForm.Model.FilterSessionId.IsNullOrWhiteSpace()))
@@ -132,7 +132,7 @@ namespace FoxIDs.Client.Pages.Users
             deleteActiveSessionError = null;
             try
             {
-                SetGeneralActiveSessions(await UserService.GetActiveSessionsAsync(activeSessionFilterForm.Model.FilterUserIdentifier, activeSessionFilterForm.Model.FilterUserIdentifier, activeSessionFilterForm.Model.FilterUpParty, activeSessionFilterForm.Model.FilterDownParty, activeSessionFilterForm.Model.FilterSessionId, paginationToken: paginationToken), addSessions: true);
+                SetGeneralActiveSessions(await UserService.GetActiveSessionsAsync(activeSessionFilterForm.Model.FilterUserIdentifier, activeSessionFilterForm.Model.FilterUserIdentifier, activeSessionFilterForm.Model.FilterDownParty, activeSessionFilterForm.Model.FilterUpParty, activeSessionFilterForm.Model.FilterSessionId, paginationToken: paginationToken), addSessions: true);
             }
             catch (TokenUnavailableException)
             {

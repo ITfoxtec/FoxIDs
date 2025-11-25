@@ -25,13 +25,13 @@ namespace FoxIDs.Logic
             this.activeSessionLogic = activeSessionLogic;
         }
 
-        public async Task<string> GetSessionIdAsync<T>(T upParty) where T : IUpParty
+        public async Task<string> GetSessionIdAsync<T>(T upParty, bool checkActiveSession = false) where T : IUpParty
         {
             var session = await sessionTrackCookieRepository.GetAsync();
             if (session != null && session.Groups?.Count() > 0)
             {
                 var sessionGroup = session.Groups.Where(g => (g.SequenceId != null && g.SequenceId == Sequence?.Id) || g.UpPartyLinks?.Any(u => u.Id == upParty.Id) == true).FirstOrDefault();
-                if (sessionGroup != null)
+                if (sessionGroup != null && (!checkActiveSession || await ActiveSessionExistsAsync(sessionGroup.Claims)))
                 {
                     var sessionId = sessionGroup.Claims?.Where(c => c.Claim == JwtClaimTypes.SessionId).Select(c => c.Values?.FirstOrDefault()).FirstOrDefault();
                     if (!string.IsNullOrEmpty(sessionId))
@@ -50,7 +50,7 @@ namespace FoxIDs.Logic
             if (session != null && session.Groups?.Count() > 0)
             {
                 var sessionGroup = session.Groups.Where(g => g.SessionUpParty != null && g.UpPartyLinks?.Any(u => upPartyLinks.Any(ru => ru.Name == u.Id.PartyIdToName())) == true).FirstOrDefault();
-                if (sessionGroup != null && sessionGroup.SessionUpParty != null)
+                if (sessionGroup != null && sessionGroup.SessionUpParty != null && await ActiveSessionExistsAsync(sessionGroup.Claims))
                 {
                     return ([new UpPartyLink { Name = sessionGroup.SessionUpParty.Id.PartyIdToName(), Type = sessionGroup.SessionUpParty.Type }], true);
                 }

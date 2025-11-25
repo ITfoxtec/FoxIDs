@@ -33,8 +33,9 @@ namespace FoxIDs.Logic
         private readonly PlanUsageLogic planUsageLogic;
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
+        private readonly ActiveSessionLogic activeSessionLogic;
 
-        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ICacheProvider cacheProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic, FailingLoginLogic failingLoginLogic, SendSmsLogic sendSmsLogic, SendEmailLogic sendEmailLogic, PlanUsageLogic planUsageLogic, TrackCacheLogic trackCacheLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)        {
+        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ICacheProvider cacheProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic, FailingLoginLogic failingLoginLogic, SendSmsLogic sendSmsLogic, SendEmailLogic sendEmailLogic, PlanUsageLogic planUsageLogic, TrackCacheLogic trackCacheLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, ActiveSessionLogic activeSessionLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)        {
             this.settings = settings;
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -48,6 +49,7 @@ namespace FoxIDs.Logic
             this.planUsageLogic = planUsageLogic;
             this.trackCacheLogic = trackCacheLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
+            this.activeSessionLogic = activeSessionLogic;
         }
 
         #region PasswordlessCode
@@ -203,7 +205,7 @@ namespace FoxIDs.Logic
             return sendStatus;
         }
 
-        public async Task<User> VerifyPhoneSetPasswordCodeSmsAndSetPasswordAsync(string phone, string code, string newPassword, bool deleteRefreshTokenGrants)
+        public async Task<User> VerifyPhoneSetPasswordCodeSmsAndSetPasswordAsync(string phone, string code, string newPassword, bool deleteRefreshTokenGrants, bool deleteActiveSessions)
         {
             phone = phone?.Trim();
             Func<User, Task> onSuccess = (user) => GetAccountLogic().SetPasswordUserAsync(user, newPassword);
@@ -211,6 +213,10 @@ namespace FoxIDs.Logic
             if (deleteRefreshTokenGrants)
             {
                 await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsByPhoneAsync(phone);
+            }
+            if (deleteActiveSessions)
+            {
+                await activeSessionLogic.DeleteSessionsByPhoneAsync(phone);
             }
             return user;
         }
@@ -227,7 +233,7 @@ namespace FoxIDs.Logic
             return sendStatus;
         }
 
-        public async Task<User> VerifyEmailSetPasswordCodeAndSetPasswordAsync(string email, string code, string newPassword, bool deleteRefreshTokenGrants)
+        public async Task<User> VerifyEmailSetPasswordCodeAndSetPasswordAsync(string email, string code, string newPassword, bool deleteRefreshTokenGrants, bool deleteActiveSessions)
         {
             email = email?.Trim()?.ToLower();
             Func<User, Task> onSuccess = (user) => GetAccountLogic().SetPasswordUserAsync(user, newPassword);
@@ -236,6 +242,10 @@ namespace FoxIDs.Logic
             {
                 await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsByEmailAsync(email);
             }            
+            if (deleteActiveSessions)
+            {
+                await activeSessionLogic.DeleteSessionsByEmailAsync(email);
+            }
             return user;
         }
 

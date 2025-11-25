@@ -67,6 +67,7 @@ namespace FoxIDs.Logic
                 EnableCreateUser = false,
                 EnableCancelLogin = false,
                 DeleteRefreshTokenGrantsOnChangePassword = true,
+                DeleteActiveSessionOnChangePassword = true,
                 SessionLifetime = 36000, // 10 hours
                 SessionAbsoluteLifetime = 36000, // 10 hours
                 PersistentSessionLifetimeUnlimited = false,

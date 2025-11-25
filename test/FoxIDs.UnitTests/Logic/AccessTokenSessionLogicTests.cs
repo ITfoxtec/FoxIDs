@@ -121,7 +121,7 @@ namespace FoxIDs.UnitTests.Logic
             var expectedId = await ActiveSessionTtl.IdFormatAsync(new ActiveSessionTtl.IdKey { TenantName = routeBinding.TenantName, TrackName = routeBinding.TrackName, SessionIdHash = sessionIdHash });
 
             tenantDataRepositoryMock.Setup(r => r.GetAsync<ActiveSessionTtl>(expectedId, false, false, false, It.IsAny<TelemetryScopedLogger>()))
-                .ReturnsAsync(new ActiveSessionTtl { Id = expectedId, SessionId = sessionIdHash });
+                .ReturnsAsync(new ActiveSessionTtl { Id = expectedId, SessionId = sessionId });
 
             await logic.ValidateSessionAsync(new[] { new Claim(JwtClaimTypes.SessionId, sessionId) });
 
@@ -137,7 +137,7 @@ namespace FoxIDs.UnitTests.Logic
             var expectedId = await ActiveSessionTtl.IdFormatAsync(new ActiveSessionTtl.IdKey { TenantName = routeBinding.TenantName, TrackName = routeBinding.TrackName, SessionIdHash = sessionIdHash });
 
             tenantDataRepositoryMock.Setup(r => r.GetAsync<ActiveSessionTtl>(expectedId, false, true, false, It.IsAny<TelemetryScopedLogger>()))
-                .ReturnsAsync(new ActiveSessionTtl { Id = expectedId, SessionId = sessionIdHash, TimeToLive = ActiveSessionTtl.DefaultTimeToLive });
+                .ReturnsAsync(new ActiveSessionTtl { Id = expectedId, SessionId = sessionId, TimeToLive = ActiveSessionTtl.DefaultTimeToLive });
 
             await logic.DeleteSessionAsync(sessionId);
 

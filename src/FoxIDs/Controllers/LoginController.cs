@@ -1545,6 +1545,10 @@ namespace FoxIDs.Controllers
                     {
                         await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(sequenceData.UserIdentifier, upPartyType: loginUpParty.Type);
                     }
+                    if (loginUpParty.DeleteActiveSessionOnChangePassword)
+                    {
+                        await activeSessionLogic.DeleteSessionsAsync(sequenceData.UserIdentifier, user?.UserId, upPartyType: loginUpParty.Type);
+                    }
 
                     auditLogic.LogChangePasswordEvent(PartyTypes.Login, sequenceData.UpPartyId, user.UserId);
 

@@ -101,6 +101,12 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool DeleteRefreshTokenGrantsOnChangePassword { get; set; }
 
         /// <summary>
+        /// Default false.
+        /// </summary>
+        [Display(Name = "Delete user sessions if a user change / set password")]
+        public bool DeleteActiveSessionOnChangePassword { get; set; }
+
+        /// <summary>
         /// Claim transforms.
         /// </summary>
         [ValidateComplexType]

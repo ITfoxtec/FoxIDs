@@ -246,22 +246,34 @@ namespace FoxIDs.Logic
             throw new SessionException($"Active session for session ID '{sessionId}' does not exist.");
         }
 
-        public async Task<(IReadOnlyCollection<ActiveSessionTtl> sessions, string paginationToken)> ListSessionsAsync(string userIdentifier, string sub, string upPartyName, string downPartyName, string sessionId, string paginationToken = null)
+        public async Task<(IReadOnlyCollection<ActiveSessionTtl> sessions, string paginationToken)> ListSessionsAsync(string userIdentifier, string sub, string sessionId, string downPartyName, string upPartyName, string paginationToken = null)
         {
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            return await tenantDataRepository.GetManyAsync(idKey, GetQuery(userIdentifier, sub, upPartyName, downPartyName, sessionId), paginationToken: paginationToken);
+            return await tenantDataRepository.GetManyAsync(idKey, GetQuery(userIdentifier, sub, sessionId, downPartyName, upPartyName, null), paginationToken: paginationToken);
         }
 
-        public async Task DeleteSessionsAsync(string userIdentifier, string sub = null, string upPartyName = null, string downPartyName = null, string sessionId = null)
+        public async Task DeleteSessionsAsync(string userIdentifier, string sub = null, string sessionId = null, string downPartyName = null, string upPartyName = null, PartyTypes ? upPartyType = null)
         {
-            logger.ScopeTrace(() => $"Delete active sessions, Route '{RouteBinding.Route}', User identifier '{userIdentifier}', Sub '{sub}', Auth method '{upPartyName}', application '{downPartyName}', Session ID '{sessionId}'.");
+            logger.ScopeTrace(() => $"Delete active sessions, Route '{RouteBinding.Route}', User identifier '{userIdentifier}', Sub '{sub}', Session ID '{sessionId}', application '{downPartyName}', Auth method '{upPartyName}', Auth method type '{upPartyType}'.");
 
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            var deletedCount = await tenantDataRepository.DeleteManyAsync(idKey, GetQuery(userIdentifier, sub, upPartyName, downPartyName, sessionId));
+            var deletedCount = await tenantDataRepository.DeleteManyAsync(idKey, GetQuery(userIdentifier, sub, sessionId, downPartyName, upPartyName, upPartyType));
             if (deletedCount > 0)
             {
                 logger.ScopeTrace(() => $"Access token sessions deleted.");
             }
+        }
+
+        public Task DeleteSessionsByEmailAsync(string email, PartyTypes upPartyType = PartyTypes.Login)
+        {
+            if (email.IsNullOrWhiteSpace()) return Task.CompletedTask;
+            return DeleteSessionsAsync(email, upPartyType: upPartyType);
+        }
+
+        public Task DeleteSessionsByPhoneAsync(string phone, PartyTypes upPartyType = PartyTypes.Login)
+        {
+            if (phone.IsNullOrWhiteSpace()) return Task.CompletedTask;
+            return DeleteSessionsAsync(phone, upPartyType: upPartyType);
         }
 
         public async Task DeleteSessionAsync(string sessionId)
@@ -319,13 +331,14 @@ namespace FoxIDs.Logic
             return GetTruncatedValue(value);
         }
 
-        private static Expression<Func<ActiveSessionTtl, bool>> GetQuery(string userIdentifier, string sub, string upPartyName, string downPartyName, string sessionId)
+        private static Expression<Func<ActiveSessionTtl, bool>> GetQuery(string userIdentifier, string sub, string sessionId, string downPartyName, string upPartyName, PartyTypes? upPartyType)
         {
             var queryByUserIdentifier = !userIdentifier.IsNullOrWhiteSpace();
             var queryBySub = !sub.IsNullOrWhiteSpace();
-            var queryByUpPartyName = !upPartyName.IsNullOrWhiteSpace();
-            var queryByDownPartyName = !downPartyName.IsNullOrWhiteSpace();
             var queryBySessionId = !sessionId.IsNullOrWhiteSpace();
+            var queryByDownPartyName = !downPartyName.IsNullOrWhiteSpace();
+            var queryByUpPartyName = !upPartyName.IsNullOrWhiteSpace();
+            var queryByUpPartyType = upPartyType.HasValue;
 
             return s => s.DataType.Equals(Constants.Models.DataType.ActiveSession) &&
                 (
@@ -334,9 +347,10 @@ namespace FoxIDs.Logic
                     (!queryByUserIdentifier && queryBySub && s.Sub == sub) || // only sub
                     (queryByUserIdentifier && queryBySub && (s.Email == userIdentifier || s.Phone == userIdentifier || s.Username == userIdentifier || s.Sub == sub)) // both => OR
                 ) &&
-                (!queryByUpPartyName || s.UpPartyLinks.Any(u => u.Name == upPartyName)) &&
-                (!queryByDownPartyName || s.DownPartyLinks.Any(d => d.Name == downPartyName)) &&
-                (!queryBySessionId || s.SessionId == sessionId);
+                (!queryBySessionId || s.SessionId == sessionId) &&
+                (!queryByDownPartyName || (s.DownPartyLinks != null && s.DownPartyLinks.Any(d => d.Name == downPartyName))) &&
+                (!queryByUpPartyName || (s.UpPartyLinks != null && s.UpPartyLinks.Any(u => u.Name == upPartyName))) &&
+                (!queryByUpPartyType || (s.UpPartyLinks != null && s.UpPartyLinks.Any(u => u.Type == upPartyType)));;
         }
     }
 }

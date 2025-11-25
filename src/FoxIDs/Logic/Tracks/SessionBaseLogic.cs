@@ -76,7 +76,7 @@ namespace FoxIDs.Logic
             return upParty.SessionLifetime > 0 || upParty.PersistentSessionAbsoluteLifetime > 0 || upParty.PersistentSessionLifetimeUnlimited;
         }
 
-        public async Task AddOrUpdateSessionTrackAsync<T>(T upParty, DownPartySessionLink downPartyLink, bool updateDbActiveSession = false) where T : IUpParty
+        public async Task AddOrUpdateSessionTrackAsync<T>(T upParty, DownPartySessionLink downPartyLink, bool saveDbActiveSession = false) where T : IUpParty
         {
             (var session, var sessionGroups) = await LoadSessionTrackAsync(upParty, downPartyLink);
             foreach (var sessionGroup in sessionGroups)
@@ -89,13 +89,13 @@ namespace FoxIDs.Logic
             }
             await sessionTrackCookieRepository.SaveAsync(session);
 
-            if (updateDbActiveSession)
+            if (saveDbActiveSession)
             {
                 await activeSessionLogic.SaveSessionAsync(sessionGroups, session.CreateTime, session.LastUpdated);
             }
         }
 
-        protected async Task AddOrUpdateSessionTrackWithClaimsAsync<T>(T upParty, IEnumerable<ClaimAndValues> claims, bool updateDbActiveSession = false) where T : IUpParty
+        protected async Task AddOrUpdateSessionTrackWithClaimsAsync<T>(T upParty, IEnumerable<ClaimAndValues> claims, bool saveDbActiveSession = false) where T : IUpParty
         {
             (var session, var sessionGroups) = await LoadSessionTrackAsync(upParty, null);
             foreach (var sessionGroup in sessionGroups)
@@ -109,7 +109,7 @@ namespace FoxIDs.Logic
             }
             await sessionTrackCookieRepository.SaveAsync(session);
 
-            if (updateDbActiveSession && claims?.Any() == true)
+            if (saveDbActiveSession && claims?.Any() == true)
             {
                 await activeSessionLogic.SaveSessionAsync(sessionGroups, session.CreateTime, session.LastUpdated);
             }

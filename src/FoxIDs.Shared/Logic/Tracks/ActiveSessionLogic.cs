@@ -319,13 +319,13 @@ namespace FoxIDs.Logic
             return GetTruncatedValue(value);
         }
 
-        private static Expression<Func<ActiveSessionTtl, bool>> GetQuery(string userIdentifier, string sub, string upPartyName, string downPartyName, string sessionIdHash)
+        private static Expression<Func<ActiveSessionTtl, bool>> GetQuery(string userIdentifier, string sub, string upPartyName, string downPartyName, string sessionId)
         {
             var queryByUserIdentifier = !userIdentifier.IsNullOrWhiteSpace();
             var queryBySub = !sub.IsNullOrWhiteSpace();
             var queryByUpPartyName = !upPartyName.IsNullOrWhiteSpace();
             var queryByDownPartyName = !downPartyName.IsNullOrWhiteSpace();
-            var queryBySessionId = !sessionIdHash.IsNullOrWhiteSpace();
+            var queryBySessionId = !sessionId.IsNullOrWhiteSpace();
 
             return s => s.DataType.Equals(Constants.Models.DataType.ActiveSession) &&
                 (
@@ -336,7 +336,7 @@ namespace FoxIDs.Logic
                 ) &&
                 (!queryByUpPartyName || s.UpPartyLinks.Any(u => u.Name == upPartyName)) &&
                 (!queryByDownPartyName || s.DownPartyLinks.Any(d => d.Name == downPartyName)) &&
-                (!queryBySessionId || s.SessionId == sessionIdHash);
+                (!queryBySessionId || s.SessionId == sessionId);
         }
     }
 }

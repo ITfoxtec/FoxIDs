@@ -32,7 +32,7 @@
 		<PackageReference Include="Azure.Security.KeyVault.Certificates" Version="4.7.0" />
 		<PackageReference Include="MongoDB.Driver" Version="3.4.2" />
 		<PackageReference Include="OpenSearch.Client" Version="1.8.0" />
-		<PackageReference Include="PgKeyValueDB" Version="1.6.0" />
+		<PackageReference Include="PgKeyValueDB" Version="3.0.0" />
 		<PackageReference Include="RSAKeyVaultProvider" Version="2.1.1" />
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="10.0.0" />

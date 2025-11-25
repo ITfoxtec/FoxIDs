@@ -33,12 +33,11 @@ namespace FoxIDs.Logic
             }
 
             var countryCode = elements.Where(e => e.Type == DynamicElementTypes.Phone).Any() ? countryCodesLogic.GetCountryCodeStringByCulture() : null;
-
             var i = -1;
             foreach (var element in elements)
             {
                 DynamicElementBase valueElement = null;
-                if (element.Type != DynamicElementTypes.Text && element.Type != DynamicElementTypes.Html)
+                if (!IsContentElement(element.Type))
                 {
                     i++;
                     valueElement = GetValueElement(element, valueElements, initClaims, i);
@@ -79,11 +78,20 @@ namespace FoxIDs.Logic
                     case DynamicElementTypes.Custom:
                         yield return new CustomDElement { Name = element.Name, DField1 = valueElement?.DField1, Required = element.Required, DisplayName = element.DisplayName, MaxLength = element.MaxLength, RegEx = element.RegEx, ErrorMessage = element.ErrorMessage, ClaimOut = element.ClaimOut };
                         break;
+                    case DynamicElementTypes.Checkbox:
+                        yield return new CheckboxDElement { Name = element.Name, DField1 = NormalizeCheckboxValue(valueElement?.DField1), Required = element.Required, DisplayName = element.DisplayName, ClaimOut = element.ClaimOut };
+                        break;
                     case DynamicElementTypes.Text:
                         yield return new ContentDElement { Name = element.Name, DContent = element.Content };
                         break;
                     case DynamicElementTypes.Html:
                         yield return new ContentDElement { Name = element.Name, DContent = element.Content, IsHtml = true };
+                        break;
+                    case DynamicElementTypes.LargeText:
+                        yield return new ContentDElement { Name = element.Name, DContent = element.Content, IsHtml = false, IsLarge = true };
+                        break;
+                    case DynamicElementTypes.LargeHtml:
+                        yield return new ContentDElement { Name = element.Name, DContent = element.Content, IsHtml = true, IsLarge = true };
                         break;
 
                     default:
@@ -160,14 +168,17 @@ namespace FoxIDs.Logic
                     {
                         result.Add(new LoginHrdDElement { Name = element.Name });
                     }
+                    else if (element.Type == DynamicElementTypes.Checkbox)
+                    {
+                        result.Add(new CheckboxDElement { Name = element.Name, DField1 = NormalizeCheckboxValue(element.Content), Required = element.Required, DisplayName = element.DisplayName, ClaimOut = element.ClaimOut });
+                    }
                     else if (element.Type == DynamicElementTypes.Text || element.Type == DynamicElementTypes.Html)
                     {
-                        result.Add(new ContentDElement
-                        {
-                            Name = element.Name,
-                            DContent = element.Content,
-                            IsHtml = element.Type == DynamicElementTypes.Html,
-                        });
+                        result.Add(new ContentDElement { Name = element.Name, DContent = element.Content, IsHtml = element.Type == DynamicElementTypes.Html });
+                    }
+                    else if (element.Type == DynamicElementTypes.LargeText || element.Type == DynamicElementTypes.LargeHtml)
+                    {
+                        result.Add(new ContentDElement { Name = element.Name, DContent = element.Content, IsHtml = element.Type == DynamicElementTypes.LargeHtml, IsLarge = true });
                     }
                 }
             }
@@ -273,6 +284,15 @@ namespace FoxIDs.Logic
                     }
                 }
 
+                if (element is CheckboxDElement checkboxDElement)
+                {
+                    if (checkboxDElement.Required && !IsCheckboxChecked(checkboxDElement.DField1))
+                    {
+                        var displayName = checkboxDElement.DisplayName.IsNullOrWhiteSpace() ? localizer["Checkbox"] : checkboxDElement.DisplayName;
+                        modelState.AddModelError($"InputElements[{index}].{nameof(element.DField1)}", localizer["The {0} field is required.", displayName]);
+                    }
+                }
+
                 index++;
             }
 
@@ -347,10 +367,19 @@ namespace FoxIDs.Logic
             {
                 claims.AddClaim(JwtClaimTypes.FamilyName, familyNameDElament.DField1);
             }
-            var CustomDElament = elements.Where(e => e is CustomDElement).FirstOrDefault() as CustomDElement;
-            if (!string.IsNullOrWhiteSpace(CustomDElament?.ClaimOut) && !string.IsNullOrWhiteSpace(CustomDElament?.DField1))
+            foreach (var customDElament in elements.OfType<CustomDElement>() ?? Enumerable.Empty<CustomDElement>())
             {
-                claims.AddClaim(CustomDElament.ClaimOut, CustomDElament.DField1);
+                if (!customDElament.ClaimOut.IsNullOrWhiteSpace() && !customDElament.DField1.IsNullOrWhiteSpace())
+                {
+                    claims.AddClaim(customDElament.ClaimOut, NormalizeCheckboxValue(customDElament.DField1));
+                }
+            }
+            foreach (var checkboxDElament in elements.OfType<CheckboxDElement>() ?? Enumerable.Empty<CheckboxDElement>())
+            {
+                if (!checkboxDElament.ClaimOut.IsNullOrWhiteSpace())
+                {
+                    claims.AddClaim(checkboxDElament.ClaimOut, NormalizeCheckboxValue(checkboxDElament.DField1));
+                }
             }
             return (claims, userIdentifierClaimTypes);
         }
@@ -376,8 +405,12 @@ namespace FoxIDs.Logic
                         return claims.Where(c => c.Type == JwtClaimTypes.FamilyName).FirstOrDefault();
                     case DynamicElementTypes.Custom:
                         return string.IsNullOrWhiteSpace(element.ClaimOut) ? null : claims.Where(c => c.Type == element.ClaimOut).FirstOrDefault();
+                    case DynamicElementTypes.Checkbox:
+                        return string.IsNullOrWhiteSpace(element.ClaimOut) ? null : claims.Where(c => c.Type == element.ClaimOut).FirstOrDefault();
                     case DynamicElementTypes.Text:
                     case DynamicElementTypes.Html:
+                    case DynamicElementTypes.LargeText:
+                    case DynamicElementTypes.LargeHtml:
                     case DynamicElementTypes.LoginInput:
                     case DynamicElementTypes.LoginButton:
                     case DynamicElementTypes.LoginLink:
@@ -389,5 +422,23 @@ namespace FoxIDs.Logic
             }
             return null;
         }
+
+        private static bool IsContentElement(DynamicElementTypes type) =>
+            type == DynamicElementTypes.Text ||
+            type == DynamicElementTypes.Html ||
+            type == DynamicElementTypes.LargeText ||
+            type == DynamicElementTypes.LargeHtml;
+
+        private static string NormalizeCheckboxValue(string value)
+        {
+            if (string.Equals(value, bool.TrueString, StringComparison.OrdinalIgnoreCase) || string.Equals(value, "1", StringComparison.OrdinalIgnoreCase))
+            {
+                return bool.TrueString.ToLowerInvariant();
+            }
+
+            return bool.FalseString.ToLowerInvariant();
+        }
+
+        private static bool IsCheckboxChecked(string value) => string.Equals(NormalizeCheckboxValue(value), bool.TrueString.ToLowerInvariant(), StringComparison.Ordinal);
     }
 }

@@ -36,6 +36,7 @@ namespace FoxIDs.Logic.Seed
                 {
                     await SeedLogAsync(cancellationToken);
                     await SeedDbAsync(canSeedMaster, cancellationToken);
+                    await SeedDataProtectionKeysAsync(cancellationToken);
                     return;
                 }
                 catch (OperationCanceledException)
@@ -154,6 +155,12 @@ namespace FoxIDs.Logic.Seed
             {
                 throw new Exception("Error seeding master documents on startup.", maex);
             }
+        }
+
+        private async Task SeedDataProtectionKeysAsync(CancellationToken cancellationToken)
+        {
+            var dataProtectionSeedLogic = serviceProvider.GetService<DataProtectionSeedLogic>();
+            await dataProtectionSeedLogic.EnsureKeysAsync(cancellationToken);
         }
     }
 }

@@ -196,7 +196,7 @@ Download [OpenSearch](https://docs.opensearch.org/docs/latest/install-and-config
 16. Set **Startup type:** to `Automatic` and click **OK**
 17. Run `opensearch-service.bat start` to start the OpenSearch Windows Service
 
-OpenSearch is default started with a self-signed certificate. You can configure a domain and a certificate but, in this guide, the self-signed certificate is retained and FoxIDs is configured to accept the certificate.
+OpenSearch is default started with a self-signed certificate. You can configure a domain and a certificate, but in this guide, the self-signed certificate is retained and FoxIDs is configured to accept the certificate.
 
 Configure OpenSearch in both the FoxIDs site and the FoxIDs Control site in the `appsettings.json` files, located in e.g. `C:\inetpub\FoxIDs\appsettings.json` and `C:\inetpub\FoxIDs.Control\appsettings.json`
 

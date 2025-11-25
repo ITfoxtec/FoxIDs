@@ -11,11 +11,8 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public TrackLargeResourceViewModel(TrackLargeResourceItem resource)
         {
-            Id = resource.Id;
             Name = resource.Name;
         }
-
-        public string Id { get; set; }
 
         public string Name { get; set; }
 

@@ -171,6 +171,7 @@ namespace FoxIDs.Client.Pages
 
         private void ShowCreateSecondaryCertificate(GeneralTrackCertificateViewModel generalCertificate)
         {
+            generalCertificate.ResetCertificateSelection(resetSource: true);
             generalCertificate.CreateMode = true;
             generalCertificate.DeleteAcknowledge = false;
             generalCertificate.ShowAdvanced = false;
@@ -180,6 +181,7 @@ namespace FoxIDs.Client.Pages
 
         private void ShowUpdateCertificate(GeneralTrackCertificateViewModel generalCertificate)
         {
+            generalCertificate.ResetCertificateSelection(resetSource: true);
             generalCertificate.CreateMode = false;
             generalCertificate.DeleteAcknowledge = false;
             generalCertificate.ShowAdvanced = false;
@@ -205,33 +207,90 @@ namespace FoxIDs.Client.Pages
 
         private void CertificateCancel(GeneralTrackCertificateViewModel generalCertificate)
         {
+            generalCertificate.ResetCertificateSelection(resetSource: true);
             generalCertificate.Edit = false;
         }
 
-        private async Task OnCertificateFileSelectedAsync(GeneralTrackCertificateViewModel generalCertificate, InputFileChangeEventArgs e)
+        private void OnCertificateSourceChanged(GeneralTrackCertificateViewModel generalCertificate, string source)
+        {
+            generalCertificate.CertificateSource = source == GeneralTrackCertificateViewModel.CertificateSourcePem ? GeneralTrackCertificateViewModel.CertificateSourcePem : GeneralTrackCertificateViewModel.CertificateSourcePfx;
+            generalCertificate.ResetCertificateSelection();
+            generalCertificate.Form?.ClearFieldError(nameof(generalCertificate.Form.Model.Key));
+            if (generalCertificate.Form?.Model != null)
+            {
+                generalCertificate.Form.Model.Password = null;
+            }
+            ClearCertificateFormFields(generalCertificate);
+        }
+
+        private void ClearCertificateFormFields(GeneralTrackCertificateViewModel generalCertificate)
+        {
+            if (generalCertificate?.Form?.Model == null)
+            {
+                return;
+            }
+
+            generalCertificate.Form.Model.Subject = null;
+            generalCertificate.Form.Model.ValidFrom = default;
+            generalCertificate.Form.Model.ValidTo = default;
+            generalCertificate.Form.Model.IsValid = false;
+            generalCertificate.Form.Model.Thumbprint = null;
+            generalCertificate.Form.Model.Key = null;
+            generalCertificate.Form.Model.KeyId = null;
+            generalCertificate.Form.Model.CertificateBase64 = null;
+        }
+
+        private async Task OnPfxSelectedAsync(GeneralTrackCertificateViewModel generalCertificate, InputFileChangeEventArgs e)
         {
             try
             {
                 generalCertificate.Form.ClearFieldError(nameof(generalCertificate.Form.Model.Key));
-                if (e.File.Size > GeneralTrackCertificateViewModel.CertificateMaxFileSize)
+                generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
+                generalCertificate.PfxBytes = null;
+
+                var file = e.File;
+                if (file == null)
+                {
+                    return;
+                }
+
+                if (file.Size > GeneralTrackCertificateViewModel.CertificateMaxFileSize)
                 {
                     generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), $"That's too big. Max size: {GeneralTrackCertificateViewModel.CertificateMaxFileSize} bytes.");
                     return;
                 }
 
                 generalCertificate.CertificateFileStatus = "Loading...";
+                using var memoryStream = new MemoryStream();
+                using var fileStream = file.OpenReadStream();
+                await fileStream.CopyToAsync(memoryStream);
+                generalCertificate.PfxBytes = memoryStream.ToArray();
+                generalCertificate.CertificateFileStatus = file.Name;
+                generalCertificate.Form.Model.Key = null;
+                generalCertificate.Form.Model.CertificateBase64 = null;
+                ClearCertificateFormFields(generalCertificate);
+            }
+            catch (Exception ex)
+            {
+                generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
+                generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), ex.Message);
+            }
+        }
 
-                byte[] certificateBytes;
-                using (var memoryStream = new MemoryStream())
+        private async Task ConvertPfxToJwkAsync(GeneralTrackCertificateViewModel generalCertificate)
+        {
+            try
+            {
+                generalCertificate.Form.ClearFieldError(nameof(generalCertificate.Form.Model.Key));
+                if (generalCertificate.PfxBytes == null)
                 {
-                    using var fileStream = e.File.OpenReadStream();
-                    await fileStream.CopyToAsync(memoryStream);
-                    certificateBytes = memoryStream.ToArray();
+                    generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), "Select a PFX file first.");
+                    return;
                 }
 
-                var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(certificateBytes);
+                var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(generalCertificate.PfxBytes);
                 var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate, Password = generalCertificate.Form.Model.Password });
-                    
+
                 if (!jwkWithCertificateInfo.HasPrivateKey())
                 {
                     generalCertificate.Form.Model.Subject = null;
@@ -241,18 +300,7 @@ namespace FoxIDs.Client.Pages
                     return;
                 }
 
-                generalCertificate.Form.Model.Subject = jwkWithCertificateInfo.CertificateInfo.Subject;
-                generalCertificate.Form.Model.ValidFrom = jwkWithCertificateInfo.CertificateInfo.ValidFrom;
-                generalCertificate.Form.Model.ValidTo = jwkWithCertificateInfo.CertificateInfo.ValidTo;
-                generalCertificate.Form.Model.IsValid = jwkWithCertificateInfo.CertificateInfo.IsValid();
-                generalCertificate.Form.Model.Thumbprint = jwkWithCertificateInfo.CertificateInfo.Thumbprint;
-                generalCertificate.Form.Model.Key = jwkWithCertificateInfo;
-                generalCertificate.Form.Model.CertificateBase64 = jwkWithCertificateInfo.X5c?.FirstOrDefault();
-                generalCertificate.CertificateBase64 = generalCertificate.Form.Model.CertificateBase64;
-                generalCertificate.Key = jwkWithCertificateInfo;
-                generalCertificate.KeyId = jwkWithCertificateInfo.Kid;
-
-                generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
+                ApplyCertificateReadResult(generalCertificate, jwkWithCertificateInfo);
             }
             catch (TokenUnavailableException)
             {
@@ -260,14 +308,108 @@ namespace FoxIDs.Client.Pages
             }
             catch (HttpRequestException ex)
             {
-                generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
                 generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), ex.Message);
             }
             catch (FoxIDsApiException aex)
             {
-                generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
                 generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), aex.Message);
             }
+        }
+
+        private async Task OnPemCrtSelectedAsync(GeneralTrackCertificateViewModel generalCertificate, InputFileChangeEventArgs e)
+        {
+            generalCertificate.Form.ClearFieldError(nameof(generalCertificate.Form.Model.Key));
+            generalCertificate.PemCertificateFileStatus = GeneralTrackCertificateViewModel.DefaultPemCertificateFileStatus;
+            generalCertificate.PemCrt = null;
+            var file = e.File;
+            if (file == null) return;
+
+            using var reader = new StreamReader(file.OpenReadStream());
+            generalCertificate.PemCrt = await reader.ReadToEndAsync();
+            generalCertificate.PemCertificateFileStatus = file.Name;
+            generalCertificate.Form.Model.Key = null;
+            generalCertificate.Form.Model.CertificateBase64 = null;
+            ClearCertificateFormFields(generalCertificate);
+        }
+
+        private async Task OnPemKeySelectedAsync(GeneralTrackCertificateViewModel generalCertificate, InputFileChangeEventArgs e)
+        {
+            generalCertificate.Form.ClearFieldError(nameof(generalCertificate.Form.Model.Key));
+            generalCertificate.PemKeyFileStatus = GeneralTrackCertificateViewModel.DefaultPemKeyFileStatus;
+            generalCertificate.PemKey = null;
+            var file = e.File;
+            if (file == null) return;
+
+            using var reader = new StreamReader(file.OpenReadStream());
+            generalCertificate.PemKey = await reader.ReadToEndAsync();
+            generalCertificate.PemKeyFileStatus = file.Name;
+            generalCertificate.Form.Model.Key = null;
+            generalCertificate.Form.Model.CertificateBase64 = null;
+            ClearCertificateFormFields(generalCertificate);
+        }
+
+        private async Task ConvertPemToJwkAsync(GeneralTrackCertificateViewModel generalCertificate)
+        {
+            try
+            {
+                generalCertificate.Form.ClearFieldError(nameof(generalCertificate.Form.Model.Key));
+                if (generalCertificate.PemCrt.IsNullOrWhiteSpace() || generalCertificate.PemKey.IsNullOrWhiteSpace())
+                {
+                    generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), "Select both .crt and .key files.");
+                    return;
+                }
+
+                var jwkWithCertificateInfo = await HelpersService.ReadCertificateFromPemAsync(new CertificateCrtAndKey { CertificatePemCrt = generalCertificate.PemCrt, CertificatePemKey = generalCertificate.PemKey });
+                if (!jwkWithCertificateInfo.HasPrivateKey())
+                {
+                    generalCertificate.Form.Model.Subject = null;
+                    generalCertificate.Form.Model.Key = null;
+                    generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), "Private key is required in the PEM key file.");
+                    return;
+                }
+
+                ApplyCertificateReadResult(generalCertificate, jwkWithCertificateInfo);
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), ex.Message);
+            }
+            catch (FoxIDsApiException aex)
+            {
+                generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), aex.Message);
+            }
+        }
+
+        private void ApplyCertificateReadResult(GeneralTrackCertificateViewModel generalCertificate, JwkWithCertificateInfo jwkWithCertificateInfo)
+        {
+            generalCertificate.Form.Model.Subject = jwkWithCertificateInfo.CertificateInfo.Subject;
+            generalCertificate.Form.Model.ValidFrom = jwkWithCertificateInfo.CertificateInfo.ValidFrom;
+            generalCertificate.Form.Model.ValidTo = jwkWithCertificateInfo.CertificateInfo.ValidTo;
+            generalCertificate.Form.Model.IsValid = jwkWithCertificateInfo.CertificateInfo.IsValid();
+            generalCertificate.Form.Model.Thumbprint = jwkWithCertificateInfo.CertificateInfo.Thumbprint;
+            generalCertificate.Form.Model.Key = jwkWithCertificateInfo;
+            generalCertificate.Form.Model.CertificateBase64 = jwkWithCertificateInfo.X5c?.FirstOrDefault();
+
+            generalCertificate.Subject = generalCertificate.Form.Model.Subject;
+            generalCertificate.ValidFrom = generalCertificate.Form.Model.ValidFrom;
+            generalCertificate.ValidTo = generalCertificate.Form.Model.ValidTo;
+            generalCertificate.IsValid = generalCertificate.Form.Model.IsValid;
+            generalCertificate.Thumbprint = generalCertificate.Form.Model.Thumbprint;
+            generalCertificate.CertificateBase64 = generalCertificate.Form.Model.CertificateBase64;
+            generalCertificate.Key = jwkWithCertificateInfo;
+            generalCertificate.KeyId = jwkWithCertificateInfo.Kid;
+
+            generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
+            generalCertificate.PemCertificateFileStatus = GeneralTrackCertificateViewModel.DefaultPemCertificateFileStatus;
+            generalCertificate.PemKeyFileStatus = GeneralTrackCertificateViewModel.DefaultPemKeyFileStatus;
+            generalCertificate.PfxBytes = null;
+            generalCertificate.PemCrt = null;
+            generalCertificate.PemKey = null;
+            generalCertificate.ResetInputKeys();
         }
 
         private async Task CreateSelfSignedCertificateAsync(GeneralTrackCertificateViewModel generalCertificate)
@@ -297,6 +439,7 @@ namespace FoxIDs.Client.Pages
                     generalCertificate.Form.Model.Key = keyResponse;
                     generalCertificate.Form.Model.KeyId = keyResponse.Kid;
                 }
+                generalCertificate.ResetCertificateSelection(resetSource: true);
                 generalCertificate.CreateMode = false;
                 generalCertificate.Edit = false;
             }
@@ -370,6 +513,7 @@ namespace FoxIDs.Client.Pages
                     generalCertificate.Form.Model.Key = null;
                     generalCertificate.Form.Model.KeyId = null;
                 }
+                generalCertificate.ResetCertificateSelection(resetSource: true);
             }
             catch (TokenUnavailableException)
             {

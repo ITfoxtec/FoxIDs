@@ -1,8 +1,9 @@
-﻿using FoxIDs.Models;
+using FoxIDs.Models;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Net;
 
 namespace FoxIDs.UnitTests.MockHelpers
 {
@@ -26,6 +27,8 @@ namespace FoxIDs.UnitTests.MockHelpers
             mockHttpRequest.Setup(r => r.Scheme).Returns("https");
             mockHttpRequest.Setup(r => r.Host).Returns(new HostString("foxidstest.test"));
             mockHttpRequest.Setup(r => r.Path).Returns(new PathString("/sometenant/sometrack/(login)/login/CreateUser/_CfDJ8JOhOhitapNOk0YwRh-azW-uLvIVSVeabekwNFrDKn836MraokC1PKD-7HatR09hT5CwAjOV7L5QkNyBP11yExMbePpBDAg8ohpk7TxflZ-EOV7Ib6T4rRwYqzORMrNF9zty3y0wsgmgSYP9njaPvMpfA3W3sKZIWq5S_IKdbKNs"));
+            var requestHeaders = new HeaderDictionary { ["User-Agent"] = "unit-test-agent" };
+            mockHttpRequest.Setup(r => r.Headers).Returns(requestHeaders);
 
             var mockRequestCookieCollection = new Mock<IRequestCookieCollection>();
             mockHttpRequest.Setup(r => r.Cookies).Returns(mockRequestCookieCollection.Object);
@@ -37,6 +40,10 @@ namespace FoxIDs.UnitTests.MockHelpers
             var mockResponseCookies = new Mock<IResponseCookies>();
             mockHttpResponse.Setup(r => r.Cookies).Returns(mockResponseCookies.Object);
             mockResponseCookies.Setup(rc => rc.Append(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CookieOptions>())).Callback((string key, string value, CookieOptions options) => cookies[key] = value);
+
+            var mockConnectionInfo = new Mock<ConnectionInfo>();
+            mockConnectionInfo.Setup(c => c.RemoteIpAddress).Returns(IPAddress.Parse("127.0.0.1"));
+            mockHttpContext.Setup(c => c.Connection).Returns(mockConnectionInfo.Object);
 
             var mockIServiceProvider = new Mock<IServiceProvider>();
             mockHttpContext.Setup(c => c.RequestServices).Returns(mockIServiceProvider.Object);

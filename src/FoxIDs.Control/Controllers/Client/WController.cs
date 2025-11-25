@@ -1,18 +1,20 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using System.Reflection;
+﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure.Filters;
+using FoxIDs.Infrastructure.Hosting;
+using FoxIDs.Models;
+using FoxIDs.Models.Config;
+using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Diagnostics;
-using System;
-using FoxIDs.Repository;
-using FoxIDs.Models;
-using FoxIDs.Infrastructure;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using FoxIDs.Models.Config;
-using FoxIDs.Infrastructure.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Reflection;
 
 namespace FoxIDs.Controllers.Client
 {
+    [FoxIDsControlHttpSecurityHeaders]
     public class WController : Controller
     {
         private static string indexFile;

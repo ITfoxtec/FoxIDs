@@ -1,6 +1,6 @@
 @inherits FInputBase<string>
 
-<div class="form-group active-group">
+<div class="form-group active-group @Class">
     <textarea @ref="inputElement" @bind="@CurrentValue" class="form-control input-control" @attributes="AdditionalAttributes"></textarea>
     <Label For="@For" LabelText="@LabelText" class="label-control" />
     <ValidationMessage For="@For" />
@@ -9,4 +9,7 @@
 @code {
     [Parameter]
     public string LabelText { get; set; }
+
+    [Parameter]
+    public string Class { get; set; }
 }

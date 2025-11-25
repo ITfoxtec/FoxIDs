@@ -257,6 +257,7 @@ namespace FoxIDs
             public const string CosmosPartitionKeyPath = "/partition_id";
 
             public const int DefaultNameLength = 8;
+            public const int DefaultLongNameLength = 20;
             public const int DefaultNameMaxAttempts = 3;
 
             public const int MasterPartitionIdLength = 30;
@@ -282,6 +283,7 @@ namespace FoxIDs
                 public const string ExternalUser = "extu";
                 public const string AuthCodeTtlGrant = "acgrant";
                 public const string RefreshTokenGrant = "rtgrant";
+                public const string ActiveSession = "atses";
                 public const string SamlUpPartyIdPInitiatedTtlGrant = "idpigrant";
                 public const string RiskPassword = "prisk";
                 public const string Plan = "plan";
@@ -470,10 +472,11 @@ namespace FoxIDs
 
                 public static class LargeResource
                 {
-                    public const int IdLength = 200;
+                    public const int IdLength = 150;
                     public const string IdRegExPattern = @"^[\w:\-]*$";
-                    public const int UniqueIdLength = 40;
-                    public const string UniqueIdRegExPattern = @"^[a-z0-9]*$";
+                    public const int NameMinLength = 10;
+                    public const int NameMaxLength = 40;
+                    public const string NameRegExPattern = @"^[\w\-]*$";
                     public const int ValueLength = 40000;
                 }
             }
@@ -587,6 +590,22 @@ namespace FoxIDs
                 public const int ConfirmationCodeEmailLength = 8;
                 public const int ConfirmationCodeSmsLength = 5;
                 public const int TwoFactorAppCodeLength = 50;
+            }
+
+            public static class Session
+            {
+                public const int IdLength = 170;
+                public const string IdRegExPattern = @"^[\w:\-_]*$";
+                public const int SessionIdHashLength = 50;
+                public const int AdditionalLifetimeMax = 300; // 5 minutes
+                public const int GroupsMin = 0;
+                public const int GroupsMax = 100;
+                public const int LinksMin = 0;
+                public const int LinksMax = 50;
+
+                public const int sessionShortLongThreshold = 86400; // 24 hours
+                public const string ShortSessionPostKey = "_s"; // Used for short lived sessions max 24 hours
+                public const string LongSessionPostKey = "_l"; // Used for long lived sessions more than 24 hours
             }
 
             public static class FailingLoginLock
@@ -1166,6 +1185,7 @@ namespace FoxIDs
             /// </summary>
             public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken.ConcatOnce(
                 [
+                    FoxI.JwtClaimTypes.SessionId, 
                     JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthProfileMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, 
                     JwtClaimTypes.AuthMethodIssuer, JwtClaimTypes.SubFormat, FoxI.JwtClaimTypes.Actor, JwtClaimTypes.LocalSub
                 ]).ToArray();

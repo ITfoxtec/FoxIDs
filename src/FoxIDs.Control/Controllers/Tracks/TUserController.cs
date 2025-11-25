@@ -27,9 +27,10 @@ namespace FoxIDs.Controllers
         private readonly PlanCacheLogic planCacheLogic;
         private readonly BaseAccountLogic accountLogic;
         private readonly OAuthRefreshTokenGrantDownBaseLogic oAuthRefreshTokenGrantDownBaseLogic;
+        private readonly ActiveSessionLogic activeSessionLogic;
         private readonly TenantApiLockLogic tenantApiLockLogic;
 
-        public TUserController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, BaseAccountLogic accountLogic, OAuthRefreshTokenGrantDownBaseLogic oAuthRefreshTokenGrantDownBaseLogic, TenantApiLockLogic tenantApiLockLogic) : base(logger)
+        public TUserController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, BaseAccountLogic accountLogic, OAuthRefreshTokenGrantDownBaseLogic oAuthRefreshTokenGrantDownBaseLogic, ActiveSessionLogic activeSessionLogic, TenantApiLockLogic tenantApiLockLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -38,6 +39,7 @@ namespace FoxIDs.Controllers
             this.planCacheLogic = planCacheLogic;
             this.accountLogic = accountLogic;
             this.oAuthRefreshTokenGrantDownBaseLogic = oAuthRefreshTokenGrantDownBaseLogic;
+            this.activeSessionLogic = activeSessionLogic;
             this.tenantApiLockLogic = tenantApiLockLogic;
         }
 
@@ -189,6 +191,7 @@ namespace FoxIDs.Controllers
                 if (!mUser.DisableAccount && user.DisableAccount)
                 {
                     await oAuthRefreshTokenGrantDownBaseLogic.DeleteRefreshTokenGrantsAsync(user.Email ?? user.Phone ?? user.Username, upPartyType: PartyTypes.Login);
+                    await activeSessionLogic.DeleteSessionsAsync(user.Email ?? user.Phone ?? user.Username, upPartyType: PartyTypes.Login);
                 }
 
                 if (user.UpdateEmail != null)
@@ -328,6 +331,8 @@ namespace FoxIDs.Controllers
                 await tenantDataRepository.DeleteAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = email, UserIdentifier = phone ?? username }), queryAdditionalIds: true);
 
                 await oAuthRefreshTokenGrantDownBaseLogic.DeleteRefreshTokenGrantsAsync(email ?? phone ?? username, upPartyType: PartyTypes.Login);
+                await activeSessionLogic.DeleteSessionsAsync(email ?? phone ?? username, upPartyType: PartyTypes.Login);
+
 
                 return NoContent();
             }

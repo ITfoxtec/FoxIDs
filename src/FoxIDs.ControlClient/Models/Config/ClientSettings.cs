@@ -1,7 +1,7 @@
-﻿using FoxIDs.Models.Api;
-
-namespace FoxIDs.Client.Models.Config
+﻿namespace FoxIDs.Client.Models.Config
 {
+    using FoxIDs.Models.Api;
+
     public class ClientSettings
     {
         public string FoxIDsEndpoint { get; set; }
@@ -20,5 +20,6 @@ namespace FoxIDs.Client.Models.Config
         public bool EnablePayment { get; set; }
         public bool PaymentTestMode { get; set; }
         public string MollieProfileId { get; set; }
+        public SettingsAddress SettingsAddress { get; set; }
     }
 }

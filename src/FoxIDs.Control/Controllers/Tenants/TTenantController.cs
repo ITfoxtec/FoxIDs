@@ -141,14 +141,7 @@ namespace FoxIDs.Controllers
                     await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(tenant.Name);
                     await masterTenantLogic.CreateMasterControlClientDocumentAsync(tenant.Name, tenant.ControlClientBaseUri, mLoginUpParty);
 
-                    if (tenant.ChangeAdministratorPassword)
-                    {
-                        await masterTenantLogic.CreateDefaultTracksDocmentsAsync(tenant.Name);
-                    }
-                    else
-                    {
-                        await masterTenantLogic.CreateDefaultTracksDocmentsAsync(tenant.Name, tenant.AdministratorEmail, administratorPassword);
-                    }
+                    await masterTenantLogic.CreateDefaultTracksDocmentsAsync(tenant.Name);
                 }
                 return Created(mapper.Map<Api.TenantResponse>(mTenant));
             }

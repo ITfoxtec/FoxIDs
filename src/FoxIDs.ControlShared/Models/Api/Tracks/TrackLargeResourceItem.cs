@@ -6,15 +6,15 @@ namespace FoxIDs.Models.Api
 {
     public class TrackLargeResourceItem : INameValue
     {
-        [MaxLength(Constants.Models.Resource.LargeResource.IdLength)]
-        public string Id { get; set; }
-
         [Required]
-        [MaxLength(Constants.Models.Resource.NameLength)]
-        [Display(Name = "Text look up key (en)")]
+        [MinLength(Constants.Models.Resource.LargeResource.NameMinLength)]
+        [MaxLength(Constants.Models.Resource.LargeResource.NameMaxLength)]
+        [Display(Name = "Unique look up name")]
         public string Name { get; set; }
 
+        [ValidateComplexType]
         [ListLength(Constants.Models.Resource.ResourcesMin, Constants.Models.Resource.ResourcesMax)]
+        [Display(Name = "Texts")]
         public List<TrackLargeResourceCultureItem> Items { get; set; }
     }
 }

@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using FoxIDs.Infrastructure;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using FoxIDs.Infrastructure;
 
 namespace FoxIDs.Client.Infrastructure
 {
@@ -17,7 +19,14 @@ namespace FoxIDs.Client.Infrastructure
             {
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    throw new FoxIDsApiException("Unauthorized", response.StatusCode, await GetResponseTextAsync(response), GetHeaders(response));
+                    try
+                    {
+                        throw new FoxIDsApiException("Unauthorized", response.StatusCode, await GetResponseTextAsync(response), GetHeaders(response));
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new TokenUnavailableException(ex.Message, ex);
+                    }                
                 }
                 else if (response.StatusCode == HttpStatusCode.Forbidden)
                 {

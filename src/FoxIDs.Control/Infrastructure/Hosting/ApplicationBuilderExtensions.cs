@@ -1,16 +1,20 @@
-﻿using ITfoxtec.Identity.Util;
+﻿using FoxIDs.Infrastructure.Filters;
+using FoxIDs.Models.Config;
+using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.OpenApi.Models;
-using System.Collections.Generic;
-using System;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 using Microsoft.OpenApi.Writers;
-using System.Text;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -26,8 +30,10 @@ namespace FoxIDs.Infrastructure.Hosting
                     var httpClientFactory = context.RequestServices.GetService<IHttpClientFactory>();
                     var httpClient = httpClientFactory.CreateClient();
 
-                    var response = await httpClient.GetAsync($"{context.Request.Scheme}://{context.Request.Host.ToUriComponent()}/api/swagger/{Constants.ControlApi.Version}/swagger.json");
-                    var result = await response.Content.ReadAsStringAsync();
+                    var response = await httpClient.GetAsync($"{context.Request.Scheme}://{context.Request.Host.ToUriComponent()}/api/swagger/{Constants.ControlApi.Version}/swagger.json", HttpCompletionOption.ResponseHeadersRead);
+                    await using var responseStream = await response.Content.ReadAsStreamAsync();
+                    using var streamReader = new StreamReader(responseStream);
+                    var result = await streamReader.ReadToEndAsync();
 
                     // Replace to support Swagger V1
                     result = result.Replace("{tenant_name}/{track_name}", "[tenant_name]/[track_name]");
@@ -55,6 +61,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
                     context.Response.StatusCode = (int)response.StatusCode;
                     context.Response.ContentType = response.Content.Headers.ContentType?.ToString() ?? "text/html";
+                    ApplySwaggerSecurityHeaders(context);
 
                     await context.Response.WriteAsync(stringBuilder.ToString());
                 }
@@ -62,6 +69,22 @@ namespace FoxIDs.Infrastructure.Hosting
                 {
                     await next();
                 }
+            });
+
+            builder.Use(async (context, next) =>
+            {
+                var applySecurityHeaders = context.Request.Path.StartsWithSegments("/api/swagger", StringComparison.OrdinalIgnoreCase);
+
+                if (applySecurityHeaders)
+                {
+                    context.Response.OnStarting(() =>
+                    {
+                        ApplySwaggerSecurityHeaders(context);
+                        return Task.CompletedTask;
+                    });
+                }
+
+                await next();
             });
 
             builder.Use((context, next) =>
@@ -102,10 +125,22 @@ namespace FoxIDs.Infrastructure.Hosting
         public static IApplicationBuilder UseApiRouteBindingMiddleware(this IApplicationBuilder app)
         {
             return app.UseMiddleware<FoxIDsApiRouteBindingMiddleware>();
-        } 
+        }
+        
         public static IApplicationBuilder UseApiExceptionMiddleware(this IApplicationBuilder app)
         {
             return app.UseMiddleware<FoxIDsApiExceptionMiddleware>();
+        }
+        
+        private static void ApplySwaggerSecurityHeaders(HttpContext context)
+        {
+            var settings = context.RequestServices.GetRequiredService<FoxIDsControlSettings>();
+            var environment = context.RequestServices.GetRequiredService<IWebHostEnvironment>();
+            var securityHeaders = new FoxIDsControlHttpSecurityHeadersAttribute.FoxIDsControlHttpSecurityHeadersActionAttribute(settings, environment);
+
+            var contentType = context.Response.ContentType;
+            var isHtml = !string.IsNullOrEmpty(contentType) && contentType.Contains("text/html", StringComparison.OrdinalIgnoreCase);
+            securityHeaders.ApplyFromMiddleware(context, isHtml);
         }
     }
 }

@@ -1,0 +1,166 @@
+@page "/{tenantName}/activesessions"
+@inherits PageBase
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="@internalUsersHref">Internal Users</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@externalUsersHref">External Users</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@failingLoginsHref">Failing Login Lockout</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@refreshTokenGrantsHref">Refresh Token Grants</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active">Active Sessions</a>
+    </li>
+</ul>
+
+<div class="d-flex pt-2">
+    <div class="info-text mr-auto">
+        Active sessions in this environment. Only sessions with a lifetime of up to 24 hours are captured.
+    </div>
+</div>
+
+<PageEditForm @ref="activeSessionFilterForm" TModel="FilterActiveSessionViewModel" OnValidSubmit="OnActiveSessionsFilterValidSubmitAsync">
+    <FInputText @bind-Value="activeSessionFilterForm.Model.FilterUserIdentifier" For="@(() => activeSessionFilterForm.Model.FilterUserIdentifier)" />
+    <div class="row">
+        <div class="col-6">
+            <FInputText @bind-Value="activeSessionFilterForm.Model.FilterUpParty" For="@(() => activeSessionFilterForm.Model.FilterUpParty)" />
+        </div>
+        <div class="col-6">
+            <FInputText @bind-Value="activeSessionFilterForm.Model.FilterDownParty" For="@(() => activeSessionFilterForm.Model.FilterDownParty)" />
+        </div>
+    </div>
+    <FInputTextFilter @bind-Value="activeSessionFilterForm.Model.FilterSessionId" For="@(() => activeSessionFilterForm.Model.FilterSessionId)" />
+</PageEditForm>
+
+@if (activeSessions.Count() > 0)
+{
+    <div class="active-group active">
+        <div class="card">
+            <div class="card-body">
+                @if (!deleteActiveSessionError.IsNullOrWhiteSpace())
+                {
+                    <div class="alert alert-danger mt-2" role="alert">
+                        @deleteActiveSessionError
+                    </div>
+                }
+                <div class="d-flex">
+                    <div class="align-self-center info-text mr-auto">
+                        @if (deleteActiveSessionFilter == null)
+                        {
+                            <span>Specify at least one search parameter if you want to delete active sessions.</span>
+                        }
+                        else
+                        {
+                            <span>Delete @String.Join(' ', GetDeleteText()).</span>
+                        }
+                    </div>
+                    <div class="py-2">
+                        @if (deleteActiveSessionFilter == null)
+                        {
+                            <button type="button" class="btn btn-secondary" disabled="disabled">Delete sessions</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-secondary" @onclick="DeleteActiveSessionsAsync">Delete sessions</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <label class="label-control">Delete active sessions</label>
+    </div>
+}
+
+<ul class="list-group">
+    @if (activeSessions.Count() > 0)
+    {
+        @foreach (var activeSession in activeSessions)
+        {
+            <li class="list-group-item @(activeSession.Details != null ? "active" : string.Empty)">
+                @if (!activeSession.Error.IsNullOrWhiteSpace())
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @activeSession.Error
+                    </div>
+                }
+
+                @if (activeSession.Details != null)
+                {
+                    <div class="modal-header sticky-header">
+                        <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
+                            <span class="text-nowrap first-header">Active Session</span>
+                            <span class="ml-2 text-muted text-truncate second-header">@GetInfoText(activeSession)</span>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <FFieldText @bind-Value="activeSession.Details.CreatedAtText" For="@(() => activeSession.Details.CreatedAtText)" />
+                        <FFieldText @bind-Value="activeSession.Details.ExpireAtText" For="@(() => activeSession.Details.ExpireAtText)" />
+                        <div class="active-group active">
+                            <div class="card">
+                                <div class="card-body">
+                                    <FFieldText @bind-Value="activeSession.Details.Email" For="@(() => activeSession.Details.Email)" />
+                                    <FFieldText @bind-Value="activeSession.Details.Phone" For="@(() => activeSession.Details.Phone)" />
+                                    <FFieldText @bind-Value="activeSession.Details.Username" For="@(() => activeSession.Details.Username)" />
+                                </div>
+                            </div>
+                            <label class="label-control">User identifiers</label>
+                        </div>
+                        <FFieldText @bind-Value="activeSession.Details.Sub" For="@(() => activeSession.Details.Sub)" />
+                        <FFieldText @bind-Value="activeSession.Details.SessionId" For="@(() => activeSession.Details.SessionId)" />
+                        @if (!activeSession.Details.UpPartyLinksDisplay.IsNullOrWhiteSpace())
+                        {
+                            <FFieldText @bind-Value="activeSession.Details.UpPartyLinksDisplay" For="@(() => activeSession.Details.UpPartyLinksDisplay)" />
+                        }
+                        @if (!activeSession.Details.DownPartyLinksDisplay.IsNullOrWhiteSpace())
+                        {
+                            <FFieldText @bind-Value="activeSession.Details.DownPartyLinksDisplay" For="@(() => activeSession.Details.DownPartyLinksDisplay)" />
+                        }
+                        @if (!activeSession.Details.ClientIp.IsNullOrWhiteSpace())
+                        {
+                            <FFieldText @bind-Value="activeSession.Details.ClientIp" For="@(() => activeSession.Details.ClientIp)" />
+                        }
+                        @if (!activeSession.Details.UserAgent.IsNullOrWhiteSpace())
+                        {
+                            <FFieldText @bind-Value="activeSession.Details.UserAgent" For="@(() => activeSession.Details.UserAgent)" />
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => activeSession.Details = null)">Close</button>
+                    </div>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link" @onclick="@(async () => await ShowDetailsActiveSessionAsync(activeSession))">
+                        <span>User: @GetInfoText(activeSession)</span>
+                        <br />
+                        <span>Session ID: @activeSession.SessionId</span>
+                        <br />
+                        <span>Created at: @activeSession.CreatedAtText</span>
+                        <br />
+                        <span>Expire at: @activeSession.ExpireAtText</span>
+                    </button>
+                }
+            </li>
+        }
+    }
+    else
+    {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="font-italic pl-1">No active sessions</div>
+        </li>
+    }
+</ul>
+@if (paginationToken != null)
+{
+    <div class="pl-3 pt-3">
+        <button type="button" class="btn btn-secondary" @onclick="LoadMoreSessionsAsync">
+            Load more
+        </button>
+    </div>
+}

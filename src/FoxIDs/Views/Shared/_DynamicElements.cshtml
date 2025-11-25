@@ -65,6 +65,12 @@
                 @Html.GetCustomControl($"InputElements[{i}].DField1", item.DField1, customDElement.DisplayName, customDElement.MaxLength, customDElement.RegEx, customDElement.ErrorMessage, item.Required)
             </div>
         }
+        else if (item is CheckboxDElement checkboxDElement)
+        {
+            <div class="form-group active-group @cssName">
+                @Html.GetCheckboxControl($"InputElements[{i}].DField1", checkboxDElement.DField1, checkboxDElement.DisplayName, item.Required)
+            </div>
+        }
         else if (item is ContentDElement contentDElement)
         {
             await Html.RenderPartialAsync("_DynamicContentElements", item);

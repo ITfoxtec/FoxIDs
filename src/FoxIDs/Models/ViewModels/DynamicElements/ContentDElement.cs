@@ -5,5 +5,7 @@
         public string DContent { get; set; }
 
         public bool IsHtml { get; set; }
+
+        public bool IsLarge { get; set; }
     }
 }

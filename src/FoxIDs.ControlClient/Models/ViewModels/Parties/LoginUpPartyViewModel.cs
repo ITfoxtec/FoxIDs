@@ -88,10 +88,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Create new users")]
         public bool EnableCreateUser { get; set; }
 
-        [Display(Name = "Users can set / reset password (SMS confirmation)")]
+        [Display(Name = "Users can set / reset password with SMS confirmation")]
         public bool DisableSetPasswordSms { get; set; }
 
-        [Display(Name = "Users can set / reset password (email confirmation)")]
+        [Display(Name = "Users can set / reset password with email confirmation")]
         public bool DisableSetPasswordEmail { get; set; }
 
         /// <summary>
@@ -99,6 +99,12 @@ namespace FoxIDs.Client.Models.ViewModels
         /// </summary>
         [Display(Name = "Delete refresh tokens if a user change / set password")]
         public bool DeleteRefreshTokenGrantsOnChangePassword { get; set; }
+
+        /// <summary>
+        /// Default false.
+        /// </summary>
+        [Display(Name = "Delete user sessions if a user change / set password")]
+        public bool DeleteActiveSessionOnChangePassword { get; set; }
 
         /// <summary>
         /// Claim transforms.

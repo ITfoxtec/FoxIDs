@@ -227,12 +227,11 @@ namespace FoxIDs.Logic
 
             if (HttpContext.Request.HasFormContentType)
             {
-                var form = HttpContext.Request.Form;
-                if (form != null)
+                if (HttpContext.Request.Form != null)
                 {
                     foreach (var key in loginHintKeys)
                     {
-                        if (form.TryGetValue(key, out var values))
+                        if (HttpContext.Request.Form.TryGetValue(key, out var values))
                         {
                             var loginHintCandidate = values.FirstOrDefault(v => !v.IsNullOrWhiteSpace());
                             if (!loginHintCandidate.IsNullOrWhiteSpace())

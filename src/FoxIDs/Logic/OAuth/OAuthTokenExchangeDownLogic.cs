@@ -18,18 +18,16 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
-        private readonly PlanUsageLogic planUsageLogic;
-        private readonly OAuthJwtDownLogic<TClient, TScope, TClaim> oauthJwtDownLogic;
+        private readonly OAuthJwtDownLogic<TParty, TClient, TScope, TClaim> oauthJwtDownLogic;
         private readonly TrackIssuerLogic trackIssuerLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly ClaimValidationLogic claimValidationLogic;
         private readonly OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic;
 
-        public OAuthTokenExchangeDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, PlanUsageLogic planUsageLogic, OAuthJwtDownLogic<TClient, TScope, TClaim> oauthJwtDownLogic, TrackIssuerLogic trackIssuerLogic, ClaimTransformLogic claimTransformLogic, ClaimValidationLogic claimValidationLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthTokenExchangeDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, OAuthJwtDownLogic<TParty, TClient, TScope, TClaim> oauthJwtDownLogic, TrackIssuerLogic trackIssuerLogic, ClaimTransformLogic claimTransformLogic, ClaimValidationLogic claimValidationLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
-            this.planUsageLogic = planUsageLogic;
             this.oauthJwtDownLogic = oauthJwtDownLogic;
             this.trackIssuerLogic = trackIssuerLogic;
             this.claimTransformLogic = claimTransformLogic;
@@ -95,7 +93,7 @@ namespace FoxIDs.Logic
                 logger.SetUserScopeProperty(transformedClaims);
 
                 var scopes = tokenExchangeRequest.Scope.ToSpaceList();
-                tokenExchangeResponse.AccessToken = await oauthJwtDownLogic.CreateAccessTokenAsync(party.Client, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, transformedClaims, scopes, algorithm);
+                tokenExchangeResponse.AccessToken = await oauthJwtDownLogic.CreateAccessTokenAsync(party, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, transformedClaims, scopes, algorithm, saveActiveSession: true);
 
                 logger.ScopeTrace(() => $"Token response '{tokenExchangeResponse.ToJson()}'.", traceType: TraceTypes.Message);
                 logger.ScopeTrace(() => "AppReg, OAuth Token response.", triggerEvent: true);
@@ -202,10 +200,18 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, OAuth validate same environment token exchange subject token.");
 
-            var claimsPrincipal = await oauthJwtDownLogic.ValidateTokenAsync(party.UsePartyIssuer ? RouteBinding.RouteUrl : null, subjectToken, audience: party.Name);
-            if (claimsPrincipal == null)
+            ClaimsPrincipal claimsPrincipal;
+            try
             {
-                throw new OAuthRequestException($"Subject token not accepted in the same environment, perhaps due to incorrect audience. Client id (required audience) '{party.Client.ClientId}'") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
+                claimsPrincipal = await oauthJwtDownLogic.ValidateTokenAsync(party.UsePartyIssuer ? RouteBinding.RouteUrl : null, subjectToken, audience: party.Name);
+            }
+            catch (SessionException sex)
+            {
+                throw new OAuthRequestException($"The subject token session is missing or no longer valid. Client id (required audience) '{party.Client.ClientId}'.", sex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
+            }
+            catch (Exception ex)
+            {
+                throw new OAuthRequestException($"Subject token not accepted in the same environment, perhaps due to incorrect audience. Client id (required audience) '{party.Client.ClientId}'.", ex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
             }
 
             var claims = claimsPrincipal.Claims?.ToList();

@@ -20,7 +20,7 @@ namespace FoxIDs.Logic
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly UpPartyCookieRepository<SessionLoginUpPartyCookie> sessionCookieRepository;
 
-        public SessionLoginUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, UpPartyCookieRepository<SessionLoginUpPartyCookie> sessionCookieRepository, TrackCookieRepository<SessionTrackCookie> sessionTrackCookieRepository, IHttpContextAccessor httpContextAccessor) : base(settings, sessionTrackCookieRepository, httpContextAccessor)
+        public SessionLoginUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, UpPartyCookieRepository<SessionLoginUpPartyCookie> sessionCookieRepository, TrackCookieRepository<SessionTrackCookie> sessionTrackCookieRepository, ActiveSessionLogic activeSessionLogic, IHttpContextAccessor httpContextAccessor) : base(settings, sessionTrackCookieRepository, activeSessionLogic, httpContextAccessor)
         {
             this.logger = logger;
             this.tenantDataRepository = tenantDataRepository;
@@ -51,7 +51,7 @@ namespace FoxIDs.Logic
                 session.CreateTime = authTime;
                 session.LastUpdated = authTime;
                 SetLoginUserIdentifier(session, loginUserIdentifier);
-                await AddOrUpdateSessionTrackWithClaimsAsync(upParty, session.Claims);
+                await AddOrUpdateSessionTrackWithClaimsAsync(upParty, session.Claims, updateDbActiveSession: true);
                 await sessionCookieRepository.SaveAsync(upParty, session, GetPersistentCookieExpires(upParty, session.CreateTime));
                 logger.ScopeTrace(() => $"Session created, User id '{session.UserIdClaim}', Session id '{session.SessionIdClaim}'.", GetSessionScopeProperties(session));
             }
@@ -68,7 +68,7 @@ namespace FoxIDs.Logic
             var sessionEnabled = SessionEnabled(upParty);
             var sessionValid = SessionValid(session, upParty);
 
-            if (!session.IsMarkerSession && sessionEnabled && sessionValid)
+            if (!session.IsMarkerSession && sessionEnabled && sessionValid && await ActiveSessionExistsAsync(session.Claims))
             {
                 session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                 if (claims?.Count() > 0)
@@ -79,7 +79,7 @@ namespace FoxIDs.Logic
                 {
                     SetLoginUserIdentifier(session, loginUserIdentifier);
                 }
-                await AddOrUpdateSessionTrackWithClaimsAsync(upParty, session.Claims);
+                await AddOrUpdateSessionTrackWithClaimsAsync(upParty, session.Claims, updateDbActiveSession: false);
                 await sessionCookieRepository.SaveAsync(upParty, session, GetPersistentCookieExpires(upParty, session.CreateTime));
                 logger.ScopeTrace(() => $"Session updated, Session id '{session.SessionIdClaim}'.", GetSessionScopeProperties(session));
                 return true;
@@ -135,9 +135,10 @@ namespace FoxIDs.Logic
             {
                 var sessionEnabled = SessionEnabled(loginUpParty);
                 var sessionValid = SessionValid(session, loginUpParty);
+                var activeSessionExists = sessionValid && await ActiveSessionExistsAsync(session.Claims);
 
-                logger.ScopeTrace(() => $"User id '{session.UserIdClaim}' session exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionIdClaim}', Route '{RouteBinding.Route}'.");
-                if (sessionEnabled && sessionValid)
+                logger.ScopeTrace(() => $"User id '{session.UserIdClaim}' session exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Active '{activeSessionExists}', Session id '{session.SessionIdClaim}', Route '{RouteBinding.Route}'.");
+                if (sessionEnabled && sessionValid && activeSessionExists)
                 {
                     var email = session.Email;
                     if (session.Email.IsNullOrEmpty() && session.UserIdentifier.IsNullOrEmpty() && session.UserId.IsNullOrEmpty())

@@ -46,7 +46,7 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             services.AddScoped<ExternalUserService>();
             services.AddScoped<HelpersService>();
             services.AddScoped<HelpersNoAccessTokenService>();
-            
+
             services.AddScoped<PlanService>();
             services.AddScoped<SmsPriceService>();
             services.AddScoped<RiskPasswordService>();
@@ -81,13 +81,17 @@ namespace FoxIDs.Client.Infrastructure.Hosting
 
             services.AddBlazoredSessionStorage();
 
-            services.AddSingleton<OpenidConnectPkceSettings>();
+            services.AddSingleton(new OpenidConnectPkceSettings
+            {
+                SessionValidationIntervalSeconds = 900 // 15 minutes
+            });
             services.AddScoped<OpenidConnectPkce, TenantOpenidConnectPkce>();
             services.AddSingleton(sp => new OidcDiscoveryHandler(sp.GetService<IHttpClientFactory>()));
             services.AddScoped(sp => new OidcHelper(sp.GetService<IHttpClientFactory>(), sp.GetService<OidcDiscoveryHandler>()));
 
+            services.AddSingleton<OidcSessionValidationService>();
             services.AddScoped<AuthenticationStateProvider, OidcAuthenticationStateProvider>();
-            services.AddTransient<AccessTokenMessageHandler>();
+            services.AddScoped<AccessTokenMessageHandler>();
 
             services.AddOptions();
             services.AddAuthorizationCore();

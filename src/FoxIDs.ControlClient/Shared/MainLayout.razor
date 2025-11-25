@@ -178,7 +178,7 @@
                                 <TenantLiNavLink Href="authentication">
                                     Authentication
                                 </TenantLiNavLink>
-                                <TenantLiNavLink Href="internalusers" SubPages="externalusers,failingloginlocks,refreshtokengrants">
+                                <TenantLiNavLink Href="internalusers" SubPages="externalusers,failingloginlocks,refreshtokengrants,activesessions">
                                     Users
                                 </TenantLiNavLink>
                                 <TenantLiNavLink Href="certificates">
@@ -376,7 +376,16 @@
     </div>
 
     <footer class="footer-container">
-        <span class="footer-content">&copy; @DateTime.Now.Year FoxIDs<small title="@(ClientSettings.Version.IsNullOrEmpty() ? string.Empty : $"Version {ClientSettings.FullVersion}")">@(ClientSettings.Version.IsNullOrEmpty() ? string.Empty : $", version {ClientSettings.Version}")</small></span>
+        <span class="footer-content" role="button" @onclick="ToggleVersionDisplay" style="cursor: pointer;">&copy; @DateTime.Now.Year 
+            @if (ClientSettings.Version.IsNullOrEmpty())
+            {
+                <span> FoxIDs</span>
+            }
+            else
+            {
+                <span> FoxIDs<small class="footer-version">, version @(showFullVersion ? ClientSettings.FullVersion : ClientSettings.Version)</small></span>
+            }
+        </span>
     </footer>
 </div>
 

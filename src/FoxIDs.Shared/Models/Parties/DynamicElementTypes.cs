@@ -27,6 +27,13 @@ namespace FoxIDs.Models
         Text = 200,
         [EnumMember(Value = "html")]
         Html = 210,
+        [EnumMember(Value = "large_text")]
+        LargeText = 220,
+        [EnumMember(Value = "large_html")]
+        LargeHtml = 230,
+
+        [EnumMember(Value = "checkbox")]
+        Checkbox = 300,
 
         [EnumMember(Value = "custom")]
         Custom = 1000,

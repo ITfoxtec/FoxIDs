@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using ITfoxtec.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -24,5 +25,12 @@ namespace FoxIDs.Client.Models.ViewModels
         [MaxLength(Constants.Models.Party.NameLength)]
         [Display(Name = "Authentication method (technical name)")]
         public string FilterAuthMethod { get; set; }
+
+        /// <summary>
+        /// Search by session ID.
+        /// </summary>
+        [MaxLength(IdentityConstants.MessageLength.SessionIdMax)]
+        [Display(Name = "Session ID")]
+        public string FilterSessionId { get; set; }
     }
 }

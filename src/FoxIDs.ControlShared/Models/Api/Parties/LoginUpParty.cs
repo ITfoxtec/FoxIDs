@@ -78,6 +78,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Delete refresh tokens if a user change / set password")]
         public bool DeleteRefreshTokenGrantsOnChangePassword { get; set; }
 
+        [Display(Name = "Delete user sessions if a user change / set password")]
+        public bool DeleteActiveSessionOnChangePassword { get; set; }
+
         /// <summary>
         /// Default if required.
         /// </summary>

@@ -18,12 +18,14 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
+        private readonly OAuthRefreshTokenGrantDownBaseLogic oAuthRefreshTokenGrantDownBaseLogic;
         private readonly ActiveSessionLogic activeSessionLogic;
 
-        public TActiveSessionsController(TelemetryScopedLogger logger, IMapper mapper, ActiveSessionLogic activeSessionLogic) : base(logger)
+        public TActiveSessionsController(TelemetryScopedLogger logger, IMapper mapper, OAuthRefreshTokenGrantDownBaseLogic oAuthRefreshTokenGrantDownBaseLogic, ActiveSessionLogic activeSessionLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
+            this.oAuthRefreshTokenGrantDownBaseLogic = oAuthRefreshTokenGrantDownBaseLogic;
             this.activeSessionLogic = activeSessionLogic;
         }
 
@@ -88,6 +90,7 @@ namespace FoxIDs.Controllers
                 upPartyName = upPartyName?.Trim().ToLower();
                 sessionId = sessionId?.Trim();
 
+                await oAuthRefreshTokenGrantDownBaseLogic.DeleteRefreshTokenGrantsAsync(userIdentifier, sub: sub, sessionId: sessionId, upPartyName: upPartyName);
                 await activeSessionLogic.DeleteSessionsAsync(userIdentifier, sub: sub, sessionId: sessionId, downPartyName: downPartyName, upPartyName: upPartyName);
 
                 return NoContent();

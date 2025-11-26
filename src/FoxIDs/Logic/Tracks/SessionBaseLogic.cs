@@ -25,8 +25,13 @@ namespace FoxIDs.Logic
             this.activeSessionLogic = activeSessionLogic;
         }
 
-        public async Task<string> GetSessionIdAsync<T>(T upParty) where T : IUpParty
+        public async Task<string> GetOrCreateSessionIdAsync<T>(T upParty) where T : IUpParty
         {
+            if (!SessionEnabled(upParty))
+            {
+                return null;
+            }
+
             var session = await sessionTrackCookieRepository.GetAsync();
             if (session != null && session.Groups?.Count() > 0)
             {

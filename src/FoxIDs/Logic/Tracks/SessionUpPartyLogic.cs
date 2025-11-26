@@ -62,7 +62,11 @@ namespace FoxIDs.Logic
             {
                 if (!sessionClaims.Where(c => c.Type == JwtClaimTypes.SessionId).Any())
                 {
-                    sessionClaims.AddClaim(JwtClaimTypes.SessionId, await GetSessionIdAsync(upParty));
+                    var sessionId = await GetOrCreateSessionIdAsync(upParty);
+                    if (!sessionId.IsNullOrEmpty())
+                    {
+                        sessionClaims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+                    }                        
                 }
                 session.Claims = sessionClaims.ToClaimAndValues();
 

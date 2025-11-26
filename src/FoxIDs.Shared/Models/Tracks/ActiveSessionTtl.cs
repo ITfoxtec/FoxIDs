@@ -10,7 +10,7 @@ namespace FoxIDs.Models
 {
     public class ActiveSessionTtl : DataTtlDocument
     {
-        public static readonly int DefaultTimeToLive = Constants.Models.OAuthDownParty.Client.AccessTokenLifetimeMax + Constants.Models.OAuthDownParty.Client.AuthorizationCodeLifetimeMax + Constants.Models.Session.AdditionalLifetimeMax;
+        public static readonly int DefaultTimeToLive = Constants.Models.OAuthDownParty.Client.AccessTokenLifetimeMax + Constants.Models.Session.AdditionalLifetimeMax;
 
         public static async Task<string> IdFormatAsync(IdKey idKey)
         {

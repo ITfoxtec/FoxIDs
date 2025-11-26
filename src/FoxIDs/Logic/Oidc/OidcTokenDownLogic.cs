@@ -130,7 +130,7 @@ namespace FoxIDs.Logic
                 logger.SetUserScopeProperty(claims);
                 var scopes = authCodeGrant.Scope.ToSpaceList();
 
-                tokenResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(party, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, algorithm, saveActiveSession: false);
+                tokenResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(party, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, algorithm);
                 var responseTypes = new[] { IdentityConstants.ResponseTypes.IdToken, IdentityConstants.ResponseTypes.Token };
                 tokenResponse.IdToken = await oidcJwtDownLogic.CreateIdTokenAsync(party.Client, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, authCodeGrant.Nonce, responseTypes, null, tokenResponse.AccessToken, algorithm);
 
@@ -180,7 +180,7 @@ namespace FoxIDs.Logic
                 var claims = refreshTokenGrant.Claims.ToClaimList();
                 logger.SetUserScopeProperty(claims);
 
-                tokenResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(party, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, algorithm, saveActiveSession: true);
+                tokenResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(party, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, algorithm);
                 var responseTypes = new[] { IdentityConstants.ResponseTypes.IdToken, IdentityConstants.ResponseTypes.Token };
                 tokenResponse.IdToken = await oidcJwtDownLogic.CreateIdTokenAsync(party.Client, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, null, responseTypes, null, tokenResponse.AccessToken, algorithm);
 

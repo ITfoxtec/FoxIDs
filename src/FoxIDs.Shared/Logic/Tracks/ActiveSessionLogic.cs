@@ -177,6 +177,11 @@ namespace FoxIDs.Logic
 
         private void ApplyUpPartyLink(ActiveSessionTtl session, List<UpPartySessionLink> upPartyLinks)
         {
+            if (upPartyLinks == null || !(upPartyLinks.Count() > 0))
+            {
+                return;
+            }
+
             if (session.UpPartyLinks == null)
             {
                 session.UpPartyLinks = new List<PartyNameSessionLink>();

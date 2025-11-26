@@ -145,39 +145,6 @@ namespace FoxIDs.UnitTests.Logic
         }
 
         [Fact]
-        public async Task GetSessionAsync_WhenSessionExists_ReturnsSession()
-        {
-            var (logic, tenantDataRepositoryMock, routeBinding) = CreateLogic();
-            var sessionId = CreateSessionId("sid123");
-            var sessionIdHash = await sessionId.HashIdStringAsync();
-            var expectedId = await ActiveSessionTtl.IdFormatAsync(new ActiveSessionTtl.IdKey { TenantName = routeBinding.TenantName, TrackName = routeBinding.TrackName, SessionIdHash = sessionIdHash });
-            var storedSession = new ActiveSessionTtl { Id = expectedId, SessionId = sessionId, TimeToLive = ActiveSessionTtl.DefaultTimeToLive };
-
-            tenantDataRepositoryMock.Setup(r => r.GetAsync<ActiveSessionTtl>(expectedId, false, false, false, It.IsAny<TelemetryScopedLogger>()))
-                .ReturnsAsync(storedSession);
-
-            var result = await logic.GetSessionAsync(sessionId);
-
-            Assert.Equal(storedSession, result);
-        }
-
-        [Fact]
-        public async Task GetSessionAsync_WhenSessionMissing_ThrowsNotFound()
-        {
-            var (logic, tenantDataRepositoryMock, routeBinding) = CreateLogic();
-            var sessionId = CreateSessionId("sid123");
-            var sessionIdHash = await sessionId.HashIdStringAsync();
-            var expectedId = await ActiveSessionTtl.IdFormatAsync(new ActiveSessionTtl.IdKey { TenantName = routeBinding.TenantName, TrackName = routeBinding.TrackName, SessionIdHash = sessionIdHash });
-
-            tenantDataRepositoryMock.Setup(r => r.GetAsync<ActiveSessionTtl>(expectedId, false, false, false, It.IsAny<TelemetryScopedLogger>()))
-                .ReturnsAsync((ActiveSessionTtl)null);
-
-            var ex = await Assert.ThrowsAsync<FoxIDsDataException>(() => logic.GetSessionAsync(sessionId));
-
-            Assert.Equal(DataStatusCode.NotFound, ex.StatusCode);
-        }
-
-        [Fact]
         public async Task ListSessionsAsync_UsesFilter()
         {
             var (logic, tenantDataRepositoryMock, _) = CreateLogic();

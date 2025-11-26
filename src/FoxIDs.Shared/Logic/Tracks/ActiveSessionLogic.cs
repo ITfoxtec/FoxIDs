@@ -276,24 +276,6 @@ namespace FoxIDs.Logic
             return await tenantDataRepository.GetManyAsync(idKey, GetQuery(userIdentifier, sub, sessionId, downPartyName, upPartyName, null), paginationToken: paginationToken);
         }
 
-        public async Task<ActiveSessionTtl> GetSessionAsync(string sessionId)
-        {
-            if (!sessionId.EndsWith(Constants.Models.Session.ShortSessionPostKey, StringComparison.Ordinal))
-            {
-                throw new FoxIDsDataException(sessionId, DataDocument.PartitionIdFormat(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName })) { StatusCode = DataStatusCode.NotFound };
-            }
-
-            var idKey = new ActiveSessionTtl.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, SessionIdHash = await sessionId.HashIdStringAsync() };
-            var id = await ActiveSessionTtl.IdFormatAsync(idKey);
-            var session = await tenantDataRepository.GetAsync<ActiveSessionTtl>(id, required: false);
-            if (session == null)
-            {
-                throw new FoxIDsDataException(id, DataDocument.PartitionIdFormat(idKey)) { StatusCode = DataStatusCode.NotFound };
-            }
-
-            return session;
-        }
-
         public async Task DeleteSessionsAsync(string userIdentifier, string sub = null, string sessionId = null, string downPartyName = null, string upPartyName = null, PartyTypes ? upPartyType = null)
         {
             logger.ScopeTrace(() => $"Delete active sessions, Route '{RouteBinding.Route}', User identifier '{userIdentifier}', Sub '{sub}', Session ID '{sessionId}', application '{downPartyName}', Auth method '{upPartyName}', Auth method type '{upPartyType}'.");
@@ -320,14 +302,15 @@ namespace FoxIDs.Logic
 
         public async Task DeleteSessionAsync(string sessionId)
         {
-            if (!sessionId.EndsWith(Constants.Models.Session.ShortSessionPostKey, StringComparison.Ordinal))
+            if (!sessionId.IsNullOrWhiteSpace() && sessionId.EndsWith(Constants.Models.Session.ShortSessionPostKey, StringComparison.Ordinal))
             {
-                throw new FoxIDsDataException(sessionId, DataDocument.PartitionIdFormat(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName })) { StatusCode = DataStatusCode.NotFound };
+                var id = await ActiveSessionTtl.IdFormatAsync(new ActiveSessionTtl.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, SessionIdHash = await sessionId.HashIdStringAsync() });
+                var session = await tenantDataRepository.GetAsync<ActiveSessionTtl>(id, required: false, delete: true);
+                if (session != null)
+                {
+                    logger.ScopeTrace(() => $"Active session deleted, Route '{RouteBinding.Route}', Session ID '{sessionId}'.");
+                }
             }
-
-            var idKey = new ActiveSessionTtl.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, SessionIdHash = await sessionId.HashIdStringAsync() };
-            var id = await ActiveSessionTtl.IdFormatAsync(idKey);
-            await tenantDataRepository.DeleteAsync<ActiveSessionTtl>(id);
         }
 
         private string GetShortSessionId(IEnumerable<Claim> claims)

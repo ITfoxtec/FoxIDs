@@ -32,7 +32,7 @@ namespace FoxIDs.Logic
             this.activeSessionLogic = activeSessionLogic;
         }
 
-        public async Task<string> CreateAccessTokenAsync(TParty party, string routeUrl, IEnumerable<Claim> claims, IEnumerable<string> selectedScopes, string algorithm)
+        public async Task<string> CreateAccessTokenAsync(TParty party, string routeUrl, IEnumerable<Claim> claims, IEnumerable<string> selectedScopes, string algorithm, bool saveActiveSession)
         {
             var accessTokenClaims = new List<Claim>();
 
@@ -59,9 +59,10 @@ namespace FoxIDs.Logic
 
             var adjustedClaims = claimsOAuthDownLogic.AdjustClaims(accessTokenClaims);
             logger.ScopeTrace(() => $"AppReg, JWT access token claims '{adjustedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-
-            await activeSessionLogic.SaveSessionAsync(new DownPartySessionLink { Id = party.Id, Type = party.Type }, adjustedClaims);
-
+            if (saveActiveSession)
+            {
+                await activeSessionLogic.SaveSessionAsync(new DownPartySessionLink { Id = party.Id, Type = party.Type }, adjustedClaims);
+            }
             var token = JwtHandler.CreateToken(await trackKeyLogic.GetPrimarySecurityKeyAsync(RouteBinding.Key), trackIssuerLogic.GetIssuer(routeUrl), audiences, adjustedClaims, expiresIn: party.Client.AccessTokenLifetime, algorithm: algorithm, typ: IdentityConstants.JwtHeaders.MediaTypes.AtJwt);
             return await token.ToJwtString();
         }

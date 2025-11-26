@@ -388,7 +388,7 @@ namespace FoxIDs.Logic
                 logger.SetUserScopeProperty(claims);
 
                 var scopes = tokenRequest.Scope.ToSpaceList();
-                tokenResponse.AccessToken = await oauthJwtDownLogic.CreateAccessTokenAsync(party, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, algorithm);
+                tokenResponse.AccessToken = await oauthJwtDownLogic.CreateAccessTokenAsync(party, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, algorithm, saveActiveSession: true);
 
                 logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJson()}'.", traceType: TraceTypes.Message);
                 logger.ScopeTrace(() => "AppReg, OAuth Token response.", triggerEvent: true);

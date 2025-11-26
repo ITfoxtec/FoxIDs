@@ -373,7 +373,7 @@ namespace FoxIDs.Logic
                 if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Token)).Any())
                 {
                     authenticationResponse.TokenType = IdentityConstants.TokenTypes.Bearer;
-                    authenticationResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(party, sequenceData.RouteUrl, claims, sequenceData.Scope?.ToSpaceList(), algorithm);
+                    authenticationResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(party, sequenceData.RouteUrl, claims, sequenceData.Scope?.ToSpaceList(), algorithm, saveActiveSession: false);
                 }
                 if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.IdToken)).Any())
                 {

@@ -2,10 +2,12 @@ using AutoMapper;
 using FoxIDs.Infrastructure;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Logic;
+using FoxIDs.Models;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 using Api = FoxIDs.Models.Api;
 
@@ -16,15 +18,15 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly OAuthRefreshTokenGrantDownBaseLogic oauthRefreshTokenGrantDownBaseLogic;
-        private readonly ActiveSessionLogic activeSessionLogic;
 
-        public TActiveSessionController(TelemetryScopedLogger logger, IMapper mapper, OAuthRefreshTokenGrantDownBaseLogic oauthRefreshTokenGrantDownBaseLogic, ActiveSessionLogic activeSessionLogic) : base(logger)
+        public TActiveSessionController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, OAuthRefreshTokenGrantDownBaseLogic oauthRefreshTokenGrantDownBaseLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
+            this.tenantDataRepository = tenantDataRepository;
             this.oauthRefreshTokenGrantDownBaseLogic = oauthRefreshTokenGrantDownBaseLogic;
-            this.activeSessionLogic = activeSessionLogic;
         }
 
         /// <summary>
@@ -46,7 +48,13 @@ namespace FoxIDs.Controllers
 
                 sessionId = sessionId.Trim();
 
-                var session = await activeSessionLogic.GetSessionAsync(sessionId);
+                if (!sessionId.EndsWith(Constants.Models.Session.ShortSessionPostKey, StringComparison.Ordinal))
+                {
+                    throw new FoxIDsDataException() { StatusCode = DataStatusCode.NotFound };
+                }
+
+                var idKey = new ActiveSessionTtl.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, SessionIdHash = await sessionId.HashIdStringAsync() };
+                var session = await tenantDataRepository.GetAsync<ActiveSessionTtl>(await ActiveSessionTtl.IdFormatAsync(idKey));
 
                 return Ok(mapper.Map<Api.ActiveSession>(session));
             }
@@ -79,8 +87,15 @@ namespace FoxIDs.Controllers
 
                 sessionId = sessionId.Trim();
 
+                if (!sessionId.EndsWith(Constants.Models.Session.ShortSessionPostKey, StringComparison.Ordinal))
+                {
+                    throw new FoxIDsDataException() { StatusCode = DataStatusCode.NotFound };
+                }
+
                 await oauthRefreshTokenGrantDownBaseLogic.DeleteRefreshTokenGrantsAsync(null, sessionId: sessionId);
-                await activeSessionLogic.DeleteSessionAsync(sessionId);
+
+                var idKey = new ActiveSessionTtl.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, SessionIdHash = await sessionId.HashIdStringAsync() };
+                await tenantDataRepository.DeleteAsync<ActiveSessionTtl>(await ActiveSessionTtl.IdFormatAsync(idKey));
 
                 return NoContent();
             }

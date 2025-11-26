@@ -26,7 +26,7 @@ namespace FoxIDs.Logic
 
         public async Task SaveSessionAsync(DownPartySessionLink downPartyLink, IEnumerable<Claim> claims)
         {
-            var sessionId = GetSessionId(claims);
+            var sessionId = GetShortSessionId(claims);
             if (sessionId.IsNullOrWhiteSpace())
             {
                return;
@@ -51,7 +51,7 @@ namespace FoxIDs.Logic
         {
             foreach (var sessionGroup in sessionTrackCookieGroups)
             {
-                var sessionId = GetSessionId(sessionGroup.Claims);
+                var sessionId = GetShortSessionId(sessionGroup.Claims);
                 if (sessionId.IsNullOrWhiteSpace())
                 {
                     break;
@@ -198,6 +198,11 @@ namespace FoxIDs.Logic
 
         private void ApplyDownPartyLink(ActiveSessionTtl session, IEnumerable<DownPartySessionLink> downPartyLinks)
         {
+            if (downPartyLinks == null || !(downPartyLinks.Count() > 0))
+            {
+                return;
+            }
+
             if (session.DownPartyLinks == null)
             {
                 session.DownPartyLinks = new List<PartyNameSessionLink>();
@@ -229,21 +234,40 @@ namespace FoxIDs.Logic
 
         public async Task ValidateSessionAsync(IEnumerable<Claim> claims, string trackName = null)
         {
-            var sessionId = GetSessionId(claims);
+            var sessionId = GetShortSessionId(claims);
             if (sessionId.IsNullOrWhiteSpace())
             {
                 return;
             }
 
-            var sessionIdHash = await sessionId.HashIdStringAsync();
+            if (!await ValidateSessionAsync(sessionId, trackName))
+            {
+                throw new SessionException($"Active session for session ID '{sessionId}' does not exist.");
+            }
+        }
+
+        public async Task<bool> ValidateSessionAsync(IEnumerable<ClaimAndValues> claims)
+        {
+            var sessionId = GetShortSessionId(claims);
+            if (sessionId.IsNullOrWhiteSpace())
+            {
+                return true;
+            }
+            
+            return await ValidateSessionAsync(sessionId);
+        }
+
+        public async Task<bool> ValidateSessionAsync(string shortSessionId, string trackName = null)
+        {
+            var sessionIdHash = await shortSessionId.HashIdStringAsync();
 
             var session = await GetExistingSessionAsync(sessionIdHash, trackName);
             if (session != null)
             {
-                return;
+                return true;
             }
 
-            throw new SessionException($"Active session for session ID '{sessionId}' does not exist.");
+            return false;
         }
 
         public async Task<(IReadOnlyCollection<ActiveSessionTtl> sessions, string paginationToken)> ListSessionsAsync(string userIdentifier, string sub, string sessionId, string downPartyName, string upPartyName, string paginationToken = null)
@@ -289,13 +313,13 @@ namespace FoxIDs.Logic
             }
         }
 
-        private string GetSessionId(IEnumerable<Claim> claims)
+        private string GetShortSessionId(IEnumerable<Claim> claims)
         {
             var sessionId = claims?.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.SessionId);
             return GetShortSessionId(sessionId);
         }
 
-        private string GetSessionId(IEnumerable<ClaimAndValues> claims)
+        private string GetShortSessionId(IEnumerable<ClaimAndValues> claims)
         {
             var sessionId = claims?.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.SessionId);
             return GetShortSessionId(sessionId);

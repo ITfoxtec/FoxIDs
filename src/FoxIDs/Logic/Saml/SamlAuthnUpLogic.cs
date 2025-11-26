@@ -99,7 +99,7 @@ namespace FoxIDs.Logic
             var party = await tenantDataRepository.GetAsync<SamlUpParty>(samlUpSequenceData.UpPartyId);
             if (party.EnableIdPInitiated)
             {
-                var sessionId = await sessionUpPartyLogic.GetSessionIdAsync(party, checkActiveSession: true);
+                var sessionId = await sessionUpPartyLogic.GetOrCreateSessionIdAsync(party);
                 if (!sessionId.IsNullOrEmpty())
                 {
                     var idPInitiatedTtlGrant = await serviceProvider.GetService<SamlAuthnUpIdPInitiatedGrantLogic>().GetGrantAsync(party, sessionId);

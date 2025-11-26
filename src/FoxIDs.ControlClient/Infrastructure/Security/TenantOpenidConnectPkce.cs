@@ -30,6 +30,9 @@ namespace FoxIDs.Client.Infrastructure.Security
 
         public async Task TenantLoginAsync(string prompt = null)
         {
+            // Clear possible existing session.
+            await sessionStorage.RemoveItemAsync("user_session");
+
             await controlClientSettingLogic.InitLoadAsync();
 
             var openidConnectPkceSettings = new OpenidConnectPkceSettings

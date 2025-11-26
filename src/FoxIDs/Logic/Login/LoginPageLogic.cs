@@ -312,7 +312,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                var sessionId = await sessionLogic.GetSessionIdAsync(loginUpParty);
+                var sessionId = await sessionLogic.GetOrCreateSessionIdAsync(loginUpParty);
                 claims = await GetClaimsAsync(loginUpParty, sequenceData, newDownPartyLink, user, authTime, sessionId);
                 await sessionLogic.CreateSessionAsync(loginUpParty, authTime, GetLoginUserIdentifier(user, sequenceData.UserIdentifier), claims);
             }
@@ -392,7 +392,10 @@ namespace FoxIDs.Logic
             {
                 claims.AddRange(acrClaims);
             }
-            claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+            if (!sessionId.IsNullOrWhiteSpace())
+            {
+                claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+            }
             if (!user.Email.IsNullOrEmpty())
             {
                 claims.AddClaim(JwtClaimTypes.Email, user.Email);

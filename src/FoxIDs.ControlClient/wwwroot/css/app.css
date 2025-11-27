@@ -490,6 +490,32 @@ img.logo {
             border-bottom-right-radius: unset;
         }
 
+.nav-tabs.nav-tabs-gray {
+    border-bottom: 1px solid #dee2e6;
+}
+
+    .nav-tabs.nav-tabs-gray .nav-link {
+        border: 0;
+        border-radius: 0;
+        background-color: transparent;
+        margin-right: 0.25rem;
+    }
+
+        .nav-tabs.nav-tabs-gray .nav-link:hover, .nav-tabs.nav-tabs-gray .nav-link:focus {
+            text-decoration: none;
+            border-bottom-color: #dee2e6;
+            box-shadow: none;
+        }
+
+        .nav-tabs.nav-tabs-gray .nav-link.active, .nav-tabs.nav-tabs-gray .nav-item.show .nav-link {
+            color: #495057;
+            border: 1px solid #dee2e6;
+            border-bottom-color: #ffffff;
+            background-color: #ffffff;
+            border-radius: 0.25rem 0.25rem 0 0;
+            text-decoration: none !important;
+        }
+
 .dropdown-item.active, .dropdown-item:active {
     color: #fff;
     background-color: #ea7c0f;

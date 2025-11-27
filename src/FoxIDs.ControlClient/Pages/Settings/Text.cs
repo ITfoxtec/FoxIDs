@@ -32,6 +32,7 @@ namespace FoxIDs.Client.Pages.Settings
         private string smsSettingsHref;
 
         private List<string> supportedCultures;
+        private TextTab activeTab = TextTab.TrackTexts;
         private PageEditForm<FilterResourceViewModel> resourceFilterForm;
         private List<GeneralResourceViewModel> trackOnlyResources = new List<GeneralResourceViewModel>();
         private List<GeneralResourceViewModel> resources = new List<GeneralResourceViewModel>();
@@ -130,6 +131,11 @@ namespace FoxIDs.Client.Pages.Settings
         }
 
         #region TrackOnlyResources
+        private void SelectTab(TextTab tab)
+        {
+            activeTab = tab;
+        }
+
         private void SetTrackOnlyResources(PaginationResponse<ResourceName> trackResourceNames)
         {
             trackOnlyResources.Clear();
@@ -541,6 +547,13 @@ namespace FoxIDs.Client.Pages.Settings
             {
                 generalTextSettings.Form.SetError(ex.Message);
             }
+        }
+
+        private enum TextTab
+        {
+            TrackTexts,
+            LargeTexts,
+            GlobalTexts
         }
     }
 }

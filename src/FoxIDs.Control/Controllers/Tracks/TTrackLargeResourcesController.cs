@@ -48,7 +48,7 @@ namespace FoxIDs.Controllers
                 Expression<Func<TrackLargeResource, bool>> whereQuery = r => r.DataType.Equals(dataType);
                 if (!filterName.IsNullOrWhiteSpace())
                 {
-                    whereQuery = r => r.DataType.Equals(dataType) && r.Name != null && r.Name.Contains(filterName, StringComparison.InvariantCultureIgnoreCase);
+                    whereQuery = r => r.DataType.Equals(dataType) && r.Name != null && r.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase);
                 }
 
                 (var mResources, var nextPaginationToken) = await tenantDataRepository.GetManyAsync<TrackLargeResource>(trackIdKey, whereQuery: whereQuery, paginationToken: paginationToken);

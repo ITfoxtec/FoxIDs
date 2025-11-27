@@ -358,6 +358,10 @@ img.logo {
             padding-top: 1rem;
         }
 
+        .navbar.navbar-second .nav-item .nav-link.tenants-link {
+            font-weight: 700;
+        }
+
     /*        .navbar.navbar-second .nav-item .nav-link:focus {
                 text-decoration: underline;
                 border-top-color: #d3d6da;

@@ -162,13 +162,13 @@
                             <ul class="navbar-nav">
                                 @if (IsMasterTenant)
                                 {
-                                    <TenantLiNavLink Href="tenants">
-                                        Tenants
+                                    <TenantLiNavLink Href="tenants" LinkClass="tenants-link">
+                                        <span class="oi oi-people" aria-hidden="true"></span> Tenants
                                     </TenantLiNavLink>
                                 }
                                 else if (IsMasterTrack)
                                 {
-                                    <TenantLiNavLink Href="tenant">
+                                    <TenantLiNavLink Href="tenant" LinkClass="tenants-link">
                                         Tenant
                                     </TenantLiNavLink>
                                 }

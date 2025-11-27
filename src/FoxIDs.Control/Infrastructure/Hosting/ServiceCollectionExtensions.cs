@@ -83,7 +83,6 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<ValidateApiModelExternalUserLogic>();
 
             services.AddTransient<OAuthRefreshTokenGrantDownBaseLogic>();
-            services.AddTransient<ActiveSessionLogic>();
 
             services.AddTransient<OidcDiscoveryReadLogic>();
             services.AddTransient<OidcDiscoveryReadModelLogic<OAuthUpParty, OAuthUpClient>>();

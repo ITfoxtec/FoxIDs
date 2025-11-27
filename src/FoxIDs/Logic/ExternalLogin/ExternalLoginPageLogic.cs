@@ -71,7 +71,7 @@ namespace FoxIDs.Logic
             else
             {
                 var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                var sessionId = await sessionLogic.GetSessionIdAsync(extLoginUpParty);
+                var sessionId = await sessionLogic.GetOrCreateSessionIdAsync(extLoginUpParty);
                 claims = await GetClaimsAsync(extLoginUpParty, sequenceData, newDownPartyLink, userClaims, authTime, sessionId, acrClaims);
                 await sessionLogic.CreateSessionAsync(extLoginUpParty, authTime, GetLoginUserIdentifier(userIdentifier), claims);
             }
@@ -96,7 +96,7 @@ namespace FoxIDs.Logic
         {
             if (session != null && await sessionLogic.UpdateSessionAsync(extLoginUpParty, session))
             {
-                await sessionLogic.AddOrUpdateSessionTrackAsync(extLoginUpParty, sequenceData.DownPartyLink, updateDbActiveSession: true);
+                await sessionLogic.AddOrUpdateSessionTrackAsync(extLoginUpParty, sequenceData.DownPartyLink, saveDbActiveSession: true);
                 (var transformedClaims, var actionResult) = await TransformClaimsAsync(extLoginUpParty, sequenceData, session.Claims.ToClaimList());
                 if (actionResult != null)
                 {
@@ -125,7 +125,14 @@ namespace FoxIDs.Logic
             {
                 claims.AddRange(acrClaims);
             }
-            claims.AddOrReplaceClaim(JwtClaimTypes.SessionId, sessionId);
+            if (!sessionId.IsNullOrWhiteSpace())
+            {
+                claims.AddOrReplaceClaim(JwtClaimTypes.SessionId, sessionId);
+            }
+            else
+            {
+                claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId).ToList();
+            }
             claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, extLoginUpParty.Name);
             if (!sequenceData.UpPartyProfileName.IsNullOrEmpty())
             {

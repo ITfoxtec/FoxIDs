@@ -15,6 +15,7 @@ namespace FoxIDs.Client.Services
         private const string failingLoginLocksApiUri = "api/{tenant}/{track}/!failingloginlocks";
         private const string refreshTokenGrantApiUri = "api/{tenant}/{track}/!refreshtokengrant";
         private const string refreshTokenGrantsApiUri = "api/{tenant}/{track}/!refreshtokengrants";
+        private const string activeSessionApiUri = "api/{tenant}/{track}/!activesession";
         private const string activeSessionsApiUri = "api/{tenant}/{track}/!activesessions";
 
         public UserService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
@@ -42,7 +43,9 @@ namespace FoxIDs.Client.Services
         public async Task<RefreshTokenGrant> GetRefreshTokenGrantAsync(string refreshToken) => await GetAsync<RefreshTokenGrant>(refreshTokenGrantApiUri, refreshToken, parmName1: nameof(refreshToken));
         public async Task DeleteRefreshTokenGrantsAsync(string userIdentifier = null, string sub = null, string clientId = null, string upPartyName = null, string sessionId = null) => await DeleteAsync(refreshTokenGrantsApiUri, userIdentifier, sub, clientId, upPartyName, sessionId, parmName1: nameof(userIdentifier), parmName2: nameof(sub), parmName3: nameof(clientId), parmName4: nameof(upPartyName), parmName5: nameof(sessionId));
 
+        public async Task<ActiveSession> GetActiveSessionAsync(string sessionId) => await GetAsync<ActiveSession>(activeSessionApiUri, sessionId, parmName1: nameof(sessionId));
         public async Task<PaginationResponse<ActiveSession>> GetActiveSessionsAsync(string filterUserIdentifier, string filterSub, string filterDownPartyName, string filterUpPartyName, string filterSessionId, string paginationToken = null) => await GetListAsync<ActiveSession>(activeSessionsApiUri, filterUserIdentifier, filterSub, filterDownPartyName, filterUpPartyName, filterSessionId, parmName1: nameof(filterUserIdentifier), parmName2: nameof(filterSub), parmName3: nameof(filterDownPartyName), parmName4: nameof(filterUpPartyName), parmName5: nameof(filterSessionId), paginationToken: paginationToken);
+        public async Task DeleteActiveSessionAsync(string sessionId) => await DeleteAsync(activeSessionApiUri, sessionId, parmName1: nameof(sessionId));
         public async Task DeleteActiveSessionsAsync(string userIdentifier = null, string sub = null, string downPartyName = null, string upPartyName = null, string sessionId = null) => await DeleteAsync(activeSessionsApiUri, userIdentifier, sub, downPartyName, upPartyName, sessionId, parmName1: nameof(userIdentifier), parmName2: nameof(sub), parmName3: nameof(downPartyName), parmName4: nameof(upPartyName), parmName5: nameof(sessionId));
     }
 }

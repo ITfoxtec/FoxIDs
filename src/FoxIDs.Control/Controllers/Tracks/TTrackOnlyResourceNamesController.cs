@@ -35,7 +35,7 @@ namespace FoxIDs.Controllers
         /// <returns>Resource names.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.ResourceName>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Api.PaginationResponse<Api.ResourceName>>> GetTrackOnlyResourceNames(string filterName, string paginationToken = null)
+        public async Task<ActionResult<Api.PaginationResponse<Api.ResourceName>>> GetTrackOnlyResourceNames(string filterName, string paginationToken = null)
         {
 
             try
@@ -43,7 +43,22 @@ namespace FoxIDs.Controllers
                 filterName = filterName?.Trim();
                 var mTrack = await tenantDataRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
 
-                var filderResourceNames = filterName.IsNullOrWhiteSpace() ? mTrack.ResourceEnvelope?.Names : mTrack.ResourceEnvelope?.Names.Where(r => r.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || (int.TryParse(filterName, out var filterId) && r.Id == filterId));
+                var filderResourceNames = mTrack.ResourceEnvelope?.Names;
+                if (!filterName.IsNullOrWhiteSpace() && mTrack.ResourceEnvelope != null)
+                {
+                    var filterIds = mTrack.ResourceEnvelope.Names.Where(r => r.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase)).Select(r => r.Id).ToList();
+                    if (int.TryParse(filterName, out var filterId))
+                    {
+                        filterIds.Add(filterId);
+                    }
+
+                    var resourceIds = mTrack.ResourceEnvelope.Resources?
+                        .Where(r => r.Items != null && r.Items.Any(i => i.Value.Contains(filterName, StringComparison.CurrentCultureIgnoreCase)))
+                        .Select(r => r.Id) ?? Enumerable.Empty<int>();
+
+                    var filteredIds = filterIds.Concat(resourceIds).ToHashSet();
+                    filderResourceNames = mTrack.ResourceEnvelope.Names.Where(r => filteredIds.Contains(r.Id)).ToList();
+                }
 
                 var response = new Api.PaginationResponse<Api.ResourceName>
                 {

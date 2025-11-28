@@ -516,6 +516,12 @@ img.logo {
             text-decoration: none !important;
         }
 
+.card.tab-content-card {
+    border-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
 .dropdown-item.active, .dropdown-item:active {
     color: #fff;
     background-color: #ea7c0f;

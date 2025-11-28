@@ -63,67 +63,79 @@
     </li>
 </ul>
 
-<div class="tab-content pt-3">
-    <div class="tab-pane fade @(activeTab == ClaimMappingsTab.Custom ? "show active" : string.Empty)">
-        <PageEditForm @ref="trackClaimMappingForm" TModel="ClaimMappingViewModel" OnValidSubmit="OnUpdateClaimMappingValidSubmitAsync">
-            @if (TrackSelectedLogic.IsTrackSelected)
-            {
-                <div class="modal-body px-0">
-                    <div class="form-group active-group active">
-                        <Label For="@(() => trackClaimMappingForm.Model.ClaimMappings)" class="label-control" />
-                        @if (trackClaimMappingForm.Model.ClaimMappings != null)
-                        {
-                            <ul class="list-group">
-                                @foreach (var claimMapping in trackClaimMappingForm.Model.ClaimMappings)
+<div class="card tab-content-card">
+    <div class="card-body">
+        <div class="tab-content pt-3">
+            <div class="tab-pane fade @(activeTab == ClaimMappingsTab.Custom ? "show active" : string.Empty)">
+                <div class="d-flex">
+                    <div class="info-text mr-auto pb-4">
+                        Mappings between JWT and SAML claim types.
+                    </div>
+                </div>
+                <PageEditForm @ref="trackClaimMappingForm" TModel="ClaimMappingViewModel" OnValidSubmit="OnUpdateClaimMappingValidSubmitAsync">
+                    @if (TrackSelectedLogic.IsTrackSelected)
+                    {
+                        <div class="modal-body px-0 py-0">
+                            <div class="form-group active-group pt-0 active">
+                                @if (trackClaimMappingForm.Model.ClaimMappings != null)
                                 {
-                                    <li class="list-group-item">
-                                        <div class="row">
-                                            <div class="col-11">
-                                                <FInputText @bind-Value="claimMapping.JwtClaim" For="@(() => claimMapping.JwtClaim)" />
-                                                <FInputText @bind-Value="claimMapping.SamlClaim" For="@(() => claimMapping.SamlClaim)" />
-                                            </div>
-                                            <div class="col-1 text-right">
-                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveClaimMapping(e, claimMapping))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
-                                            </div>
-                                        </div>
-                                    </li>
+                                    <ul class="list-group">
+                                        @foreach (var claimMapping in trackClaimMappingForm.Model.ClaimMappings)
+                                        {
+                                            <li class="list-group-item">
+                                                <div class="row">
+                                                    <div class="col-11">
+                                                        <FInputText @bind-Value="claimMapping.JwtClaim" For="@(() => claimMapping.JwtClaim)" />
+                                                        <FInputText @bind-Value="claimMapping.SamlClaim" For="@(() => claimMapping.SamlClaim)" />
+                                                    </div>
+                                                    <div class="col-1 text-right">
+                                                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveClaimMapping(e, claimMapping))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul>
+                                    <ValidationMessage For="@(() => trackClaimMappingForm.Model.ClaimMappings)" />
                                 }
-                            </ul>
-                            <ValidationMessage For="@(() => trackClaimMappingForm.Model.ClaimMappings)" />
-                        }
-                        <button type="button" class="btn btn-link btn-xs" @onclick="AddClaimMapping"><span class="oi oi-plus" aria-hidden="true"></span> Add claim mapping</button>
-                    </div>
-                </div>
-                <div class="modal-footer px-0">
-                    <button type="submit" class="btn btn-primary">Update</button>
-                </div>
-            }
-        </PageEditForm>
-    </div>
+                                <button type="button" class="btn btn-link btn-xs" @onclick="AddClaimMapping"><span class="oi oi-plus" aria-hidden="true"></span> Add claim mapping</button>
+                            </div>
+                        </div>
+                        <div class="modal-footer px-0 pb-1">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    }
+                </PageEditForm>
+            </div>
 
-    <div class="tab-pane fade @(activeTab == ClaimMappingsTab.Defaults ? "show active" : string.Empty)">
-        <PageEditForm @ref="trackClaimMappingDefaultForm" TModel="ClaimMappingDefaultViewModel">
-            @if (TrackSelectedLogic.IsTrackSelected)
-            {
-                <div class="modal-body px-0">
-                    <div class="form-group active-group active">
-                        <Label For="@(() => trackClaimMappingDefaultForm.Model.DefaultClaimMappings)" class="label-control" />
-                        <ul class="list-group">
-                            @foreach (var claimMapping in trackClaimMappingDefaultForm.Model.DefaultClaimMappings)
-                            {
-                                <li class="list-group-item">
-                                    <div class="row">
-                                        <div class="col-11">
-                                            <FFieldText @bind-Value="claimMapping.JwtClaim" For="@(() => claimMapping.JwtClaim)" />
-                                            <FFieldText @bind-Value="claimMapping.SamlClaim" For="@(() => claimMapping.SamlClaim)" />
-                                        </div>
-                                    </div>
-                                </li>
-                            }
-                        </ul>
+            <div class="tab-pane fade @(activeTab == ClaimMappingsTab.Defaults ? "show active" : string.Empty)">
+                <div class="d-flex">
+                    <div class="info-text mr-auto pb-4">
+                        Default mappings between JWT and SAML claim types.
                     </div>
                 </div>
-            }
-        </PageEditForm>
+                <PageEditForm @ref="trackClaimMappingDefaultForm" TModel="ClaimMappingDefaultViewModel">
+                    @if (TrackSelectedLogic.IsTrackSelected)
+                    {
+                        <div class="modal-body px-0 py-0">
+                            <div class="form-group active-group pt-0 pb-1 active">
+                                <ul class="list-group">
+                                    @foreach (var claimMapping in trackClaimMappingDefaultForm.Model.DefaultClaimMappings)
+                                    {
+                                        <li class="list-group-item">
+                                            <div class="row">
+                                                <div class="col-11">
+                                                    <FFieldText @bind-Value="claimMapping.JwtClaim" For="@(() => claimMapping.JwtClaim)" />
+                                                    <FFieldText @bind-Value="claimMapping.SamlClaim" For="@(() => claimMapping.SamlClaim)" />
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                </PageEditForm>
+            </div>
+        </div>
     </div>
 </div>

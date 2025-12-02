@@ -18,7 +18,7 @@ namespace FoxIDs
                     string.Format(ErrorMessages.PasswordLengthComplex, exception.PasswordPolicy.MinLength) :
                     string.Format(ErrorMessages.PasswordLengthSimple, exception.PasswordPolicy.MinLength),
                 PasswordMaxLengthException => string.Format(ErrorMessages.PasswordMaxLength, exception.PasswordPolicy.MaxLength),
-                PasswordBannedCharactersException => ErrorMessages.PasswordBannedCharacters,
+                PasswordBannedCharactersException => string.Format(ErrorMessages.PasswordBannedCharacters, exception.PasswordPolicy?.BannedCharacters),
                 PasswordComplexityException => ErrorMessages.PasswordComplexity,
                 PasswordEmailTextComplexityException => ErrorMessages.PasswordEmailComplexity,
                 PasswordPhoneTextComplexityException => ErrorMessages.PasswordPhoneComplexity,

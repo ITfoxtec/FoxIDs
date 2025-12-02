@@ -96,15 +96,15 @@ namespace FoxIDs.Client.Models.ViewModels
         public string PasswordBannedCharacters { get; set; }
 
         [Range(Constants.Models.Track.PasswordHistoryMin, Constants.Models.Track.PasswordHistoryMax)]
-        [Display(Name = "Password history (number of previous passwords)")]
+        [Display(Name = "Password history (number of previous passwords, 0 to disable)")]
         public int PasswordHistory { get; set; }
 
         [Range(Constants.Models.Track.PasswordMaxAgeMin, Constants.Models.Track.PasswordMaxAgeMax)]
-        [Display(Name = "Password max age (seconds)")]
+        [Display(Name = "Password max age in seconds (0 to disable)")]
         public long PasswordMaxAge { get; set; }
 
         [Range(Constants.Models.Track.SoftPasswordChangeMin, Constants.Models.Track.SoftPasswordChangeMax)]
-        [Display(Name = "Soft password change (seconds)")]
+        [Display(Name = "Soft password change in seconds (0 to disable)")]
         public long SoftPasswordChange { get; set; }
 
         [ListLength(Constants.Models.Track.PasswordPoliciesMin, Constants.Models.Track.PasswordPoliciesMax)]

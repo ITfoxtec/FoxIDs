@@ -13,6 +13,7 @@ using Microsoft.Extensions.Localization;
 using MimeKit;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -193,11 +194,11 @@ namespace FoxIDs.Logic
         #endregion
 
         #region PasswordCode
-        public async Task<ConfirmationCodeSendStatus> SendPhoneSetPasswordCodeSmsAsync(string phone, bool forceNewCode)
+        public async Task<ConfirmationCodeSendStatus> SendPhoneSetPasswordCodeSmsAsync(string userIdentifier, string phone, bool forceNewCode)
         {
             phone = phone?.Trim();
             await failingLoginLogic.VerifyFailingLoginCountAsync(phone, FailingLoginTypes.SmsCode);
-            (var sendStatus, var user) = await SendCodeAsync(SendType.SetPasswordSms, SmsSetPasswordCodeKeyElement, phone, GetSmsSendSetPasswordAction(), forceNewCode, GetConfirmationCodeSmsAction(), SmsSetPasswordCodeLogText);
+            (var sendStatus, var user) = await SendCodeAsync(SendType.SetPasswordSms, SmsSetPasswordCodeKeyElement, userIdentifier, GetSmsSendSetPasswordAction(), forceNewCode, GetConfirmationCodeSmsAction(), SmsSetPasswordCodeLogText, sendIdentifier: phone);
             if (sendStatus != ConfirmationCodeSendStatus.UseExistingCode)
             {
                 await planUsageLogic.LogSetPasswordSmsEventAsync(user?.Phone ?? phone);
@@ -205,11 +206,11 @@ namespace FoxIDs.Logic
             return sendStatus;
         }
 
-        public async Task<User> VerifyPhoneSetPasswordCodeSmsAndSetPasswordAsync(string phone, string code, string newPassword, bool deleteRefreshTokenGrants, bool deleteActiveSessions)
+        public async Task<User> VerifyPhoneSetPasswordCodeSmsAndSetPasswordAsync(string userIdentifier, string phone, string code, string newPassword, bool deleteRefreshTokenGrants, bool deleteActiveSessions)
         {
             phone = phone?.Trim();
             Func<User, Task> onSuccess = (user) => GetAccountLogic().SetPasswordUserAsync(user, newPassword);
-            var user = await VerifyCodeAsync(SendType.SetPasswordSms, SmsSetPasswordCodeKeyElement, phone, code, GetSmsSendSetPasswordAction(), onSuccess, GetConfirmationCodeSmsAction(), SmsSetPasswordCodeLogText);
+            var user = await VerifyCodeAsync(SendType.SetPasswordSms, SmsSetPasswordCodeKeyElement, userIdentifier, code, GetSmsSendSetPasswordAction(), onSuccess, GetConfirmationCodeSmsAction(), SmsSetPasswordCodeLogText, sendIdentifier: phone);
             if (deleteRefreshTokenGrants)
             {
                 await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsByPhoneAsync(phone);
@@ -221,11 +222,11 @@ namespace FoxIDs.Logic
             return user;
         }
 
-        public async Task<ConfirmationCodeSendStatus> SendEmailSetPasswordCodeAsync(string email, bool forceNewCode)
+        public async Task<ConfirmationCodeSendStatus> SendEmailSetPasswordCodeAsync(string userIdentifier, string email, bool forceNewCode)
         {
             email = email?.Trim()?.ToLower();
             await failingLoginLogic.VerifyFailingLoginCountAsync(email, FailingLoginTypes.EmailCode);
-            (var sendStatus, _) = await SendCodeAsync(SendType.SetPasswordEmail, EmailSetPasswordCodeKeyElement, email, GetEmailSendSetPasswordAction(), forceNewCode, GetConfirmationCodeEmailAction(), EmailSetPasswordCodeLogText);
+            (var sendStatus, _) = await SendCodeAsync(SendType.SetPasswordEmail, EmailSetPasswordCodeKeyElement, userIdentifier, GetEmailSendSetPasswordAction(), forceNewCode, GetConfirmationCodeEmailAction(), EmailSetPasswordCodeLogText, sendIdentifier: email);
             if (sendStatus != ConfirmationCodeSendStatus.UseExistingCode)
             {
                 planUsageLogic.LogSetPasswordEmailEvent();
@@ -233,11 +234,11 @@ namespace FoxIDs.Logic
             return sendStatus;
         }
 
-        public async Task<User> VerifyEmailSetPasswordCodeAndSetPasswordAsync(string email, string code, string newPassword, bool deleteRefreshTokenGrants, bool deleteActiveSessions)
+        public async Task<User> VerifyEmailSetPasswordCodeAndSetPasswordAsync(string userIdentifier, string email, string code, string newPassword, bool deleteRefreshTokenGrants, bool deleteActiveSessions)
         {
             email = email?.Trim()?.ToLower();
             Func<User, Task> onSuccess = (user) => GetAccountLogic().SetPasswordUserAsync(user, newPassword);
-            var user = await VerifyCodeAsync(SendType.SetPasswordEmail, EmailSetPasswordCodeKeyElement, email, code, GetEmailSendSetPasswordAction(), onSuccess, GetConfirmationCodeEmailAction(), EmailSetPasswordCodeLogText);
+            var user = await VerifyCodeAsync(SendType.SetPasswordEmail, EmailSetPasswordCodeKeyElement, userIdentifier, code, GetEmailSendSetPasswordAction(), onSuccess, GetConfirmationCodeEmailAction(), EmailSetPasswordCodeLogText, sendIdentifier: email);
             if (deleteRefreshTokenGrants)
             {
                 await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsByEmailAsync(email);
@@ -584,28 +585,72 @@ namespace FoxIDs.Logic
                         case SendType.Sms:
                         case SendType.SetPasswordSms:
                         case SendType.TwoFactorSms:
+                            var phoneClaim = user.Claims.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.PhoneNumber);
                             if (!user.Phone.IsNullOrEmpty() && !user.PhoneVerified)
                             {
                                 user.PhoneVerified = true;
                                 await tenantDataRepository.SaveAsync(user);
                             }
+                            else
+                            {
+                                var phoneVerifiedClaim = user.Claims.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.PhoneNumberVerified);
+                                if (!phoneClaim.IsNullOrWhiteSpace() && (phoneVerifiedClaim.IsNullOrWhiteSpace() || phoneVerifiedClaim.Equals("false", StringComparison.OrdinalIgnoreCase) || phoneVerifiedClaim == "0"))
+                                {
+                                    if (phoneVerifiedClaim.IsNullOrWhiteSpace())
+                                    {
+                                        user.Claims.Add(new ClaimAndValues
+                                        {
+                                            Claim = JwtClaimTypes.PhoneNumberVerified,
+                                            Values = ["true"]
+                                        });
+                                    }
+                                    else
+                                    {
+                                        var pvc = user.Claims.First(c => c.Claim == JwtClaimTypes.PhoneNumberVerified);
+                                        pvc.Values = ["true"];
+                                    }
+                                    await tenantDataRepository.SaveAsync(user);
+                                }
+                            }
                             if (sendIdentifier.IsNullOrWhiteSpace())
                             {
-                                sendIdentifier = user.Phone;
+                                sendIdentifier = user.Phone ?? phoneClaim;
                             }
                             break;
                         case SendType.PasswordlessEmail:
                         case SendType.Email:
                         case SendType.SetPasswordEmail:
                         case SendType.TwoFactorEmail:
+                            var emailClaim = user.Claims.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.Email);
                             if (!user.Email.IsNullOrEmpty() && !user.EmailVerified)
                             {
                                 user.EmailVerified = true;
                                 await tenantDataRepository.SaveAsync(user);
                             }
+                            else
+                            {
+                                var emailVerifiedClaim = user.Claims.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.EmailVerified);
+                                if (!emailClaim.IsNullOrWhiteSpace() && (emailVerifiedClaim.IsNullOrWhiteSpace() || emailVerifiedClaim.Equals("false", StringComparison.OrdinalIgnoreCase) || emailVerifiedClaim == "0"))
+                                {
+                                    if (emailVerifiedClaim.IsNullOrWhiteSpace())
+                                    {
+                                        user.Claims.Add(new ClaimAndValues
+                                        {
+                                            Claim = JwtClaimTypes.EmailVerified,
+                                            Values = ["true"]
+                                        });
+                                    }
+                                    else
+                                    {
+                                        var evc = user.Claims.First(c => c.Claim == JwtClaimTypes.EmailVerified);
+                                        evc.Values = ["true"];
+                                    }
+                                    await tenantDataRepository.SaveAsync(user);
+                                }
+                            }
                             if (sendIdentifier.IsNullOrWhiteSpace())
                             {
-                                sendIdentifier = user.Email;
+                                sendIdentifier = user.Email ?? emailClaim;
                             }
                             break;
                         default:

@@ -247,19 +247,32 @@ namespace FoxIDs.Controllers
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 var user = await accountLogic.GetUserAsync(sequenceData.UserIdentifier);
-                sequenceData.CanUseExistingPassword = !string.IsNullOrEmpty(user?.Hash);
-                if (!loginUpParty.DisableSetPasswordSms && (user?.SetPasswordSms == true || (user?.SetPasswordEmail != true && !string.IsNullOrWhiteSpace(user?.Phone))))
-                {
-                    sequenceData.Phone = user.Phone;
-                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                    return HttpContext.GetUpPartyUrl(sequenceData.UpPartyId.PartyIdToName(), Constants.Routes.ActionController, Constants.Endpoints.PhoneSetPassword, includeSequence: true).ToRedirectResult();
-                }
-                else if (!loginUpParty.DisableSetPasswordEmail && !string.IsNullOrWhiteSpace(user?.Email))
+                if (user != null)
                 {
                     sequenceData.Email = user.Email;
-                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                    sequenceData.EmailVerified = !string.IsNullOrWhiteSpace(sequenceData.Email) ? user.EmailVerified : false;
+                    if (string.IsNullOrWhiteSpace(sequenceData.Email))
+                    {
+                        sequenceData.Email = user.Claims.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.Email);
+                    }
+                    sequenceData.Phone = user.Phone;
+                    sequenceData.PhoneVerified = !string.IsNullOrWhiteSpace(sequenceData.Phone) ? user.PhoneVerified : false;
+                    if (string.IsNullOrWhiteSpace(sequenceData.Phone))
+                    {
+                        sequenceData.Phone = user.Claims.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.PhoneNumber);
+                    }
                 }
-                return HttpContext.GetUpPartyUrl(sequenceData.UpPartyId.PartyIdToName(), Constants.Routes.ActionController, Constants.Endpoints.EmailSetPassword, includeSequence: true).ToRedirectResult();
+                sequenceData.CanUseExistingPassword = !string.IsNullOrEmpty(user?.Hash);
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+
+                if (!loginUpParty.DisableSetPasswordSms && (loginUpParty.DisableSetPasswordEmail || user?.SetPasswordSms == true || (user?.SetPasswordEmail != true && !string.IsNullOrWhiteSpace(sequenceData.Phone))))
+                {
+                    return HttpContext.GetUpPartyUrl(sequenceData.UpPartyId.PartyIdToName(), Constants.Routes.ActionController, Constants.Endpoints.PhoneSetPassword, includeSequence: true).ToRedirectResult();
+                }
+                else
+                {
+                    return HttpContext.GetUpPartyUrl(sequenceData.UpPartyId.PartyIdToName(), Constants.Routes.ActionController, Constants.Endpoints.EmailSetPassword, includeSequence: true).ToRedirectResult();
+                }
             }
             catch (Exception ex)
             {
@@ -296,7 +309,7 @@ namespace FoxIDs.Controllers
                 var confirmationCodeSendStatus = ConfirmationCodeSendStatus.UseExistingCode;
                 try
                 {
-                    confirmationCodeSendStatus = await accountActionLogic.SendPhoneSetPasswordCodeSmsAsync(sequenceData.Phone, newCode);
+                    confirmationCodeSendStatus = await accountActionLogic.SendPhoneSetPasswordCodeSmsAsync(sequenceData.UserIdentifier, sequenceData.Phone, newCode);
                 }
                 catch (UserNotExistsException unex)
                 {
@@ -362,7 +375,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountActionLogic.VerifyPhoneSetPasswordCodeSmsAndSetPasswordAsync(sequenceData.Phone, setPassword.ConfirmationCode, setPassword.NewPassword, loginUpParty.DeleteRefreshTokenGrantsOnChangePassword, loginUpParty.DeleteActiveSessionOnChangePassword);
+                    var user = await accountActionLogic.VerifyPhoneSetPasswordCodeSmsAndSetPasswordAsync(sequenceData.UserIdentifier, sequenceData.Phone, setPassword.ConfirmationCode, setPassword.NewPassword, loginUpParty.DeleteRefreshTokenGrantsOnChangePassword, loginUpParty.DeleteActiveSessionOnChangePassword);
 
                     auditLogic.LogChangePasswordEvent(PartyTypes.Login, sequenceData.UpPartyId, user.UserId);
 
@@ -481,7 +494,7 @@ namespace FoxIDs.Controllers
                 var confirmationCodeSendStatus = ConfirmationCodeSendStatus.UseExistingCode;
                 try
                 {
-                    confirmationCodeSendStatus = await accountActionLogic.SendEmailSetPasswordCodeAsync(sequenceData.Email ?? sequenceData.UserIdentifier, newCode);
+                    confirmationCodeSendStatus = await accountActionLogic.SendEmailSetPasswordCodeAsync(sequenceData.UserIdentifier, sequenceData.Email ?? sequenceData.UserIdentifier, newCode);
                 }
                 catch (UserNotExistsException unex)
                 {
@@ -538,7 +551,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountActionLogic.VerifyEmailSetPasswordCodeAndSetPasswordAsync(sequenceData.Email ?? sequenceData.UserIdentifier, setPassword.ConfirmationCode, setPassword.NewPassword, loginUpParty.DeleteRefreshTokenGrantsOnChangePassword, loginUpParty.DeleteActiveSessionOnChangePassword);
+                    var user = await accountActionLogic.VerifyEmailSetPasswordCodeAndSetPasswordAsync(sequenceData.UserIdentifier, sequenceData.Email ?? sequenceData.UserIdentifier, setPassword.ConfirmationCode, setPassword.NewPassword, loginUpParty.DeleteRefreshTokenGrantsOnChangePassword, loginUpParty.DeleteActiveSessionOnChangePassword);
 
                     auditLogic.LogChangePasswordEvent(PartyTypes.Login, sequenceData.UpPartyId, user.UserId);
 

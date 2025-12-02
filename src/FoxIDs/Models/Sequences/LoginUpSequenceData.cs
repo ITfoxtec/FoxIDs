@@ -93,5 +93,8 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "cuep")]
         public bool CanUseExistingPassword { get; set; }
+
+        [JsonProperty(PropertyName = "aspc")]
+        public bool AllowSoftPasswordChange { get; set; }
     }
 }

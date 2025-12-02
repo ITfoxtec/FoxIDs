@@ -9,6 +9,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public TrackSettingsViewModel()
         {
             AllowIframeOnDomains = new List<string>();
+            PasswordPolicies = new List<PasswordPolicyViewModel>();
         }
 
         [MaxLength(Constants.Models.Track.DisplayNameLength)]
@@ -76,7 +77,11 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
         [Display(Name = "Password min length")]
-        public int PasswordLength { get; set; } 
+        public int PasswordLength { get; set; } = Constants.TrackDefaults.DefaultPasswordLength;
+
+        [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
+        [Display(Name = "Password max length")]
+        public int PasswordMaxLength { get; set; } = Constants.Models.Track.PasswordLengthMax;
 
         [Required]
         [Display(Name = "Check password complexity")]
@@ -85,6 +90,27 @@ namespace FoxIDs.Client.Models.ViewModels
         [Required]
         [Display(Name = "Check password risk based on global password breaches")]
         public bool? CheckPasswordRisk { get; set; }
+
+        [MaxLength(Constants.Models.Track.PasswordBannedCharactersLength)]
+        [Display(Name = "Banned characters")]
+        public string PasswordBannedCharacters { get; set; }
+
+        [Range(Constants.Models.Track.PasswordHistoryMin, Constants.Models.Track.PasswordHistoryMax)]
+        [Display(Name = "Password history (number of previous passwords)")]
+        public int PasswordHistory { get; set; }
+
+        [Range(Constants.Models.Track.PasswordMaxAgeMin, Constants.Models.Track.PasswordMaxAgeMax)]
+        [Display(Name = "Password max age (seconds)")]
+        public long PasswordMaxAge { get; set; }
+
+        [Range(Constants.Models.Track.SoftPasswordChangeMin, Constants.Models.Track.SoftPasswordChangeMax)]
+        [Display(Name = "Soft password change (seconds)")]
+        public long SoftPasswordChange { get; set; }
+
+        [ListLength(Constants.Models.Track.PasswordPoliciesMin, Constants.Models.Track.PasswordPoliciesMax)]
+        [ValidateComplexType]
+        [Display(Name = "Password policy groups")]
+        public List<PasswordPolicyViewModel> PasswordPolicies { get; set; }
 
         [ValidateComplexType]
         public ExternalPasswordViewModel ExternalPassword { get; set; } = new ExternalPasswordViewModel();

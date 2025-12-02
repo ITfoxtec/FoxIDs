@@ -4,12 +4,16 @@ namespace FoxIDs.Models.ViewModels
     {
         public const string PasswordLengthComplex = "Please use {0} characters or more with a mix of letters, numbers and symbols.";
         public const string PasswordLengthSimple = "Please use {0} characters or more.";
+        public const string PasswordMaxLength = "Please use {0} characters or less.";
         public const string PasswordComplexity = "Please use a mix of letters, numbers and symbols";
         public const string PasswordEmailComplexity = "Please do not use the email or parts of it.";
         public const string PasswordPhoneComplexity = "Please do not use the phone number.";
         public const string PasswordUsernameComplexity = "Please do not use the username or parts of it.";
         public const string PasswordUrlComplexity = "Please do not use parts of the URL.";
         public const string PasswordRisk = "The password has previously appeared in a data breach. Please choose a more secure alternative.";
+        public const string PasswordBannedCharacters = "The password contains banned characters that are not allowed.";
+        public const string PasswordHistory = "Please use a password you have not used previously.";
+        public const string PasswordExpired = "Your password has expired. Please change your password.";
         public const string PasswordNotAccepted = "Please use a password that complies with the password policy.";
         public const string AccountLocked = "Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again.";
         public const string WrongPassword = "Wrong password";

@@ -58,6 +58,11 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Require user to set password at next log-in with email confirmation")]
         public bool SetPasswordEmail { get; set; }
 
+        [MaxLength(Constants.Models.Track.PasswordPolicyNameLength)]
+        [RegularExpression(Constants.Models.Track.PasswordPolicyNameRegExPattern)]
+        [Display(Name = "Password policy group")]
+        public string PasswordPolicyName { get; set; }
+
         [Display(Name = "Account status")]
         public bool DisableAccount { get; set; }
 
@@ -79,6 +84,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [MaxLength(Constants.Models.User.UserIdLength)]
         [Display(Name = "User id (unique and persistent)")]
         public string UserId { get; set; }
+
+        [Display(Name = "Password last changed (Unix seconds)")]
+        public long PasswordLastChanged { get; set; }
 
         [ValidateComplexType]
         [ListLength(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]

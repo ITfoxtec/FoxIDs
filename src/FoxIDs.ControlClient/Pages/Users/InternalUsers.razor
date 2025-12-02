@@ -103,6 +103,29 @@
                             </div>
                             <label class="label-control">Set / reset password</label>
                         </div>
+                        <div class="active-group active">
+                            <div class="card">
+                                <div class="card-body pt-3 pb-0">
+                                    @if (passwordPolicies?.Count > 0)
+                                    {
+                                        <FInputSelect @bind-Value="user.Form.Model.PasswordPolicyName" For="@(() => user.Form.Model.PasswordPolicyName)">
+                                            <option value=""></option>
+                                            @foreach (var policy in passwordPolicies)
+                                            {
+                                                <option value="@policy.Name">@(!string.IsNullOrWhiteSpace(policy.DisplayName) ? policy.DisplayName : policy.Name)</option>
+                                            }
+                                        </FInputSelect>
+                                    }
+                                    else
+                                    {
+                                        <div class="info-text">
+                                            By default, the environment password policy is used. You can define a password policy group in the environment settings and then apply it to the user.
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <label class="label-control">Password policy</label>
+                        </div>
                         <FInputToggle @bind-Value="user.Form.Model.DisableAccount" For="@(() => user.Form.Model.DisableAccount)" Negation="true" TextType="e.d" />
                         @if (user.ShowAdvanced)
                         {

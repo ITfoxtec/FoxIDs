@@ -1,17 +1,19 @@
-﻿using FoxIDs.Client.Infrastructure.Security;
+﻿using Blazored.Toast.Services;
+using FoxIDs.Client.Infrastructure.Security;
+using FoxIDs.Client.Logic;
+using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
+using FoxIDs.Util;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using System;
-using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
-using System.Threading.Tasks;
-using FoxIDs.Client.Logic;
-using Blazored.Toast.Services;
-using FoxIDs.Client.Models.Config;
 using Microsoft.JSInterop;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Pages.Settings
 {
@@ -97,6 +99,7 @@ namespace FoxIDs.Client.Pages.Settings
                 deleteTrackAcknowledge = false;
                 var track = await TrackService.GetTrackAsync(TrackSelectedLogic.Track.Name);
                 await trackSettingsForm.InitAsync(track.Map<TrackSettingsViewModel>());
+                EnsurePasswordPolicyCollections();
             }
             catch (TokenUnavailableException)
             {
@@ -125,7 +128,9 @@ namespace FoxIDs.Client.Pages.Settings
                     }
                 }));
                 trackSettingsForm.UpdateModel(trackSettingsResult.Map<TrackSettingsViewModel>());
-                toastService.ShowSuccess("Track settings updated.");
+                TrackSelectedLogic.UpdateTrack(trackSettingsResult);
+                EnsurePasswordPolicyCollections();
+                toastService.ShowSuccess("Track settings have been updated.");
                 trackWorking = false;
             }
             catch (Exception ex)
@@ -140,7 +145,7 @@ namespace FoxIDs.Client.Pages.Settings
             deleteTrackError = string.Empty;
             if (!"delete".Equals(deleteTrackAcknowledgeText, StringComparison.InvariantCultureIgnoreCase))
             {
-                deleteTrackError = "Please type 'delete' to confirm that you want to delete.";
+                deleteTrackError = "Type 'delete' to confirm track deletion.";
                 return;
             }
 
@@ -185,6 +190,43 @@ namespace FoxIDs.Client.Pages.Settings
             {
                 // Ignore scroll errors to avoid blocking UI updates.
             }
+        }
+
+        private void AddPasswordPolicy()
+        {
+            if (trackSettingsForm.Model.PasswordPolicies.Count >= Constants.Models.Track.PasswordPoliciesMax)
+            {
+                toastService.ShowError($"Maximum number of password policies reached ({Constants.Models.Track.PasswordPoliciesMax}).");
+                return;
+            }
+
+            trackSettingsForm.Model.PasswordPolicies.Add(new PasswordPolicyViewModel
+            {
+                Name = RandomName.GenerateDefaultName(),
+                PasswordLength = trackSettingsForm.Model.PasswordLength,
+                PasswordMaxLength = trackSettingsForm.Model.PasswordMaxLength,
+                CheckPasswordComplexity = trackSettingsForm.Model.CheckPasswordComplexity ?? true,
+                CheckPasswordRisk = trackSettingsForm.Model.CheckPasswordRisk ?? true,
+                PasswordHistory = trackSettingsForm.Model.PasswordHistory,
+                PasswordMaxAge = trackSettingsForm.Model.PasswordMaxAge,
+                SoftPasswordChange = trackSettingsForm.Model.SoftPasswordChange,
+                PasswordBannedCharacters = trackSettingsForm.Model.PasswordBannedCharacters
+            });
+        }
+
+        private void RemovePasswordPolicy(List<PasswordPolicyViewModel> passwordPolicies, PasswordPolicyViewModel policy)
+        {
+            passwordPolicies.Remove(policy);
+        }
+
+        private void EnsurePasswordPolicyCollections()
+        {
+            if (trackSettingsForm?.Model == null)
+            {
+                return;
+            }
+
+            trackSettingsForm.Model.PasswordPolicies ??= new List<PasswordPolicyViewModel>();
         }
     }
 }

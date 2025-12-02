@@ -62,8 +62,21 @@ namespace FoxIDs.Logic
                 else
                 {
                     logger.ScopeTrace(() => $"User '{userIdentifier}' and password valid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
-                    await ValidatePasswordPolicyAndNotifyAsync(new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }, password, PasswordState.Current);
-                    return user;
+                    var passwordPolicy = GetPasswordPolicy(user);
+                    try
+                    {
+                        await ValidatePasswordPolicyAndNotifyAsync(new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }, password, PasswordState.Current, user, passwordPolicy);
+                        return user;
+                    }
+                    catch (PasswordPolicyException pex)
+                    {
+                        if (CanUseSoftPasswordChange(user, passwordPolicy, pex))
+                        {
+                            throw new SoftChangePasswordException("Initiate password soft change.", pex) { PasswordPolicy = passwordPolicy };
+                        }
+
+                        throw;
+                    }
                 }
             }
             else
@@ -103,9 +116,12 @@ namespace FoxIDs.Logic
                     throw new NewPasswordEqualsCurrentException($"New password equals current password, user '{userIdentifier}'.");
                 }
 
-                await ValidatePasswordPolicyAndNotifyAsync(new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }, newPassword);
+                var passwordPolicy = GetPasswordPolicy(user);
+                await ValidatePasswordPolicyAndNotifyAsync(new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }, newPassword, PasswordState.New, user, passwordPolicy);
 
+                await UpdatePasswordHistoryAsync(user, currentPassword, passwordPolicy);
                 await secretHashLogic.AddSecretHashAsync(user, newPassword);
+                user.PasswordLastChanged = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                 user.ChangePassword = false;
                 await tenantDataRepository.SaveAsync(user);
 
@@ -118,9 +134,9 @@ namespace FoxIDs.Logic
             }
         }
 
-        protected override async Task ValidatePasswordPolicyAndNotifyAsync(UserIdentifier userIdentifier, string password, PasswordState state = PasswordState.New)
+        protected override async Task ValidatePasswordPolicyAndNotifyAsync(UserIdentifier userIdentifier, string password, PasswordState state, User user, PasswordPolicyState passwordPolicy)
         {
-            await base.ValidatePasswordPolicyAndNotifyAsync(userIdentifier, password, state);
+            await base.ValidatePasswordPolicyAndNotifyAsync(userIdentifier, password, state, user, passwordPolicy);
 
             var externalPassword = RouteBinding.ExternalPassword;
             if (externalPassword != null)
@@ -186,5 +202,27 @@ namespace FoxIDs.Logic
         }
 
         private AccountActionLogic GetAccountActionLogicLogic() => serviceProvider.GetService<AccountActionLogic>();
+
+        private bool CanUseSoftPasswordChange(User user, PasswordPolicyState policy, AccountException exception)
+        {
+            if (policy.SoftChange <= 0)
+            {
+                return false;
+            }
+
+            if (user.PasswordLastChanged <= 0)
+            {
+                return false;
+            }
+
+            var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            var allowedAge = policy.SoftChange;
+            if (policy.MaxAge > 0 && exception is PasswordExpiredException)
+            {
+                allowedAge += policy.MaxAge;
+            }
+
+            return now <= user.PasswordLastChanged + allowedAge;
+        }
     }
 }

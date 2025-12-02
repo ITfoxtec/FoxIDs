@@ -1,9 +1,10 @@
-﻿using System;
+using FoxIDs.Models.Logic;
+using System;
 
 namespace FoxIDs.Logic
 {
     [Serializable]
-    public class PasswordUrlTextComplexityException : AccountException
+    public class PasswordUrlTextComplexityException : PasswordPolicyException
     {
         public PasswordUrlTextComplexityException() { }
         public PasswordUrlTextComplexityException(string message) : base(message) { }

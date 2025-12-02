@@ -70,6 +70,18 @@ namespace FoxIDs.Controllers
                     $"Please use {RouteBinding.PasswordLength} characters or more.");
                 return BadRequest(ModelState, plex);
             }
+            catch (PasswordMaxLengthException pmex)
+            {
+                logger.ScopeTrace(() => pmex.Message);
+                ModelState.AddModelError(nameof(userRequest.NewPassword), $"Please use {RouteBinding.PasswordMaxLength} characters or less.");
+                return BadRequest(ModelState, pmex);
+            }
+            catch (PasswordBannedCharactersException pbex)
+            {
+                logger.ScopeTrace(() => pbex.Message);
+                ModelState.AddModelError(nameof(userRequest.NewPassword), "The password contains banned characters that are not allowed.");
+                return BadRequest(ModelState, pbex);
+            }
             catch (PasswordComplexityException pcex)
             {
                 logger.ScopeTrace(() => pcex.Message);
@@ -106,6 +118,12 @@ namespace FoxIDs.Controllers
                 ModelState.AddModelError(nameof(userRequest.NewPassword), "The password has previously appeared in a data breach. Please choose a more secure alternative.");
                 return BadRequest(ModelState, prex);
 
+            }
+            catch (PasswordHistoryException phex)
+            {
+                logger.ScopeTrace(() => phex.Message);
+                ModelState.AddModelError(nameof(userRequest.NewPassword), "Please use a password you have not used previously.");
+                return BadRequest(ModelState, phex);
             }
         }
     }

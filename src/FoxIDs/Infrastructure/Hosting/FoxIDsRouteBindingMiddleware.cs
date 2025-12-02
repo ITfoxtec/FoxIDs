@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Models;
+using FoxIDs.Models.Logic;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -149,8 +150,14 @@ namespace FoxIDs.Infrastructure.Hosting
             routeBinding.FailingLoginCountLifetime = track.FailingLoginCountLifetime;
             routeBinding.FailingLoginObservationPeriod = track.FailingLoginObservationPeriod;
             routeBinding.PasswordLength = track.PasswordLength;
+            routeBinding.PasswordMaxLength = track.PasswordMaxLength.Value;
             routeBinding.CheckPasswordComplexity = track.CheckPasswordComplexity.Value;
             routeBinding.CheckPasswordRisk = track.CheckPasswordRisk.Value;
+            routeBinding.PasswordBannedCharacters = track.PasswordBannedCharacters;
+            routeBinding.PasswordHistory = track.PasswordHistory;
+            routeBinding.PasswordMaxAge = track.PasswordMaxAge;
+            routeBinding.SoftPasswordChange = track.SoftPasswordChange;
+            routeBinding.PasswordPolicies = GetPasswordPolicies(track);
             routeBinding.ExternalPassword = track.ExternalPassword;
             routeBinding.AllowIframeOnDomains = track.AllowIframeOnDomains;
             routeBinding.SendEmail = track.SendEmail;
@@ -193,6 +200,29 @@ namespace FoxIDs.Infrastructure.Hosting
             }
 
             return routeBinding;
+        }
+
+        private List<PasswordPolicyState> GetPasswordPolicies(Track track)
+        {
+            if (track.PasswordPolicies == null || !(track.PasswordPolicies.Count > 0))
+            {
+                return null;
+            }
+
+            return track.PasswordPolicies.Select(p => 
+                new PasswordPolicyState
+                {
+                    Name = p.Name,
+                    MinLength = p.MinLength,
+                    MaxLength = p.MaxLength,
+                    CheckComplexity = p.CheckComplexity,
+                    CheckRisk = p.CheckRisk,
+                    BannedCharacters = p.BannedCharacters,
+                    History = p.History,
+                    MaxAge = p.MaxAge,
+                    SoftChange = p.SoftChange
+                }
+            ).ToList();
         }
 
         private async Task<UpPartyWithProfile<UpPartyProfile>> GetUpPartyAsync(Track.IdKey trackIdKey, Group upPartyGroup, bool acceptUnknownParty)

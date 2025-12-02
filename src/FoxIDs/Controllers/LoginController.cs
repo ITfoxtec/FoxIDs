@@ -738,13 +738,44 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => cpex.Message, triggerEvent: true);
                 return StartChangePassword();
             }
+            catch (SoftChangePasswordException scex)
+            {
+                logger.ScopeTrace(() => scex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = scex.GetUiMessage();
+                sequenceData.AllowSoftPasswordChange = true;
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
             catch (PasswordLengthException plex)
             {
                 logger.ScopeTrace(() => plex.Message, triggerEvent: true);
                 sequenceData.ShowPasswordError = true;
-                sequenceData.ShowPasswordErrorUIMessage = RouteBinding.CheckPasswordComplexity ?
-                    string.Format(ErrorMessages.PasswordLengthComplex, RouteBinding.PasswordLength) :
-                    string.Format(ErrorMessages.PasswordLengthSimple, RouteBinding.PasswordLength);
+                sequenceData.ShowPasswordErrorUIMessage = plex.GetUiMessage();
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
+            catch (PasswordMaxLengthException pmex)
+            {
+                logger.ScopeTrace(() => pmex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = pmex.GetUiMessage();
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
+            catch (PasswordBannedCharactersException pbex)
+            {
+                logger.ScopeTrace(() => pbex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = pbex.GetUiMessage();
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
+            catch (PasswordExpiredException peex)
+            {
+                logger.ScopeTrace(() => peex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = peex.GetUiMessage();
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 return StartChangePassword();
             }
@@ -752,7 +783,7 @@ namespace FoxIDs.Controllers
             {
                 logger.ScopeTrace(() => pcex.Message, triggerEvent: true);
                 sequenceData.ShowPasswordError = true;
-                sequenceData.ShowPasswordErrorUIMessage = ErrorMessages.PasswordComplexity;
+                sequenceData.ShowPasswordErrorUIMessage = pcex.GetUiMessage();
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 return StartChangePassword();
             }
@@ -760,7 +791,7 @@ namespace FoxIDs.Controllers
             {
                 logger.ScopeTrace(() => pecex.Message, triggerEvent: true);
                 sequenceData.ShowPasswordError = true;
-                sequenceData.ShowPasswordErrorUIMessage = ErrorMessages.PasswordEmailComplexity;
+                sequenceData.ShowPasswordErrorUIMessage = pecex.GetUiMessage();
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 return StartChangePassword();
             }
@@ -768,7 +799,7 @@ namespace FoxIDs.Controllers
             {
                 logger.ScopeTrace(() => ppcex.Message, triggerEvent: true);
                 sequenceData.ShowPasswordError = true;
-                sequenceData.ShowPasswordErrorUIMessage = ErrorMessages.PasswordPhoneComplexity;
+                sequenceData.ShowPasswordErrorUIMessage = ppcex.GetUiMessage();
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 return StartChangePassword();
             }
@@ -776,7 +807,7 @@ namespace FoxIDs.Controllers
             {
                 logger.ScopeTrace(() => pucex.Message, triggerEvent: true);
                 sequenceData.ShowPasswordError = true;
-                sequenceData.ShowPasswordErrorUIMessage = ErrorMessages.PasswordUsernameComplexity;
+                sequenceData.ShowPasswordErrorUIMessage = pucex.GetUiMessage();
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 return StartChangePassword();
             }
@@ -784,7 +815,7 @@ namespace FoxIDs.Controllers
             {
                 logger.ScopeTrace(() => puurlcex.Message, triggerEvent: true);
                 sequenceData.ShowPasswordError = true;
-                sequenceData.ShowPasswordErrorUIMessage = ErrorMessages.PasswordUrlComplexity;
+                sequenceData.ShowPasswordErrorUIMessage = puurlcex.GetUiMessage();
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 return StartChangePassword();
             }
@@ -792,7 +823,7 @@ namespace FoxIDs.Controllers
             {
                 logger.ScopeTrace(() => prex.Message, triggerEvent: true);
                 sequenceData.ShowPasswordError = true;
-                sequenceData.ShowPasswordErrorUIMessage = ErrorMessages.PasswordRisk;
+                sequenceData.ShowPasswordErrorUIMessage = prex.GetUiMessage();
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 return StartChangePassword();
             }
@@ -1285,39 +1316,47 @@ namespace FoxIDs.Controllers
                 catch (PasswordLengthException plex)
                 {
                     logger.ScopeTrace(() => plex.Message);
-                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", RouteBinding.CheckPasswordComplexity ?
-                        localizer[ErrorMessages.PasswordLengthComplex, RouteBinding.PasswordLength] :
-                        localizer[ErrorMessages.PasswordLengthSimple, RouteBinding.PasswordLength]);
+                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[plex.GetUiMessage()]);
+                }
+                catch (PasswordMaxLengthException pmex)
+                {
+                    logger.ScopeTrace(() => pmex.Message);
+                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[pmex.GetUiMessage()]);
+                }
+                catch (PasswordBannedCharactersException pbex)
+                {
+                    logger.ScopeTrace(() => pbex.Message);
+                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[pbex.GetUiMessage()]);
                 }
                 catch (PasswordComplexityException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordComplexity]);
+                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[pcex.GetUiMessage()]);
                 }
                 catch (PasswordEmailTextComplexityException pecex)
                 {
                     logger.ScopeTrace(() => pecex.Message);
-                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordEmailComplexity]);
+                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[pecex.GetUiMessage()]);
                 }
                 catch (PasswordPhoneTextComplexityException ppcex)
                 {
                     logger.ScopeTrace(() => ppcex.Message);
-                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordPhoneComplexity]);
+                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ppcex.GetUiMessage()]);
                 }
                 catch (PasswordUsernameTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordUsernameComplexity]);
+                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[pucex.GetUiMessage()]);
                 }
-                catch (PasswordUrlTextComplexityException pucex)
+                catch (PasswordUrlTextComplexityException purcex)
                 {
-                    logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordUrlComplexity]);
+                    logger.ScopeTrace(() => purcex.Message);
+                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[purcex.GetUiMessage()]);
                 }
                 catch (PasswordRiskException prex)
                 {
                     logger.ScopeTrace(() => prex.Message);
-                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordRisk]);
+                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[prex.GetUiMessage()]);
                 }
                 catch (PasswordNotAcceptedExternalException piex)
                 {
@@ -1456,7 +1495,8 @@ namespace FoxIDs.Controllers
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
-                    Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty)
+                    Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty),
+                    AllowSoftPasswordChange = sequenceData.AllowSoftPasswordChange
                 };
 
                 if (sequenceData.ShowPasswordError)
@@ -1528,8 +1568,15 @@ namespace FoxIDs.Controllers
                     changePassword.Css = loginUpParty.Css;
                     changePassword.EnableCancelLogin = loginUpParty.EnableCancelLogin;
                     changePassword.Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty);
+                    changePassword.AllowSoftPasswordChange = sequenceData.AllowSoftPasswordChange;
                     return View(nameof(ChangePassword), changePassword);
                 };
+
+                if (sequenceData.AllowSoftPasswordChange && changePassword.SkipPasswordChange)
+                {
+                    var user = await accountLogic.GetUserAsync(sequenceData.UserIdentifier); 
+                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
+                }
 
                 if (!ModelState.IsValid)
                 {
@@ -1571,39 +1618,52 @@ namespace FoxIDs.Controllers
                 catch (PasswordLengthException plex)
                 {
                     logger.ScopeTrace(() => plex.Message);
-                    ModelState.AddModelError(nameof(changePassword.NewPassword), RouteBinding.CheckPasswordComplexity ?
-                        localizer[ErrorMessages.PasswordLengthComplex, RouteBinding.PasswordLength] :
-                        localizer[ErrorMessages.PasswordLengthSimple, RouteBinding.PasswordLength]);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[plex.GetUiMessage()]);
+                }
+                catch (PasswordMaxLengthException pmex)
+                {
+                    logger.ScopeTrace(() => pmex.Message);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[pmex.GetUiMessage()]);
+                }
+                catch (PasswordBannedCharactersException pbex)
+                {
+                    logger.ScopeTrace(() => pbex.Message);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[pbex.GetUiMessage()]);
                 }
                 catch (PasswordComplexityException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[ErrorMessages.PasswordComplexity]);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[pcex.GetUiMessage()]);
                 }
                 catch (PasswordEmailTextComplexityException pecex)
                 {
                     logger.ScopeTrace(() => pecex.Message);
-                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[ErrorMessages.PasswordEmailComplexity]);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[pecex.GetUiMessage()]);
                 }
                 catch (PasswordPhoneTextComplexityException ppcex)
                 {
                     logger.ScopeTrace(() => ppcex.Message);
-                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[ErrorMessages.PasswordPhoneComplexity]);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[ppcex.GetUiMessage()]);
                 }
                 catch (PasswordUsernameTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[ErrorMessages.PasswordUsernameComplexity]);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[pucex.GetUiMessage()]);
                 }
-                catch (PasswordUrlTextComplexityException pucex)
+                catch (PasswordUrlTextComplexityException purcex)
                 {
-                    logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[ErrorMessages.PasswordUrlComplexity]);
+                    logger.ScopeTrace(() => purcex.Message);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[purcex.GetUiMessage()]);
                 }
                 catch (PasswordRiskException prex)
                 {
                     logger.ScopeTrace(() => prex.Message);
-                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[ErrorMessages.PasswordRisk]);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[prex.GetUiMessage()]);
+                }
+                catch (PasswordHistoryException phex)
+                {
+                    logger.ScopeTrace(() => phex.Message);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[phex.GetUiMessage()]);
                 }
                 catch (PasswordNotAcceptedExternalException piex)
                 {

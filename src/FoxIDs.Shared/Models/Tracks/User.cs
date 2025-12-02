@@ -71,6 +71,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "password_last_changed")]
         public long PasswordLastChanged { get; set; }
 
+        [JsonProperty(PropertyName = "soft_password_change_started")]
+        public long SoftPasswordChangeStarted { get; set; }
+
         [ListLength(Constants.Models.Track.PasswordHistoryMin, Constants.Models.Track.PasswordHistoryMax)]
         [ValidateComplexType]
         [JsonProperty(PropertyName = "password_history")]

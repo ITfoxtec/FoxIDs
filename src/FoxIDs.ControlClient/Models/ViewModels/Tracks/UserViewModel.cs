@@ -88,6 +88,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Password last changed (Unix seconds)")]
         public long PasswordLastChanged { get; set; }
 
+        [Display(Name = "Soft password change started (Unix seconds)")]
+        public long SoftPasswordChangeStarted { get; set; }
+
         [ValidateComplexType]
         [ListLength(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]
         [Display(Name = "Claims")]

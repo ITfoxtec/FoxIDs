@@ -70,7 +70,7 @@ namespace FoxIDs.Logic
                     }
                     catch (PasswordPolicyException pex)
                     {
-                        if (CanUseSoftPasswordChange(user, passwordPolicy, pex))
+                        if (await CanUseSoftPasswordChangeAsync(user, passwordPolicy))
                         {
                             throw new SoftChangePasswordException("Initiate password soft change.", pex) { PasswordPolicy = passwordPolicy };
                         }
@@ -122,6 +122,7 @@ namespace FoxIDs.Logic
                 await UpdatePasswordHistoryAsync(user, currentPassword, passwordPolicy);
                 await secretHashLogic.AddSecretHashAsync(user, newPassword);
                 user.PasswordLastChanged = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                user.SoftPasswordChangeStarted = 0;
                 user.ChangePassword = false;
                 await tenantDataRepository.SaveAsync(user);
 
@@ -203,26 +204,21 @@ namespace FoxIDs.Logic
 
         private AccountActionLogic GetAccountActionLogicLogic() => serviceProvider.GetService<AccountActionLogic>();
 
-        private bool CanUseSoftPasswordChange(User user, PasswordPolicyState policy, AccountException exception)
+        private async Task<bool> CanUseSoftPasswordChangeAsync(User user, PasswordPolicyState policy)
         {
             if (policy.SoftChange <= 0)
             {
                 return false;
             }
 
-            if (user.PasswordLastChanged <= 0)
+            if (user.SoftPasswordChangeStarted <= 0)
             {
-                return false;
+                user.SoftPasswordChangeStarted = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                await tenantDataRepository.SaveAsync(user);
             }
 
             var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            var allowedAge = policy.SoftChange;
-            if (policy.MaxAge > 0 && exception is PasswordExpiredException)
-            {
-                allowedAge += policy.MaxAge;
-            }
-
-            return now <= user.PasswordLastChanged + allowedAge;
+            return now <= user.SoftPasswordChangeStarted + policy.SoftChange;
         }
     }
 }

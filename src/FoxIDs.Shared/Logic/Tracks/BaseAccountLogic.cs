@@ -195,6 +195,7 @@ namespace FoxIDs.Logic
                 await UpdatePasswordHistoryAsync(user, currentPassword, passwordPolicy);
                 await secretHashLogic.AddSecretHashAsync(user, newPassword);
                 user.PasswordLastChanged = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                user.SoftPasswordChangeStarted = 0;
                 user.ChangePassword = false;
                 await tenantDataRepository.SaveAsync(user);
 
@@ -223,6 +224,7 @@ namespace FoxIDs.Logic
             await UpdatePasswordHistoryAsync(user, null, passwordPolicy);
             await secretHashLogic.AddSecretHashAsync(user, newPassword);
             user.PasswordLastChanged = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            user.SoftPasswordChangeStarted = 0;
             user.ChangePassword = false;
             user.SetPasswordEmail = false;
             user.SetPasswordSms = false;

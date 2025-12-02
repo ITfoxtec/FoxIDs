@@ -17,5 +17,8 @@ namespace FoxIDs.Models.Api
 
         [Display(Name = "Password last changed (Unix seconds)")]
         public long PasswordLastChanged { get; set; }
+
+        [Display(Name = "Soft password change started (Unix seconds)")]
+        public long SoftPasswordChangeStarted { get; set; }
     }
 }

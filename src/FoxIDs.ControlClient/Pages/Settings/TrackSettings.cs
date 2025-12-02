@@ -99,7 +99,6 @@ namespace FoxIDs.Client.Pages.Settings
                 deleteTrackAcknowledge = false;
                 var track = await TrackService.GetTrackAsync(TrackSelectedLogic.Track.Name);
                 await trackSettingsForm.InitAsync(track.Map<TrackSettingsViewModel>());
-                EnsurePasswordPolicyCollections();
             }
             catch (TokenUnavailableException)
             {
@@ -129,7 +128,6 @@ namespace FoxIDs.Client.Pages.Settings
                 }));
                 trackSettingsForm.UpdateModel(trackSettingsResult.Map<TrackSettingsViewModel>());
                 TrackSelectedLogic.UpdateTrack(trackSettingsResult);
-                EnsurePasswordPolicyCollections();
                 toastService.ShowSuccess("Track settings have been updated.");
                 trackWorking = false;
             }
@@ -217,16 +215,6 @@ namespace FoxIDs.Client.Pages.Settings
         private void RemovePasswordPolicy(List<PasswordPolicyViewModel> passwordPolicies, PasswordPolicyViewModel policy)
         {
             passwordPolicies.Remove(policy);
-        }
-
-        private void EnsurePasswordPolicyCollections()
-        {
-            if (trackSettingsForm?.Model == null)
-            {
-                return;
-            }
-
-            trackSettingsForm.Model.PasswordPolicies ??= new List<PasswordPolicyViewModel>();
         }
     }
 }

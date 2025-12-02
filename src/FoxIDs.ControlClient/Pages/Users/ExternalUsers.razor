@@ -130,6 +130,13 @@
 
                         <div class="form-group active-group active">
                             <Label For="@(() => externalUser.Form.Model.Claims)" class="label-control" />
+                            @if (externalUser.Form.Model.Claims.Count() <= 0)
+                            {
+                                <div class="card">
+                                    <div class="card-body">
+                                    </div>
+                                </div>
+                            }
                             <ul class="list-group">
                                 @foreach (var claimAndValues in externalUser.Form.Model.Claims)
                                 {

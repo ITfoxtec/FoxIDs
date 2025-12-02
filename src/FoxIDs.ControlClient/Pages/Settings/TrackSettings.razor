@@ -129,7 +129,7 @@
                 <div class="pt-1">
                     <div class="form-group active-group active">
                         <div class="card">
-                            <div class="card-body mt-2">
+                            <div class="card-body pt-3">
                                 <div class="info-text mr-auto pt-0">
                                     Users are locked for an period of time after exceeding @trackSettingsForm.Model.MaxFailingLogins failed login attempts within a @(trackSettingsForm.Model.FailingLoginCountLifetime / 3600) hour timeframe. During this observation period, users remain locked for @(trackSettingsForm.Model.FailingLoginObservationPeriod / 60) minutes and are automatically unlocked once the period ends.
                                 </div>
@@ -148,23 +148,23 @@
                 <div class="pt-1">
                     <div class="form-group active-group active">
                         <div class="card">
-                            <div class="card-body mt-2">
+                            <div class="card-body pt-3">
                                 <div class="info-text mr-auto pt-0">
                                     The default password policy is used if no password policy group is applied to the internal user.
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <FInputNumber @bind-Value="trackSettingsForm.Model.PasswordLength" For="@(() => trackSettingsForm.Model.PasswordLength)" />
-                                    <FInputNumber @bind-Value="trackSettingsForm.Model.PasswordMaxLength" For="@(() => trackSettingsForm.Model.PasswordMaxLength)" />
-                                    <FInputToggleN @bind-Value="trackSettingsForm.Model.CheckPasswordComplexity" For="@(() => trackSettingsForm.Model.CheckPasswordComplexity)" />
-                                    <FInputToggleN @bind-Value="trackSettingsForm.Model.CheckPasswordRisk" For="@(() => trackSettingsForm.Model.CheckPasswordRisk)" />
-                                </div>
-                                <div class="col-md-6">
-                                    <FInputText @bind-Value="trackSettingsForm.Model.PasswordBannedCharacters" For="@(() => trackSettingsForm.Model.PasswordBannedCharacters)" />
-                                    <FInputNumber @bind-Value="trackSettingsForm.Model.PasswordHistory" For="@(() => trackSettingsForm.Model.PasswordHistory)" />
-                                    <FInputNumberL @bind-Value="trackSettingsForm.Model.PasswordMaxAge" For="@(() => trackSettingsForm.Model.PasswordMaxAge)" />
-                                    <FInputNumberL @bind-Value="trackSettingsForm.Model.SoftPasswordChange" For="@(() => trackSettingsForm.Model.SoftPasswordChange)" />
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <FInputNumber @bind-Value="trackSettingsForm.Model.PasswordLength" For="@(() => trackSettingsForm.Model.PasswordLength)" />
+                                        <FInputNumber @bind-Value="trackSettingsForm.Model.PasswordMaxLength" For="@(() => trackSettingsForm.Model.PasswordMaxLength)" />
+                                        <FInputToggleN @bind-Value="trackSettingsForm.Model.CheckPasswordComplexity" For="@(() => trackSettingsForm.Model.CheckPasswordComplexity)" />
+                                        <FInputToggleN @bind-Value="trackSettingsForm.Model.CheckPasswordRisk" For="@(() => trackSettingsForm.Model.CheckPasswordRisk)" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <FInputText @bind-Value="trackSettingsForm.Model.PasswordBannedCharacters" For="@(() => trackSettingsForm.Model.PasswordBannedCharacters)" />
+                                        <FInputNumber @bind-Value="trackSettingsForm.Model.PasswordHistory" For="@(() => trackSettingsForm.Model.PasswordHistory)" />
+                                        <FInputNumberL @bind-Value="trackSettingsForm.Model.PasswordMaxAge" For="@(() => trackSettingsForm.Model.PasswordMaxAge)" />
+                                        <FInputNumberL @bind-Value="trackSettingsForm.Model.SoftPasswordChange" For="@(() => trackSettingsForm.Model.SoftPasswordChange)" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -175,59 +175,68 @@
                 <div class="pt-1">
                     <div class="form-group active-group active">
                         <div class="card">
-                            <div class="card-body mt-2">
+                            <div class="card-body pt-3">
                                 <div class="info-text mr-auto pt-0">
                                     Define password policy group that can be applied to the internal users.
                                 </div>
-                            </div>
-                            @if (trackSettingsForm.Model.PasswordPolicies?.Count > 0)
-                            {
-                                @foreach (var policy in trackSettingsForm.Model.PasswordPolicies)
-                                {
-                                    <div class="form-group active-group active">
-                                        <div class="card mb-2">
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                                    <span class="font-weight-bold">Group @(policy.Name ?? "new")</span>
-                                                    <button type="button" class="btn btn-link text-danger p-0" @onclick="@(() => RemovePasswordPolicy(trackSettingsForm.Model.PasswordPolicies, policy))">Remove</button>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <FInputText @bind-Value="policy.Name" For="@(() => policy.Name)" />
-                                                        <FInputText @bind-Value="policy.DisplayName" For="@(() => policy.DisplayName)" />
-                                                        <FInputNumber @bind-Value="policy.PasswordLength" For="@(() => policy.PasswordLength)" />
-                                                        <FInputNumber @bind-Value="policy.PasswordMaxLength" For="@(() => policy.PasswordMaxLength)" />
-                                                        <FInputToggle @bind-Value="policy.CheckPasswordComplexity" For="@(() => policy.CheckPasswordComplexity)" />
-                                                        <FInputToggle @bind-Value="policy.CheckPasswordRisk" For="@(() => policy.CheckPasswordRisk)" />
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <FInputText @bind-Value="policy.PasswordBannedCharacters" For="@(() => policy.PasswordBannedCharacters)" />
-                                                        <FInputNumber @bind-Value="policy.PasswordHistory" For="@(() => policy.PasswordHistory)" />
-                                                        <FInputNumberL @bind-Value="policy.PasswordMaxAge" For="@(() => policy.PasswordMaxAge)" />
-                                                        <FInputNumberL @bind-Value="policy.SoftPasswordChange" For="@(() => policy.SoftPasswordChange)" />
-                                                    </div>
-                                                </div>
-                                            </div>
+                                    @if (trackSettingsForm.Model.PasswordPolicies?.Count > 0)
+                                    {
+                                        <div class="form-group active-group active mt-3">
+                                            <Label For="@(() => trackSettingsForm.Model.ExternalPassword)" LabelText="Policy groups" class="label-control" />
+                                            <ul class="list-group">
+                                                @foreach (var policy in trackSettingsForm.Model.PasswordPolicies)
+                                                {
+                                                    <li class="list-group-item">
+                                                        <div class="row">
+                                                        <div class="col-11 col-md-8">
+                                                                <FInputText @bind-Value="policy.Name" For="@(() => policy.Name)" />
+                                                            </div>
+                                                            <div class="col-1 text-right">
+                                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemovePasswordPolicy(trackSettingsForm.Model.PasswordPolicies, policy))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-12">
+                                                                <FInputText @bind-Value="policy.DisplayName" For="@(() => policy.DisplayName)" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <FInputNumber @bind-Value="policy.PasswordLength" For="@(() => policy.PasswordLength)" />
+                                                                <FInputNumber @bind-Value="policy.PasswordMaxLength" For="@(() => policy.PasswordMaxLength)" />
+                                                                <FInputToggle @bind-Value="policy.CheckPasswordComplexity" For="@(() => policy.CheckPasswordComplexity)" />
+                                                                <FInputToggle @bind-Value="policy.CheckPasswordRisk" For="@(() => policy.CheckPasswordRisk)" />
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <FInputText @bind-Value="policy.PasswordBannedCharacters" For="@(() => policy.PasswordBannedCharacters)" />
+                                                                <FInputNumber @bind-Value="policy.PasswordHistory" For="@(() => policy.PasswordHistory)" />
+                                                                <FInputNumberL @bind-Value="policy.PasswordMaxAge" For="@(() => policy.PasswordMaxAge)" />
+                                                                <FInputNumberL @bind-Value="policy.SoftPasswordChange" For="@(() => policy.SoftPasswordChange)" />
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                }
+                                            </ul>
+                                            <ValidationMessage For="@(() => trackSettingsForm.Model.PasswordPolicies)" />
+                                            <button type="button" class="btn btn-link btn-xs @(trackSettingsForm.Model.PasswordPolicies.Count >= Constants.Models.Track.PasswordPoliciesMax ? "disabled" : string.Empty)" @onclick="AddPasswordPolicy"><span class="oi oi-plus" aria-hidden="true"></span> Add policy group</button>
                                         </div>
-                                    </div>
-                                }
-                            }
-                            <div class="pb-2">
-                                <button type="button" class="btn btn-secondary @(trackSettingsForm.Model.PasswordPolicies.Count >= Constants.Models.Track.PasswordPoliciesMax ? "disabled" : string.Empty)" @onclick="AddPasswordPolicy">Add policy group</button>
+                                    }
+                                    else
+                                    {
+                                        <div class="pl-2 pt-2 pb-3">
+                                            <button type="button" class="btn btn-secondary" @onclick="AddPasswordPolicy">Add policy group</button>
+                                        </div>
+                                    }
                             </div>
                         </div>
                         <Label For="@(() => trackSettingsForm.Model.ExternalPassword)" LabelText="Password policy groups" class="label-control" />
                     </div>
                 </div>
 
-                <div class="mr-auto">
-                    <h4 class="pt-5 pb-3">Password policy groups</h4>
-                </div>
-
                 <div class="pt-1">
                     <div class="form-group active-group active">
                         <div class="card">
-                            <div class="card-body mt-2">
+                            <div class="card-body pt-3">
                                 <div class="info-text mr-auto pt-0">
                                     External password validation and notifications:
                                     <ul>
@@ -238,10 +247,10 @@
                                     The external password validation and notifications API is called no matter what you configure in the default password policy or password policy groups.
                                 </div>
 
-                                <div class="pt-1">
+                                <div class="pt-2">
                                     <div class="form-group active-group active">
                                         <div class="card">
-                                            <div class="card-body mt-2">
+                                            <div class="card-body pt-3">
                                                 <div class="row pl-4">
                                                     <div class="col-6">
                                                         <FInputToggle @bind-Value="trackSettingsForm.Model.ExternalPassword.EnabledValidationCurrent" For="@(() => trackSettingsForm.Model.ExternalPassword.EnabledValidationCurrent)" />
@@ -259,7 +268,7 @@
                                 <div class="pt-1">
                                     <div class="form-group active-group active">
                                         <div class="card">
-                                            <div class="card-body mt-2">
+                                            <div class="card-body pt-3">
                                                 <div class="row pl-4">
                                                     <div class="col-6">
                                                         <FInputToggle @bind-Value="trackSettingsForm.Model.ExternalPassword.EnabledNotificationCurrent" For="@(() => trackSettingsForm.Model.ExternalPassword.EnabledNotificationCurrent)" />

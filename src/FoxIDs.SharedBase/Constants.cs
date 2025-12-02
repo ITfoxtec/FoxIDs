@@ -541,7 +541,7 @@ namespace FoxIDs
                 public const int PasswordLengthMin = 4;
                 public const int PasswordLengthMax = 50;
                 public const int PasswordPoliciesMin = 0;
-                public const int PasswordPoliciesMax = 20;
+                public const int PasswordPoliciesMax = 10;
                 public const int PasswordPolicyNameLength = 10;
                 public const string PasswordPolicyNameRegExPattern = @"^[\w\-]*$";
                 public const int PasswordPolicyDisplayNameLength = 30;

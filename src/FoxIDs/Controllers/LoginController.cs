@@ -1,22 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using ITfoxtec.Identity;
 using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Logic;
 using FoxIDs.Models;
+using FoxIDs.Models.Logic;
+using FoxIDs.Models.Sequences;
 using FoxIDs.Models.Session;
 using FoxIDs.Models.ViewModels;
 using FoxIDs.Repository;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Mvc;
-using FoxIDs.Models.Logic;
-using FoxIDs.Models.Sequences;
-using FoxIDs.Infrastructure.Filters;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Controllers
 {
@@ -1572,12 +1572,6 @@ namespace FoxIDs.Controllers
                     return View(nameof(ChangePassword), changePassword);
                 };
 
-                if (sequenceData.AllowSoftPasswordChange && changePassword.SkipPasswordChange)
-                {
-                    var user = await accountLogic.GetUserAsync(sequenceData.UserIdentifier); 
-                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
-                }
-
                 if (!ModelState.IsValid)
                 {
                     return viewError();
@@ -1686,6 +1680,30 @@ namespace FoxIDs.Controllers
             catch (Exception ex)
             {
                 throw new EndpointException($"Change password failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        public async Task<IActionResult> SkipPasswordChange()
+        {
+            try
+            {
+                logger.ScopeTrace(() => "Skip password change.");
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                loginPageLogic.CheckUpParty(sequenceData);
+
+                if (!sequenceData.AllowSoftPasswordChange)
+                {
+                    throw new InvalidOperationException("Soft password change not allow.");
+                }
+
+                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+
+                var user = await accountLogic.GetUserAsync(sequenceData.UserIdentifier);
+                return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Skip password change failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
     }

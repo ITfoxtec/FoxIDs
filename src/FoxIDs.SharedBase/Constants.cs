@@ -83,6 +83,7 @@ namespace FoxIDs
             public const string CancelLogin = "cancellogin";
             public const string CreateUser = "createuser";
             public const string ChangePassword = "changepassword";
+            public const string SkipPasswordChange = "skippasswordchange";
             public const string SetPassword = "setpassword";
             public const string PhoneSetPassword = "phonesetpassword";
             public const string EmailSetPassword = "emailsetpassword";

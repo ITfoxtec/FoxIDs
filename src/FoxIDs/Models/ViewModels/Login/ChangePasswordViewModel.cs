@@ -52,7 +52,5 @@ namespace FoxIDs.Models.ViewModels
         public List<DynamicElementBase> Elements { get; set; }
 
         public bool AllowSoftPasswordChange { get; set; }
-
-        public bool SkipPasswordChange { get; set; }
     }
 }

@@ -81,6 +81,20 @@
                         {
                             <FFieldText @bind-Value="user.Form.Model.UserId" For="@(() => user.Form.Model.UserId)" />
                         }
+                        @if (user.ShowAdvanced && !user.CreateMode && user.Form.Model.PasswordLastChanged > 0)
+                        {
+                            <div class="active-group active">
+                                <div class="card card-row bg-light d-flex align-items-center">
+                                    <div class="card-body py-2 mb-0 flex-fill">
+                                        <div class="d-flex flex-nowrap align-items-center">
+                                            <span class="text-truncate d-inline-block">@user.Form.Model.PasswordLastChanged.TimeToString()</span>
+                                        </div>
+                                    </div>
+                                    <div class="pr-2"></div>
+                                </div>
+                                <Label LabelText="Password last changed" class="label-control" />
+                            </div>
+                        }
                         <div class="active-group active">
                             <div class="card">
                                 <div class="card-body pt-3 pb-0">

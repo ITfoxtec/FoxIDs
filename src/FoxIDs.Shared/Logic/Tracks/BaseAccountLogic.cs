@@ -40,7 +40,7 @@ namespace FoxIDs.Logic
 
             return new PasswordPolicyState
             {
-                MinLength = RouteBinding.PasswordLength,
+                Length = RouteBinding.PasswordLength,
                 MaxLength = RouteBinding.PasswordMaxLength,
                 CheckComplexity = RouteBinding.CheckPasswordComplexity,
                 CheckRisk = RouteBinding.CheckPasswordRisk,
@@ -258,7 +258,7 @@ namespace FoxIDs.Logic
 
         private void CheckPasswordLength(string password, PasswordPolicyState policy)
         {
-            if (password.Length < policy.MinLength)
+            if (password.Length < policy.Length)
             {
                 throw new PasswordLengthException("Password is to short.") { PasswordPolicy = policy };
             }

@@ -4,7 +4,7 @@ namespace FoxIDs.Models.Logic
     {
         public string Name { get; set; }
 
-        public int MinLength { get; set; }
+        public int Length { get; set; }
 
         public int MaxLength { get; set; }
 

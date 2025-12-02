@@ -213,7 +213,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 new PasswordPolicyState
                 {
                     Name = p.Name,
-                    MinLength = p.Length,
+                    Length = p.Length,
                     MaxLength = p.MaxLength,
                     CheckComplexity = p.CheckComplexity,
                     CheckRisk = p.CheckRisk,

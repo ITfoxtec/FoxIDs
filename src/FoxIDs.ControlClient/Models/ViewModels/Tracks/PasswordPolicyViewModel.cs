@@ -17,32 +17,32 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
         [Display(Name = "Password max length")]
-        public int PasswordLength { get; set; }
+        public int Length { get; set; }
 
         [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
         [Display(Name = "Password max length")]
-        public int PasswordMaxLength { get; set; }
+        public int MaxLength { get; set; }
 
         [Display(Name = "Check password complexity")]
-        public bool CheckPasswordComplexity { get; set; } = true;
+        public bool CheckComplexity { get; set; } = true;
 
         [Display(Name = "Check password risk based on global password breaches")]
-        public bool CheckPasswordRisk { get; set; } = true;
+        public bool CheckRisk { get; set; } = true;
 
         [MaxLength(Constants.Models.Track.PasswordBannedCharactersLength)]
         [Display(Name = "Banned characters")]
-        public string PasswordBannedCharacters { get; set; }
+        public string BannedCharacters { get; set; }
 
         [Range(Constants.Models.Track.PasswordHistoryMin, Constants.Models.Track.PasswordHistoryMax)]
         [Display(Name = "Password history (number of previous passwords)")]
-        public int PasswordHistory { get; set; }
+        public int History { get; set; }
 
         [Range(Constants.Models.Track.PasswordMaxAgeMin, Constants.Models.Track.PasswordMaxAgeMax)]
         [Display(Name = "Password max age (seconds)")]
-        public long PasswordMaxAge { get; set; }
+        public long MaxAge { get; set; }
 
         [Range(Constants.Models.Track.SoftPasswordChangeMin, Constants.Models.Track.SoftPasswordChangeMax)]
         [Display(Name = "Soft password change (seconds)")]
-        public long SoftPasswordChange { get; set; }
+        public long SoftChange { get; set; }
     }
 }

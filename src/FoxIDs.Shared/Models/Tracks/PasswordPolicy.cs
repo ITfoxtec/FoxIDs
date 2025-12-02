@@ -18,8 +18,8 @@ namespace FoxIDs.Models
         public string DisplayName { get; set; }
 
         [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
-        [JsonProperty(PropertyName = "min_length")]
-        public int MinLength { get; set; }
+        [JsonProperty(PropertyName = "length")]
+        public int Length { get; set; }
 
         [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
         [JsonProperty(PropertyName = "max_length")]
@@ -49,9 +49,9 @@ namespace FoxIDs.Models
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (MaxLength < MinLength)
+            if (MaxLength < Length)
             {
-                yield return new ValidationResult($"The field {nameof(MaxLength)} must be greater than or equal to {nameof(MinLength)}.", [nameof(MaxLength), nameof(MinLength)]);
+                yield return new ValidationResult($"The field {nameof(MaxLength)} must be greater than or equal to {nameof(Length)}.", [nameof(MaxLength), nameof(Length)]);
             }
         }
     }

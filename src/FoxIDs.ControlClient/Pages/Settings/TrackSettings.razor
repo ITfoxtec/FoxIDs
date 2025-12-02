@@ -202,16 +202,16 @@
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-md-6">
-                                                                <FInputNumber @bind-Value="policy.PasswordLength" For="@(() => policy.PasswordLength)" />
-                                                                <FInputNumber @bind-Value="policy.PasswordMaxLength" For="@(() => policy.PasswordMaxLength)" />
-                                                                <FInputToggle @bind-Value="policy.CheckPasswordComplexity" For="@(() => policy.CheckPasswordComplexity)" />
-                                                                <FInputToggle @bind-Value="policy.CheckPasswordRisk" For="@(() => policy.CheckPasswordRisk)" />
+                                                                <FInputNumber @bind-Value="policy.Length" For="@(() => policy.Length)" />
+                                                                <FInputNumber @bind-Value="policy.MaxLength" For="@(() => policy.MaxLength)" />
+                                                                <FInputToggle @bind-Value="policy.CheckComplexity" For="@(() => policy.CheckComplexity)" />
+                                                                <FInputToggle @bind-Value="policy.CheckRisk" For="@(() => policy.CheckRisk)" />
                                                             </div>
                                                             <div class="col-md-6">
-                                                                <FInputText @bind-Value="policy.PasswordBannedCharacters" For="@(() => policy.PasswordBannedCharacters)" />
-                                                                <FInputNumber @bind-Value="policy.PasswordHistory" For="@(() => policy.PasswordHistory)" />
-                                                                <FInputNumberL @bind-Value="policy.PasswordMaxAge" For="@(() => policy.PasswordMaxAge)" />
-                                                                <FInputNumberL @bind-Value="policy.SoftPasswordChange" For="@(() => policy.SoftPasswordChange)" />
+                                                                <FInputText @bind-Value="policy.BannedCharacters" For="@(() => policy.BannedCharacters)" />
+                                                                <FInputNumber @bind-Value="policy.History" For="@(() => policy.History)" />
+                                                                <FInputNumberL @bind-Value="policy.MaxAge" For="@(() => policy.MaxAge)" />
+                                                                <FInputNumberL @bind-Value="policy.SoftChange" For="@(() => policy.SoftChange)" />
                                                             </div>
                                                         </div>
                                                     </li>

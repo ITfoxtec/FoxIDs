@@ -108,8 +108,11 @@
                                 <div class="card-body pb-0">
                                     @if (passwordPolicies?.Count > 0)
                                     {
-                                        <FInputSelect @bind-Value="user.Form.Model.PasswordPolicyName" For="@(() => user.Form.Model.PasswordPolicyName)">
-                                            <option value=""></option>
+                                        <div class="info-text mb-2">
+                                            Optional select to use another password policy for this user than the default environment password policy.
+                                        </div>
+                                        <FInputSelect Class="active" @bind-Value="user.Form.Model.PasswordPolicyName" For="@(() => user.Form.Model.PasswordPolicyName)">
+                                            <option value="">Use default</option>
                                             @foreach (var policy in passwordPolicies)
                                             {
                                                 <option value="@policy.Name">@(!string.IsNullOrWhiteSpace(policy.DisplayName) ? policy.DisplayName : policy.Name)</option>

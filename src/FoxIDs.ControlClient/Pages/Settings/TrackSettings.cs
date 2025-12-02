@@ -201,14 +201,14 @@ namespace FoxIDs.Client.Pages.Settings
             trackSettingsForm.Model.PasswordPolicies.Add(new PasswordPolicyViewModel
             {
                 Name = RandomName.GenerateDefaultName(),
-                PasswordLength = trackSettingsForm.Model.PasswordLength,
-                PasswordMaxLength = trackSettingsForm.Model.PasswordMaxLength,
-                CheckPasswordComplexity = trackSettingsForm.Model.CheckPasswordComplexity ?? true,
-                CheckPasswordRisk = trackSettingsForm.Model.CheckPasswordRisk ?? true,
-                PasswordHistory = trackSettingsForm.Model.PasswordHistory,
-                PasswordMaxAge = trackSettingsForm.Model.PasswordMaxAge,
-                SoftPasswordChange = trackSettingsForm.Model.SoftPasswordChange,
-                PasswordBannedCharacters = trackSettingsForm.Model.PasswordBannedCharacters
+                Length = trackSettingsForm.Model.PasswordLength,
+                MaxLength = trackSettingsForm.Model.PasswordMaxLength,
+                CheckComplexity = trackSettingsForm.Model.CheckPasswordComplexity ?? true,
+                CheckRisk = trackSettingsForm.Model.CheckPasswordRisk ?? true,
+                History = trackSettingsForm.Model.PasswordHistory,
+                MaxAge = trackSettingsForm.Model.PasswordMaxAge,
+                SoftChange = trackSettingsForm.Model.SoftPasswordChange,
+                BannedCharacters = trackSettingsForm.Model.PasswordBannedCharacters
             });
         }
 

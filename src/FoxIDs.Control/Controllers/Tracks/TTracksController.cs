@@ -49,7 +49,7 @@ namespace FoxIDs.Controllers
                     Data = new HashSet<Api.Track>(mTracks.Count()),
                     PaginationToken = nextPaginationToken,
                 };                
-                foreach(var mTrack in mTracks.OrderBy(t => t.Name))
+                foreach(var mTrack in mTracks.OrderBy(t => t.DisplayName ?? t.Name))
                 {
                     response.Data.Add(mapper.Map<Api.Track>(mTrack));
                 }

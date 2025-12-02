@@ -57,7 +57,7 @@ namespace FoxIDs.Controllers
                         (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || (doFilterPartyType && p.Type == filterPartyType)));
 
                 var aDownPartys = new HashSet<Api.DownParty>(mDownPartys.Count());
-                foreach(var mDownParty in mDownPartys.OrderBy(p => p.Type).ThenBy(p => p.Name))
+                foreach(var mDownParty in mDownPartys.OrderBy(p => p.Type).ThenBy(p => p.DisplayName ?? p.Name))
                 {
                     aDownPartys.Add(mapper.Map<Api.DownParty>(mDownParty));
                 }

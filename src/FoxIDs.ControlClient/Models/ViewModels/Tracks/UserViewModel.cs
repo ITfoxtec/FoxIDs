@@ -85,10 +85,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "User id (unique and persistent)")]
         public string UserId { get; set; }
 
-        [Display(Name = "Password last changed (Unix seconds)")]
+        [Display(Name = "Password last changed")]
         public long PasswordLastChanged { get; set; }
 
-        [Display(Name = "Soft password change started (Unix seconds)")]
+        [Display(Name = "Soft password change started")]
         public long SoftPasswordChangeStarted { get; set; }
 
         [ValidateComplexType]

@@ -92,6 +92,23 @@
                             <label class="label-control">User confirmation</label>
                         </div>
                         <FInputToggle @bind-Value="user.Form.Model.ChangePassword" For="@(() => user.Form.Model.ChangePassword)" TextType="y.n" />
+                        @if (user.ShowAdvanced && !user.CreateMode && user.Form.Model.SoftPasswordChangeStarted > 0)
+                        {
+                            <div class="info-text">
+                                Soft password change is active; the window began at the timestamp below.
+                            </div>
+                            <div class="active-group active">
+                                <div class="card card-row bg-light d-flex align-items-center">
+                                    <div class="card-body py-2 mb-0 flex-fill">
+                                        <div class="d-flex flex-nowrap align-items-center">
+                                            <span class="text-truncate d-inline-block">@user.Form.Model.SoftPasswordChangeStarted.TimeToString()</span>
+                                        </div>
+                                    </div>
+                                    <div class="pr-2"></div>
+                                </div>
+                                <Label LabelText="Soft password change started" class="label-control" />
+                            </div>
+                        }
                         <div class="active-group active">
                             <div class="card">
                                 <div class="card-body pt-3 pb-0">
@@ -103,32 +120,35 @@
                             </div>
                             <label class="label-control">Set / reset password</label>
                         </div>
-                        <div class="active-group active">
-                            <div class="card">
-                                <div class="card-body pb-0">
-                                    @if (passwordPolicies?.Count > 0)
-                                    {
-                                        <div class="info-text mb-2">
-                                            Optional select to use another password policy for this user than the default environment password policy.
-                                        </div>
-                                        <FInputSelect Class="active" @bind-Value="user.Form.Model.PasswordPolicyName" For="@(() => user.Form.Model.PasswordPolicyName)">
-                                            <option value="">Use default</option>
-                                            @foreach (var policy in passwordPolicies)
-                                            {
-                                                <option value="@policy.Name">@(!string.IsNullOrWhiteSpace(policy.DisplayName) ? policy.DisplayName : policy.Name)</option>
-                                            }
-                                        </FInputSelect>
-                                    }
-                                    else
-                                    {
-                                        <div class="info-text">
-                                            By default, the environment password policy is used. You can define a password policy group in the environment settings and then apply it to the user.
-                                        </div>
-                                    }
+                        @if (user.ShowAdvanced)
+                        {
+                            <div class="active-group active">
+                                <div class="card">
+                                    <div class="card-body pb-0">
+                                        @if (passwordPolicies?.Count > 0)
+                                        {
+                                            <div class="info-text mb-2">
+                                                Optional select to use another password policy for this user than the default environment password policy.
+                                            </div>
+                                            <FInputSelect Class="active" @bind-Value="user.Form.Model.PasswordPolicyName" For="@(() => user.Form.Model.PasswordPolicyName)">
+                                                <option value="">Use default</option>
+                                                @foreach (var policy in passwordPolicies)
+                                                {
+                                                    <option value="@policy.Name">@(!string.IsNullOrWhiteSpace(policy.DisplayName) ? policy.DisplayName : policy.Name)</option>
+                                                }
+                                            </FInputSelect>
+                                        }
+                                        else
+                                        {
+                                            <div class="info-text">
+                                                By default, the environment password policy is used. You can define a password policy group in the environment settings and then apply it to the user.
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
+                                <label class="label-control">Password policy</label>
                             </div>
-                            <label class="label-control">Password policy</label>
-                        </div>
+                        }
                         <FInputToggle @bind-Value="user.Form.Model.DisableAccount" For="@(() => user.Form.Model.DisableAccount)" Negation="true" TextType="e.d" />
                         @if (user.ShowAdvanced)
                         {

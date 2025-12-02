@@ -81,20 +81,6 @@
                         {
                             <FFieldText @bind-Value="user.Form.Model.UserId" For="@(() => user.Form.Model.UserId)" />
                         }
-                        @if (user.ShowAdvanced && !user.CreateMode && user.Form.Model.PasswordLastChanged > 0)
-                        {
-                            <div class="active-group active">
-                                <div class="card card-row bg-light d-flex align-items-center">
-                                    <div class="card-body py-2 mb-0 flex-fill">
-                                        <div class="d-flex flex-nowrap align-items-center">
-                                            <span class="text-truncate d-inline-block">@user.Form.Model.PasswordLastChanged.TimeToString()</span>
-                                        </div>
-                                    </div>
-                                    <div class="pr-2"></div>
-                                </div>
-                                <Label LabelText="Password last changed" class="label-control" />
-                            </div>
-                        }
                         <div class="active-group active">
                             <div class="card">
                                 <div class="card-body pt-3 pb-0">
@@ -106,22 +92,39 @@
                             <label class="label-control">User confirmation</label>
                         </div>
                         <FInputToggle @bind-Value="user.Form.Model.ChangePassword" For="@(() => user.Form.Model.ChangePassword)" TextType="y.n" />
-                        @if (user.ShowAdvanced && !user.CreateMode && user.Form.Model.SoftPasswordChangeStarted > 0)
+                        @if (user.ShowAdvanced)
                         {
-                            <div class="info-text">
-                                Soft password change is active; the window began at the timestamp below.
-                            </div>
-                            <div class="active-group active">
-                                <div class="card card-row bg-light d-flex align-items-center">
-                                    <div class="card-body py-2 mb-0 flex-fill">
-                                        <div class="d-flex flex-nowrap align-items-center">
-                                            <span class="text-truncate d-inline-block">@user.Form.Model.SoftPasswordChangeStarted.TimeToString()</span>
+                            @if (user.Form.Model.PasswordLastChanged > 0)
+                            {
+                                <div class="active-group active">
+                                    <div class="card card-row bg-light d-flex align-items-center">
+                                        <div class="card-body py-2 mb-0 flex-fill">
+                                            <div class="d-flex flex-nowrap align-items-center">
+                                                <span class="text-truncate d-inline-block">@user.Form.Model.PasswordLastChanged.TimeToString()</span>
+                                            </div>
                                         </div>
+                                        <div class="pr-2"></div>
                                     </div>
-                                    <div class="pr-2"></div>
+                                    <Label LabelText="Password last changed" class="label-control" />
                                 </div>
-                                <Label LabelText="Soft password change started" class="label-control" />
-                            </div>
+                            }
+                            @if (user.Form.Model.SoftPasswordChangeStarted > 0)
+                            {
+                                <div class="info-text">
+                                    Soft password change is active; the window began at the timestamp below.
+                                </div>
+                                <div class="active-group active">
+                                    <div class="card card-row bg-light d-flex align-items-center">
+                                        <div class="card-body py-2 mb-0 flex-fill">
+                                            <div class="d-flex flex-nowrap align-items-center">
+                                                <span class="text-truncate d-inline-block">@user.Form.Model.SoftPasswordChangeStarted.TimeToString()</span>
+                                            </div>
+                                        </div>
+                                        <div class="pr-2"></div>
+                                    </div>
+                                    <Label LabelText="Soft password change started" class="label-control" />
+                                </div>
+                            }
                         }
                         <div class="active-group active">
                             <div class="card">

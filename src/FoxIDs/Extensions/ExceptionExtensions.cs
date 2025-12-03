@@ -25,7 +25,7 @@ namespace FoxIDs
                 PasswordUsernameTextComplexityException => ErrorMessages.PasswordUsernameComplexity,
                 PasswordUrlTextComplexityException => ErrorMessages.PasswordUrlComplexity,
                 PasswordRiskException => ErrorMessages.PasswordRisk,
-                PasswordHistoryException => string.Format(ErrorMessages.PasswordHistory, exception.PasswordPolicy.History),
+                PasswordHistoryException => ErrorMessages.PasswordHistory,
                 PasswordExpiredException => ErrorMessages.PasswordExpired,
                 _ => ErrorMessages.ChangePassword
             };

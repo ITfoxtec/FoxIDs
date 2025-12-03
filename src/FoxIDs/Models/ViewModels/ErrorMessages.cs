@@ -12,7 +12,7 @@ namespace FoxIDs.Models.ViewModels
         public const string PasswordUrlComplexity = "Please do not use parts of the URL.";
         public const string PasswordRisk = "The password has previously appeared in a data breach. Please choose a more secure alternative.";
         public const string PasswordBannedCharacters = "Your password contains characters that aren't allowed ({0}). Please remove them and try again.";
-        public const string PasswordHistory = "Please use a password you have not used among your last {0} passwords.";
+        public const string PasswordHistory = "Please use a password you have not used previously.";
         public const string PasswordExpired = "Your password has expired. Please change your password.";
         public const string PasswordNotAccepted = "Please use a password that complies with the password policy.";
         public const string AccountLocked = "Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again.";

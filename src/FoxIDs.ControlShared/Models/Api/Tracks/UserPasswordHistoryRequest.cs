@@ -38,10 +38,10 @@ namespace FoxIDs.Models.Api
 
             if (PasswordHistory?.Count > 0)
             {
-                var duplicateHash = PasswordHistory.GroupBy(ph => ph.Hash, StringComparer.Ordinal).FirstOrDefault(g => g.Count() > 1)?.Key;
+                var duplicateHash = PasswordHistory.GroupBy(ph => new { ph.HashAlgorithm, ph.Hash, ph.HashSalt }).FirstOrDefault(g => g.Count() > 1)?.Key;
                 if (duplicateHash != null)
                 {
-                    yield return new ValidationResult($"Duplicate password history. Hash '{duplicateHash}'.", [nameof(PasswordHistory)]);
+                    yield return new ValidationResult($"Duplicate password history. Hash '{duplicateHash.Hash}'.", [nameof(PasswordHistory)]);
                 }
             }
         }

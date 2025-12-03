@@ -221,9 +221,13 @@ namespace FoxIDs.Logic
             var passwordPolicy = GetPasswordPolicy(user);
             await ValidatePasswordPolicyAndNotifyAsync(userIdentifier, newPassword, PasswordState.New, user, passwordPolicy);
 
-            await UpdatePasswordHistoryAsync(user, null, passwordPolicy);
+            if (!await secretHashLogic.ValidateSecretAsync(user, newPassword))
+            {
+                // Only update password history and last changed if the new password is different from the current password.
+                await UpdatePasswordHistoryAsync(user, null, passwordPolicy);
+                user.PasswordLastChanged = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            }
             await secretHashLogic.AddSecretHashAsync(user, newPassword);
-            user.PasswordLastChanged = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             user.SoftPasswordChangeStarted = 0;
             user.ChangePassword = false;
             user.SetPasswordEmail = false;
@@ -387,10 +391,10 @@ namespace FoxIDs.Logic
 
             if (user.PasswordHistory?.Count > 0)
             {
-                var passwordHash = await password.Sha256HashBase64urlEncodedAsync();
+                var passwordHash = await secretHashLogic.GetPasswordHistoryHashAsync(password);
                 foreach (var history in user.PasswordHistory.Take(policy.History))
                 {
-                    if (history.HashAlgorithm == Constants.Models.SecretHash.PasswordHistoryHashAlgorithm && history.Hash == passwordHash)
+                    if (await secretHashLogic.ValidatePasswordHistoryHashAsync(history, password, passwordHash))
                     {
                         throw new PasswordHistoryException("Password reuse detected.") { PasswordPolicy = policy };
                     }
@@ -413,17 +417,35 @@ namespace FoxIDs.Logic
 
             user.PasswordHistory ??= new List<PasswordHistoryItem>();
 
+            PasswordHistoryItem passwordHistoryItem = new PasswordHistoryItem
+            {
+                Created = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+            };
+
             if (!password.IsNullOrWhiteSpace())
             {
-                var passwordHash = await password.Sha256HashBase64urlEncodedAsync();
-                user.PasswordHistory = user.PasswordHistory.Where(h => h.HashAlgorithm == Constants.Models.SecretHash.PasswordHistoryHashAlgorithm && h.Hash != passwordHash).ToList();
-                user.PasswordHistory.Insert(0, new PasswordHistoryItem
+                var passwordHash = await secretHashLogic.GetPasswordHistoryHashAsync(password);
+
+                var filteredHistory = new List<PasswordHistoryItem>();
+                foreach (var history in user.PasswordHistory)
                 {
-                    HashAlgorithm = Constants.Models.SecretHash.PasswordHistoryHashAlgorithm,
-                    Hash = passwordHash,
-                    Created = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
-                });
+                    if (await secretHashLogic.ValidatePasswordHistoryHashAsync(history, password, passwordHash))
+                    {
+                        continue;
+                    }
+                    filteredHistory.Add(history);
+                }
+                user.PasswordHistory = filteredHistory;
+                
+                secretHashLogic.AddPasswordHistoryHash(passwordHistoryItem, passwordHash);
             }
+            else if (!user.Hash.IsNullOrWhiteSpace())
+            {
+                secretHashLogic.CopySecretHash(user, passwordHistoryItem);
+                user.PasswordHistory = user.PasswordHistory.Where(h => !(h.HashAlgorithm == passwordHistoryItem.HashAlgorithm && h.Hash == passwordHistoryItem.Hash && h.HashSalt == passwordHistoryItem.HashSalt)).ToList();
+            }
+
+            user.PasswordHistory.Insert(0, passwordHistoryItem);
 
             if (user.PasswordHistory.Count > policy.History)
             {

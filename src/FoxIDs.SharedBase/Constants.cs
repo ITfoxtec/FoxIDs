@@ -452,7 +452,6 @@ namespace FoxIDs
                 public const int HashSaltLength = 512;
 
                 public const string PasswordHistoryHashAlgorithm = "S256";
-                public const int PasswordHistoryHashLength = 500;
             }
 
             public static class Certificate

@@ -1,19 +1,17 @@
 ﻿using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Models.Config;
-using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Readers;
-using Microsoft.OpenApi.Writers;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Infrastructure.Hosting
@@ -32,31 +30,57 @@ namespace FoxIDs.Infrastructure.Hosting
 
                     var response = await httpClient.GetAsync($"{context.Request.Scheme}://{context.Request.Host.ToUriComponent()}/api/swagger/{Constants.ControlApi.Version}/swagger.json", HttpCompletionOption.ResponseHeadersRead);
                     await using var responseStream = await response.Content.ReadAsStreamAsync();
-                    using var streamReader = new StreamReader(responseStream);
-                    var result = await streamReader.ReadToEndAsync();
 
-                    // Replace to support Swagger V1
-                    result = result.Replace("{tenant_name}/{track_name}", "[tenant_name]/[track_name]");
-
-                    using var textReader = new StringReader(result);
-                    var document = new OpenApiTextReaderReader().Read(textReader, out var diagnostic);
-                    document.Info.Version = "v1";
-                    foreach(var path in document.Paths)
+                    var json = JsonNode.Parse(responseStream) as JsonObject;
+                    if (json?["info"] is JsonObject info)
                     {
-                        if (path.Key.StartsWith("/[tenant_name]/[track_name]"))
+                        info["version"] = "v1";
+                    }
+
+                    if (json?["paths"] is JsonObject paths)
+                    {
+                        var newPaths = new JsonObject();
+                        foreach (var path in paths.ToList())
                         {
-                            foreach(var op in path.Value.Operations)
+                            var key = path.Key.Replace("{tenant_name}/{track_name}", "[tenant_name]/[track_name]");
+
+                            if (path.Value is JsonObject pathObj)
                             {
-                                op.Value.Parameters = op.Value.Parameters.Where(pa => pa.Name != "tenant_name" && pa.Name != "track_name").ToList();
+                                var pathObjClone = pathObj.DeepClone() as JsonObject ?? new JsonObject();
+                                foreach (var op in pathObj.Where(o => o.Value is JsonObject).ToList())
+                                {
+                                    if (op.Value is JsonObject opObj && opObj["parameters"] is JsonArray parameters)
+                                    {
+                                        var filtered = parameters
+                                            .OfType<JsonObject>()
+                                            .Where(p => !string.Equals(p["name"]?.GetValue<string>(), "tenant_name", StringComparison.OrdinalIgnoreCase)
+                                                        && !string.Equals(p["name"]?.GetValue<string>(), "track_name", StringComparison.OrdinalIgnoreCase))
+                                            .ToList();
+
+                                        var newArray = new JsonArray();
+                                        foreach (var p in filtered)
+                                        {
+                                            newArray.Add(p.DeepClone());
+                                        }
+                                        opObj["parameters"] = newArray;
+                                    }
+                                }
+
+                                newPaths[key] = pathObjClone;
+                            }
+                            else
+                            {
+                                newPaths[key] = path.Value?.DeepClone();
                             }
                         }
+
+                        json["paths"] = newPaths;
                     }
 
                     var stringBuilder = new StringBuilder();
                     using (var stringWriter = new StringWriter(stringBuilder))
                     {
-                        var writer = new OpenApiJsonWriter(stringWriter);
-                        document.SerializeAsV3(writer);
+                        stringWriter.Write(json?.ToJsonString(new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping }) ?? string.Empty);
                     }
 
                     context.Response.StatusCode = (int)response.StatusCode;
@@ -97,11 +121,6 @@ namespace FoxIDs.Infrastructure.Hosting
             });
             builder.UseSwagger(c =>
             {
-                c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
-                c.PreSerializeFilters.Add((openApiDocument, httpRequest) =>
-                {
-                    openApiDocument.Servers = new List<OpenApiServer> { new OpenApiServer { Url = UrlCombine.Combine(httpRequest.HttpContext.GetHost(addTrailingSlash: false), Constants.Routes.ApiPath) } };
-                });
                 c.RouteTemplate = "api/swagger/{documentname}/swagger.json";
             });
 

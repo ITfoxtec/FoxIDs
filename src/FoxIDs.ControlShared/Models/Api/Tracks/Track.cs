@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FoxIDs.Models.Api
 {
@@ -67,13 +68,38 @@ namespace FoxIDs.Models.Api
         public int FailingLoginObservationPeriod { get; set; } = Constants.TrackDefaults.DefaultFailingLoginObservationPeriod;
 
         [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
+        [Display(Name = "Password min length")]
         public int PasswordLength { get; set; } = Constants.TrackDefaults.DefaultPasswordLength;
+
+        [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
+        [Display(Name = "Password max length")]
+        public int PasswordMaxLength { get; set; } = Constants.Models.Track.PasswordLengthMax;
 
         [Required]
         public bool? CheckPasswordComplexity { get; set; } = true;
 
         [Required]
         public bool? CheckPasswordRisk { get; set; } = true;
+
+        [MaxLength(Constants.Models.Track.PasswordBannedCharactersLength)]
+        [Display(Name = "Banned characters")]
+        public string PasswordBannedCharacters { get; set; }
+
+        [Range(Constants.Models.Track.PasswordHistoryMin, Constants.Models.Track.PasswordHistoryMax)]
+        [Display(Name = "Password history (number of previous passwords)")]
+        public int PasswordHistory { get; set; }
+
+        [Range(Constants.Models.Track.PasswordMaxAgeMin, Constants.Models.Track.PasswordMaxAgeMax)]
+        [Display(Name = "Password max age (seconds)")]
+        public long PasswordMaxAge { get; set; }
+
+        [Range(Constants.Models.Track.SoftPasswordChangeMin, Constants.Models.Track.SoftPasswordChangeMax)]
+        [Display(Name = "Soft password change (seconds)")]
+        public long SoftPasswordChange { get; set; }
+
+        [ListLength(Constants.Models.Track.PasswordPoliciesMin, Constants.Models.Track.PasswordPoliciesMax)]
+        [Display(Name = "Password policy groups")]
+        public List<PasswordPolicy> PasswordPolicies { get; set; }
 
         [ValidateComplexType]
         public ExternalPassword ExternalPassword { get; set; }
@@ -87,6 +113,18 @@ namespace FoxIDs.Models.Api
             if (Name.IsNullOrWhiteSpace() && DisplayName.IsNullOrWhiteSpace())
             {
                 results.Add(new ValidationResult($"Require either a Name or Display Name.", [nameof(Name), nameof(DisplayName)]));
+            }
+            if (PasswordMaxLength < PasswordLength)
+            {
+                results.Add(new ValidationResult($"The field {nameof(PasswordMaxLength)} must be greater than or equal to {nameof(PasswordLength)}.", [nameof(PasswordMaxLength), nameof(PasswordLength)]));
+            }
+            if (PasswordPolicies?.Count > 0)
+            {
+                var duplicateName = PasswordPolicies.GroupBy(p => p.Name, StringComparer.OrdinalIgnoreCase).FirstOrDefault(g => g.Count() > 1)?.Key;
+                if (duplicateName != null)
+                {
+                    results.Add(new ValidationResult($"Duplicate password policy group name '{duplicateName}'.", [nameof(PasswordPolicies)]));
+                }
             }
             return results;
         }

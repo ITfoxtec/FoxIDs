@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-`FoxIDs.sln` builds the .NET 9 stack: `src/FoxIDs` is the identity runtime, `src/FoxIDs.Control` exposes the admin UI/API, shared contracts live in `src/FoxIDs.Shared*`, cross-cutting constants sit in `src/FoxIDs.SharedBase/Constants.cs`, and the generated client resides in `src/FoxIDs.ControlClient`. Tests mirror this layout in `test/FoxIDs.UnitTests` (logic) and `test/FoxIDs.IntegrationTests` (protocol/storage). Reference docs live in `docs/`, data seeds in `data/`, helper CLIs in `tools/`, and deploy assets sit under `Docker/` plus `Kubernetes/`.
+`FoxIDs.sln` builds the .NET 10 stack: `src/FoxIDs` is the identity runtime, `src/FoxIDs.Control` exposes the admin UI/API, shared contracts live in `src/FoxIDs.Shared*`, cross-cutting constants sit in `src/FoxIDs.SharedBase/Constants.cs`, and the generated client resides in `src/FoxIDs.ControlClient`. Tests mirror this layout in `test/FoxIDs.UnitTests` (logic) and `test/FoxIDs.IntegrationTests` (protocol/storage). Reference docs live in `docs/`, data seeds in `data/`, helper CLIs in `tools/`, and deploy assets sit under `Docker/` plus `Kubernetes/`.
 
 ## Build, Test, and Development Commands
 - `dotnet restore FoxIDs.sln` – sync NuGet state before switching branches.

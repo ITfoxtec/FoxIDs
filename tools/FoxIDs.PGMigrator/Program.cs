@@ -6,6 +6,7 @@ using FoxIDs.Models.Config;
 using FoxIDs.Infrastructure;
 using FoxIDs;
 using FoxIDs.PGMigrator;
+using Wololo.PgKeyValueDB;
 
 static void AddPgKeyValueDBSettings(PgKeyValueDBBuilder builder, Settings settings)
 {

@@ -53,6 +53,11 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Require set password with phone confirmation")]
         public bool SetPasswordSms { get; set; }
 
+        [MaxLength(Constants.Models.Track.PasswordPolicyNameLength)]
+        [RegularExpression(Constants.Models.Track.PasswordPolicyNameRegExPattern)]
+        [Display(Name = "Password policy name")]
+        public string PasswordPolicyName { get; set; }
+
         [Display(Name = "Disable account")]
         public bool DisableAccount { get; set; }
 

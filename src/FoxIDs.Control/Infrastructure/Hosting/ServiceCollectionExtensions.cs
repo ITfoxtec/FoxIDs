@@ -6,7 +6,6 @@ using FoxIDs.Infrastructure.Security;
 using FoxIDs.Logic;
 using FoxIDs.Logic.Logs;
 using FoxIDs.Logic.Queues;
-using FoxIDs.Logic.Seed;
 using FoxIDs.Logic.Usage;
 using FoxIDs.MappingProfiles;
 using FoxIDs.Models;
@@ -19,12 +18,13 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Mollie.Api;
 using Mollie.Api.Framework;
 using OpenSearch.Client;
 using OpenSearch.Net;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
@@ -207,19 +207,9 @@ namespace FoxIDs.Infrastructure.Hosting
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                 });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                c.AddSecurityRequirement(_ => new OpenApiSecurityRequirement
                 {
-                    {
-                         new OpenApiSecurityScheme
-                            {
-                                Reference = new OpenApiReference
-                                {
-                                    Type = ReferenceType.SecurityScheme,
-                                    Id = "Bearer"
-                                }
-                            },
-                            new string[] {}
-                    }
+                    { new OpenApiSecuritySchemeReference("Bearer"), new List<string>() }
                 });
 
                 c.SchemaFilter<NullableEnumSchemaFilter>();

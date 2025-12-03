@@ -194,6 +194,10 @@ code {
     margin-top: 15px;
 }
 
+    .button-group .btn + .btn {
+        margin-left: 0.5rem;
+    }
+
     .button-group.nested-group {
         padding-top: 0px;
     }

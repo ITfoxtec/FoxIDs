@@ -112,7 +112,7 @@ namespace FoxIDs.Infrastructure.Filters
                         yield return cspFrameSrc;
                     }
 
-                    yield return "sandbox allow-forms allow-popups allow-same-origin allow-scripts;";
+                    yield return CspSandbox(httpContext);
 
                     yield return CspFrameAncestors(httpContext);
                 }
@@ -164,6 +164,11 @@ namespace FoxIDs.Infrastructure.Filters
             protected virtual string CspFrameAncestors(HttpContext httpContext)
             {
                 return "frame-ancestors 'none';";
+            }
+
+            protected virtual string CspSandbox(HttpContext httpContext)
+            {
+                return "sandbox allow-forms allow-popups allow-same-origin allow-scripts;";
             }
 
             protected virtual string PermissionsPolicy(HttpContext httpContext)

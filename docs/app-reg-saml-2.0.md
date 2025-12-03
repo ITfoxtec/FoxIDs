@@ -15,7 +15,7 @@
 
 # SAML 2.0 application registration
 
-FoxIDs SAML 2.0 application registration enable you to connect an SAML 2.0 based application. 
+FoxIDs SAML 2.0 application registration enables you to connect a SAML 2.0 based application. 
 
 [SAML (Security Assertion Markup Language) 2.0](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf) is an XML-based authentication and authorization standard that 
 allows secure Single Sign-On (SSO) between an Identity Provider (IdP) and a Service Provider (SP).  
@@ -23,17 +23,17 @@ The two SAML 2.0 flows: SP-Initiated Login flow and IdP-initiated Login flow are
 
 ![FoxIDs SAML 2.0 application registration](images/connections-app-reg-saml.svg)
 
-Your application become a SAML 2.0 Relying Party (RP) and FoxIDs acts as an SAML 2.0 Identity Provider (IdP).
+Your application becomes a SAML 2.0 Relying Party (RP) and FoxIDs acts as a SAML 2.0 Identity Provider (IdP).
 
-FoxIDs support [SAML 2.0 redirect and post bindings](https://docs.oasis-open.org/security/saml/v2.0/saml-bindings-2.0-os.pdf).
+FoxIDs supports [SAML 2.0 redirect and post bindings](https://docs.oasis-open.org/security/saml/v2.0/saml-bindings-2.0-os.pdf).
 
-FoxIDs also supports forwarding a login hint from the SAML Authn request URL using either the login_hint or LoginHint query parameter when the request does not include a NameID. This enables relying parties such as Microsoft Entra and Okta to pre-fill the user identifier in the FoxIDs login experience.
+FoxIDs also forwards a login hint from the SAML Authn request URL using either the `login_hint` or `LoginHint` query parameter when the request does not include a NameID. This lets relying parties such as Microsoft Entra and Okta pre-fill the user identifier in the FoxIDs login experience.
 
-A application registration expose [SAML 2.0 metadata](https://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf) where your application can discover the SAML 2.0 Identity Provider (IdP).
+An application registration exposes [SAML 2.0 metadata](https://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf) where your application can discover the SAML 2.0 Identity Provider (IdP).
 
 Both the login, logout and single logout [SAML 2.0 profiles](https://docs.oasis-open.org/security/saml/v2.0/saml-profiles-2.0-os.pdf) are supported. The Artifact profile is not supported.
 
-> The FoxIDs generated SAML 2.0 metadata only contain logout and single logout information if logout is configured in the SAML 2.0 application registration.
+> The FoxIDs generated SAML 2.0 metadata only contains logout and single logout information if logout is configured in the SAML 2.0 application registration.
 
 How to guides:
 
@@ -41,17 +41,19 @@ How to guides:
 - Connect [Context Handler test IdP (Danish identity broker)](howto-saml-2.0-context-handler#configuring-test-identity-provider-for-context-handler)
 
 ## Configuration
-How to configure your application as an SAML 2.0 Relying Party (RP).
+How to configure your application as a SAML 2.0 Relying Party (RP).
 
-> The FoxIDs SAML 2.0 application registration metadata endpoint is `https://foxids.com/tenant-x/environment-y/application-saml-pr1(*)/saml/idpmetadata`.
-> If the application is configured in tenant `tenant-x` and environment `environment-y` with the application registration name `application-saml-pr1`.
+### Metadata endpoints
+- IdP metadata: `https://foxids.com/tenant-x/environment-y/application-saml-pr1(*)/saml/idpmetadata`  
+  (replace `tenant-x`, `environment-y` and `application-saml-pr1` with your values).
+- Alternative single endpoint: the Authn endpoint also returns the IdP metadata when called with `GET` and **without** a `SAMLRequest`. This allows partners that require one URL for both metadata download and Authn requests to use the same address, e.g. `https://foxids.com/tenant-x/environment-y/application-saml-pr1(*)/saml/authn`. When the same endpoint receives a SAML AuthnRequest (via redirect or post binding), it performs the normal login flow.
 
-A application registration can possibly support login through multiple [authentication methods](connections.md#authentication-method) by adding the authentication method name to the URL.  
-An authentication method name e.g. `login` can possible be added to the metadata URL like this `https://foxids.com/tenant-x/environment-y/application-saml-pr1(login)/saml/idpmetadata`.
-Or you can use the default `*` notation, which enables login with all authentication methods.
+An application registration can support login through multiple [authentication methods](connections.md#authentication-method) by adding the authentication method name to the URL.  
+For example, `https://foxids.com/tenant-x/environment-y/application-saml-pr1(login)/saml/idpmetadata` (or `/saml/authn`) targets the `login` method.  
+You can also use the default `*` notation to enable login with all authentication methods.
 
 The following screenshot shows the configuration of a FoxIDs SAML 2.0 application registration in [FoxIDs Control Client](control.md#foxids-control-client).  
-Here the configuration is created with the applications metadata. The issued claims is limited to the configured set of claims, all claims can be issued with the `*` notation.
+Here the configuration is created with the application's metadata. The issued claims are limited to the configured set of claims; all claims can be issued with the `*` notation.
 
 > More configuration options become available by clicking **Show advanced**.
 

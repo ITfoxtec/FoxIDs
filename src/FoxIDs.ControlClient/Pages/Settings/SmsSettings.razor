@@ -98,7 +98,7 @@
                                                     <div class="d-flex">
                                                         <div class="mr-auto p-2">
                                                             <strong>@smsSettingsForm.Model.Key.CertificateInfo.Subject</strong><br />
-                                                            <span class="@(smsSettingsForm.Model.Key.CertificateInfo.IsValid() ? "" : "text-danger")">Valid from @smsSettingsForm.Model.Key.CertificateInfo.ValidFrom.ToShortDateString() to @smsSettingsForm.Model.Key.CertificateInfo.ValidTo.ToShortDateString()</span><br />
+                                                            <span class="@(smsSettingsForm.Model.Key.CertificateInfo.IsValid() ? "" : "text-danger")">Valid from @smsSettingsForm.Model.Key.CertificateInfo.ValidFrom.ToDateText() to @smsSettingsForm.Model.Key.CertificateInfo.ValidTo.ToDateText()</span><br />
                                                             Thumbprint: @smsSettingsForm.Model.Key.CertificateInfo.Thumbprint
                                                         </div>
                                                     </div>
@@ -195,7 +195,7 @@
                             <div class="d-flex">
                                 <div class="mr-auto p-2">
                                     <strong>@stagedKey.CertificateInfo.Subject</strong><br />
-                                    <span class="@(stagedKey.CertificateInfo.IsValid() ? "" : "text-danger")">Valid from @stagedKey.CertificateInfo.ValidFrom.ToShortDateString() to @stagedKey.CertificateInfo.ValidTo.ToShortDateString()</span><br />
+                                    <span class="@(stagedKey.CertificateInfo.IsValid() ? "" : "text-danger")">Valid from @stagedKey.CertificateInfo.ValidFrom.ToDateText() to @stagedKey.CertificateInfo.ValidTo.ToDateText()</span><br />
                                     Thumbprint: @stagedKey.CertificateInfo.Thumbprint
                                 </div>
                             </div>

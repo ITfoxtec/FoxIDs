@@ -50,5 +50,7 @@ namespace FoxIDs.Models.ViewModels
         public string ConfirmNewPassword { get; set; }
 
         public List<DynamicElementBase> Elements { get; set; }
+
+        public bool AllowSoftPasswordChange { get; set; }
     }
 }

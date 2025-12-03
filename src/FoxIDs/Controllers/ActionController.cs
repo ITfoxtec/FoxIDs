@@ -403,52 +403,52 @@ namespace FoxIDs.Controllers
                 catch (PasswordLengthException plex)
                 {
                     logger.ScopeTrace(() => plex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[plex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), plex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordMaxLengthException pmex)
                 {
                     logger.ScopeTrace(() => pmex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[pmex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), pmex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordBannedCharactersException pbex)
                 {
                     logger.ScopeTrace(() => pbex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[pbex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), pbex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordComplexityException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[pcex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), pcex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordEmailTextComplexityException pecex)
                 {
                     logger.ScopeTrace(() => pecex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[pecex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), pecex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordPhoneTextComplexityException ppcex)
                 {
                     logger.ScopeTrace(() => ppcex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[ppcex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), ppcex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordUsernameTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[pucex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), pucex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordUrlTextComplexityException purcex)
                 {
                     logger.ScopeTrace(() => purcex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[purcex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), purcex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordHistoryException phex)
                 {
                     logger.ScopeTrace(() => phex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[phex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), phex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordRiskException prex)
                 {
                     logger.ScopeTrace(() => prex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[prex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), prex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordNotAcceptedExternalException piex)
                 {
@@ -579,52 +579,52 @@ namespace FoxIDs.Controllers
                 catch (PasswordLengthException plex)
                 {
                     logger.ScopeTrace(() => plex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[plex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), plex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordMaxLengthException pmex)
                 {
                     logger.ScopeTrace(() => pmex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[pmex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), pmex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordBannedCharactersException pbex)
                 {
                     logger.ScopeTrace(() => pbex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[pbex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), pbex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordComplexityException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[pcex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), pcex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordEmailTextComplexityException pecex)
                 {
                     logger.ScopeTrace(() => pecex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[pecex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), pecex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordPhoneTextComplexityException ppcex)
                 {
                     logger.ScopeTrace(() => ppcex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[ppcex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), ppcex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordUsernameTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[pucex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), pucex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordUrlTextComplexityException purcex)
                 {
                     logger.ScopeTrace(() => purcex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[purcex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), purcex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordHistoryException phex)
                 {
                     logger.ScopeTrace(() => phex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[phex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), phex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordRiskException prex)
                 {
                     logger.ScopeTrace(() => prex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[prex.GetUiMessage()]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), prex.GetLocalizedUiMessage(localizer));
                 }
                 catch (PasswordNotAcceptedExternalException piex)
                 {

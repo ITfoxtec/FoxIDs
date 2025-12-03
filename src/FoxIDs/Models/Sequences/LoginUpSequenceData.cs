@@ -89,7 +89,7 @@ namespace FoxIDs.Models.Sequences
         public bool ShowPasswordError { get; set; }
 
         [JsonProperty(PropertyName = "sprm")]
-        public string ShowPasswordErrorUIMessage { get; set; }
+        public string ShowLocalizedPasswordErrorUIMessage { get; set; }
 
         [JsonProperty(PropertyName = "cuep")]
         public bool CanUseExistingPassword { get; set; }

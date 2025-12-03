@@ -96,6 +96,7 @@ namespace FoxIDs.Controllers
                 createUserRequest.Email = createUserRequest.Email?.Trim().ToLower();
                 createUserRequest.Phone = createUserRequest.Phone?.Trim();
                 createUserRequest.Username = createUserRequest.Username?.Trim()?.ToLower();
+                createUserRequest.PasswordPolicyName = createUserRequest.PasswordPolicyName?.Trim()?.ToLower();
 
                 if (!RouteBinding.PlanName.IsNullOrEmpty())
                 {
@@ -138,7 +139,8 @@ namespace FoxIDs.Controllers
                     DisableTwoFactorEmail = createUserRequest.DisableTwoFactorEmail,
                     DisableSetPasswordSms = createUserRequest.DisableSetPasswordSms,
                     DisableSetPasswordEmail = createUserRequest.DisableSetPasswordEmail,
-                    RequireMultiFactor = createUserRequest.RequireMultiFactor
+                    RequireMultiFactor = createUserRequest.RequireMultiFactor,
+                    PasswordPolicyName = createUserRequest.PasswordPolicyName
                 });
                 return Created(mapper.Map<Api.User>(mUser));
             }
@@ -264,6 +266,8 @@ namespace FoxIDs.Controllers
                 }
                 mUser.RequireMultiFactor = user.RequireMultiFactor;
                 mUser.Claims = mapper.Map<List<ClaimAndValues>>(user.Claims);
+
+                mUser.PasswordPolicyName = user.PasswordPolicyName?.Trim()?.ToLower();
 
                 if (user.UpdateEmail != null || user.UpdatePhone != null || user.UpdateUsername != null)
                 {

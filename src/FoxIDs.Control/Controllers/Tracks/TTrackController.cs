@@ -5,6 +5,7 @@ using FoxIDs.Models;
 using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FoxIDs.Logic;
 using ITfoxtec.Identity;
@@ -171,8 +172,14 @@ namespace FoxIDs.Controllers
                 mTrack.FailingLoginCountLifetime = track.FailingLoginCountLifetime;
                 mTrack.FailingLoginObservationPeriod = track.FailingLoginObservationPeriod;
                 mTrack.PasswordLength = track.PasswordLength;
+                mTrack.PasswordMaxLength = track.PasswordMaxLength;
                 mTrack.CheckPasswordComplexity = track.CheckPasswordComplexity;
                 mTrack.CheckPasswordRisk = track.CheckPasswordRisk;
+                mTrack.PasswordBannedCharacters = track.PasswordBannedCharacters;
+                mTrack.PasswordHistory = track.PasswordHistory;
+                mTrack.PasswordMaxAge = track.PasswordMaxAge;
+                mTrack.SoftPasswordChange = track.SoftPasswordChange;
+                mTrack.PasswordPolicies = track.PasswordPolicies?.Map<List<PasswordPolicy>>();
                 if (track.ExternalPassword == null)
                 {
                     mTrack.ExternalPassword = null;

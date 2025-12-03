@@ -50,6 +50,11 @@ namespace FoxIDs.Infrastructure.Filters
 
                 return $"{scriptSrc};";
             }
+
+            protected override string CspSandbox(HttpContext httpContext)
+            {
+                return "sandbox allow-forms allow-popups allow-same-origin allow-scripts allow-downloads;";
+            }
         }
     }
 }

@@ -1,9 +1,11 @@
 using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
+using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Models
@@ -60,6 +62,22 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.SecretHash.HashSaltLength)]
         [JsonProperty(PropertyName = "hash_salt")]
         public string HashSalt { get; set; }
+
+        [MaxLength(Constants.Models.Track.PasswordPolicyNameLength)]
+        [RegularExpression(Constants.Models.Track.PasswordPolicyNameRegExPattern)]
+        [JsonProperty(PropertyName = "password_policy_name")]
+        public string PasswordPolicyName { get; set; }
+
+        [JsonProperty(PropertyName = "password_last_changed")]
+        public long PasswordLastChanged { get; set; }
+
+        [JsonProperty(PropertyName = "soft_password_change_started")]
+        public long SoftPasswordChangeStarted { get; set; }
+
+        [ListLength(Constants.Models.Track.PasswordHistoryMin, Constants.Models.Track.PasswordHistoryMax)]
+        [ValidateComplexType]
+        [JsonProperty(PropertyName = "password_history")]
+        public List<PasswordHistoryItem> PasswordHistory { get; set; }
 
         [JsonProperty(PropertyName = "change_password")]
         public bool ChangePassword  { get; set; }
@@ -182,6 +200,15 @@ namespace FoxIDs.Models
                 if (Phone.IsNullOrEmpty())
                 {
                     results.Add(new ValidationResult($"The field {nameof(Phone)} is required to set password with SMS.", [nameof(Phone), nameof(SetPasswordSms)]));
+                }
+            }
+
+            if (PasswordHistory?.Count > 0)
+            {
+                var duplicateHash = PasswordHistory.GroupBy(ph => ph.Hash, StringComparer.Ordinal).FirstOrDefault(g => g.Count() > 1)?.Key;
+                if (duplicateHash != null)
+                {
+                    results.Add(new ValidationResult($"Duplicate password history. Hash '{duplicateHash}'.", [nameof(PasswordHistory)]));
                 }
             }
 

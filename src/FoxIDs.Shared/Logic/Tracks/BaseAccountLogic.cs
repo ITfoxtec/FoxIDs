@@ -27,6 +27,30 @@ namespace FoxIDs.Logic
             this.secretHashLogic = secretHashLogic;
         }
 
+        protected PasswordPolicyState GetPasswordPolicy(User user)
+        {
+            if (user != null && !user.PasswordPolicyName.IsNullOrWhiteSpace() && RouteBinding.PasswordPolicies?.Count > 0)
+            {
+                var group = RouteBinding.PasswordPolicies.FirstOrDefault(p => p.Name == user.PasswordPolicyName);
+                if (group != null)
+                {
+                    return group;
+                }
+            }
+
+            return new PasswordPolicyState
+            {
+                Length = RouteBinding.PasswordLength,
+                MaxLength = RouteBinding.PasswordMaxLength,
+                CheckComplexity = RouteBinding.CheckPasswordComplexity,
+                CheckRisk = RouteBinding.CheckPasswordRisk,
+                BannedCharacters = RouteBinding.PasswordBannedCharacters,
+                History = RouteBinding.PasswordHistory,
+                MaxAge = RouteBinding.PasswordMaxAge,
+                SoftChange = RouteBinding.SoftPasswordChange
+            };
+        }
+
         public async Task<User> CreateUserAsync(CreateUserObj createUserObj, bool checkUserAndPasswordPolicy = true, string tenantName = null, string trackName = null, bool saveUser = true)
         {
             createUserObj.UserIdentifier.Email = createUserObj.UserIdentifier.Email?.Trim().ToLower();
@@ -35,6 +59,7 @@ namespace FoxIDs.Logic
             createUserObj.UserIdentifier.Phone = !createUserObj.UserIdentifier.Phone.IsNullOrEmpty() ? createUserObj.UserIdentifier.Phone : null;
             createUserObj.UserIdentifier.Username = createUserObj.UserIdentifier.Username?.Trim()?.ToLower();
             createUserObj.UserIdentifier.Username = !createUserObj.UserIdentifier.Username.IsNullOrEmpty() ? createUserObj.UserIdentifier.Username : null;
+            createUserObj.PasswordPolicyName = createUserObj.PasswordPolicyName?.Trim()?.ToLower();
             logger.ScopeTrace(() => $"Creating user '{createUserObj.UserIdentifier.ToJson()}', Route '{RouteBinding?.Route}'.");
 
             var user = new User
@@ -55,7 +80,8 @@ namespace FoxIDs.Logic
                 RequireMultiFactor = createUserObj.RequireMultiFactor,
                 DisableTwoFactorApp = createUserObj.DisableTwoFactorApp,
                 DisableTwoFactorSms = createUserObj.DisableTwoFactorSms,
-                DisableTwoFactorEmail = createUserObj.DisableTwoFactorEmail
+                DisableTwoFactorEmail = createUserObj.DisableTwoFactorEmail,
+                PasswordPolicyName = createUserObj.PasswordPolicyName
             };
 
             tenantName = tenantName ?? RouteBinding.TenantName;
@@ -65,6 +91,7 @@ namespace FoxIDs.Logic
             if (!createUserObj.Password.IsNullOrWhiteSpace())
             {
                 await secretHashLogic.AddSecretHashAsync(user, createUserObj.Password);
+                user.PasswordLastChanged = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             }
             
             if (createUserObj.Claims?.Count() > 0)
@@ -101,7 +128,7 @@ namespace FoxIDs.Logic
 
                 if (!createUserObj.Password.IsNullOrWhiteSpace())
                 {
-                    await ValidatePasswordPolicyAndNotifyAsync(createUserObj.UserIdentifier, createUserObj.Password);
+                    await ValidatePasswordPolicyAndNotifyAsync(createUserObj.UserIdentifier, createUserObj.Password, PasswordState.New, user, GetPasswordPolicy(user));
                 }
             }
 
@@ -162,9 +189,13 @@ namespace FoxIDs.Logic
                     throw new NewPasswordEqualsCurrentException($"New password equals current password, user '{userIdentifier.ToJson()}'.");
                 }
 
-                await ValidatePasswordPolicyAndNotifyAsync(userIdentifier, newPassword);
+                var passwordPolicy = GetPasswordPolicy(user);
+                await ValidatePasswordPolicyAndNotifyAsync(userIdentifier, newPassword, PasswordState.New, user, passwordPolicy);
 
+                await UpdatePasswordHistoryAsync(user, currentPassword, passwordPolicy);
                 await secretHashLogic.AddSecretHashAsync(user, newPassword);
+                user.PasswordLastChanged = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                user.SoftPasswordChangeStarted = 0;
                 user.ChangePassword = false;
                 await tenantDataRepository.SaveAsync(user);
 
@@ -187,9 +218,13 @@ namespace FoxIDs.Logic
                 throw new UserNotExistsException($"User '{userIdentifier.ToJson()}' is disabled, trying to set password.");
             }
 
-            await ValidatePasswordPolicyAndNotifyAsync(userIdentifier, newPassword);
+            var passwordPolicy = GetPasswordPolicy(user);
+            await ValidatePasswordPolicyAndNotifyAsync(userIdentifier, newPassword, PasswordState.New, user, passwordPolicy);
 
+            await UpdatePasswordHistoryAsync(user, null, passwordPolicy);
             await secretHashLogic.AddSecretHashAsync(user, newPassword);
+            user.PasswordLastChanged = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            user.SoftPasswordChangeStarted = 0;
             user.ChangePassword = false;
             user.SetPasswordEmail = false;
             user.SetPasswordSms = false;
@@ -198,49 +233,81 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"User '{userIdentifier.ToJson()}', password set.", triggerEvent: true);
         }
 
-        protected virtual async Task ValidatePasswordPolicyAndNotifyAsync(UserIdentifier userIdentifier, string password, PasswordState state = PasswordState.New)
+        protected virtual async Task ValidatePasswordPolicyAndNotifyAsync(UserIdentifier userIdentifier, string password, PasswordState state, User user, PasswordPolicyState policy)
         {
-            CheckPasswordLength(password);
+            CheckPasswordLength(password, policy);
+            CheckPasswordBannedCharacters(password, policy);
 
-            if (RouteBinding.CheckPasswordComplexity)
+            if (policy.CheckComplexity)
             {
-                CheckPasswordComplexity(userIdentifier, password);
+                CheckPasswordComplexity(userIdentifier, password, policy);
             }
 
-            if (RouteBinding.CheckPasswordRisk)
+            if (policy.CheckRisk)
             {
-                await CheckPasswordRiskAsync(password);
+                await CheckPasswordRiskAsync(password, policy);
+            }
+
+            if (state != PasswordState.Current)
+            {
+                await CheckPasswordHistoryAsync(user, password, policy);
+            }
+            else
+            {
+                CheckPasswordMaxAge(user, policy);
             }
         }
 
-        private void CheckPasswordLength(string password)
+        private void CheckPasswordLength(string password, PasswordPolicyState policy)
         {
-            if (password.Length < RouteBinding.PasswordLength)
+            if (password.Length < policy.Length)
             {
-                throw new PasswordLengthException("Password is to short.");
+                throw new PasswordLengthException("Password is to short.") { PasswordPolicy = policy };
+            }
+            if (password.Length > policy.MaxLength)
+            {
+                throw new PasswordMaxLengthException("Password is to long.") { PasswordPolicy = policy };
             }
         }
 
-        private void CheckPasswordComplexity(UserIdentifier userIdentifier, string password)
+        private void CheckPasswordBannedCharacters(string password, PasswordPolicyState policy)
         {
-            CheckPasswordComplexityCharRepeat(password);
-            CheckPasswordComplexityCharDissimilarity(password);
+            if (!policy.BannedCharacters.IsNullOrWhiteSpace())
+            {
+                foreach (var c in policy.BannedCharacters)
+                {
+                    if (char.IsWhiteSpace(c))
+                    {
+                        continue;
+                    }
+                    if (password.Contains(c, StringComparison.Ordinal))
+                    {
+                        throw new PasswordBannedCharactersException("Password contains banned characters.") { PasswordPolicy = policy };
+                    }
+                }
+            } 
+        }
+
+        private void CheckPasswordComplexity(UserIdentifier userIdentifier, string password, PasswordPolicyState policy)
+        {
+            CheckPasswordComplexityCharRepeat(password, policy);
+            CheckPasswordComplexityCharDissimilarity(password, policy);
             if (!userIdentifier.Email.IsNullOrEmpty())
             {
-                CheckPasswordComplexityContainsEmail(userIdentifier.Email, password);
+                CheckPasswordComplexityContainsEmail(userIdentifier.Email, password, policy);
             }
             if (!userIdentifier.Phone.IsNullOrEmpty())
             {
-                CheckPasswordComplexityContainsPhone(userIdentifier.Phone, password);
+                CheckPasswordComplexityContainsPhone(userIdentifier.Phone, password, policy);
             }
             if (!userIdentifier.Username.IsNullOrEmpty())
             {
-                CheckPasswordComplexityContainsUsername(userIdentifier.Username, password);
+                CheckPasswordComplexityContainsUsername(userIdentifier.Username, password, policy);
             }
-            CheckPasswordComplexityContainsUrl(password);
+            CheckPasswordComplexityContainsUrl(password, policy);
         }
 
-        private void CheckPasswordComplexityCharRepeat(string password)
+        private void CheckPasswordComplexityCharRepeat(string password, PasswordPolicyState policy)
         {
             var maxCharRepeate = password.Length  / 2;
             maxCharRepeate = maxCharRepeate < 3 ? 3 : maxCharRepeate;
@@ -248,11 +315,11 @@ namespace FoxIDs.Logic
             var charCounts = password.GroupBy(c => c).Select(g => g.Count());
             if(charCounts.Any(c => c >= maxCharRepeate))
             {
-                throw new PasswordComplexityException("Password char repeat does not comply with complexity requirements.");
+                throw new PasswordComplexityException("Password char repeat does not comply with complexity requirements.") { PasswordPolicy = policy };
             }
         }
 
-        private void CheckPasswordComplexityCharDissimilarity(string password)
+        private void CheckPasswordComplexityCharDissimilarity(string password, PasswordPolicyState policy)
         {
             var matchCount = 0;
             if (Regex.IsMatch(password, @"[a-z]")) matchCount++;
@@ -261,44 +328,44 @@ namespace FoxIDs.Logic
             if (Regex.IsMatch(password, @"\W")) matchCount++;
             if (matchCount < 3)
             {
-                throw new PasswordComplexityException("Password char dissimilarity does not comply with complexity requirements.");
+                throw new PasswordComplexityException("Password char dissimilarity does not comply with complexity requirements.") { PasswordPolicy = policy };
             }
         }
 
-        private void CheckPasswordComplexityContainsEmail(string email, string password)
+        private void CheckPasswordComplexityContainsEmail(string email, string password, PasswordPolicyState policy)
         {
             var emailSplit = email.Split('@', '.', '-', '_');
             foreach (var es in emailSplit)
             {
                 if (es.Length > 3 && password.Contains(es, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    throw new PasswordEmailTextComplexityException($"Password contains parts of the email '{email}' which does not comply with complexity requirements.");
+                    throw new PasswordEmailTextComplexityException($"Password contains parts of the email '{email}' which does not comply with complexity requirements.") { PasswordPolicy = policy };
                 }
             }
         }
 
-        private void CheckPasswordComplexityContainsPhone(string phone, string password)
+        private void CheckPasswordComplexityContainsPhone(string phone, string password, PasswordPolicyState policy)
         {
             var phoneTrim = phone.TrimStart('+');
             if (phoneTrim.Length > 3 && password.Contains(phoneTrim, StringComparison.InvariantCultureIgnoreCase))
             {
-                throw new PasswordPhoneTextComplexityException($"Password contains the phone number '{phone}' which does not comply with complexity requirements.");
+                throw new PasswordPhoneTextComplexityException($"Password contains the phone number '{phone}' which does not comply with complexity requirements.") { PasswordPolicy = policy };
             }
         }
 
-        private void CheckPasswordComplexityContainsUsername(string username, string password)
+        private void CheckPasswordComplexityContainsUsername(string username, string password, PasswordPolicyState policy)
         {
             var usernameSplit = username.Split('@', '.', '-', '_', ':');
             foreach (var us in usernameSplit)
             {
                 if (us.Length > 3 && password.Contains(us, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    throw new PasswordUsernameTextComplexityException($"Password contains parts of the username '{username}' which does not comply with complexity requirements.");
+                    throw new PasswordUsernameTextComplexityException($"Password contains parts of the username '{username}' which does not comply with complexity requirements.") { PasswordPolicy = policy };
                 }
             }
         }
 
-        private void CheckPasswordComplexityContainsUrl(string password)
+        private void CheckPasswordComplexityContainsUrl(string password, PasswordPolicyState policy)
         {
             var url = $"{HttpContext.GetHost(false)}{HttpContext.Request.Path.Value}";
             var urlSplit = url.Substring(0, url.LastIndexOf('/')).Split(':', '/', '(', ')', '.', '-', '_');
@@ -306,17 +373,84 @@ namespace FoxIDs.Logic
             {
                 if (us.Length > 3 && password.Contains(us, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    throw new PasswordUrlTextComplexityException("Password contains parts of the URL which does not comply with complexity requirements.");
+                    throw new PasswordUrlTextComplexityException("Password contains parts of the URL which does not comply with complexity requirements.") { PasswordPolicy = policy };
                 }
             }
         }
 
-        private async Task CheckPasswordRiskAsync(string password)
+        private async Task CheckPasswordHistoryAsync(User user, string password, PasswordPolicyState policy)
+        {
+            if (user == null || policy.History <= 0)
+            {
+                return;
+            }
+
+            if (user.PasswordHistory?.Count > 0)
+            {
+                var passwordHash = await password.Sha256HashBase64urlEncodedAsync();
+                foreach (var history in user.PasswordHistory.Take(policy.History))
+                {
+                    if (history.HashAlgorithm == Constants.Models.SecretHash.PasswordHistoryHashAlgorithm && history.Hash == passwordHash)
+                    {
+                        throw new PasswordHistoryException("Password reuse detected.") { PasswordPolicy = policy };
+                    }
+                }
+            }
+        }
+
+        protected async Task UpdatePasswordHistoryAsync(User user, string password, PasswordPolicyState policy)
+        {
+            if (user == null)
+            {
+                return;
+            }
+
+            if (policy.History <= 0)
+            {
+                user.PasswordHistory = null;
+                return;
+            }
+
+            user.PasswordHistory ??= new List<PasswordHistoryItem>();
+
+            if (!password.IsNullOrWhiteSpace())
+            {
+                var passwordHash = await password.Sha256HashBase64urlEncodedAsync();
+                user.PasswordHistory = user.PasswordHistory.Where(h => h.HashAlgorithm == Constants.Models.SecretHash.PasswordHistoryHashAlgorithm && h.Hash != passwordHash).ToList();
+                user.PasswordHistory.Insert(0, new PasswordHistoryItem
+                {
+                    HashAlgorithm = Constants.Models.SecretHash.PasswordHistoryHashAlgorithm,
+                    Hash = passwordHash,
+                    Created = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+                });
+            }
+
+            if (user.PasswordHistory.Count > policy.History)
+            {
+                user.PasswordHistory = user.PasswordHistory.Take(policy.History).ToList();
+            }
+        }
+
+        private void CheckPasswordMaxAge(User user, PasswordPolicyState policy)
+        {
+            if (user == null || policy.MaxAge <= 0)
+            {
+                return;
+            }
+
+            var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            if (user.PasswordLastChanged + policy.MaxAge < now)
+            {
+                throw new PasswordExpiredException("Password is too old.") { PasswordPolicy = policy };
+            }
+        }
+
+        private async Task CheckPasswordRiskAsync(string password, PasswordPolicyState policy)
         {
             var passwordSha1Hash = password.Sha1Hash();
             if (await masterDataRepository.ExistsAsync<RiskPassword>(await RiskPassword.IdFormatAsync(new RiskPassword.IdKey { PasswordSha1Hash = passwordSha1Hash })))
             {
-                throw new PasswordRiskException("Password has appeared in a data breach and is at risk.");
+                throw new PasswordRiskException("Password has appeared in a data breach and is at risk.") { PasswordPolicy = policy };
             }
         }
     }

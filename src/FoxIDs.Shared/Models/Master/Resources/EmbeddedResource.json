@@ -795,6 +795,26 @@
     {
       "name": "An email address must be registered on your account to use email two-factor authentication.",
       "id": 193
+    },
+    {
+      "name": "Continue without changing",
+      "id": 194
+    },
+    {
+      "name": "Please use {0} characters or less.",
+      "id": 195
+    },
+    {
+      "name": "Your password contains characters that aren't allowed ({0}). Please remove them and try again.",
+      "id": 196
+    },
+    {
+      "name": "Your password has expired. Please change your password.",
+      "id": 197
+    },
+    {
+      "name": "Please use a password you have not used previously.",
+      "id": 198
     }
   ],
   "resources": [
@@ -26715,6 +26735,56 @@
           "culture": "uk",
           "value": "Для використання двофакторної автентифікації за допомогою електронної пошти в обліковому записі має бути зареєстрована адреса електронної пошти.",
           "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 194,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Continue without changing",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 195,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please use {0} characters or less.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 196,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Your password contains characters that aren't allowed ({0}). Please remove them and try again.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 197,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Your password has expired. Please change your password.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 198,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please use a password you have not used previously.",
+          "edit_level": 100
         }
       ]
     }

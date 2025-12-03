@@ -83,6 +83,7 @@ namespace FoxIDs
             public const string CancelLogin = "cancellogin";
             public const string CreateUser = "createuser";
             public const string ChangePassword = "changepassword";
+            public const string SkipPasswordChange = "skippasswordchange";
             public const string SetPassword = "setpassword";
             public const string PhoneSetPassword = "phonesetpassword";
             public const string EmailSetPassword = "emailsetpassword";
@@ -449,6 +450,8 @@ namespace FoxIDs
                 public const int HashAlgorithmLength = 20;
                 public const int HashLength = 2048;
                 public const int HashSaltLength = 512;
+
+                public const string PasswordHistoryHashAlgorithm = "S256";
             }
 
             public static class Certificate
@@ -537,6 +540,18 @@ namespace FoxIDs
 
                 public const int PasswordLengthMin = 4;
                 public const int PasswordLengthMax = 50;
+                public const int PasswordPoliciesMin = 0;
+                public const int PasswordPoliciesMax = 10;
+                public const int PasswordPolicyNameLength = 10;
+                public const string PasswordPolicyNameRegExPattern = @"^[\w\-]*$";
+                public const int PasswordPolicyDisplayNameLength = 30;
+                public const int PasswordBannedCharactersLength = 20;
+                public const int PasswordHistoryMin = 0;
+                public const int PasswordHistoryMax = 20;
+                public const int PasswordMaxAgeMin = 0;
+                public const int PasswordMaxAgeMax = 63072000; // 2 years
+                public const int SoftPasswordChangeMin = 0;
+                public const int SoftPasswordChangeMax = 2592000; // 30 days
 
                 public const int AllowIframeOnDomainsMin = 0;
                 public const int AllowIframeOnDomainsMax = 40;

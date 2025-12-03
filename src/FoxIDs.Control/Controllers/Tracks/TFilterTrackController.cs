@@ -51,7 +51,7 @@ namespace FoxIDs.Controllers
                         (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase)));
                
                 var aTracks = new HashSet<Api.Track>(mTracks.Count());
-                foreach(var mTrack in mTracks.OrderBy(t => t.Name))
+                foreach(var mTrack in mTracks.OrderBy(t => t.DisplayName ?? t.Name))
                 {
                     aTracks.Add(mapper.Map<Api.Track>(mTrack));
                 }

@@ -1,11 +1,11 @@
-﻿using ITfoxtec.Identity.Util;
-using FoxIDs.Models;
+﻿using FoxIDs.Models;
+using ITfoxtec.Identity;
+using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.WebUtilities;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using ITfoxtec.Identity;
 using static FoxIDs.Constants.Models;
 
 namespace FoxIDs.Logic
@@ -36,21 +36,54 @@ namespace FoxIDs.Logic
             return Task.FromResult(string.Empty);
         }
 
-        public Task<bool> ValidateSecretAsync(ISecretHash item, string secret)
+        public void CopySecretHash(ISecretHash source, ISecretHash target)
+        {
+            target.HashAlgorithm = source.HashAlgorithm;
+            target.Hash = source.Hash;
+            target.HashSalt = source.HashSalt;
+        }
+
+        public async Task<bool> ValidateSecretAsync(ISecretHash item, string secret)
         {
             var iterations = VerifyAlgorithmAndGetIterations(item);
+
+            if (string.IsNullOrWhiteSpace(item.HashSalt))
+            {
+                throw new NotSupportedException($"Password hash salt not configured. Item '{item.ToJson()}'.");
+            }
 
             var salt = WebEncoders.Base64UrlDecode(item.HashSalt);
             var hash = KeyDerivation.Pbkdf2(secret, salt, defaultPrf, iterations * 10000, SecretHash.DefaultDerivedKeyBytes);
 
             if (WebEncoders.Base64UrlEncode(hash) == item.Hash)
             {
-                return Task.FromResult(true);
+                return true;
             }
             else
             {
-                return Task.FromResult(false);
+                return false;
             }
+        }
+
+        public async Task<string> GetPasswordHistoryHashAsync(string password)
+        {
+            return await password.Sha256HashBase64urlEncodedAsync();
+        }
+
+        public void AddPasswordHistoryHash(PasswordHistoryItem item, string passwordHistoryHash)
+        {
+            item.HashAlgorithm = SecretHash.PasswordHistoryHashAlgorithm;
+            item.Hash = passwordHistoryHash;
+        }
+
+        public async Task<bool> ValidatePasswordHistoryHashAsync(ISecretHash item, string password, string passwordHistoryHash)
+        {
+            if (string.Equals(item.HashAlgorithm, SecretHash.PasswordHistoryHashAlgorithm, StringComparison.Ordinal))
+            {
+                return passwordHistoryHash == item.Hash;
+            }
+
+            return await ValidateSecretAsync(item, password);
         }
 
         public Task ValidateSecretDefaultTimeUsageAsync(string secret)
@@ -64,7 +97,7 @@ namespace FoxIDs.Logic
         private int VerifyAlgorithmAndGetIterations(ISecretHash item)
         {
             var algoSplit = item.HashAlgorithm?.Split(':');
-            if (algoSplit?.Count() != 2 || algoSplit[0] != SecretHash.DefaultPostHashAlgorithm)
+            if (algoSplit?.Count() != 2 || !algoSplit[0].Equals(SecretHash.DefaultPostHashAlgorithm, StringComparison.Ordinal))
             {
                 throw new NotSupportedException($"Password hash algorithm '{item.HashAlgorithm}' not supported. Item '{item.ToJson()}'.");
             }

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using FoxIDs.Models.Logic;
+
 namespace FoxIDs.Models
 {
     public class RouteBinding
@@ -55,9 +57,21 @@ namespace FoxIDs.Models
 
         public int PasswordLength { get; set; }
 
+        public int PasswordMaxLength { get; set; }
+
         public bool CheckPasswordComplexity { get; set; }
 
         public bool CheckPasswordRisk { get; set; }
+
+        public string PasswordBannedCharacters { get; set; }
+
+        public int PasswordHistory { get; set; }
+
+        public long PasswordMaxAge { get; set; }
+
+        public long SoftPasswordChange { get; set; }
+
+        public List<PasswordPolicyState> PasswordPolicies { get; set; }
 
         public ExternalPassword ExternalPassword { get; set; }
 

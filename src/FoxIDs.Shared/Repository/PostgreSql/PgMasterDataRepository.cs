@@ -1,5 +1,4 @@
-﻿using FoxIDs.Infrastructure;
-using FoxIDs.Logic;
+﻿using FoxIDs.Logic;
 using FoxIDs.Models;
 using ITfoxtec.Identity;
 using Microsoft.Extensions.DependencyInjection;

@@ -72,7 +72,7 @@ The default configuration file `appsettings.json` in the FoxIDs.Control project:
     }
 
 
-**Hit run!** The FoxIDs Control site should be lunched in a browser.
+**Hit run!** The FoxIDs Control site should be launched in a browser.
 
 Login with the default admin user `admin@foxids.com` with password `FirstAccess!`
 

@@ -17,7 +17,7 @@ namespace FoxIDs.Client.Logic
 
         public async Task TrackSelectedAsync(Track track)
         {
-            Track = track;
+            UpdateTrack(track);
             if (OnTrackSelectedAsync != null)
             {
                 await OnTrackSelectedAsync(track);
@@ -31,6 +31,11 @@ namespace FoxIDs.Client.Logic
             {
                 await OnSelectTrackAsync();
             }
+        }
+
+        public void UpdateTrack(Track track)
+        {
+            Track = track;
         }
     }
 }

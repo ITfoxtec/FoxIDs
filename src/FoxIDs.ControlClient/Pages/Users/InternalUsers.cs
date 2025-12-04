@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Blazored.Toast.Services;
@@ -175,10 +176,22 @@ namespace FoxIDs.Client.Pages.Users
 
         private UserViewModel ToViewModel(User user)
         {
-            return user.Map<UserViewModel>(afterMap: afterMap =>
+            var userViewModel = user.Map<UserViewModel>(afterMap: afterMap =>
             {
                 afterMap.Password = user.HasPassword ? "********" : "-passwordless-";
             });
+
+            RemoveDeletedPasswordPolicy(userViewModel);
+
+            return userViewModel;
+        }
+
+        private void RemoveDeletedPasswordPolicy(UserViewModel userViewModel)
+        {
+            if (!userViewModel.PasswordPolicyName.IsNullOrWhiteSpace() && (passwordPolicies?.Any(p => p.Name == userViewModel.PasswordPolicyName) != true))
+            {
+                userViewModel.PasswordPolicyName = string.Empty;
+            }
         }
 
         private string GetInfoText(GeneralUserViewModel generalUser, bool includeUserIdentifier = false)

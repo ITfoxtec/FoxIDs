@@ -189,11 +189,11 @@
                                                     <li class="list-group-item">
                                                         <div class="row">
                                                         <div class="col-11 col-md-8">
-                                                                <FInputText @bind-Value="policy.Name" For="@(() => policy.Name)" />
-                                                            </div>
-                                                            <div class="col-1 text-right">
-                                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemovePasswordPolicy(trackSettingsForm.Model.PasswordPolicies, policy))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
-                                                            </div>
+                                                            <FInputText @bind-Value="policy.Name" For="@(() => policy.Name)" />
+                                                        </div>
+                                                        <div class="col-1 offset-md-3 text-right">
+                                                            <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemovePasswordPolicy(trackSettingsForm.Model.PasswordPolicies, policy))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                                        </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-12">

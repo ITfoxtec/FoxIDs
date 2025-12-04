@@ -547,7 +547,7 @@ namespace FoxIDs
                 public const int PasswordPolicyDisplayNameLength = 30;
                 public const int PasswordBannedCharactersLength = 20;
                 public const int PasswordHistoryMin = 0;
-                public const int PasswordHistoryMax = 20;
+                public const int PasswordHistoryMax = 30;
                 public const int PasswordMaxAgeMin = 0;
                 public const int PasswordMaxAgeMax = 63072000; // 2 years
                 public const int SoftPasswordChangeMin = 0;

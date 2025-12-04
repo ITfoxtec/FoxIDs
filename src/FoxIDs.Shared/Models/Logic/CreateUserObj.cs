@@ -37,6 +37,8 @@ namespace FoxIDs.Models.Logic
 
         public bool RequireMultiFactor { get; set; }
 
+        public string PasswordPolicyName { get; set; }
+
         public List<Claim> Claims { get; set; }
     }
 }

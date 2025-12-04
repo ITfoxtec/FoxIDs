@@ -65,10 +65,22 @@ namespace FoxIDs.Controllers
             catch (PasswordLengthException plex)
             {
                 logger.ScopeTrace(() => plex.Message);
-                ModelState.AddModelError(nameof(userRequest.NewPassword), RouteBinding.CheckPasswordComplexity ?
-                    $"Please use {RouteBinding.PasswordLength} characters or more with a mix of letters, numbers and symbols." :
-                    $"Please use {RouteBinding.PasswordLength} characters or more.");
+                ModelState.AddModelError(nameof(userRequest.NewPassword), plex.PasswordPolicy.CheckComplexity ?
+                    $"Please use {plex.PasswordPolicy.Length} characters or more with a mix of letters, numbers and symbols." :
+                    $"Please use {plex.PasswordPolicy.Length} characters or more.");
                 return BadRequest(ModelState, plex);
+            }
+            catch (PasswordMaxLengthException pmex)
+            {
+                logger.ScopeTrace(() => pmex.Message);
+                ModelState.AddModelError(nameof(userRequest.NewPassword), $"Please use {RouteBinding.PasswordMaxLength} characters or less.");
+                return BadRequest(ModelState, pmex);
+            }
+            catch (PasswordBannedCharactersException pbex)
+            {
+                logger.ScopeTrace(() => pbex.Message);
+                ModelState.AddModelError(nameof(userRequest.NewPassword), $"Your password contains characters that aren't allowed ({pbex.PasswordPolicy.BannedCharacters}). Please remove them and try again.");
+                return BadRequest(ModelState, pbex);
             }
             catch (PasswordComplexityException pcex)
             {
@@ -106,6 +118,12 @@ namespace FoxIDs.Controllers
                 ModelState.AddModelError(nameof(userRequest.NewPassword), "The password has previously appeared in a data breach. Please choose a more secure alternative.");
                 return BadRequest(ModelState, prex);
 
+            }
+            catch (PasswordHistoryException phex)
+            {
+                logger.ScopeTrace(() => phex.Message);
+                ModelState.AddModelError(nameof(userRequest.NewPassword), $"Please use a password you have not used among your last {phex.PasswordPolicy.History} passwords.");
+                return BadRequest(ModelState, phex);
             }
         }
     }

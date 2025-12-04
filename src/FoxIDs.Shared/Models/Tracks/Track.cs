@@ -3,11 +3,12 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Models
 {
-    public class Track : DataDocument
+    public class Track : DataDocument, IValidatableObject
     {
         public static async Task<string> IdFormatAsync(IdKey idKey)
         {
@@ -97,6 +98,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "password_length")]
         public int PasswordLength { get; set; } = Constants.TrackDefaults.DefaultPasswordLength;
 
+        [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
+        [JsonProperty(PropertyName = "password_max_length")]
+        public int? PasswordMaxLength { get; set; } = Constants.Models.Track.PasswordLengthMax;
+
         [Required]
         [JsonProperty(PropertyName = "check_password_complexity")]
         public bool? CheckPasswordComplexity { get; set; } = true;
@@ -104,6 +109,26 @@ namespace FoxIDs.Models
         [Required]
         [JsonProperty(PropertyName = "check_password_risk")]
         public bool? CheckPasswordRisk { get; set; } = true;
+
+        [MaxLength(Constants.Models.Track.PasswordBannedCharactersLength)]
+        [JsonProperty(PropertyName = "password_banned_characters")]
+        public string PasswordBannedCharacters { get; set; }
+
+        [Range(Constants.Models.Track.PasswordHistoryMin, Constants.Models.Track.PasswordHistoryMax)]
+        [JsonProperty(PropertyName = "password_history")]
+        public int PasswordHistory { get; set; }
+
+        [Range(Constants.Models.Track.PasswordMaxAgeMin, Constants.Models.Track.PasswordMaxAgeMax)]
+        [JsonProperty(PropertyName = "password_max_age")]
+        public long PasswordMaxAge { get; set; }
+
+        [Range(Constants.Models.Track.SoftPasswordChangeMin, Constants.Models.Track.SoftPasswordChangeMax)]
+        [JsonProperty(PropertyName = "soft_password_change")]
+        public long SoftPasswordChange { get; set; }
+
+        [ListLength(Constants.Models.Track.PasswordPoliciesMin, Constants.Models.Track.PasswordPoliciesMax)]
+        [JsonProperty(PropertyName = "password_policies")]
+        public List<PasswordPolicy> PasswordPolicies { get; set; }
 
         [ValidateComplexType]
         [JsonProperty(PropertyName = "external_password")]
@@ -178,6 +203,28 @@ namespace FoxIDs.Models
             [MaxLength(Constants.Models.Track.NameLength)]
             [RegularExpression(Constants.Models.Track.NameDbRegExPattern)]
             public string TrackName { get; set; }
+        }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+
+            var minLength = PasswordLength;
+            if (PasswordMaxLength < minLength)
+            {
+                results.Add(new ValidationResult($"The field {nameof(PasswordMaxLength)} must be greater than or equal to {nameof(PasswordLength)}.", [nameof(PasswordMaxLength), nameof(PasswordLength)]));
+            }
+
+            if (PasswordPolicies?.Count > 0)
+            {
+                var duplicateName = PasswordPolicies.GroupBy(p => p.Name, StringComparer.OrdinalIgnoreCase).FirstOrDefault(g => g.Count() > 1)?.Key;
+                if (duplicateName != null)
+                {
+                    results.Add(new ValidationResult($"Duplicate password policy group name '{duplicateName}'.", [nameof(PasswordPolicies)]));
+                }
+            }
+
+            return results;
         }
     }
 }

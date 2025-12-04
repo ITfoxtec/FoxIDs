@@ -795,6 +795,26 @@
     {
       "name": "An email address must be registered on your account to use email two-factor authentication.",
       "id": 193
+    },
+    {
+      "name": "Continue without changing",
+      "id": 194
+    },
+    {
+      "name": "Please use {0} characters or less.",
+      "id": 195
+    },
+    {
+      "name": "Your password contains characters that aren't allowed ({0}). Please remove them and try again.",
+      "id": 196
+    },
+    {
+      "name": "Your password has expired. Please change your password.",
+      "id": 197
+    },
+    {
+      "name": "Please use a password you have not used previously.",
+      "id": 198
     }
   ],
   "resources": [
@@ -26714,6 +26734,681 @@
         {
           "culture": "uk",
           "value": "Для використання двофакторної автентифікації за допомогою електронної пошти в обліковому записі має бути зареєстрована адреса електронної пошти.",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 194,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Продължете без промяна",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Continua sense canviar",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Pokračovat beze změny",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Fortsæt uden at ændre",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Weiter ohne Änderung",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Συνεχίστε χωρίς αλλαγή",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Continue without changing",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Continuar sin cambiar",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Jätka ilma muutmata",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Jatka muuttamatta",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Continuer sans changer",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Nastavite bez promjena",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Halda áfram án þess að breyta",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Continuare senza cambiare",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Tęsti nekeičiant",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Turpināt bez izmaiņām",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Fortsett uten å endre",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Doorgaan zonder te wijzigen",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Kontynuuj bez zmiany",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Continuar sem alterar",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Continuați fără a modifica",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Pokračujte bez zmeny",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Nadaljujte brez spreminjanja",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Fortsätt utan att ändra",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Değiştirmeden devam et",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Продовжуйте без змін",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 195,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Моля, използвайте {0} или по-малко знаци.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Si us plau, utilitzeu {0} caràcters o menys.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Použijte {0} nebo méně znaků.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Brug venligst {0} tegn eller mindre.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Bitte verwenden Sie {0} Zeichen oder weniger.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Παρακαλούμε χρησιμοποιήστε {0} χαρακτήρες ή λιγότερους.",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Please use {0} characters or less.",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Utilice {0} caracteres o menos.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Palun kasutage {0} tähemärki või vähem.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Käytä {0} merkkiä tai vähemmän.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Veuillez utiliser {0} caractères ou moins.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Molimo koristite {0} znakova ili manje.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Vinsamlegast notið {0} stafi eða færri.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Si prega di utilizzare {0} caratteri o meno.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Naudokite {0} ar mažiau simbolių.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Lūdzu, izmantojiet {0} vai mazāk rakstzīmju.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Vennligst bruk {0} tegn eller mindre.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruik {0} tekens of minder.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Prosimy o używanie {0} znaków lub mniej.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Utilize {0} caracteres ou menos.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Vă rugăm să folosiți {0} caractere sau mai puțin.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Použite {0} alebo menej znakov.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Uporabite {0} znakov ali manj.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Använd högst {0} tecken.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Lütfen {0} veya daha az karakter kullanın.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Будь ласка, використовуйте {0} символів або менше.",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 196,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Паролата ви съдържа неразрешени символи ({0}). Моля, премахнете ги и опитайте отново.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "La vostra contrasenya conté caràcters no permesos ({0}). Si us plau, elimineu-los i torneu-ho a intentar.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Vaše heslo obsahuje nepovolené znaky ({0}). Odstraňte je a zkuste to znovu.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Din adgangskode indeholder tegn, der ikke er tilladt ({0}). Fjern dem, og prøv igen.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Ihr Passwort enthält Zeichen, die nicht erlaubt sind ({0}). Bitte entfernen Sie diese und versuchen Sie es erneut.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Ο κωδικός πρόσβασής σας περιέχει χαρακτήρες που δεν επιτρέπονται ({0}). Παρακαλώ αφαιρέστε τους και προσπαθήστε ξανά.",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Your password contains characters that aren't allowed ({0}). Please remove them and try again.",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Tu contraseña contiene caracteres no permitidos ({0}). Por favor, elimínelos e inténtelo de nuevo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Teie salasõna sisaldab märke, mis ei ole lubatud ({0}). Palun eemaldage need ja proovige uuesti.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Salasanasi sisältää merkkejä, jotka eivät ole sallittuja ({0}). Poista ne ja yritä uudelleen.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Votre mot de passe contient des caractères non autorisés ({0}). Veuillez les supprimer et réessayer.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Vaša lozinka sadrži znakove koji nisu dopušteni ({0}). Uklonite ih i pokušajte ponovno.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Lykilorðið þitt inniheldur óleyfileg stafi ({0}). Vinsamlegast fjarlægðu þá og reyndu aftur.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "La password contiene caratteri non consentiti ({0}). Rimuoverli e riprovare.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Jūsų slaptažodyje yra neleistinų simbolių ({0}). Pašalinkite juos ir bandykite dar kartą.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Jūsu parole satur neatļautas rakstzīmes ({0}). Lūdzu, noņemiet tās un mēģiniet vēlreiz.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Passordet ditt inneholder tegn som ikke er tillatt ({0}). Vennligst fjern dem og prøv på nytt.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Uw wachtwoord bevat tekens die niet zijn toegestaan ({0}). Verwijder ze en probeer het opnieuw.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Twoje hasło zawiera niedozwolone znaki ({0}). Usuń je i spróbuj ponownie.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "A sua palavra-passe contém caracteres que não são permitidos ({0}). Retire-os e tente novamente.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Parola dvs. conține caractere care nu sunt permise ({0}). Vă rugăm să le eliminați și să încercați din nou.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Vaše heslo obsahuje nepovolené znaky ({0}). Odstráňte ich a skúste to znova.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Vaše geslo vsebuje nedovoljene znake ({0}). Odstranite jih in poskusite znova.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ditt lösenord innehåller tecken som inte är tillåtna ({0}). Ta bort dem och försök igen.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Parolanız izin verilmeyen karakterler içeriyor ({0}). Lütfen bunları kaldırın ve tekrar deneyin.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Ваш пароль містить недозволені символи ({0}). Будь ласка, видаліть їх і спробуйте ще раз.",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 197,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Срокът на валидност на паролата ви е изтекъл. Моля, сменете паролата си.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "La teva contrasenya ha caducat. Si us plau, canvia-la.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Platnost vašeho hesla vypršela. Změňte si prosím heslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Din adgangskode er udløbet. Skift venligst din adgangskode.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Ihr Passwort ist abgelaufen. Bitte ändern Sie Ihr Passwort.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Ο κωδικός πρόσβασής σας έχει λήξει. Παρακαλώ αλλάξτε τον κωδικό σας.",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Your password has expired. Please change your password.",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Su contraseña ha caducado. Por favor, cámbiela.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Teie salasõna on aegunud. Palun vahetage oma salasõna.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Salasanasi on vanhentunut. Vaihda salasanasi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Votre mot de passe a expiré. Veuillez le modifier.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Vaša je lozinka istekla. Molimo promijenite lozinku.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Lykilorðið þitt er útrunnið. Vinsamlegast breyttu því.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "La password è scaduta. Si prega di cambiare la password.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Jūsų slaptažodžio galiojimo laikas baigėsi. Pakeiskite slaptažodį.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Jūsu paroles derīguma termiņš ir beidzies. Lūdzu, nomainiet paroli.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Passordet ditt er utløpt. Vennligst endre passordet ditt.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Je wachtwoord is verlopen. Wijzig je wachtwoord.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Twoje hasło wygasło. Prosimy o zmianę hasła.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "A sua palavra-passe expirou. Por favor, altere a sua palavra-passe.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Parola dvs. a expirat. Vă rugăm să vă schimbați parola.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Platnosť vášho hesla vypršala. Prosím, zmeňte si heslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Vaše geslo je poteklo. Spremenite svoje geslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ditt lösenord har löpt ut. Vänligen ändra ditt lösenord.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Şifrenizin süresi doldu. Lütfen şifrenizi değiştirin.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Термін дії вашого пароля закінчився. Будь ласка, змініть пароль.",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 198,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Моля, използвайте парола, която не сте използвали досега.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Si us plau, utilitzeu una contrasenya que no hàgiu utilitzat anteriorment.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Použijte heslo, které jste dosud nepoužívali.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Brug venligst en adgangskode, som du ikke har brugt tidligere.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Bitte verwenden Sie ein Passwort, das Sie bisher noch nicht benutzt haben.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Παρακαλούμε χρησιμοποιήστε έναν κωδικό πρόσβασης που δεν έχετε χρησιμοποιήσει στο παρελθόν.",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Please use a password you have not used previously.",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Utilice una contraseña que no haya utilizado anteriormente.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Palun kasutage parooli, mida te varem ei ole kasutanud.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Käytä salasanaa, jota et ole käyttänyt aiemmin.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Veuillez utiliser un mot de passe que vous n'avez pas utilisé auparavant.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Molimo koristite lozinku koju prije niste koristili.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Vinsamlegast notaðu lykilorð sem þú hefur ekki notað áður.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Utilizzate una password che non avete mai usato in precedenza.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Naudokite slaptažodį, kurio anksčiau nenaudojote.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Lūdzu, izmantojiet paroli, kuru iepriekš neesat izmantojis.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Bruk et passord du ikke har brukt tidligere.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruik een wachtwoord dat je nog niet eerder hebt gebruikt.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Użyj hasła, którego nie używałeś wcześniej.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Utilize uma palavra-passe que não tenha utilizado anteriormente.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Vă rugăm să folosiți o parolă pe care nu ați mai folosit-o anterior.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Použite heslo, ktoré ste predtým nepoužili.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Uporabite geslo, ki ga še niste uporabili.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Använd ett lösenord som du inte har använt tidigare.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Lütfen daha önce kullanmadığınız bir şifre kullanın.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Будь ласка, використовуйте пароль, який ви не використовували раніше.",
           "edit_level": 40
         }
       ]

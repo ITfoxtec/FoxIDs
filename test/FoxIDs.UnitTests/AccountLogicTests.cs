@@ -83,11 +83,12 @@ namespace FoxIDs.UnitTests
             await Assert.ThrowsAsync<PasswordRiskException>(async () => await accountLogic.CreateUserAsync(new CreateUserObj { UserIdentifier = new UserIdentifier { Email = email }, Password = password }));
         }
 
-        private BaseAccountLogic AccountLogicInstance(int passwordLength = 8, bool checkPasswordComplexity = true, bool checkPasswordRisk = true)
+        private BaseAccountLogic AccountLogicInstance(int passwordLength = 8, int passwordMaxLength = 50, bool checkPasswordComplexity = true, bool checkPasswordRisk = true)
         {
             var routeBinding = new RouteBinding
             {
                 PasswordLength = passwordLength,
+                PasswordMaxLength = passwordMaxLength,
                 CheckPasswordComplexity = checkPasswordComplexity,
                 CheckPasswordRisk = checkPasswordRisk,
             };

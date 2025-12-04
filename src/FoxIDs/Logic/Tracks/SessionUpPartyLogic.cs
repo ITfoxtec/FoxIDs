@@ -62,7 +62,11 @@ namespace FoxIDs.Logic
             {
                 if (!sessionClaims.Where(c => c.Type == JwtClaimTypes.SessionId).Any())
                 {
-                    sessionClaims.AddClaim(JwtClaimTypes.SessionId, await GetSessionIdAsync(upParty));
+                    var sessionId = await GetOrCreateSessionIdAsync(upParty);
+                    if (!sessionId.IsNullOrEmpty())
+                    {
+                        sessionClaims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+                    }                        
                 }
                 session.Claims = sessionClaims.ToClaimAndValues();
 
@@ -91,10 +95,12 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => $"User id '{session.UserIdClaim}' session for authentication method exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionIdClaim}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid && activeSessionExists)
                 {
+                    var saveDbActiveSession = false;
                     if (session.IsMarkerSession)
                     {
                         updateAction(session);
                         session.IsMarkerSession = false;
+                        saveDbActiveSession = true;
                     }
 
                     var userId = sessionClaims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
@@ -110,7 +116,7 @@ namespace FoxIDs.Logic
                         updateAction(session);
                     }
 
-                    await AddOrUpdateSessionTrackWithClaimsAsync(upParty, session.Claims, updateDbActiveSession: false);
+                    await AddOrUpdateSessionTrackWithClaimsAsync(upParty, session.Claims, saveDbActiveSession: saveDbActiveSession);
                     session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                     await sessionCookieRepository.SaveAsync(upParty, session, null);
                     logger.ScopeTrace(() => $"Session updated authentication method, Session id '{session.SessionIdClaim}'.", GetSessionScopeProperties(session));
@@ -133,7 +139,7 @@ namespace FoxIDs.Logic
                 updateAction(session);
                 session.LastUpdated = session.CreateTime;
 
-                await AddOrUpdateSessionTrackWithClaimsAsync(upParty, session.Claims, updateDbActiveSession: true);
+                await AddOrUpdateSessionTrackWithClaimsAsync(upParty, session.Claims, saveDbActiveSession: true);
                 await sessionCookieRepository.SaveAsync(upParty, session, null);
                 logger.ScopeTrace(() => $"Session for authentication method created, User id '{session.UserIdClaim}', Session id '{session.SessionIdClaim}', External Session id '{externalSessionId}'.", GetSessionScopeProperties(session));
 

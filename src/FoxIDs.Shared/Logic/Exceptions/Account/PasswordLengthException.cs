@@ -3,7 +3,7 @@
 namespace FoxIDs.Logic
 {
     [Serializable]
-    public class PasswordLengthException : AccountException
+    public class PasswordLengthException : PasswordPolicyException
     {
         public PasswordLengthException() { }
         public PasswordLengthException(string message) : base(message) { }

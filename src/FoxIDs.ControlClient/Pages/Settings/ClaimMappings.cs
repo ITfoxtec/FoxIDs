@@ -27,6 +27,7 @@ namespace FoxIDs.Client.Pages.Settings
         private string smsSettingsHref;
         private PageEditForm<ClaimMappingViewModel> trackClaimMappingForm;
         private PageEditForm<ClaimMappingDefaultViewModel> trackClaimMappingDefaultForm;
+        private ClaimMappingsTab activeTab = ClaimMappingsTab.Custom;
 
         [Inject]
         public ClientSettings ClientSettings { get; set; }
@@ -99,6 +100,11 @@ namespace FoxIDs.Client.Pages.Settings
             trackClaimMappingForm.Model.ClaimMappings.Add(new ClaimMap());
         }
 
+        private void SelectTab(ClaimMappingsTab tab)
+        {
+            activeTab = tab;
+        }
+
         private void RemoveClaimMapping(MouseEventArgs e, ClaimMap claimMapping)
         {
             trackClaimMappingForm.Model.ClaimMappings.Remove(claimMapping);
@@ -115,6 +121,12 @@ namespace FoxIDs.Client.Pages.Settings
             {
                 trackClaimMappingForm.SetError(ex.Message);
             }
+        }
+
+        private enum ClaimMappingsTab
+        {
+            Custom,
+            Defaults
         }
     }
 }

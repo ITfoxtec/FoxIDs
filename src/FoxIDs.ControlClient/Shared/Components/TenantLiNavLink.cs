@@ -34,6 +34,9 @@ namespace FoxIDs.Client.Shared.Components
         public string SubPages { get; set; }
 
         [Parameter]
+        public string LinkClass { get; set; }
+
+        [Parameter]
         public RenderFragment ChildContent { get; set; }
 
         protected override async Task OnInitializedAsync()

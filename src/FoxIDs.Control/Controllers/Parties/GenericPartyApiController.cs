@@ -201,7 +201,7 @@ namespace FoxIDs.Controllers
                         mOidcDownParty.TestUrl = tempMParty.TestUrl;
                         if (!party.NewName.IsNullOrWhiteSpace())
                         {
-                            mOidcDownParty.TestUrl = mOidcDownParty.TestUrl.Replace(party.Name, party.NewName);
+                            mOidcDownParty.TestUrl = mOidcDownParty.TestUrl.Replace($"/{party.Name}(", $"/{party.NewName}(").Replace($"&client_id={party.Name}&", $"&client_id={party.NewName}&");
                         }
 
                         var downPartyTestLifetime = party is Api.OidcDownParty aOidcDownParty && aOidcDownParty?.TestExpireInSeconds != null ? aOidcDownParty.TestExpireInSeconds.Value : settings.DownPartyTestLifetime;

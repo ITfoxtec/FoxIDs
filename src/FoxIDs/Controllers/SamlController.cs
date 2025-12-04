@@ -11,6 +11,8 @@ using ITfoxtec.Identity.Saml2.MvcCore;
 using Saml2Http = ITfoxtec.Identity.Saml2.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using FoxIDs.Infrastructure.Saml2;
+using Microsoft.AspNetCore.Http;
 
 namespace FoxIDs.Controllers
 {
@@ -51,22 +53,7 @@ namespace FoxIDs.Controllers
         [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Client, NoStore = false)]
         public async Task<IActionResult> IdPMetadata()
         {
-            try
-            {
-                logger.ScopeTrace(() => $"SAML IdP Metadata request, Application type '{RouteBinding.DownParty?.Type}'");
-                switch (RouteBinding.DownParty?.Type)
-                {
-                    case PartyTypes.Saml2:
-                    case null:
-                        return await serviceProvider.GetService<SamlMetadataExposeLogic>().IdPMetadataAsync(RouteBinding.DownParty?.Id);
-                    default:
-                        throw new NotSupportedException($"Connection type '{RouteBinding.DownParty?.Type}' not supported.");
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new EndpointException($"SAML IdP Metadata request failed, Name '{RouteBinding.DownParty?.Name}'.", ex) { RouteBinding = RouteBinding };
-            }
+            return await IdPMetadataInternalAsync();
         }
 
         public async Task<IActionResult> Acs()
@@ -199,6 +186,11 @@ namespace FoxIDs.Controllers
         {
             try
             {
+                if (SamlRequestHelper.IsAuthnMetadataRequest(Request))
+                {
+                    return await IdPMetadataInternalAsync();
+                }
+
                 if (RouteBinding.ToUpParties?.Count() < 1)
                 {
                     throw new NotSupportedException("Authentication method not configured.");
@@ -289,5 +281,25 @@ namespace FoxIDs.Controllers
                 throw new EndpointException($"SAML Single Logout response failed, Name '{RouteBinding.DownParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }    
+
+        private async Task<IActionResult> IdPMetadataInternalAsync()
+        {
+            try
+            {
+                logger.ScopeTrace(() => $"SAML IdP Metadata request, Application type '{RouteBinding.DownParty?.Type}'");
+                switch (RouteBinding.DownParty?.Type)
+                {
+                    case PartyTypes.Saml2:
+                    case null:
+                        return await serviceProvider.GetService<SamlMetadataExposeLogic>().IdPMetadataAsync(RouteBinding.DownParty?.Id);
+                    default:
+                        throw new NotSupportedException($"Connection type '{RouteBinding.DownParty?.Type}' not supported.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"SAML IdP Metadata request failed, Name '{RouteBinding.DownParty?.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
     }
 }

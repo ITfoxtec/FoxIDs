@@ -3,7 +3,7 @@
 namespace FoxIDs.Logic
 {
     [Serializable]
-    public class PasswordComplexityException : AccountException
+    public class PasswordComplexityException : PasswordPolicyException
     {
         public PasswordComplexityException() { }
         public PasswordComplexityException(string message) : base(message) { }

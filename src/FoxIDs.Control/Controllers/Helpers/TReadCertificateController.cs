@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using ITfoxtec.Identity;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.WebUtilities;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -34,12 +35,7 @@ namespace FoxIDs.Controllers
 
             try
             {
-                var certificate = certificateAndPassword.Password.IsNullOrWhiteSpace() switch
-                {
-                    //Can not be change to X509CertificateLoader LoadPkcs12 or LoadCertificate because it should automatically select between the two methods.
-                    true => new X509Certificate2(WebEncoders.Base64UrlDecode(certificateAndPassword.EncodeCertificate), string.Empty, keyStorageFlags: X509KeyStorageFlags.Exportable),
-                    false => new X509Certificate2(WebEncoders.Base64UrlDecode(certificateAndPassword.EncodeCertificate), certificateAndPassword.Password, keyStorageFlags: X509KeyStorageFlags.Exportable),
-                };
+                var certificate = LoadCertificateWithFallback(WebEncoders.Base64UrlDecode(certificateAndPassword.EncodeCertificate), certificateAndPassword.Password);
 
                 if (!certificateAndPassword.Password.IsNullOrWhiteSpace() && !certificate.HasPrivateKey)
                 {
@@ -49,14 +45,72 @@ namespace FoxIDs.Controllers
                 var jwt = await certificate.ToFTJsonWebKeyAsync(includePrivateKey: true);
                 return Ok(mapper.Map<Api.JwkWithCertificateInfo>(jwt));
             }
-            catch (ValidationException)
+            catch (CryptographicException cex)
             {
-                throw;
+                if (OperatingSystem.IsWindows())
+                {
+                    throw new CryptographicException("Unable to read the certificate. Try to convert the certificate and save the certificate with 'TripleDES-SHA1'.", cex);
+                }
+                else
+                {
+                    throw new CryptographicException("Unable to read the certificate.", cex);
+                }
             }
             catch (Exception ex)
             {
                 throw new ValidationException("Unable to read certificate.", ex);
             }
+        }
+
+        private static X509Certificate2 LoadCertificateWithFallback(byte[] certificateBytes, string? password)
+        {
+            try
+            {
+                var primaryFlags = X509KeyStorageFlags.Exportable;
+                if (OperatingSystem.IsWindows())
+                {
+                    primaryFlags |= X509KeyStorageFlags.MachineKeySet;
+                    primaryFlags |= X509KeyStorageFlags.PersistKeySet;
+                }
+                else
+                {
+                    primaryFlags |= X509KeyStorageFlags.EphemeralKeySet;
+                }
+                return LoadWithFlags(certificateBytes, password, primaryFlags);
+            }
+            catch (CryptographicException primaryEx) 
+            {
+                try
+                {
+                    var fallbackFlags = X509KeyStorageFlags.Exportable;
+                    if (OperatingSystem.IsWindows())
+                    {
+                        fallbackFlags |= X509KeyStorageFlags.EphemeralKeySet;
+                    }
+                    return LoadWithFlags(certificateBytes, password, fallbackFlags);
+                }
+                catch (CryptographicException)
+                {
+                    throw primaryEx;
+                }           
+            }
+        }
+
+        private static X509Certificate2 LoadWithFlags(byte[] certificateBytes, string password, X509KeyStorageFlags keyStorageFlags)
+        {
+            if (password.IsNullOrWhiteSpace())
+            {
+                try
+                {
+                    return X509CertificateLoader.LoadCertificate(certificateBytes);
+                }
+                catch (CryptographicException)
+                {
+                    return X509CertificateLoader.LoadPkcs12(certificateBytes, string.Empty, keyStorageFlags, Pkcs12LoaderLimits.Defaults);
+                }
+            }
+
+            return X509CertificateLoader.LoadPkcs12(certificateBytes, password, keyStorageFlags, Pkcs12LoaderLimits.Defaults);
         }
     }
 }

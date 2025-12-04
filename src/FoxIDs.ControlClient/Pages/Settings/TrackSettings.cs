@@ -1,17 +1,19 @@
-﻿using FoxIDs.Client.Infrastructure.Security;
+﻿using Blazored.Toast.Services;
+using FoxIDs.Client.Infrastructure.Security;
+using FoxIDs.Client.Logic;
+using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
+using FoxIDs.Util;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using System;
-using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
-using System.Threading.Tasks;
-using FoxIDs.Client.Logic;
-using Blazored.Toast.Services;
-using FoxIDs.Client.Models.Config;
 using Microsoft.JSInterop;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Pages.Settings
 {
@@ -125,7 +127,8 @@ namespace FoxIDs.Client.Pages.Settings
                     }
                 }));
                 trackSettingsForm.UpdateModel(trackSettingsResult.Map<TrackSettingsViewModel>());
-                toastService.ShowSuccess("Track settings updated.");
+                TrackSelectedLogic.UpdateTrack(trackSettingsResult);
+                toastService.ShowSuccess("Track settings have been updated.");
                 trackWorking = false;
             }
             catch (Exception ex)
@@ -140,7 +143,7 @@ namespace FoxIDs.Client.Pages.Settings
             deleteTrackError = string.Empty;
             if (!"delete".Equals(deleteTrackAcknowledgeText, StringComparison.InvariantCultureIgnoreCase))
             {
-                deleteTrackError = "Please type 'delete' to confirm that you want to delete.";
+                deleteTrackError = "Type 'delete' to confirm track deletion.";
                 return;
             }
 
@@ -185,6 +188,33 @@ namespace FoxIDs.Client.Pages.Settings
             {
                 // Ignore scroll errors to avoid blocking UI updates.
             }
+        }
+
+        private void AddPasswordPolicy()
+        {
+            if (trackSettingsForm.Model.PasswordPolicies.Count >= Constants.Models.Track.PasswordPoliciesMax)
+            {
+                toastService.ShowError($"Maximum number of password policies reached ({Constants.Models.Track.PasswordPoliciesMax}).");
+                return;
+            }
+
+            trackSettingsForm.Model.PasswordPolicies.Add(new PasswordPolicyViewModel
+            {
+                Name = RandomName.GenerateDefaultName(),
+                Length = trackSettingsForm.Model.PasswordLength,
+                MaxLength = trackSettingsForm.Model.PasswordMaxLength,
+                CheckComplexity = trackSettingsForm.Model.CheckPasswordComplexity ?? true,
+                CheckRisk = trackSettingsForm.Model.CheckPasswordRisk ?? true,
+                History = trackSettingsForm.Model.PasswordHistory,
+                MaxAge = trackSettingsForm.Model.PasswordMaxAge,
+                SoftChange = trackSettingsForm.Model.SoftPasswordChange,
+                BannedCharacters = trackSettingsForm.Model.PasswordBannedCharacters
+            });
+        }
+
+        private void RemovePasswordPolicy(List<PasswordPolicyViewModel> passwordPolicies, PasswordPolicyViewModel policy)
+        {
+            passwordPolicies.Remove(policy);
         }
     }
 }

@@ -27,6 +27,7 @@ namespace FoxIDs.Client.Pages.Users
         private string failingLoginsHref;
         private string refreshTokenGrantsHref;
         private string activeSessionsHref;
+        private List<PasswordPolicy> passwordPolicies;
 
         [Inject]
         public IToastService toastService { get; set; }
@@ -71,6 +72,7 @@ namespace FoxIDs.Client.Pages.Users
             userFilterForm?.ClearError();
             try
             {
+                passwordPolicies = TrackSelectedLogic.Track.PasswordPolicies;
                 SetGeneralUsers(await UserService.GetUsersAsync(null, null, null, null));
             }
             catch (TokenUnavailableException)

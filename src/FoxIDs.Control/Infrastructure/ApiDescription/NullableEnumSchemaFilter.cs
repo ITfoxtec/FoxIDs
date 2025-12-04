@@ -1,12 +1,12 @@
-﻿using FoxIDs.Models.Api;
-using Microsoft.OpenApi.Models;
+using FoxIDs.Models.Api;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace FoxIDs.Infrastructure.ApiDescription
 {
     public class NullableEnumSchemaFilter : ISchemaFilter
     {
-        public void Apply(OpenApiSchema model, SchemaFilterContext context)
+        public void Apply(IOpenApiSchema model, SchemaFilterContext context)
         {
             if (context.Type.IsEnum)
             {
@@ -14,7 +14,10 @@ namespace FoxIDs.Infrastructure.ApiDescription
                     context.Type == typeof(ClaimTransformTasks) ||
                     context.Type == typeof(PartyTypes))
                 {
-                    model.Nullable = true; 
+                    if (model is OpenApiSchema schema)
+                    {
+                        schema.Type = schema.Type.HasValue ? schema.Type | JsonSchemaType.Null : JsonSchemaType.Null;
+                    }
                 }
             }
         }

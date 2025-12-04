@@ -19,6 +19,7 @@ using StackExchange.Redis;
 using System;
 using System.Linq;
 using System.Net.Http;
+using Wololo.PgKeyValueDB;
 
 namespace FoxIDs.Infrastructure.Hosting
 {

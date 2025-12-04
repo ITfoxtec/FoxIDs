@@ -139,7 +139,7 @@
                                                 <div class="d-flex">
                                                     <div class="mr-auto p-2">
                                                         <strong>@certificate.Form.Model.Subject</strong><br />
-                                                        <span class="@(certificate.Form.Model.IsValid ? "" : "text-danger")">Valid from @certificate.Form.Model.ValidFrom.ToShortDateString() to @certificate.Form.Model.ValidTo.ToShortDateString()</span><br />
+                                                        <span class="@(certificate.Form.Model.IsValid ? "" : "text-danger")">Valid from @certificate.Form.Model.ValidFrom.ToDateText() to @certificate.Form.Model.ValidTo.ToDateText()</span><br />
                                                         <span>Thumbprint: @certificate.Form.Model.Thumbprint</span>
                                                     </div>
                                                 </div>
@@ -197,7 +197,7 @@
                                 <button type="button" class="btn btn-link text-left p-0 btn-wrap" @onclick="@(() => ShowUpdateCertificate(certificate))">
                                     <strong>@certificate.Subject</strong>
                                 </button><br />
-                                <span class="small @(certificate.IsValid ? "" : "text-danger")">Valid from @certificate.ValidFrom.ToShortDateString() to @certificate.ValidTo.ToShortDateString()</span><br />
+                                <span class="small @(certificate.IsValid ? "" : "text-danger")">Valid from @certificate.ValidFrom.ToDateText() to @certificate.ValidTo.ToDateText()</span><br />
                                 <span class="small">Thumbprint: @certificate.Thumbprint</span>
                                 @if (!certificate.CertificateBase64.IsNullOrWhiteSpace())
                                 {
@@ -241,7 +241,7 @@
                     <div class="card border">
                         <div class="card-body">
                             <div><strong>@certificate.Subject</strong></div>
-                            <div class="small @(certificate.IsValid ? "" : "text-danger")">Valid from @certificate.ValidFrom.ToShortDateString() to @certificate.ValidTo.ToShortDateString()</div>
+                            <div class="small @(certificate.IsValid ? "" : "text-danger")">Valid from @certificate.ValidFrom.ToDateText() to @certificate.ValidTo.ToDateText()</div>
                             <div class="small">Thumbprint: @certificate.Thumbprint</div>
                             @if (!certificate.CertificateBase64.IsNullOrWhiteSpace())
                             {

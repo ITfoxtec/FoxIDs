@@ -32,7 +32,10 @@ namespace FoxIDs.Client.Pages.Settings
         private string smsSettingsHref;
 
         private List<string> supportedCultures;
-        private PageEditForm<FilterResourceViewModel> resourceFilterForm;
+        private TextTab activeTab = TextTab.TrackTexts;
+        private PageEditForm<FilterResourceViewModel> trackResourceFilterForm;
+        private PageEditForm<FilterResourceViewModel> largeResourceFilterForm;
+        private PageEditForm<FilterResourceViewModel> globalResourceFilterForm;
         private List<GeneralResourceViewModel> trackOnlyResources = new List<GeneralResourceViewModel>();
         private List<GeneralResourceViewModel> resources = new List<GeneralResourceViewModel>();
         private List<TrackLargeResourceViewModel> largeResources = new List<TrackLargeResourceViewModel>();
@@ -88,15 +91,15 @@ namespace FoxIDs.Client.Pages.Settings
 
         private async Task DefaultLoadAsync()
         {
-            resourceFilterForm?.ClearError();
+            ClearFilterErrors();
             try
             {
                 var culturesResponse = await TrackService.GetMasterResourceCulturesAsync();
                 supportedCultures = culturesResponse?.Data?.Select(c => c.Culture)?.ToList();
 
-                SetTrackOnlyResources(await TrackService.GetTrackOnlyResourceNamesAsync(null));
-                SetGeneralResources(await TrackService.GetMasterResourceNamesAsync(null));
-                SetLargeResources(await TrackService.GetTrackLargeResourcesAsync(null));
+                await LoadTrackOnlyResourcesAsync();
+                await LoadGeneralResourcesAsync();
+                await LoadLargeResourcesAsync();
             }
             catch (TokenUnavailableException)
             {
@@ -104,32 +107,31 @@ namespace FoxIDs.Client.Pages.Settings
             }
             catch (Exception ex)
             {
-                resourceFilterForm.SetError(ex.Message);
+                SetFilterError(ex.Message);
             }
         }
 
-        private async Task OnResourceFilterValidSubmitAsync(EditContext editContext)
+        private async Task OnTrackResourceFilterValidSubmitAsync(EditContext editContext)
         {
-            try
-            {
-                SetTrackOnlyResources(await TrackService.GetTrackOnlyResourceNamesAsync(resourceFilterForm.Model.FilterName));
-                SetGeneralResources(await TrackService.GetMasterResourceNamesAsync(resourceFilterForm.Model.FilterName));
-                SetLargeResources(await TrackService.GetTrackLargeResourcesAsync(resourceFilterForm.Model.FilterName));
-            }
-            catch (FoxIDsApiException ex)
-            {
-                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    resourceFilterForm.SetFieldError(nameof(resourceFilterForm.Model.FilterName), ex.Message);
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await LoadTrackOnlyResourcesAsync(trackResourceFilterForm.Model.FilterName, trackResourceFilterForm);
+        }
+
+        private async Task OnLargeResourceFilterValidSubmitAsync(EditContext editContext)
+        {
+            await LoadLargeResourcesAsync(largeResourceFilterForm.Model.FilterName, largeResourceFilterForm);
+        }
+
+        private async Task OnGlobalResourceFilterValidSubmitAsync(EditContext editContext)
+        {
+            await LoadGeneralResourcesAsync(globalResourceFilterForm.Model.FilterName, globalResourceFilterForm);
         }
 
         #region TrackOnlyResources
+        private void SelectTab(TextTab tab)
+        {
+            activeTab = tab;
+        }
+
         private void SetTrackOnlyResources(PaginationResponse<ResourceName> trackResourceNames)
         {
             trackOnlyResources.Clear();
@@ -144,10 +146,7 @@ namespace FoxIDs.Client.Pages.Settings
 
         private void ShowCreateTrackResource()
         {
-            if (!string.IsNullOrWhiteSpace(resourceFilterForm?.Model?.FilterName))
-            {
-                resourceFilterForm.Model.FilterName = null;
-            }            
+            ClearFilterName(trackResourceFilterForm);
 
             var trackOnlyResource = new GeneralResourceViewModel();
             trackOnlyResource.CreateMode = true;
@@ -285,10 +284,7 @@ namespace FoxIDs.Client.Pages.Settings
 
         private void ShowCreateLargeResource()
         {
-            if (!string.IsNullOrWhiteSpace(resourceFilterForm?.Model?.FilterName))
-            {
-                resourceFilterForm.Model.FilterName = null;
-            }
+            ClearFilterName(largeResourceFilterForm);
 
             var largeResource = new TrackLargeResourceViewModel
             {
@@ -454,7 +450,7 @@ namespace FoxIDs.Client.Pages.Settings
         }
 
         private async Task ShowUpdateResourceAsync(GeneralResourceViewModel resource)
-        {           
+        {
             resource.DeleteAcknowledge = false;
             resource.ShowAdvanced = false;
             resource.Error = null;
@@ -541,6 +537,78 @@ namespace FoxIDs.Client.Pages.Settings
             {
                 generalTextSettings.Form.SetError(ex.Message);
             }
+        }
+
+        private async Task LoadTrackOnlyResourcesAsync(string filterName = null, PageEditForm<FilterResourceViewModel> filterForm = null)
+        {
+            await LoadResourcesAsync(() => TrackService.GetTrackOnlyResourceNamesAsync(filterName), SetTrackOnlyResources, filterForm);
+        }
+
+        private async Task LoadLargeResourcesAsync(string filterName = null, PageEditForm<FilterResourceViewModel> filterForm = null)
+        {
+            await LoadResourcesAsync(() => TrackService.GetTrackLargeResourcesAsync(filterName), SetLargeResources, filterForm);
+        }
+
+        private async Task LoadGeneralResourcesAsync(string filterName = null, PageEditForm<FilterResourceViewModel> filterForm = null)
+        {
+            await LoadResourcesAsync(() => TrackService.GetMasterResourceNamesAsync(filterName), SetGeneralResources, filterForm);
+        }
+
+        private async Task LoadResourcesAsync<T>(Func<Task<PaginationResponse<T>>> loadResourcesFunc, Action<PaginationResponse<T>> setResourcesAction, PageEditForm<FilterResourceViewModel> filterForm = null)
+        {
+            try
+            {
+                var resourcesResponse = await loadResourcesFunc();
+                setResourcesAction(resourcesResponse);
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound && filterForm != null)
+                {
+                    filterForm.SetFieldError(nameof(FilterResourceViewModel.FilterName), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private void ClearFilterName(PageEditForm<FilterResourceViewModel> filterForm)
+        {
+            if (filterForm == null)
+            {
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(filterForm.Model?.FilterName))
+            {
+                filterForm.Model.FilterName = null;
+            }
+
+            filterForm.ClearFieldError(nameof(FilterResourceViewModel.FilterName));
+            filterForm.ClearError();
+        }
+
+        private void ClearFilterErrors()
+        {
+            trackResourceFilterForm?.ClearError();
+            largeResourceFilterForm?.ClearError();
+            globalResourceFilterForm?.ClearError();
+        }
+
+        private void SetFilterError(string error)
+        {
+            trackResourceFilterForm?.SetError(error);
+            largeResourceFilterForm?.SetError(error);
+            globalResourceFilterForm?.SetError(error);
+        }
+
+        private enum TextTab
+        {
+            TrackTexts,
+            LargeTexts,
+            GlobalTexts
         }
     }
 }

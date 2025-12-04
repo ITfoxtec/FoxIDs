@@ -3,6 +3,9 @@ using FoxIDs.Models;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
+using FoxIDs.Models.Logic;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -52,11 +55,40 @@ namespace FoxIDs.Infrastructure.Hosting
         protected override ValueTask<RouteBinding> PostRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, Track track, RouteBinding routeBinding, string partyNameAndBinding, bool acceptUnknownParty)
         {
             routeBinding.PasswordLength = track.PasswordLength;
+            routeBinding.PasswordMaxLength = track.PasswordMaxLength.Value;
             routeBinding.CheckPasswordComplexity = track.CheckPasswordComplexity.Value;
             routeBinding.CheckPasswordRisk = track.CheckPasswordRisk.Value;
+            routeBinding.PasswordBannedCharacters = track.PasswordBannedCharacters;
+            routeBinding.PasswordHistory = track.PasswordHistory;
+            routeBinding.PasswordMaxAge = track.PasswordMaxAge;
+            routeBinding.SoftPasswordChange = track.SoftPasswordChange;
+            routeBinding.PasswordPolicies = GetPasswordPolicies(track);
             routeBinding.Logging = track.Logging;
 
             return new ValueTask<RouteBinding>(routeBinding);
+        }
+
+        private List<PasswordPolicyState> GetPasswordPolicies(Track track)
+        {
+            if (track.PasswordPolicies == null || !(track.PasswordPolicies.Count > 0))
+            {
+                return null;
+            }
+
+            return track.PasswordPolicies.Select(p =>
+                new PasswordPolicyState
+                {
+                    Name = p.Name,
+                    Length = p.Length,
+                    MaxLength = p.MaxLength,
+                    CheckComplexity = p.CheckComplexity,
+                    CheckRisk = p.CheckRisk,
+                    BannedCharacters = p.BannedCharacters,
+                    History = p.History,
+                    MaxAge = p.MaxAge,
+                    SoftChange = p.SoftChange
+                }
+            ).ToList();
         }
     }
 }

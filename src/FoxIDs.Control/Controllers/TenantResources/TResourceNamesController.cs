@@ -35,13 +35,28 @@ namespace FoxIDs.Controllers
         /// <returns>Resource names.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.ResourceName>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<Api.PaginationResponse<Api.ResourceName>> GetResourceNames(string filterName, string paginationToken = null)
+        public ActionResult<Api.PaginationResponse<Api.ResourceName>> GetResourceNames(string filterName, string paginationToken = null)
         {
             try
             {
                 filterName = filterName?.Trim();
                 var resourceEnvelope = embeddedResourceLogic.GetResourceEnvelope();
-                var filderResourceNames = filterName.IsNullOrWhiteSpace() ? resourceEnvelope.Names : resourceEnvelope.Names.Where(r => r.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || (int.TryParse(filterName, out var filterId) && r.Id == filterId));
+                var filderResourceNames = resourceEnvelope.Names;
+                if (!filterName.IsNullOrWhiteSpace())
+                {
+                    var filterIds = resourceEnvelope.Names.Where(r => r.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase)).Select(r => r.Id).ToList();
+                    if (int.TryParse(filterName, out var filterId))
+                    {
+                        filterIds.Add(filterId);
+                    }
+
+                    var resourceIds = resourceEnvelope.Resources?
+                        .Where(r => r.Items != null && r.Items.Any(i => i.Value.Contains(filterName, StringComparison.CurrentCultureIgnoreCase)))
+                        .Select(r => r.Id) ?? Enumerable.Empty<int>();
+
+                    var filteredIds = filterIds.Concat(resourceIds).ToHashSet();
+                    filderResourceNames = resourceEnvelope.Names.Where(r => filteredIds.Contains(r.Id)).ToList();
+                }
 
                 var response = new Api.PaginationResponse<Api.ResourceName>
                 {

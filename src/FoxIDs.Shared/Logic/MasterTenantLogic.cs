@@ -41,8 +41,12 @@ namespace FoxIDs.Logic
                 FailingLoginCountLifetime = 36000,
                 FailingLoginObservationPeriod = 600,
                 PasswordLength = 8,
+                PasswordMaxLength = Constants.Models.Track.PasswordLengthMax,
                 CheckPasswordComplexity = true,
-                CheckPasswordRisk = true
+                CheckPasswordRisk = true,
+                PasswordHistory = 0,
+                PasswordMaxAge = 0,
+                SoftPasswordChange = 0
             };
             await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName, TrackName = trackName });
 

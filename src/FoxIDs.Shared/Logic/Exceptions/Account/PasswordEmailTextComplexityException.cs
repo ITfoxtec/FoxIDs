@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 
 namespace FoxIDs.Logic
 {
     [Serializable]
-    public class PasswordEmailTextComplexityException : AccountException
+    public class PasswordEmailTextComplexityException : PasswordPolicyException
     {
         public PasswordEmailTextComplexityException() { }
         public PasswordEmailTextComplexityException(string message) : base(message) { }

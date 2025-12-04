@@ -51,7 +51,7 @@ namespace FoxIDs.Logic
                 session.CreateTime = authTime;
                 session.LastUpdated = authTime;
                 SetLoginUserIdentifier(session, loginUserIdentifier);
-                await AddOrUpdateSessionTrackWithClaimsAsync(upParty, session.Claims, updateDbActiveSession: true);
+                await AddOrUpdateSessionTrackWithClaimsAsync(upParty, session.Claims, saveDbActiveSession: true);
                 await sessionCookieRepository.SaveAsync(upParty, session, GetPersistentCookieExpires(upParty, session.CreateTime));
                 logger.ScopeTrace(() => $"Session created, User id '{session.UserIdClaim}', Session id '{session.SessionIdClaim}'.", GetSessionScopeProperties(session));
             }
@@ -79,7 +79,7 @@ namespace FoxIDs.Logic
                 {
                     SetLoginUserIdentifier(session, loginUserIdentifier);
                 }
-                await AddOrUpdateSessionTrackWithClaimsAsync(upParty, session.Claims, updateDbActiveSession: false);
+                await AddOrUpdateSessionTrackWithClaimsAsync(upParty, session.Claims);
                 await sessionCookieRepository.SaveAsync(upParty, session, GetPersistentCookieExpires(upParty, session.CreateTime));
                 logger.ScopeTrace(() => $"Session updated, Session id '{session.SessionIdClaim}'.", GetSessionScopeProperties(session));
                 return true;

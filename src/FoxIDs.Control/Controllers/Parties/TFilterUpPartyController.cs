@@ -48,7 +48,7 @@ namespace FoxIDs.Controllers
                 filterHrdDomains = filterHrdDomains?.Trim();
                 (var mUpPartys, _) = await GetFilterUpPartyInternalAsync(filterName, filterHrdDomains);
                 var aUpPartys = new HashSet<Api.UpParty>(mUpPartys.Count());
-                foreach (var mUpParty in mUpPartys.OrderBy(p => p.Type).ThenBy(p => p.Name))
+                foreach (var mUpParty in mUpPartys.OrderBy(p => p.Type).ThenBy(p => p.DisplayName ?? p.Name))
                 {
                     aUpPartys.Add(mapper.Map<Api.UpParty>(mUpParty));
                 }

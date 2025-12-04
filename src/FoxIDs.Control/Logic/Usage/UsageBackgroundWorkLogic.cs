@@ -133,8 +133,8 @@ namespace FoxIDs.Logic.Usage
         {
             try
             {
-                var calculatonTasksDone = false;
-                var invoicingTasksDone = false;                 
+                var calculatonTasksDone = true;
+                var invoicingTasksDone = true;                 
                 scopedLogger.Event("Usage, calculation and invoicing stated by query tenants.");
 
                 string paginationToken = null;
@@ -147,13 +147,29 @@ namespace FoxIDs.Logic.Usage
                         try
                         {
                             stoppingToken.ThrowIfCancellationRequested();
-                            var used = await usageCalculatorLogic.DoCalculationAsync(invoicingDatePointer, tenant, stoppingToken);
-                            calculatonTasksDone = true;
+                            Used used = null;
+                            try
+                            {
+                                used = await usageCalculatorLogic.DoCalculationAsync(invoicingDatePointer, tenant, stoppingToken);
+                            }
+                            catch (Exception)
+                            {
+                                calculatonTasksDone = false;
+                                throw;
+                            }
 
                             stoppingToken.ThrowIfCancellationRequested();
-                            if (await usageInvoicingLogic.DoInvoicingAsync(tenant, used, stoppingToken))
+                            try
                             {
-                                invoicingTasksDone = true;
+                                if (!await usageInvoicingLogic.DoInvoicingAsync(tenant, used, stoppingToken))
+                                {
+                                    invoicingTasksDone = false;
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                invoicingTasksDone = false;
+                                throw;
                             }
                         }
                         catch (OperationCanceledException)
@@ -217,7 +233,7 @@ namespace FoxIDs.Logic.Usage
         {
             try
             {
-                var invoicingTasksDone = false;
+                var invoicingTasksDone = true;
                 scopedLogger.Event("Usage, invoicing stated by query used items.");
 
                 string paginationToken = null;
@@ -229,10 +245,18 @@ namespace FoxIDs.Logic.Usage
                         try
                         {
                             stoppingToken.ThrowIfCancellationRequested();
-                            var tenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(used.TenantName));
-                            if (await usageInvoicingLogic.DoInvoicingAsync(tenant, used, stoppingToken))
+                            try
                             {
-                                invoicingTasksDone = true;
+                                var tenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(used.TenantName));
+                                if (!await usageInvoicingLogic.DoInvoicingAsync(tenant, used, stoppingToken))
+                                {
+                                    invoicingTasksDone = false;
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                invoicingTasksDone = false;
+                                throw;
                             }
                         }
                         catch (OperationCanceledException)

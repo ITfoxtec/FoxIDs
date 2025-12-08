@@ -34,6 +34,8 @@ Email, phone number and username as user identifiers.
 
 Internal users can be authenticated with a password. The password is checked against the built‑in password policy and optionally an [external password API](external-password-api.md). 
 
+### Built-in password policy
+
 The password policy is configured in the environment settings in the [FoxIDs Control Client](control.md#foxids-control-client).
 
 1. Select the **Settings** tab
@@ -41,9 +43,12 @@ The password policy is configured in the environment settings in the [FoxIDs Con
 3. Set the **Password min length** to the minimum required password length, e.g. `6` for 6 characters
 4. Select **Check password complexity** to enforce a mix of character classes (upper / lower / digit / symbol) and not containing parts of the URL or user identifier (email, phone, username). Exact rules can evolve.
 5. Select **Check password risk based on global password breaches** to reject passwords found in the global risk password lists. Exact list will evolve. (self-hosted see [risk Passwords](risk-passwords.md)).  
-6. Configure [external password API](external-password-api.md)   
-   ![Failing login lockout](images/configure-password-policy.png)
-7. Click **Update**
+   ![Built‑in password policy](images/configure-password-policy.png)
+6. Click **Update**
+
+### External password API
+
+You can optionally configure an [external password API](external-password-api.md) to validate passwords and/or notify about password changes.
 
 If the built-in password policy rejects the password, the external password API is not called. The external password API's notification method is only called if the password has passed all configured policy checks.
 
@@ -74,7 +79,7 @@ This is the configuration in the [login](login.md) method. In addition, the clai
 ![Login configuration - create an account online](images/user-create-new-account-config.png)
 
 ## Provisioning
-Internal users can be created, updated, and deleted in the [Control Client](control.md#foxids-control-client) or provisioned via the [Control API](control.md#foxids-control-api).  
+Internal users can be created, updated, and deleted in the [Control Client](control.md#foxids-control-client) or provisioned via the [Control API](control.md#foxids-control-api). And [upload many users](users-upload.md) from a CSV file. 
 ![Configure Login](images/configure-user.png)
 
 ## Multi-factor authentication (MFA)

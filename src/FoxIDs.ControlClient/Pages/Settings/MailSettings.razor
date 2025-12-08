@@ -5,12 +5,18 @@
     <li class="nav-item">
         <a class="nav-link" href="@trackSettingsHref">Environment</a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link active">Mail</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="@smsSettingsHref">SMS</a>
-    </li>
+    @if (ClientSettings.ShowMailSettings)
+    {
+        <li class="nav-item">
+            <a class="nav-link active">Mail</a>
+        </li>
+    }
+    @if (ClientSettings.ShowSmsSettings)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="@smsSettingsHref">SMS</a>
+        </li>
+    }
     <li class="nav-item">
         <a class="nav-link" href="@claimMappingsHref">Claim mappings</a>
     </li>

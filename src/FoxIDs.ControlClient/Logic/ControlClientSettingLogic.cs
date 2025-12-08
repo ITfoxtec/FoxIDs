@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Services;
+using FoxIDs.Models.Api;
 using ITfoxtec.Identity;
 using System.Threading.Tasks;
 
@@ -32,6 +33,7 @@ namespace FoxIDs.Client.Logic
                 clientSettings.EnablePayment = controlClientSettings.EnablePayment;
                 clientSettings.PaymentTestMode = controlClientSettings.PaymentTestMode;
                 clientSettings.MollieProfileId = controlClientSettings.MollieProfileId;
+                clientSettings.Client = controlClientSettings.ClientUi ?? new ControlClientUiSettings();
                 
                 notificationLogic.ClientSettingLoaded();
             }

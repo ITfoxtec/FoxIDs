@@ -20,5 +20,11 @@
         public bool EnablePayment { get; set; }
         public bool PaymentTestMode { get; set; }
         public string MollieProfileId { get; set; }
+
+        public ControlClientUiSettings Client { get; set; } = new ControlClientUiSettings();
+
+        public bool ShowBrandingSettings => Client?.ShowBrandingSettings ?? true;
+        public bool ShowSmsSettings => Client?.ShowSmsSettings ?? true;
+        public bool ShowMailSettings => Client?.ShowMailSettings ?? true;
     }
 }

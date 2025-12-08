@@ -16,5 +16,7 @@
         public bool PaymentTestMode { get; set; }
         public string Currency { get; set;}
         public string MollieProfileId { get; set;}
+
+        public ControlClientUiSettings ClientUi { get; set; }
     }
 }

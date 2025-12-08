@@ -40,6 +40,9 @@ namespace FoxIDs.Client.Pages.Settings
         [Inject]
         public TrackService TrackService { get; set; }
 
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
+
         [Parameter]
         public string TenantName { get; set; }
 
@@ -47,6 +50,12 @@ namespace FoxIDs.Client.Pages.Settings
 
         protected override async Task OnInitializedAsync()
         {
+            if (!ClientSettings.ShowMailSettings)
+            {
+                NavigationManager.NavigateTo($"{TenantName}/envsettings", true);
+                return;
+            }
+
             trackSettingsHref = $"{TenantName}/envsettings";
             claimMappingsHref = $"{TenantName}/claimmappings";
             textsHref = $"{TenantName}/texts";

@@ -5,12 +5,18 @@
     <li class="nav-item">
         <a class="nav-link active">Environment</a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" href="@mailSettingsHref">Mail</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="@smsSettingsHref">SMS</a>
-    </li>
+    @if (ClientSettings.ShowMailSettings)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="@mailSettingsHref">Mail</a>
+        </li>
+    }
+    @if (ClientSettings.ShowSmsSettings)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="@smsSettingsHref">SMS</a>
+        </li>
+    }
     <li class="nav-item">
         <a class="nav-link" href="@claimMappingsHref">Claim mappings</a>
     </li>
@@ -50,42 +56,45 @@
                 <FInputNumber @bind-Value="trackSettingsForm.Model.SequenceLifetime" For="@(() => trackSettingsForm.Model.SequenceLifetime)" />
                 <FInputToggle @bind-Value="trackSettingsForm.Model.AutoMapSamlClaims" For="@(() => trackSettingsForm.Model.AutoMapSamlClaims)" TextType="e.d" />
 
-                <div class="info-text">
-                    Add your company name and address to send branded SMS and emails.
-                </div>
-                <div class="row">
-                    <div class="col-md-8">
-                        <FInputText @bind-Value="trackSettingsForm.Model.CompanyName" For="@(() => trackSettingsForm.Model.CompanyName)" />
+                @if (ClientSettings.ShowBrandingSettings)
+                {
+                    <div class="info-text">
+                        Add your company name and address to send branded SMS and emails.
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-8">
-                        <FInputText @bind-Value="trackSettingsForm.Model.AddressLine1" For="@(() => trackSettingsForm.Model.AddressLine1)" />
+                    <div class="row">
+                        <div class="col-md-8">
+                            <FInputText @bind-Value="trackSettingsForm.Model.CompanyName" For="@(() => trackSettingsForm.Model.CompanyName)" />
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-8">
-                        <FInputText @bind-Value="trackSettingsForm.Model.AddressLine2" For="@(() => trackSettingsForm.Model.AddressLine2)" />
+                    <div class="row">
+                        <div class="col-md-8">
+                            <FInputText @bind-Value="trackSettingsForm.Model.AddressLine1" For="@(() => trackSettingsForm.Model.AddressLine1)" />
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-6">
-                        <FInputText @bind-Value="trackSettingsForm.Model.PostalCode" For="@(() => trackSettingsForm.Model.PostalCode)" />
+                    <div class="row">
+                        <div class="col-md-8">
+                            <FInputText @bind-Value="trackSettingsForm.Model.AddressLine2" For="@(() => trackSettingsForm.Model.AddressLine2)" />
+                        </div>
                     </div>
-                    <div class="col-6">
-                        <FInputText @bind-Value="trackSettingsForm.Model.City" For="@(() => trackSettingsForm.Model.City)" />
+                    <div class="row">
+                        <div class="col-6">
+                            <FInputText @bind-Value="trackSettingsForm.Model.PostalCode" For="@(() => trackSettingsForm.Model.PostalCode)" />
+                        </div>
+                        <div class="col-6">
+                            <FInputText @bind-Value="trackSettingsForm.Model.City" For="@(() => trackSettingsForm.Model.City)" />
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-8">
-                        <FInputText @bind-Value="trackSettingsForm.Model.StateRegion" For="@(() => trackSettingsForm.Model.StateRegion)" />
+                    <div class="row">
+                        <div class="col-md-8">
+                            <FInputText @bind-Value="trackSettingsForm.Model.StateRegion" For="@(() => trackSettingsForm.Model.StateRegion)" />
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-8">
-                        <FInputText @bind-Value="trackSettingsForm.Model.Country" For="@(() => trackSettingsForm.Model.Country)" />
+                    <div class="row">
+                        <div class="col-md-8">
+                            <FInputText @bind-Value="trackSettingsForm.Model.Country" For="@(() => trackSettingsForm.Model.Country)" />
+                        </div>
                     </div>
-                </div>
+                }
 
                 <div class="mr-auto">
                     <h4 class="pt-5 pb-3">Login settings</h4>

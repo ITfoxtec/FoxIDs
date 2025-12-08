@@ -1,3 +1,18 @@
+<!--
+{
+    "title":  "Create an OCES3 test certificate",
+    "description":  "Step-by-step guide to issue an OCES3 system certificate in the NemLog-in test environment for use with FoxIDs SAML 2.0 connections.",
+    "ogTitle":  "Create an OCES3 test certificate",
+    "ogDescription":  "Step-by-step guide to issue an OCES3 system certificate in the NemLog-in test environment for use with FoxIDs SAML 2.0 connections.",
+    "ogType":  "article",
+    "ogImage":  "/images/foxids_logo.png",
+    "twitterCard":  "summary_large_image",
+    "additionalMeta":  {
+                           "keywords":  "create oces3 test certificate, FoxIDs docs"
+                       }
+}
+-->
+
 # Create an OCES3 test certificate
 
 This guide explains how to create an OCES3 test certificate in the NemLog-in test environment. It condenses the Danish guide and uses the Danish screenshots.

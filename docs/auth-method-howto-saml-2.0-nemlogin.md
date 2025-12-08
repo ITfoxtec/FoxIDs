@@ -120,7 +120,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-attributes.png)
 
- 16. Add **at least one** `technical` contact person 
+ 16. Add at least one `technical` contact person 
  
 ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-contact.png)
 

@@ -91,53 +91,52 @@ The environment properties can be configured by clicking the top right settings 
 ![Configure environment settings](images/configure-environment-setting.png)
 
 ## FoxIDs Control API
-Control API is a REST API with a online [Swagger (OpenApi)](https://control.foxids.com/api/swagger/v2/swagger.json) interface description and [Swagger UI](https://control.foxids.com/api/swagger).
+Control API is a REST API with an online [Swagger (OpenAPI)](https://control.foxids.com/api/swagger/v2/swagger.json) interface description and [Swagger UI](https://control.foxids.com/api/swagger).
 
-If you host FoxIDs your self the Swagger (OpenApi) interface document is exposed in FoxIDs Control on `.../api/swagger/v2/swagger.json` and the Swagger UI on `.../api/swagger`.  
+If you self-host FoxIDs, the Swagger (OpenAPI) document is exposed in FoxIDs Control on `.../api/swagger/v2/swagger.json` and the Swagger UI on `.../api/swagger`.  
 
 > Control API naming:
 > - An environment is called a `track`
 > - An application registration is called `downparty`
 > - An authentication method is called `upparty`
 
-The Control API URL contains variables for the tenant name and track name (environment name) on winch you want to operate `.../{tenant_name}/{track_name}/...`. 
-To call your API you replace the `{tenant_name}` element with your tenant name and the `{track_name}` element with your environments technically name.
-The URL variables is set by e.g. input parameters in a method if you use a proxy generated from the [Swagger (OpenApi)](https://control.foxids.com/api/swagger/v2/swagger.json). 
+The Control API URL contains variables for the tenant name and track name (environment name) you want to operate on: `.../{tenant_name}/{track_name}/...`. 
+Replace `{tenant_name}` with your tenant name and `{track_name}` with the environment technical name. If you generate a proxy from the [Swagger (OpenAPI)](https://control.foxids.com/api/swagger/v2/swagger.json) document, those variables are supplied as input parameters.
 
-If you e.g. want to read a OpenID Connect application registration on FoxIDs Cloud with the technically name `some_oidc_app` you do a HTTP GET call to `https://control.foxids.com/api/{tenant_name}/{track_name}/!oidcdownparty?name=some_oidc_app` - replaced with your tenant name and environments technically name.
+For example, to read an OpenID Connect application registration on FoxIDs Cloud with the technical name `some_oidc_app`, call (HTTP GET) `https://control.foxids.com/api/{tenant_name}/{track_name}/!oidcdownparty?name=some_oidc_app` (replace the variables with your tenant name and environment technical name).
 
-You can either call the Control API as a system/demon with a OAuth 2.0 client or in the context of a user via a OpenID Connect client. 
+You can call Control API either as a service/daemon using an OAuth 2.0 client (client credentials) or in the context of a user via an OpenID Connect client. 
 
-In the following we will create a OAuth 2.0 client and grant the client admin [access rights](#api-access-rights) by scopes and roles.
+The steps below create an OAuth 2.0 client and grant it admin-level [access rights](#api-access-rights) via scopes and roles.
 
-Create a OAuth 2.0 client in the [FoxIDs Control Client](control.md#foxids-control-client):
+Create an OAuth 2.0 client in the [FoxIDs Control Client](control.md#foxids-control-client):
 
-1. Select the **master** environment (in the header)
-2. Select the **Applications** tab
-3. Click **New Application**
-4. Click **Backend Application**
-    a. Add a **Name** e.g., `My API Client`
-    b. Click **Register**
-    c. Remember the **Client ID** and **Client secret**.
-    d. Click **Close**
-5. Click on your client registration in the list to open it
-6. In the **Resource and scopes** section - *This will granted the client access to your tenant*
-    a. Click **Add Resource and scope** and add the resource `foxids_control_api`
-    b. Then click **Add Scope** and add the scope `foxids:tenant` 
-7. Select **Show advanced**
-8. In the **Issue claims** section - *This will granted the client the tenant administrator role*
-    a. Click **Add Claim** and add the claim `role`
-    b. Then click **Add Value** and add the claim value `foxids:tenant.admin`
-9. Click **Update**
+1. Select the **master** environment (in the header).
+2. Select the **Applications** tab.
+3. Click **New Application**.
+4. Click **Backend Application**.
+    a. Add a **Name** e.g., `My API Client`.
+    b. Click **Register**.
+    c. Copy the **Client ID** and **Client secret**.
+    d. Click **Close**.
+5. Click your client registration in the list to open it.
+6. In the **Resource and scopes** section - *grants the client access to your tenant*:
+    a. Click **Add Resource and scope** and add the resource `foxids_control_api`.
+    b. Click **Add Scope** and add the scope `foxids:tenant`. 
+7. Select **Show advanced**.
+8. In the **Issue claims** section - *grants the client the tenant administrator role*:
+    a. Click **Add Claim** and add the claim `role`.
+    b. Click **Add Value** and add the claim value `foxids:tenant.admin`.
+9. Click **Update**.
 
-Then do a OAuth 2.0 Client Credentials Grant call to obtain an access token for the Control API.
+Then perform an OAuth 2.0 Client Credentials Grant request to obtain an access token for Control API.
 
-*Replace the `{tenant_name}`, `{track_name}`, `{client_id}` and `{client_secret}`. And change the domain if you are self-hosting.*
+*Replace `{tenant_name}`, `{track_name}`, `{client_id}` and `{client_secret}`. Change the domain if you are self-hosting.*
 
 **Postman sample**  
-This is a Postman sample collection which authenticate with the OAuth 2.0 client `My API Client` and returns the users the configured environment (track).
+This Postman collection authenticates with the OAuth 2.0 client `My API Client` and returns the users for the configured environment (track).
 
-Create a Postman sample collection json file e.g. with the name `foxids_control_api.postman_collection.json` and add this content. *Replace the `{tenant_name}`, `{track_name}`, `{client_id}` and `{client_secret}`. And change the domains (`foxids.com` and `control.foxids.com`) if you are self-hosting.*
+Create a Postman collection JSON file, e.g., `foxids_control_api.postman_collection.json`, with the content below. *Replace `{tenant_name}`, `{track_name}`, `{client_id}` and `{client_secret}`. Change the domains (`foxids.com` and `control.foxids.com`) if you are self-hosting.*
 ```json
 {
   "info": {
@@ -215,7 +214,7 @@ Create a Postman sample collection json file e.g. with the name `foxids_control_
 ```
 
 **HTTP request sample**  
-This HTTP sample authenticate as the OAuth 2.0 Client `My API Client` with Credentials Grant.
+This HTTP sample authenticates as the OAuth 2.0 client `My API Client` with the client credentials grant.
 
 ```plaintext 
 POST https://foxids.com/{tenant_name}/{track_name}/{client_id}(*)/oauth/token HTTP/1.1
@@ -245,7 +244,7 @@ Cache-Control: no-cache, no-store
 The `access_token` is used to call the Control API.
 
 **C# code sample**  
-This C# sample authenticate as the OAuth 2.0 Client `My API Client` with Credentials Grant.
+This C# sample authenticates as the OAuth 2.0 client `My API Client` with the client credentials grant.
 
 ```C#
 // NuGet package: ITfoxtec.Identity
@@ -265,10 +264,10 @@ var scope = "foxids_control_api:foxids:tenant";
 
 ```
 
-Then call the Control API with the access token as a Authorization Bearer header. Defined in the [OAuth 2.0 Bearer Token (RFC 6750)](https://datatracker.ietf.org/doc/html/rfc6750) standard.
+Then call the Control API with the access token as an Authorization Bearer header, as defined in the [OAuth 2.0 Bearer Token (RFC 6750)](https://datatracker.ietf.org/doc/html/rfc6750) standard.
 
 **C# code sample**  
-This C# sample show how to add the access token to the `HttpClient` and read the OpenID Connect application registration `some_oidc_app` (technically name).
+This C# sample shows how to add the access token to the `HttpClient` and read the OpenID Connect application registration `some_oidc_app` (technical name).
 
 ```C#
 // NuGet package: ITfoxtec.Identity
@@ -285,28 +284,27 @@ using var response = await client.GetAsync("https://control.foxids.com/api/{tena
 ```
 
 ### API access rights
-This shows the Control API configuration in a tenants master environment with the default set of scopes that grants access to tenants data.
+This shows the Control API configuration in a tenant's master environment with the default set of scopes that grant access to tenant data.
 
 ![Configure foxids_control_api](images/configure-foxids_control_api.png)
 
-More scopes can be added to extend the Control API access rights in the different environments. To achieve least privileges access rights for each environment.
+You can add more scopes to extend Control API access rights per environment to achieve least-privilege configurations.
 
-Access to Control API is limited by scopes and roles. There are two sets of scopes based on `foxids:master` which grant access to the master tenant data and `foxids:tenant` which grant access to tenant data.  
-The Control API resource `foxids_control_api` is defined in each tenant's master environment and the configured set of scopes grant access the tenants data through the Control API.
+Access to Control API is limited by scopes and roles. There are two scope families: `foxids:master` grants access to master-tenant data and `foxids:tenant` grants access to tenant data.  
+The Control API resource `foxids_control_api` is defined in each tenant's master environment, and the configured scopes grant access to that tenant's data through Control API.
 
-A scopes access is limited by adding more elements separated with semicolon and dot. The dot notation limits to a specific sub role, the notation is both used in scopes and roles. 
-To be granted access the caller is required to possess one or more matching scope(s) and role(s).
+A scope's access can be narrowed by adding more elements separated with semicolons and dots. Dot notation limits to a specific sub-role and is used in both scopes and roles. Callers must present one or more matching scope(s) and role(s).
 
-Each access right is both defined as a scope and a role. This makes it possible to limit or grant access on both client and user level. The access rights are a hierarchy and the client and user do not need to be granted matching scopes and roles. 
+Each access right is defined as both a scope and a role. This lets you grant or limit access at both client and user level. Access rights are hierarchical, and the client and user do not need matching scopes and roles. 
 
-The administrator role `foxids:tenant.admin` grants access to all data in a tenant and the master tenant data, it is the same as having the roles `foxids:tenant` and `foxids:master`.
+The administrator role `foxids:tenant.admin` grants access to all data in a tenant and the master tenant data; it is equivalent to having the roles `foxids:tenant` and `foxids:master`.
 
-A client request a scope by requesting a scope on a resource, separating the resource and scope with a semicolon. E.g., to request the `foxids:tenant:track:party.create` scope the client request for `foxids_control_api:foxids:tenant:track:party.create`.
+A client requests a scope by specifying the resource and scope separated by a semicolon. For example, to request the `foxids:tenant:track:party.create` scope the client requests `foxids_control_api:foxids:tenant:track:party.create`.
 
-> If a request is denied due to insufficient access rights, a trace item is logged with the possible authorising scopes and roles along with the users actual scopes and roles.
+> If a request is denied due to insufficient access rights, a trace item is logged with the possible authorising scopes and roles along with the user's actual scopes and roles.
 
 #### Tenant access rights
-The tenant access rights is at the same time both scopes and roles.
+The tenant access rights are both scopes and roles.
 
 > If the scope you need is not defined on the Control API `foxids_control_api` you can add the scope.
 
@@ -584,7 +582,7 @@ and a `Production` environment with the technical name `-` is `:track[-]`.
 </table>
 
 #### Master tenant access rights
-The master tenant access rights is at the same time both scopes and roles.
+The master tenant access rights are both scopes and roles.
 
 <table>
     <tr>

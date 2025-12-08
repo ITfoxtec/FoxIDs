@@ -14,9 +14,9 @@
 -->
 
 # FoxIDs Control
-FoxIDs is configured through FoxIDs Control which consists of [Control Client](#foxids-control-client) and [Control API](#foxids-control-api). Control Client and API is secured by FoxIDs and Control Client use Control API. 
+FoxIDs is configured through FoxIDs Control which consists of [Control Client](#foxids-control-client) and [Control API](#foxids-control-api). Control Client and API are secured by FoxIDs, and Control Client uses Control API. 
 
-Control API contain all the configuration functionality. Therefore, it is possible to automate the configuration by integrating with Control API.
+Control API contains all the configuration functionality. Therefore, it is possible to automate the configuration by integrating with Control API.
 
 ## FoxIDs Control Client
 Control Client is a Blazor WebAssembly (WASM) app.
@@ -24,9 +24,9 @@ Control Client is a Blazor WebAssembly (WASM) app.
 > Open your [Control Client on FoxIDs.com](https://www.foxids.com/action/login). 
 
 ### Tenant and master environment
-If you use [FoxIDs.com](https://foxids.com). Your one tenant will be pre created on registration.
+If you use [FoxIDs.com](https://foxids.com), your tenant is created during registration.
 
-Otherwise if you [deployed](development.md) FoxIDs (self-Hosted) you get access to the master tenant. In this case you firstly need to create a tenant which will contain your entire security configuration. You probably only need one, but it is possible to configure an unlimited number of tenants.  
+If you [deploy](development.md) FoxIDs (self-hosted) you get access to the master tenant. First create a tenant to contain your security configuration. Most installations only need one, but you can configure an unlimited number of tenants.  
 
 ![Configure tenants](images/configure-tenant.png)
 
@@ -36,7 +36,7 @@ Normally you should not change the master environment configuration or add new a
 
 ### Create administrator user(s)
 
-It is possible to create more administrator users in the `master` environment. A user become an administrator by adding the administrator role `foxids:tenant.admin` like shown below.
+It is possible to create more administrator users in the `master` environment. A user becomes an administrator by adding the administrator role `foxids:tenant.admin` like shown below.
 
 Create a user:
 
@@ -47,6 +47,22 @@ Create a user:
 
 ![Configure administrator user](images/configure-tenant-adminuser.png)
 
+### Grant access to user
+Access is granted with roles. Scopes are only needed when a client requests a token for Control API; Control Client already requests the required scope on `foxids_control_api`, so you typically only assign roles to the user in the master environment.
+
+To let a person sign in to Control Client and see configuration data:
+
+1. Create or open the user in the `master` environment (Users tab).
+2. Add the baseline role `foxids:tenant:basic.read` (required for Control Client to load profile and helper tools).
+3. Decide what the user is allowed to see:
+   - To limit visibility to one environment, add `foxids:tenant:track[vh2csjt4].read` (replace `vh2csjt4` with the technical environment name).
+   - To allow all environments, add `foxids:tenant.read`.
+4. Add the operation roles the user needs in each environment. Examples: `foxids:tenant:track[vh2csjt4]:user` to manage users, `foxids:tenant:track[vh2csjt4]:party` to manage applications and authentication methods.
+
+Control Client vs API-only:
+- Control Client (interactive UI) reads profile data and environment lists in addition to the specific API you want to manage. It therefore needs `foxids:tenant:basic.read` plus an environment read role (`foxids:tenant:track[main].read` or `foxids:tenant.read`) alongside your action roles.
+- API-only callers can be narrower. If a backend service only calls the user API for the `vh2csjt4` environment, role `foxids:tenant:track[vh2csjt4]:user` (and requesting the matching scope when using client credentials) is sufficient; the extra read roles are not required because no UI data needs to be loaded.
+
 ### Environments
 Configure a number of environments, one for each of your environments e.g. dev, qa and prod.
 
@@ -54,23 +70,23 @@ Configure a number of environments, one for each of your environments e.g. dev, 
 
 ![Configure environments](images/configure-environment.png)
 
-Each environment contains a user repository and a default created [login](login.md) authentication method.
+Each environment contains a user repository and a default [login](login.md) authentication method.
 
 You can add [OpenID Connect](oidc.md), [OAuth 2.0](oauth-2.0.md) and [SAML 2.0](saml-2.0.md) application registrations and authentication methods. 
 
-![Configure application registrations and application registrations](images/configure-connections.png)
+![Configure application registrations and authentication methods](images/configure-connections.png)
 
-A environment contains a primary certificate and possible a secondary certificate in the Certificates tab. It is possible to swap between the primary and secondary certificate if both is configured, depending on the [certificate](certificates.md) container type.
+An environment contains a primary certificate and possibly a secondary certificate in the Certificates tab. It is possible to swap between the primary and secondary certificate if both are configured, depending on the [certificate](certificates.md) container type.
 
 ![Configure certificates](images/configure-certificate.png)
 
-The environment properties can be configured by clicking the top right setting icon. 
+The environment properties can be configured by clicking the top right settings icon. 
 
 - Sequence lifetime is the max lifetime of a user's login flow from start to end.
-- FoxIDs protect against password guess. Configured in max failing logins, failing login count lifetime and observation period.
+- FoxIDs protects against password guessing via max failing logins, failing login count lifetime and observation period.
 - Password requirements are configured regarding length, complexity and [password risk](https://haveibeenpwned.com/Passwords).
 - It is possible to host FoxIDs in an iframe from allowed domains.
-- You can sent emails with you one SendGrid tenant by adding a custom email address and SendGrid key.
+- You can send emails with your own SendGrid tenant by adding a custom email address and SendGrid key.
 
 ![Configure environment settings](images/configure-environment-setting.png)
 

@@ -5,13 +5,13 @@
     <li class="nav-item">
         <a class="nav-link active">Environment</a>
     </li>
-    @if (ClientSettings.ShowSmsSettings)
+    @if (!ClientSettings.HideSmsSettings)
     {
         <li class="nav-item">
             <a class="nav-link" href="@smsSettingsHref">SMS</a>
         </li>
     }
-    @if (ClientSettings.ShowMailSettings)
+    @if (!ClientSettings.HideMailSettings)
     {
         <li class="nav-item">
             <a class="nav-link" href="@mailSettingsHref">Mail</a>
@@ -56,7 +56,7 @@
                 <FInputNumber @bind-Value="trackSettingsForm.Model.SequenceLifetime" For="@(() => trackSettingsForm.Model.SequenceLifetime)" />
                 <FInputToggle @bind-Value="trackSettingsForm.Model.AutoMapSamlClaims" For="@(() => trackSettingsForm.Model.AutoMapSamlClaims)" TextType="e.d" />
 
-                @if (ClientSettings.ShowBrandingSettings)
+                @if (!ClientSettings.HideBrandingSettings)
                 {
                     <div class="info-text">
                         Add your company name and address to send branded SMS and emails.

@@ -69,7 +69,7 @@ namespace FoxIDs.Client.Pages.Settings
 
         protected override async Task OnInitializedAsync()
         {
-            if (!ClientSettings.ShowSmsSettings)
+            if (ClientSettings.HideSmsSettings)
             {
                 NavigationManager.NavigateTo($"{TenantName}/envsettings", true);
                 return;

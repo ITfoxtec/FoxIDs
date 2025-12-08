@@ -2,8 +2,8 @@
 {
     public class ControlClientUiSettings
     {
-        public bool ShowBrandingSettings { get; set; } = true;
-        public bool ShowSmsSettings { get; set; } = true;
-        public bool ShowMailSettings { get; set; } = true;
+        public bool HideBrandingSettings { get; set; }
+        public bool HideSmsSettings { get; set; }
+        public bool HideMailSettings { get; set; }
     }
 }

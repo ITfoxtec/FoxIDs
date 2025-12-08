@@ -50,7 +50,7 @@ namespace FoxIDs.Client.Pages.Settings
 
         protected override async Task OnInitializedAsync()
         {
-            if (!ClientSettings.ShowMailSettings)
+            if (ClientSettings.HideMailSettings)
             {
                 NavigationManager.NavigateTo($"{TenantName}/envsettings", true);
                 return;

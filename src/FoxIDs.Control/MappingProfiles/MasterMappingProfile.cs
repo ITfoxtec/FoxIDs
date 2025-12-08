@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using FoxIDs.Models;
-using FoxIDs.Models.Config;
 using System;
 using Api = FoxIDs.Models.Api;
 
@@ -44,8 +43,6 @@ namespace FoxIDs.MappingProfiles
             CreateMap<UsageSettings, Api.UsageSettings>();
             CreateMap<UsageCurrencyExchange, Api.UsageCurrencyExchange>()
                 .ReverseMap();
-
-            CreateMap<AddressSettings, Api.SettingsAddress>();
         }
     }
 }

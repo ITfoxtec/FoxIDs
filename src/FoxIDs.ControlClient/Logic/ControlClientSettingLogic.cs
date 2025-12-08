@@ -32,7 +32,6 @@ namespace FoxIDs.Client.Logic
                 clientSettings.EnablePayment = controlClientSettings.EnablePayment;
                 clientSettings.PaymentTestMode = controlClientSettings.PaymentTestMode;
                 clientSettings.MollieProfileId = controlClientSettings.MollieProfileId;
-                clientSettings.SettingsAddress = controlClientSettings.SettingsAddress;
                 
                 notificationLogic.ClientSettingLoaded();
             }

@@ -39,8 +39,7 @@ namespace FoxIDs.Controllers.Client
                 EnableCreateNewTenant = !settings.MainTenantSeedEnabled,
                 EnablePayment = settings.Payment?.EnablePayment == true && settings.Usage?.EnableInvoice == true,
                 PaymentTestMode = settings.Payment != null ? settings.Payment.TestMode : true,
-                MollieProfileId = settings.Payment?.MollieProfileId,
-                SettingsAddress = mapper.Map<Api.SettingsAddress>(settings.Address),
+                MollieProfileId = settings.Payment?.MollieProfileId
             });
         }
     }

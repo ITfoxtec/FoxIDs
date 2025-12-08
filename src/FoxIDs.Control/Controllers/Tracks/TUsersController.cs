@@ -85,7 +85,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Create users if they do not already exist. Existing users are not updated and if a user exists, the update element is ignored.
+        /// Create new users or override existing users. It is not possible to update username/phone/email user identifies in this API method.
         /// </summary>
         /// <param name="usersRequest">Users.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]

@@ -158,6 +158,7 @@ namespace FoxIDs.Client.Pages.Users
             generalUser.ShowAdvanced = false;
             generalUser.Error = null;
             generalUser.Edit = true;
+            generalUser.ShowSetPassword = false;
 
             try
             {
@@ -172,6 +173,16 @@ namespace FoxIDs.Client.Pages.Users
             {
                 generalUser.Error = ex.Message;
             }
+        }
+
+        private void ShowSetPassword(GeneralUserViewModel generalUser)
+        {
+            generalUser.ShowSetPassword = true;
+        }
+
+        private void CancelSetPassword(GeneralUserViewModel generalUser)
+        {
+            generalUser.ShowSetPassword = false;
         }
 
         private UserViewModel ToViewModel(User user)
@@ -242,6 +253,12 @@ namespace FoxIDs.Client.Pages.Users
             }
         }
 
+        private void SetPasswordViewModelAfterInit(GeneralUserViewModel generalUser, SetPasswordViewModel model)
+        {
+            model.Password = null;
+            model.ChangePassword = true;
+        }
+
         private void UserCancel(GeneralUserViewModel user)
         {
             if (user.CreateMode)
@@ -252,6 +269,7 @@ namespace FoxIDs.Client.Pages.Users
             {
                 user.Edit = false;
             }
+            user.ShowSetPassword = false;
         }
 
         private void AddClaim(MouseEventArgs e, List<ClaimAndValues> claims)
@@ -320,6 +338,34 @@ namespace FoxIDs.Client.Pages.Users
                     throw;
                 }
             }
+        }
+
+        private async Task OnSetPasswordValidSubmitAsync(GeneralUserViewModel generalUser, EditContext editContext)
+        {
+            try
+            {
+                var request = generalUser.SetPasswordForm.Model.Map<UserSetPasswordRequest>(afterMap: afterMap =>
+                {
+                    afterMap.Email = generalUser.Email;
+                    afterMap.Phone = generalUser.Phone;
+                    afterMap.Username = generalUser.Username;
+                });
+
+                var userResult = await UserService.SetUserPasswordAsync(request);
+                generalUser.Form?.UpdateModel(ToViewModel(userResult));
+                generalUser.ShowSetPassword = false;
+                toastService.ShowSuccess("Password updated.");
+            }
+            catch (FoxIDsApiException ex)
+            {
+                generalUser.SetPasswordForm.SetFieldError(nameof(generalUser.SetPasswordForm.Model.Password), ex.Message);
+            }
+        }
+
+        private async Task RemovePasswordAsync(GeneralUserViewModel generalUser)
+        {
+            generalUser.SetPasswordForm.Model.Password = string.Empty;
+            await generalUser.SetPasswordForm.Submit();
         }
 
         private async Task DeleteUserAsync(GeneralUserViewModel generalUser)

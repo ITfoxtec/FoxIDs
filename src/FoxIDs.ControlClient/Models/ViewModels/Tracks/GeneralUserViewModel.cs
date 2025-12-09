@@ -35,6 +35,10 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public PageEditForm<UserViewModel> Form { get; set; }
 
+        public bool ShowSetPassword { get; set; }
+
+        public PageEditForm<SetPasswordViewModel> SetPasswordForm { get; set; }
+
         public void LoadName(List<ClaimAndValues> claims)
         {
             Name = ResolveNameFromClaims(claims);

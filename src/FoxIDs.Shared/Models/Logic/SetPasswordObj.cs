@@ -1,6 +1,6 @@
-﻿namespace FoxIDs.SeedTool.Models.ApiModels
+namespace FoxIDs.Models.Logic
 {
-    public class CreateUserApiModel : UserBaseApiModel
+    public class SetPasswordObj
     {
         public string Password { get; set; }
 
@@ -11,5 +11,7 @@
         public string PasswordHashSalt { get; set; }
 
         public long? PasswordLastChanged { get; set; }
+
+        public bool ChangePassword { get; set; }
     }
 }

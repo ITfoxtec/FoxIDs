@@ -270,10 +270,15 @@ namespace FoxIDs.Logic
             var passwordPolicy = GetPasswordPolicy(user);
             await ValidatePasswordPolicyAndNotifyAsync(userIdentifier, setPasswordObj.Password, PasswordState.New, user, passwordPolicy);
 
-            if (!await secretHashLogic.ValidateSecretAsync(user, setPasswordObj.Password))
+            var hasPassword = !user.HashAlgorithm.IsNullOrWhiteSpace();
+            if (hasPassword && !await secretHashLogic.ValidateSecretAsync(user, setPasswordObj.Password))
             {
                 // Only update password history and last changed if the new password is different from the current password.
                 await UpdatePasswordHistoryAsync(user, null, passwordPolicy);
+                user.PasswordLastChanged = ResolvePasswordLastChanged(setPasswordObj.PasswordLastChanged);
+            }
+            else if (!hasPassword)
+            {
                 user.PasswordLastChanged = ResolvePasswordLastChanged(setPasswordObj.PasswordLastChanged);
             }
 

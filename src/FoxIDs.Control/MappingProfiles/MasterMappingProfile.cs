@@ -45,7 +45,7 @@ namespace FoxIDs.MappingProfiles
             CreateMap<UsageCurrencyExchange, Api.UsageCurrencyExchange>()
                 .ReverseMap();
 
-            CreateMap<AddressSettings, Api.SettingsAddress>();
+            CreateMap<ControlClientUiSettings, Api.ControlClientUiSettings>();
         }
     }
 }

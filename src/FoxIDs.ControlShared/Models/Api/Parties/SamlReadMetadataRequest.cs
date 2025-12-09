@@ -4,11 +4,20 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Request to ingest SAML metadata from a URL or XML payload.
+    /// </summary>
     public class SamlReadMetadataRequest : IValidatableObject
     {
+        /// <summary>
+        /// Indicates whether metadata is provided as a URL or raw XML.
+        /// </summary>
         [Required]
         public SamlReadMetadataType Type { get; set; }
 
+        /// <summary>
+        /// Metadata source (URL or XML string).
+        /// </summary>
         [Required]
         public string Metadata { get; set; }
 

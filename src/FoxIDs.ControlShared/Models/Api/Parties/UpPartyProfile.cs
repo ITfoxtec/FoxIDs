@@ -2,6 +2,9 @@
 
 namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Named profile for customizing an upstream party.
+    /// </summary>
     public class UpPartyProfile 
     {
         [Required]

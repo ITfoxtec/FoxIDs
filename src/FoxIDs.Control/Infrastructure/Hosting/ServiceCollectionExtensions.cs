@@ -207,9 +207,9 @@ namespace FoxIDs.Infrastructure.Hosting
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                 });
-                c.AddSecurityRequirement(_ => new OpenApiSecurityRequirement
+                c.AddSecurityRequirement(doc => new OpenApiSecurityRequirement
                 {
-                    { new OpenApiSecuritySchemeReference("Bearer"), new List<string>() }
+                    { new OpenApiSecuritySchemeReference("Bearer", doc, null), new List<string>() }
                 });
 
                 c.SchemaFilter<NullableEnumSchemaFilter>();

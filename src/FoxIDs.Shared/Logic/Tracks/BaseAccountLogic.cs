@@ -88,10 +88,19 @@ namespace FoxIDs.Logic
             trackName = trackName ?? RouteBinding.TrackName;
             await SetIdsAsync(user, tenantName, trackName);
 
-            if (!createUserObj.Password.IsNullOrWhiteSpace())
+            var passwordProvided = !createUserObj.Password.IsNullOrWhiteSpace();
+            var hashProvided = !createUserObj.PasswordHashAlgorithm.IsNullOrWhiteSpace();
+            if (passwordProvided)
             {
                 await secretHashLogic.AddSecretHashAsync(user, createUserObj.Password);
-                user.PasswordLastChanged = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                user.PasswordLastChanged = ResolvePasswordLastChanged(createUserObj.PasswordLastChanged);
+            }
+            else if (hashProvided)
+            {
+                user.HashAlgorithm = createUserObj.PasswordHashAlgorithm;
+                user.Hash = createUserObj.PasswordHash;
+                user.HashSalt = createUserObj.PasswordHashSalt;
+                user.PasswordLastChanged = ResolvePasswordLastChanged(createUserObj.PasswordLastChanged);
             }
             
             if (createUserObj.Claims?.Count() > 0)
@@ -218,23 +227,90 @@ namespace FoxIDs.Logic
                 throw new UserNotExistsException($"User '{userIdentifier.ToJson()}' is disabled, trying to set password.");
             }
 
-            var passwordPolicy = GetPasswordPolicy(user);
-            await ValidatePasswordPolicyAndNotifyAsync(userIdentifier, newPassword, PasswordState.New, user, passwordPolicy);
+            await SetPasswordUserInternalAsync(userIdentifier, user, new SetPasswordObj { Password = newPassword });
+        }
 
-            if (!await secretHashLogic.ValidateSecretAsync(user, newPassword))
+        public async Task SetPasswordUserAsync(User user, SetPasswordObj setPasswordObj)
+        {
+            var userIdentifier = new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username };
+
+            var removePassword = setPasswordObj.Password.IsNullOrWhiteSpace() && setPasswordObj.PasswordHashAlgorithm.IsNullOrWhiteSpace();
+            if (removePassword)
+            {
+                logger.ScopeTrace(() => $"Remove password user '{userIdentifier.ToJson()}', Route '{RouteBinding?.Route}'.");
+                user.HashAlgorithm = null;
+                user.Hash = null;
+                user.HashSalt = null;
+                user.PasswordLastChanged = 0;
+                user.PasswordHistory = null;
+                user.SoftPasswordChangeStarted = 0;
+                await tenantDataRepository.SaveAsync(user);
+                logger.ScopeTrace(() => $"User '{userIdentifier.ToJson()}', password removed.", triggerEvent: true);
+                return;
+            }
+
+            if (!setPasswordObj.Password.IsNullOrWhiteSpace())
+            {
+                logger.ScopeTrace(() => $"Set password user '{userIdentifier.ToJson()}', Route '{RouteBinding?.Route}'.");
+                await SetPasswordUserInternalAsync(userIdentifier, user, setPasswordObj);
+                return;
+            }
+            if (!setPasswordObj.PasswordHashAlgorithm.IsNullOrWhiteSpace())
+            {
+                logger.ScopeTrace(() => $"Set password hash user '{userIdentifier.ToJson()}', Route '{RouteBinding?.Route}'.");
+                await SetPasswordUserHashInternalAsync(userIdentifier, user, setPasswordObj);
+                return;
+            }
+
+            throw new ArgumentException("Password or password hash required.", nameof(setPasswordObj));
+        }
+
+        private async Task SetPasswordUserInternalAsync(UserIdentifier userIdentifier, User user, SetPasswordObj setPasswordObj)
+        {
+            var passwordPolicy = GetPasswordPolicy(user);
+            await ValidatePasswordPolicyAndNotifyAsync(userIdentifier, setPasswordObj.Password, PasswordState.New, user, passwordPolicy);
+
+            var hasPassword = !user.HashAlgorithm.IsNullOrWhiteSpace();
+            if (hasPassword && !await secretHashLogic.ValidateSecretAsync(user, setPasswordObj.Password))
             {
                 // Only update password history and last changed if the new password is different from the current password.
                 await UpdatePasswordHistoryAsync(user, null, passwordPolicy);
-                user.PasswordLastChanged = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                user.PasswordLastChanged = ResolvePasswordLastChanged(setPasswordObj.PasswordLastChanged);
             }
-            await secretHashLogic.AddSecretHashAsync(user, newPassword);
+            else if (!hasPassword)
+            {
+                user.PasswordLastChanged = ResolvePasswordLastChanged(setPasswordObj.PasswordLastChanged);
+            }
+
+            await secretHashLogic.AddSecretHashAsync(user, setPasswordObj.Password);
             user.SoftPasswordChangeStarted = 0;
-            user.ChangePassword = false;
+            user.ChangePassword = setPasswordObj.ChangePassword;
             user.SetPasswordEmail = false;
             user.SetPasswordSms = false;
             await tenantDataRepository.SaveAsync(user);
 
             logger.ScopeTrace(() => $"User '{userIdentifier.ToJson()}', password set.", triggerEvent: true);
+        }
+
+        private async Task SetPasswordUserHashInternalAsync(UserIdentifier userIdentifier, User user, SetPasswordObj setPasswordObj)
+        {
+            user.HashAlgorithm = setPasswordObj.PasswordHashAlgorithm;
+            user.Hash = setPasswordObj.PasswordHash;
+            user.HashSalt = setPasswordObj.PasswordHashSalt;
+            user.PasswordLastChanged = ResolvePasswordLastChanged(setPasswordObj.PasswordLastChanged);
+            user.SoftPasswordChangeStarted = 0;
+            user.ChangePassword = setPasswordObj.ChangePassword;
+            user.SetPasswordEmail = false;
+            user.SetPasswordSms = false;
+            await tenantDataRepository.SaveAsync(user);
+
+            logger.ScopeTrace(() => $"User '{userIdentifier.ToJson()}', password set.", triggerEvent: true);
+        }
+
+        private long ResolvePasswordLastChanged(long? passwordLastChanged)
+        {
+            var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            return passwordLastChanged.HasValue && passwordLastChanged.Value <= now ? passwordLastChanged.Value : now;
         }
 
         protected virtual async Task ValidatePasswordPolicyAndNotifyAsync(UserIdentifier userIdentifier, string password, PasswordState state, User user, PasswordPolicyState policy)

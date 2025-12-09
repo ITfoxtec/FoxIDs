@@ -2,6 +2,9 @@
 
 namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Profile configuration for an OIDC upstream party.
+    /// </summary>
     public class OidcUpPartyProfile : IProfile
     {
         [Required]

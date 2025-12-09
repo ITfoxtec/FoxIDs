@@ -1,5 +1,8 @@
 ﻿namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Transformation strategies supported when issuing claims.
+    /// </summary>
     public enum ClaimTransformTypes
     {
         Constant = 10,

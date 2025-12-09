@@ -59,6 +59,9 @@ namespace FoxIDs.Client.Pages.Settings
         [Inject]
         public HelpersService HelpersService { get; set; }
 
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
+
         [Parameter]
         public string TenantName { get; set; }
 
@@ -66,6 +69,12 @@ namespace FoxIDs.Client.Pages.Settings
 
         protected override async Task OnInitializedAsync()
         {
+            if (ClientSettings.HideSmsSettings)
+            {
+                NavigationManager.NavigateTo($"{TenantName}/envsettings", true);
+                return;
+            }
+
             trackSettingsHref = $"{TenantName}/envsettings";
             mailSettingsHref = $"{TenantName}/mailsettings";
             claimMappingsHref = $"{TenantName}/claimmappings";

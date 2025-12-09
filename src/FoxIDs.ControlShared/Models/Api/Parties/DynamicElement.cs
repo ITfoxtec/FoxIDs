@@ -5,45 +5,81 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Configurable UI element used to build dynamic login pages.
+    /// </summary>
     public class DynamicElement : IValidatableObject
     {
+        /// <summary>
+        /// Technical name of the element.
+        /// </summary>
         [MaxLength(Constants.Models.DynamicElements.NameLength)]
         [RegularExpression(Constants.Models.DynamicElements.NameRegExPattern)]
         [Display(Name = "Technical element name")]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Element type defining layout and validation.
+        /// </summary>
         [Required]
         public DynamicElementTypes Type { get; set; }
 
+        /// <summary>
+        /// Order of the element on the page.
+        /// </summary>
         [Required]
         [Range(Constants.Models.DynamicElements.ElementsOrderMin, Constants.Models.DynamicElements.ElementsOrderMax)]
         public int Order { get; set; }
 
+        /// <summary>
+        /// Require the field to be completed.
+        /// </summary>
         [Display(Name = "Field is required")]
         public bool Required { get; set; }
 
+        /// <summary>
+        /// Marks the field as a user identifier.
+        /// </summary>
         [Display(Name = "Login user identifier")]
         public bool IsUserIdentifier { get; set; }
 
+        /// <summary>
+        /// Content used for text or HTML elements.
+        /// </summary>
         [MaxLength(Constants.Models.DynamicElements.ContentLength)]
         [Display(Name = "Text or HTML content")]
         public string Content { get; set; }
 
+        /// <summary>
+        /// Display label for the element.
+        /// </summary>
         [MaxLength(Constants.Models.DynamicElements.DisplayNameLength)]
         [Display(Name = "Display name")]
         public string DisplayName { get; set; }
 
+        /// <summary>
+        /// Maximum allowed input length.
+        /// </summary>
         [Display(Name = "Input max length")]
         public int MaxLength { get; set; }
 
+        /// <summary>
+        /// Regular expression applied to validate input.
+        /// </summary>
         [MaxLength(Constants.Models.DynamicElements.RegExLength)]
         [Display(Name = "Input regex validation")]
         public string RegEx { get; set; }
 
+        /// <summary>
+        /// Error message shown when regex validation fails.
+        /// </summary>
         [MaxLength(Constants.Models.DynamicElements.ErrorMessageLength)]
         [Display(Name = "RegEx validation error message")]
         public string ErrorMessage { get; set; }
 
+        /// <summary>
+        /// Claim type to map the output value to.
+        /// </summary>
         [MaxLength(Constants.Models.Claim.JwtTypeLength)]
         [RegularExpression(Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
         [Display(Name = "Output claim type")]

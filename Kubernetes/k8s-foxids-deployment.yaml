@@ -138,6 +138,13 @@ spec:
               value: "http://foxids:8800"
             - name: "Settings__FoxIDsControlEndpoint"
               value: "https://control.itfoxtec.com" # change to your domain -  https://control.my-domain.com
+            # Options to hide settings in the FoxIDs client user interface
+            # - name: "Settings__ClientUi__HideBrandingSettings"
+            #   value: "true"
+            # - name: "Settings__ClientUi__HideSmsSettings"
+            #   value: "true"
+            # - name: "Settings__ClientUi__HideMailSettings"
+            #   value: "true"
             - name: "Settings__MasterSeedEnabled"
               value: "true"
             - name: "Settings__MainTenantSeedEnabled"

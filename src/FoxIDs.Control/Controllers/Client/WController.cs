@@ -14,6 +14,9 @@ using System.Reflection;
 
 namespace FoxIDs.Controllers.Client
 {
+    /// <summary>
+    /// Hosts the SPA shell and exposes fallback endpoints for the Control UI.
+    /// </summary>
     [FoxIDsControlHttpSecurityHeaders]
     public class WController : Controller
     {
@@ -29,12 +32,18 @@ namespace FoxIDs.Controllers.Client
             this.settings = settings;
         }
 
+        /// <summary>
+        /// Serves the Control UI entry point with environment specific substitutions.
+        /// </summary>
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Index()
         {
             return GetProcessedIndexFile();
         }
 
+        /// <summary>
+        /// Renders the Control UI entry point while surfacing request specific errors.
+        /// </summary>
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

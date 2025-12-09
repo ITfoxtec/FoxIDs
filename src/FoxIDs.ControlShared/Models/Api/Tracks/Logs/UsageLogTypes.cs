@@ -2,6 +2,9 @@
 
 namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Usage categories that can be logged and aggregated.
+    /// </summary>
     public enum UsageLogTypes
     {
         Hour = 10,

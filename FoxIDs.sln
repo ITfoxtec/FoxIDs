@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.32014.148
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11222.15 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs", "src\FoxIDs\FoxIDs.csproj", "{82C6C190-C560-4A25-94C4-BF8233D5043C}"
 EndProject
@@ -211,7 +211,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\connections-saml.svg = docs\images\connections-saml.svg
 		docs\images\connections.svg = docs\images\connections.svg
 		docs\images\connections.vsdx = docs\images\connections.vsdx
+		docs\images\create_oces3_test_cert_create_user_organisation.png = docs\images\create_oces3_test_cert_create_user_organisation.png
+		docs\images\create_oces3_test_cert_info.png = docs\images\create_oces3_test_cert_info.png
 		docs\images\deployment-window-iis-add-website.png = docs\images\deployment-window-iis-add-website.png
+		docs\images\create_oces3_test_cert_name.png = docs\images\create_oces3_test_cert_name.png
 		docs\images\deployment-window-iis-my-cert.png = docs\images\deployment-window-iis-my-cert.png
 		docs\images\environments.vsdx = docs\images\environments.vsdx
 		docs\images\example-claim-transform-name-to-given_name-family_name.png = docs\images\example-claim-transform-name-to-given_name-family_name.png
@@ -418,6 +421,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "linux", "linux", "{71C64DBE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoxIDs.SeedTool", "tools\FoxIDs.SeedTool\FoxIDs.SeedTool.csproj", "{19139648-C13A-42CF-AFD3-BB55EDE95634}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "certificates", "certificates", "{FD143321-73AC-457F-A02E-CFDA3535C063}"
+	ProjectSection(SolutionItems) = preProject
+		docs\certificates\oces3_FoxIDs_NemLog-in_test.p12 = docs\certificates\oces3_FoxIDs_NemLog-in_test.p12
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -506,6 +514,7 @@ Global
 		{A5BB6949-EFE0-4B5A-BD65-8F14E5673A07} = {4680A3C4-E70C-4922-8A2E-90BFAB58FA6A}
 		{71C64DBE-14A9-4986-A899-89C12DFF4BCE} = {A65357EF-19B7-4487-88FB-E3888B9F6618}
 		{19139648-C13A-42CF-AFD3-BB55EDE95634} = {66AA1AF7-CBCC-46AA-ACAB-9E1B7A8532EF}
+		{FD143321-73AC-457F-A02E-CFDA3535C063} = {CB5D86A0-DD55-49F6-B7AF-8162E9DA4CAF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD8F0D8F-FD1F-4DE2-AC92-4948FC1EDE56}

@@ -4,16 +4,28 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Request model for retrieving or calculating usage in a period.
+    /// </summary>
     public class UsageRequest : IValidatableObject
     {
+        /// <summary>
+        /// Tenant name to fetch usage for.
+        /// </summary>
         [Required]
         [MaxLength(Constants.Models.Tenant.NameLength)]
         [RegularExpression(Constants.Models.Tenant.NameDbRegExPattern)]
         public string TenantName { get; set; }
 
+        /// <summary>
+        /// Start date of the requested period.
+        /// </summary>
         [Required]
         public DateOnly PeriodBeginDate { get; set; }
 
+        /// <summary>
+        /// Optional end date; defaults to the same month if omitted.
+        /// </summary>
         public DateOnly? PeriodEndDate { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

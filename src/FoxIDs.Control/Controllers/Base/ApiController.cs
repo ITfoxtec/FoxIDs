@@ -15,6 +15,9 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Controllers
 {
+    /// <summary>
+    /// Base controller for Control API endpoints that adds shared filters, response helpers, and audit logging.
+    /// </summary>
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     [Log]
     [FoxIDsControlHttpSecurityHeaders]

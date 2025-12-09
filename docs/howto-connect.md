@@ -1,9 +1,9 @@
 <!--
 {
     "title":  "How to connect",
-    "description":  "FoxIDs become an IdP by registering an application where you can connect applications and APIs. External IdPs is connected with an authentication methods.",
+    "description":  "FoxIDs becomes an IdP by registering an application you connect to applications and APIs. External IdPs are connected with authentication methods.",
     "ogTitle":  "How to connect",
-    "ogDescription":  "FoxIDs become an IdP by registering an application where you can connect applications and APIs. External IdPs is connected with an authentication methods.",
+    "ogDescription":  "FoxIDs becomes an IdP by registering an application you connect to applications and APIs. External IdPs are connected with authentication methods.",
     "ogType":  "article",
     "ogImage":  "/images/foxids_logo.png",
     "twitterCard":  "summary_large_image",
@@ -15,10 +15,10 @@
 
 # How to connect
 
-FoxIDs become an IdP by [registering an application](connections.md#application-registration) where you can connect applications and APIs. External IdPs is connected with an [authentication methods](connections.md#authentication-method).
+FoxIDs becomes an IdP by [registering an application](connections.md#application-registration) that you connect to your applications and APIs. External IdPs are connected with [authentication methods](connections.md#authentication-method).
 
-By configuring a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a [OpenID Connect application](app-reg-oidc.md) FoxIDs become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect and automatically convert SAML 2.0 claims to JWT (OAuth 2.0) claims.  
-FoxIDs will then handle the SAML 2.0 connection and you only need to care about OpenID Connect in your application. You can possibly select multiple authentication methods from the same OpenID Connect application.
+By configuring a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and an [OpenID Connect application](app-reg-oidc.md), FoxIDs becomes a [bridge](bridge.md) between SAML 2.0 and OpenID Connect and automatically converts SAML 2.0 claims to JWT (OAuth 2.0) claims.  
+FoxIDs handles the SAML 2.0 connection so your application only needs to care about OpenID Connect. You can select multiple authentication methods for the same OpenID Connect application to offer users different sign-in options.
 
 ![How to connect with applications and authentication methods](images/how-to-connect.svg)
 
@@ -29,15 +29,15 @@ If needed you can [connect two FoxIDs environments](#connect-foxids-environments
 
 ## How to connect OpenID Provider / Identity Provider
 
-An external OpenID Provider (OP) / Identity Provider (IdP) can be connected with a OpenID Connect or SAML 2.0 authentication method.
+An external OpenID Provider (OP) / Identity Provider (IdP) can be connected with an OpenID Connect or SAML 2.0 authentication method.
 
-All IdPs supporting either OpenID Connect or SAML 2.0 can be connected to FoxIDs. The following is how to guides for some IdPs; more guides will be added over time.
+All IdPs supporting either OpenID Connect or SAML 2.0 can be connected to FoxIDs. The following are how-to guides for common IdPs; more guides will be added over time.
 
 ### OpenID Connect
 
-Configure [OpenID Connect](auth-method-oidc.md) which trust an external OpenID Provider (OP) - *an Identity Provider (IdP) is called an OpenID Provider (OP) if configured with OpenID Connect*.
+Configure [OpenID Connect](auth-method-oidc.md) to trust an external OpenID Provider (OP) - *an Identity Provider (IdP) is called an OpenID Provider (OP) if configured with OpenID Connect*.
 
-> You should always ask for the `sub` claim, even if you only use the `email` claim or e.g. another custom user ID claim.
+> Always request the `sub` claim, even if you only plan to use the `email` claim or another custom user ID claim.
 
 How to guides:
 
@@ -54,10 +54,10 @@ How to guides:
 
 ### SAML 2.0
 
-Configure [SAML 2.0](auth-method-saml-2.0.md) which trust an external Identity Provider (IdP).
+Configure [SAML 2.0](auth-method-saml-2.0.md) to trust an external Identity Provider (IdP).
 
-> You should always ask for the `NameID` claim, even if you only use the email (`http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress`) claim or e.g. another custom user ID claim. SAML 2.0 can not do logout without the `NameID` claim.  
-> You should prefer to do SAML 2.0 connects with the use of the authentication methods metadata, then the customer's IdP can automatically download the certificate(s). And request for an online IdP metadata from the customer.
+> Always request the `NameID` claim, even if you primarily use the email (`http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress`) claim or another custom user ID claim. SAML 2.0 logout requires `NameID`.  
+> Prefer metadata-driven configuration so the customer's IdP can automatically download certificate(s). When possible, ask the customer for a live IdP metadata endpoint.
 
 How to guides:
 
@@ -79,8 +79,8 @@ List of customer-verified platforms.
 - [Nexus Group](https://www.nexusgroup.com/)
 
 ## How to connect applications
-When you register an application with either OpenID Connect or SAML 2.0, FoxIDs become an OpenID Provider (OP) / Identity Provider (IdP). 
-You would most often connect applications and APIs. But an application registration can also be used as a OP / IdP for an external system where the external system is the relaying party (RP). 
+When you register an application with either OpenID Connect or SAML 2.0, FoxIDs becomes an OpenID Provider (OP) / Identity Provider (IdP). 
+You most often connect applications and APIs, but an application registration can also issue tokens to an external system where that system is the relaying party (RP). 
 
 ### OpenID Connect and OAuth 2.0
 It is recommended to secure applications and APIs with [OpenID Connect](app-reg-oidc.md) and [OAuth 2.0](app-reg-oauth-2.0.md). Please see the [samples](samples.md).
@@ -101,12 +101,12 @@ How to guides:
 
 ## Connect FoxIDs environments
 
-It is possible to interconnect FoxIDs environments with a [Environment Link](howto-environmentlink-foxids.md) or [OpenID Connect](howto-oidc-foxids.md).
+It is possible to interconnect FoxIDs environments with an [Environment Link](howto-environmentlink-foxids.md) or [OpenID Connect](howto-oidc-foxids.md).
 
-You can connect two environments in the same tenant with a [Environment Link](howto-environmentlink-foxids.md).
-Environment Links is fast and secure, but they can only be used in to connect within a tenant.  
-*It is recommended to use Environment Link if you need to connect environments in the same tenant.*
+You can connect two environments in the same tenant with an [Environment Link](howto-environmentlink-foxids.md).
+Environment Links are fast and secure, but they can only be used to connect within a tenant.  
+*Use Environment Link if you need to connect environments in the same tenant.*
 
-You can connect two environments in the same or different tenants with [OpenID Connect](howto-oidc-foxids.md). The configuration is more complex than if you use a Environment Link. 
-OpenID Connect is secure and you can connect all environments regardless of which tenant they are in. There is basically not different in external OpenID Connect connections and internal connections used between environments.
+You can connect two environments in the same or different tenants with [OpenID Connect](howto-oidc-foxids.md). The configuration is more complex than using an Environment Link. 
+OpenID Connect is secure and can connect all environments regardless of tenant. There is essentially no difference between external OpenID Connect connections and internal connections used between environments.
 

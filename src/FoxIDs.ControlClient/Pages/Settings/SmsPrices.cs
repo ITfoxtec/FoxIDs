@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Blazored.Toast.Services;
 using FoxIDs.Client.Logic;
+using FoxIDs.Client.Models.Config;
 
 namespace FoxIDs.Client.Pages.Settings
 {
@@ -28,6 +29,9 @@ namespace FoxIDs.Client.Pages.Settings
 
         private PageEditForm<FilterSmsPriceViewModel> smsPriceFilterForm;
         private List<GeneralSmsPriceViewModel> smsPrices = new List<GeneralSmsPriceViewModel>();
+
+        [Inject]
+        public ClientSettings ClientSettings { get; set; }
 
         [Inject]
         public IToastService toastService { get; set; }

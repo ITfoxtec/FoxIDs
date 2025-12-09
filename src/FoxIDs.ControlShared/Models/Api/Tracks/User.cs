@@ -2,6 +2,9 @@
 
 namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// User details response.
+    /// </summary>
     public class User : UserBase, IEmailValue
     {
         [Required]

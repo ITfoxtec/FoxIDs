@@ -5,6 +5,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Update user request.
+    /// </summary>
     public class UserRequest : UserBase, IValidatableObject
     {
         /// <summary>

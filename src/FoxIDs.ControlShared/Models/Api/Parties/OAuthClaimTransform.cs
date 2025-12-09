@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Claim transform configuration applied to OAuth/OIDC down-parties.
+    /// </summary>
     public class OAuthClaimTransform : ClaimTransform
     {
         [ListLength(Constants.Models.Claim.TransformClaimsInMin, Constants.Models.Claim.TransformClaimsInMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]

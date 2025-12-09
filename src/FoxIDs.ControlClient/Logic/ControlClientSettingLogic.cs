@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Services;
+using FoxIDs.Models.Api;
 using ITfoxtec.Identity;
 using System.Threading.Tasks;
 
@@ -32,7 +33,10 @@ namespace FoxIDs.Client.Logic
                 clientSettings.EnablePayment = controlClientSettings.EnablePayment;
                 clientSettings.PaymentTestMode = controlClientSettings.PaymentTestMode;
                 clientSettings.MollieProfileId = controlClientSettings.MollieProfileId;
-                clientSettings.SettingsAddress = controlClientSettings.SettingsAddress;
+
+                clientSettings.HideBrandingSettings = controlClientSettings.ClientUi?.HideBrandingSettings ?? false;
+                clientSettings.HideSmsSettings = controlClientSettings.ClientUi?.HideSmsSettings ?? false;
+                clientSettings.HideMailSettings = controlClientSettings.ClientUi?.HideMailSettings ?? false;
                 
                 notificationLogic.ClientSettingLoaded();
             }

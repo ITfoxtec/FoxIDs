@@ -1,19 +1,19 @@
 using AutoMapper;
 using FoxIDs.Infrastructure;
-using FoxIDs.Repository;
+using FoxIDs.Infrastructure.Security;
+using FoxIDs.Logic;
 using FoxIDs.Models;
-using Api = FoxIDs.Models.Api;
+using FoxIDs.Models.Logic;
+using FoxIDs.Repository;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using ITfoxtec.Identity;
-using System;
-using FoxIDs.Infrastructure.Security;
 using System.Linq.Expressions;
-using FoxIDs.Logic;
-using FoxIDs.Models.Logic;
+using System.Threading.Tasks;
+using Api = FoxIDs.Models.Api;
 
 namespace FoxIDs.Controllers
 {
@@ -48,7 +48,7 @@ namespace FoxIDs.Controllers
         /// <returns>Users.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.User>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Api.PaginationResponse<Api.User>>> GetUsers(string filterEmail = null, string filterPhone = null, string filterUsername = null, string filterUserId = null, string paginationToken = null)
+        public async Task<ActionResult<Api.PaginationResponse<Api.User>>> GetUsers(string filterEmail = null, string filterPhone = null, string filterUsername = null, string filterUserId = null, string paginationToken = null)
         {
             try
             {
@@ -85,7 +85,8 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Create users if they do not already exist. Existing users are not updated and if a user exists, the update element is ignored.
+        /// Create new users or override existing users. It is not possible to update user identifies (username/phone/email) in this API method.
+        /// Validate the password policy if a password is set. Not validated if the password is set with a password hash. Password history is not validated or update because existing users are overridden.
         /// </summary>
         /// <param name="usersRequest">Users.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -123,11 +124,16 @@ namespace FoxIDs.Controllers
                 var mUsers = new List<User>();
                 foreach (var user in usersRequest.Users)
                 {
+                    var hasPassword = !user.Password.IsNullOrWhiteSpace() || !user.PasswordHashAlgorithm.IsNullOrWhiteSpace();
                     var mUser = await accountLogic.CreateUserAsync(new CreateUserObj
                     {
                         UserIdentifier = new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username },
                         Password = user.Password,
-                        ChangePassword = user.Password.IsNullOrWhiteSpace() ? false : user.ChangePassword,
+                        PasswordHashAlgorithm = user.PasswordHashAlgorithm,
+                        PasswordHash = user.PasswordHash,
+                        PasswordHashSalt = user.PasswordHashSalt,
+                        PasswordLastChanged = user.PasswordLastChanged,
+                        ChangePassword = hasPassword ? user.ChangePassword : false,
                         SetPasswordEmail = user.SetPasswordEmail,
                         SetPasswordSms = user.SetPasswordSms,
                         Claims = user.Claims.ToClaimList(),
@@ -140,16 +146,9 @@ namespace FoxIDs.Controllers
                         DisableTwoFactorEmail = user.DisableTwoFactorEmail,
                         DisableSetPasswordSms = user.DisableSetPasswordSms,
                         DisableSetPasswordEmail = user.DisableSetPasswordEmail,
-                        RequireMultiFactor = user.RequireMultiFactor
+                        RequireMultiFactor = user.RequireMultiFactor,
+                        PasswordPolicyName = user.PasswordPolicyName
                     }, saveUser: false);
-
-                    if (!user.PasswordHashAlgorithm.IsNullOrWhiteSpace())
-                    {
-                        mUser.ChangePassword = user.ChangePassword;
-                        mUser.HashAlgorithm = user.PasswordHashAlgorithm;
-                        mUser.Hash = user.PasswordHash;
-                        mUser.HashSalt = user.PasswordHashSalt;
-                    }
 
                     mUsers.Add(mUser);
                 }

@@ -1,5 +1,8 @@
 ﻿namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Login methods that can trigger a lock after repeated failures.
+    /// </summary>
     public enum FailingLoginTypes
     {
         InternalLogin = 100,

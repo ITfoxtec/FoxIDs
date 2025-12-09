@@ -1,5 +1,8 @@
 ﻿namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Contact roles published in SAML metadata.
+    /// </summary>
     public enum SamlMetadataContactPersonTypes
     {
         Technical = 10,

@@ -38,6 +38,9 @@ namespace FoxIDs.Models.Config
 
         public string SupportEmail { get; set; }
 
+        [ValidateComplexType]
+        public ControlClientUiSettings ClientUi { get; set; } = new ControlClientUiSettings();
+
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = base.Validate(validationContext).ToList();

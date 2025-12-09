@@ -1,9 +1,13 @@
-﻿using ITfoxtec.Identity;
+using ITfoxtec.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Request to create a single user.
+    /// </summary>
     public class CreateUserRequest : UserBase, IValidatableObject
     {
         [MaxLength(Constants.Models.Track.PasswordLengthMax)]
@@ -22,6 +26,10 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.SecretHash.HashSaltLength)]
         [Display(Name = "Password hash salt")]
         public string PasswordHashSalt { get; set; }
+
+        [Range(0, long.MaxValue)]
+        [Display(Name = "Password last changed (Unix seconds)")]
+        public long? PasswordLastChanged { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

@@ -61,7 +61,7 @@ namespace FoxIDs.UnitTests.Mocks
 
         public override ValueTask SaveAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)
         {
-            throw new NotImplementedException();
+            return ValueTask.CompletedTask;
         }
 
         public override ValueTask SaveManyAsync<T>(IReadOnlyCollection<T> items, TelemetryScopedLogger scopedLogger = null)

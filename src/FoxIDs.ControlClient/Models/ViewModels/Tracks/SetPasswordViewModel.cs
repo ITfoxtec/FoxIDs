@@ -4,6 +4,7 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class SetPasswordViewModel 
     {
+        [Required]
         [MaxLength(Constants.Models.Track.PasswordLengthMax)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]

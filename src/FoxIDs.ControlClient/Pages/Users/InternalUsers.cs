@@ -364,8 +364,26 @@ namespace FoxIDs.Client.Pages.Users
 
         private async Task RemovePasswordAsync(GeneralUserViewModel generalUser)
         {
-            generalUser.SetPasswordForm.Model.Password = string.Empty;
-            await generalUser.SetPasswordForm.Submit();
+            try
+            {
+                var request = new UserSetPasswordRequest
+                {
+                    Email = generalUser.Email,
+                    Phone = generalUser.Phone,
+                    Username = generalUser.Username,
+                    Password = string.Empty,
+                    ChangePassword = false
+                };
+
+                var userResult = await UserService.SetUserPasswordAsync(request);
+                generalUser.Form?.UpdateModel(ToViewModel(userResult));
+                generalUser.ShowSetPassword = false;
+                toastService.ShowSuccess("Password removed and history cleared.");
+            }
+            catch (FoxIDsApiException ex)
+            {
+                generalUser.SetPasswordForm.SetFieldError(nameof(generalUser.SetPasswordForm.Model.Password), ex.Message);
+            }
         }
 
         private async Task DeleteUserAsync(GeneralUserViewModel generalUser)

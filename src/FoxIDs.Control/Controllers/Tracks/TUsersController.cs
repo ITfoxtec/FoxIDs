@@ -86,7 +86,7 @@ namespace FoxIDs.Controllers
 
         /// <summary>
         /// Create new users or override existing users. It is not possible to update user identifies (username/phone/email) in this API method.
-        /// Validate the password policy including password history update if a password is set. Not validated if the password is set with a password hash.
+        /// Validate the password policy if a password is set. Not validated if the password is set with a password hash. Password history is not validated or update because existing users are overridden.
         /// </summary>
         /// <param name="usersRequest">Users.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]

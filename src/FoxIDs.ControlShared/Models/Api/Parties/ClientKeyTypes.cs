@@ -2,6 +2,9 @@
 
 namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Key storage approaches available for client credentials.
+    /// </summary>
     public enum ClientKeyTypes
     {
         Contained = 0,

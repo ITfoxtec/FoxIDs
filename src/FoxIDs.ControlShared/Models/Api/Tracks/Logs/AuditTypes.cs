@@ -1,5 +1,8 @@
 namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Types of actions captured in audit logs.
+    /// </summary>
     public enum AuditTypes
     {
         Data = 100,

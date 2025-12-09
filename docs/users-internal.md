@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 {
     "title":  "Internal users",
     "description":  "Internal users can be authenticated in one or more login authentication methods in an environment, making it possible to customise the login experience, e.g. depending on different application requirements.",
@@ -50,6 +50,8 @@ The default password policy is configured in the environment settings in the [Fo
    - **Password max age in seconds (0 to disable)** to force a change when a password gets too old.
    - **Soft password change in seconds (0 to disable)** to allow a grace period: during login a non-compliant or expired password prompts the user to change it but can still sign in until the window expires.
 5. Click **Update**
+
+![Built‑in password policy](images/configure-password-policy.png)
 
 ### Password policy groups
 

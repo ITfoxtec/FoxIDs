@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Controllers
 {
+    /// <summary>
+    /// Exposes health probe endpoints for liveness/readiness checks.
+    /// </summary>
     [Route(Constants.Routes.HealthController)]
     [FoxIDsControlHttpSecurityHeaders]
     public class HealthController : HealthControllerBase
@@ -13,6 +16,9 @@ namespace FoxIDs.Controllers
             : base(healthCheckLogic)
         { }
 
+        /// <summary>
+        /// Returns current health status for monitoring systems.
+        /// </summary>
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         [HttpGet]
         public async Task<IActionResult> Index()

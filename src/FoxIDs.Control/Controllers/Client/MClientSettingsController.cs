@@ -29,7 +29,7 @@ namespace FoxIDs.Controllers.Client
             var displayVersion = assembly.GetDisplayVersion();
             var majorMinorVersion = assembly.GetName().Version?.ToString(2) ?? string.Empty;
 
-            return Ok(new Api.ControlClientSettings 
+            return Ok(new Api.ControlClientSettings
             {
                 FoxIDsEndpoint = settings.FoxIDsEndpoint,
                 Version = majorMinorVersion,
@@ -39,8 +39,8 @@ namespace FoxIDs.Controllers.Client
                 EnableCreateNewTenant = !settings.MainTenantSeedEnabled,
                 EnablePayment = settings.Payment?.EnablePayment == true && settings.Usage?.EnableInvoice == true,
                 PaymentTestMode = settings.Payment != null ? settings.Payment.TestMode : true,
-                MollieProfileId = settings.Payment?.MollieProfileId,
-                SettingsAddress = mapper.Map<Api.SettingsAddress>(settings.Address),
+                MollieProfileId = settings.Payment?.MollieProfileId, 
+                ClientUi = mapper.Map<Api.ControlClientUiSettings>(settings.ClientUi)
             });
         }
     }

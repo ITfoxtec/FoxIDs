@@ -1,5 +1,8 @@
 ﻿namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Execution points where claim transforms can run.
+    /// </summary>
     public enum ClaimTransformTasks
     {        
         RequestException = 20,

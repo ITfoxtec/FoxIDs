@@ -1,5 +1,8 @@
 ﻿namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Supported party types within a track.
+    /// </summary>
     public enum PartyTypes
     {
         Login = 10,

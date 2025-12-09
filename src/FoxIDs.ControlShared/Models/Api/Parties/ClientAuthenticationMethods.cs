@@ -1,5 +1,8 @@
 ﻿namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Methods supported for authenticating OAuth/OIDC clients.
+    /// </summary>
     public enum ClientAuthenticationMethods
     {
         ClientSecretPost = 0,

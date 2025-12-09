@@ -93,19 +93,25 @@ namespace FoxIDs.Logic
 
         public async Task LogSmsEventAsync(UsageLogTypes planUsageType, string phone)
         {
-            var smsPrices = await LoadAndCreateSmsPrices();
-            decimal price = 0.0M;
-            if (smsPrices.Countries?.Count() > 0)
+            var properties = new Dictionary<string, string> { { Constants.Logs.UsageSms, "1" } };
+            if (RouteBinding.SendSms == null)
             {
-                var phoneNumber = phone.TrimStart('+');
-                var queryprice = smsPrices.Countries?.Where(c => phoneNumber.StartsWith(c.PhoneCode.ToString())).OrderByDescending(c => c.PhoneCode.ToString().Length).Select(c => c.Price).FirstOrDefault();
-                if (!queryprice.HasValue || !(queryprice > 0))
+                var smsPrices = await LoadAndCreateSmsPrices();
+                decimal price = 0.0M;
+                if (smsPrices.Countries?.Count() > 0)
                 {
-                    throw new Exception($"Phone number '{phone}' country code not supported.");
+                    var phoneNumber = phone.TrimStart('+');
+                    var queryprice = smsPrices.Countries?.Where(c => phoneNumber.StartsWith(c.PhoneCode.ToString())).OrderByDescending(c => c.PhoneCode.ToString().Length).Select(c => c.Price).FirstOrDefault();
+                    if (!queryprice.HasValue || !(queryprice > 0))
+                    {
+                        throw new Exception($"Phone number '{phone}' country code not supported.");
+                    }
+                    price = queryprice.Value;
                 }
-                price = queryprice.Value;
+
+                properties.Add(Constants.Logs.UsageSmsPrice, price.ToString(CultureInfo.InvariantCulture));
             }
-            var properties = new Dictionary<string, string> { { Constants.Logs.UsageSms, "1" }, { Constants.Logs.UsageSmsPrice, price.ToString(CultureInfo.InvariantCulture) } };
+
             LogEvent(planUsageType, UsageLogSendTypes.Sms, properties);
         }
 

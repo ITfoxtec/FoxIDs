@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Claim transform configuration applied to SAML down-parties.
+    /// </summary>
     public class SamlClaimTransform : ClaimTransform
     {
         [ListLength(Constants.Models.Claim.TransformClaimsInMin, Constants.Models.Claim.TransformClaimsInMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]

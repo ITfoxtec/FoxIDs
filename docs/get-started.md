@@ -47,7 +47,7 @@ Fill in the `Name` and the base URL as the `Redirect URI`.
 
 ![New app registration configuration](images/get-started-new-app-reg-conf.png)
 
-Click `Create` to save the application configuration. Copy the `Authority`, `Client ID`, and `Client secret`, and optionally the `scopes`. Click `Show more` if you need the OpenID Connect (OIDC) Discovery endpoint.
+Click `Create` to save the application configuration. Copy the `Authority`, `Client ID`, and `Client secret`, and optionally the `scopes`. Click `Show advanced` if you need the OpenID Connect (OIDC) Discovery endpoint.
 
 ![New app registration done](images/get-started-new-app-reg-done.png)
 

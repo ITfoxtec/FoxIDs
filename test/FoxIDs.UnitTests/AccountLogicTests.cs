@@ -137,7 +137,6 @@ namespace FoxIDs.UnitTests
             var accountLogic = AccountLogicInstance(checkPasswordComplexity: false, checkPasswordRisk: false);
             var user = await accountLogic.CreateUserAsync(new CreateUserObj { UserIdentifier = new UserIdentifier { Email = "remove@test.com" }, Password = "12345678" });
 
-            var lastChanged = 6789;
             await accountLogic.SetPasswordUserAsync(user, new SetPasswordObj
             {
                 // RemovePassword

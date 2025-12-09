@@ -1,10 +1,13 @@
 ﻿using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Models.Config;
+using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -121,6 +124,11 @@ namespace FoxIDs.Infrastructure.Hosting
             });
             builder.UseSwagger(c =>
             {
+                c.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
+                c.PreSerializeFilters.Add((openApiDocument, httpRequest) =>
+                {
+                    openApiDocument.Servers = new List<OpenApiServer> { new OpenApiServer { Url = UrlCombine.Combine(httpRequest.HttpContext.GetHost(addTrailingSlash: false), Constants.Routes.ApiPath) } };
+                });
                 c.RouteTemplate = "api/swagger/{documentname}/swagger.json";
             });
 

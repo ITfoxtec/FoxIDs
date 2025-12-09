@@ -101,7 +101,7 @@ If you self-host FoxIDs, the Swagger (OpenAPI) document is exposed in FoxIDs Con
 > - An authentication method is called `upparty`
 
 The Control API URL contains variables for the tenant name and track name (environment name) you want to operate on: `.../{tenant_name}/{track_name}/...`. 
-Replace `{tenant_name}` with your tenant name and `{track_name}` with the environment technical name. If you generate a proxy from the [Swagger (OpenAPI)](https://control.foxids.com/api/swagger/v2/swagger.json) document, those variables are supplied as input parameters.
+Replace `{tenant_name}` with your tenant name and `{track_name}` with the environments technical name. If you generate a proxy from the [Swagger (OpenAPI)](https://control.foxids.com/api/swagger/v2/swagger.json) document, those variables are supplied as input parameters.
 
 For example, to read an OpenID Connect application registration on FoxIDs Cloud with the technical name `some_oidc_app`, call (HTTP GET) `https://control.foxids.com/api/{tenant_name}/{track_name}/!oidcdownparty?name=some_oidc_app` (replace the variables with your tenant name and environment technical name).
 

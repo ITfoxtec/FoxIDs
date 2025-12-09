@@ -82,7 +82,7 @@ namespace FoxIDs.Models.Api
         public bool? CheckPasswordRisk { get; set; } = true;
 
         [MaxLength(Constants.Models.Track.PasswordBannedCharactersLength)]
-        [Display(Name = "Banned characters")]
+        [Display(Name = "Banned characters (case-insensitive)")]
         public string PasswordBannedCharacters { get; set; }
 
         [Range(Constants.Models.Track.PasswordHistoryMin, Constants.Models.Track.PasswordHistoryMax)]

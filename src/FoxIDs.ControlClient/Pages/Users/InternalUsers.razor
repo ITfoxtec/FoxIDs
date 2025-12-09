@@ -73,7 +73,19 @@
                         }
                         else
                         {
-                            <FFieldText @bind-Value="user.Form.Model.Password" For="@(() => user.Form.Model.Password)" />
+                            <div class="active-group active">
+                                <div class="card card-row bg-light d-flex align-items-stretch">
+                                    <div class="card-body py-2 mb-0 flex-fill">
+                                        <div class="d-flex flex-nowrap align-items-center">
+                                            <span class="text-truncate d-inline-block" title="@user.Form.Model.Password">@user.Form.Model.Password</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-stretch">
+                                        <button type="button" class="btn btn-secondary h-100 px-3" style="border-top-left-radius: 0; border-bottom-left-radius: 0;" @onclick="@(() => ShowSetPassword(user))">Set password</button>
+                                    </div>
+                                </div>
+                                <Label For="@(() => user.Form.Model.Password)" class="label-control" />
+                            </div>
                             <input type="hidden" @bind="user.Form.Model.Password" />
                         }
 
@@ -237,6 +249,36 @@
                         <button type="button" class="btn btn-secondary" @onclick="@(() => UserCancel(user))">@(@user.CreateMode ? "Cancel" : "Close")</button>
                     </div>
                 </PageEditForm>
+                @if (user.ShowSetPassword)
+                {
+                    <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <PageEditForm @ref="user.SetPasswordForm" TModel="SetPasswordViewModel" OnAfterInit="@(m => SetPasswordViewModelAfterInit(user, m))" OnValidSubmit="@(async (editContext) => await OnSetPasswordValidSubmitAsync(user, editContext))">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Set password</h5>
+                                        <button type="button" class="close" aria-label="Close" @onclick="@(() => CancelSetPassword(user))">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="info-text">
+                                            Set a new password for the user. Changes take effect immediately.
+                                        </div>
+                                        <FInputPassword @bind-Value="user.SetPasswordForm.Model.Password" For="@(() => user.SetPasswordForm.Model.Password)" />
+                                        <FInputToggle @bind-Value="user.SetPasswordForm.Model.ChangePassword" For="@(() => user.SetPasswordForm.Model.ChangePassword)" TextType="y.n" />
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-link" @onclick="@(async () => await RemovePasswordAsync(user))">Remove password & history</button>
+                                        <button type="submit" class="btn btn-primary">Save password</button>
+                                        <button type="button" class="btn btn-secondary" @onclick="@(() => CancelSetPassword(user))">Cancel</button>
+                                    </div>
+                                </PageEditForm>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-backdrop fade show"></div>
+                }
             }
             else
             {

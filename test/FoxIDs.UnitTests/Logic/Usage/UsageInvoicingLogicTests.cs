@@ -1,7 +1,6 @@
 using AutoMapper;
 using FoxIDs.Infrastructure;
 using FoxIDs.Logic.Usage;
-using FoxIDs.MappingProfiles;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;

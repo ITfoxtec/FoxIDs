@@ -20,6 +20,9 @@
         public bool EnablePayment { get; set; }
         public bool PaymentTestMode { get; set; }
         public string MollieProfileId { get; set; }
-        public SettingsAddress SettingsAddress { get; set; }
+
+        public bool HideBrandingSettings { get; set; }
+        public bool HideSmsSettings { get; set; }
+        public bool HideMailSettings { get; set; }
     }
 }

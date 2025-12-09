@@ -1,5 +1,8 @@
 namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Dynamic page elements that can be composed in login flows.
+    /// </summary>
     public enum DynamicElementTypes
     {
         Email = 5,

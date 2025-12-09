@@ -441,6 +441,7 @@ namespace FoxIDs
                 public const string DefaultPostHashAlgorithm = "P2HS512";
                 public static string DefaultHashAlgorithm = $"{DefaultPostHashAlgorithm}:{DefaultIterations}";
                 public const int DefaultIterations = 10;
+                public const int IterationFactor = 10000;
                 public const int DefaultDerivedKeyBytes = 80;
                 public const int DefaultSaltBytes = 64;
 
@@ -547,7 +548,7 @@ namespace FoxIDs
                 public const int PasswordPolicyDisplayNameLength = 30;
                 public const int PasswordBannedCharactersLength = 20;
                 public const int PasswordHistoryMin = 0;
-                public const int PasswordHistoryMax = 20;
+                public const int PasswordHistoryMax = 30;
                 public const int PasswordMaxAgeMin = 0;
                 public const int PasswordMaxAgeMax = 63072000; // 2 years
                 public const int SoftPasswordChangeMin = 0;

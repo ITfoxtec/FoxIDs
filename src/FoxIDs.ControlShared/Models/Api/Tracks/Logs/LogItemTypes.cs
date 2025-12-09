@@ -1,5 +1,8 @@
 ﻿namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Classification of log entries emitted by FoxIDs.
+    /// </summary>
     public enum LogItemTypes
     {
         Sequence = 3,

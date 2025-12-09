@@ -9,5 +9,7 @@
         public string PasswordHash { get; set; }
 
         public string PasswordHashSalt { get; set; }
+
+        public long? PasswordLastChanged { get; set; }
     }
 }

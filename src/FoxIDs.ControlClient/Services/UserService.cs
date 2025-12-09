@@ -9,6 +9,7 @@ namespace FoxIDs.Client.Services
     {
         private const string apiUri = "api/{tenant}/{track}/!user";
         private const string listApiUri = "api/{tenant}/{track}/!users";
+        private const string setPasswordApiUri = "api/{tenant}/{track}/!usersetpassword";
         private const string myUserApiUri = "api/{tenant}/master/!myuser";
         private const string userControlProfileApiUri = "api/{tenant}/master/!usercontrolprofile";
         private const string failingLoginLockApiUri = "api/{tenant}/{track}/!failingloginlock";
@@ -26,6 +27,7 @@ namespace FoxIDs.Client.Services
         public async Task<User> GetUserAsync(string email, string phone, string username) => await GetAsync<User>(apiUri, email, phone, username, parmName1: nameof(email), parmName2: nameof(phone), parmName3: nameof(username));
         public async Task<User> CreateUserAsync(CreateUserRequest user) => await PostResponseAsync<CreateUserRequest, User>(apiUri, user);
         public async Task<User> UpdateUserAsync(UserRequest user) => await PutResponseAsync<UserRequest, User>(apiUri, user);
+        public async Task<User> SetUserPasswordAsync(UserSetPasswordRequest request) => await PutResponseAsync<UserSetPasswordRequest, User>(setPasswordApiUri, request);
         public async Task DeleteUserAsync(string email, string phone, string username) => await DeleteAsync(apiUri, email, phone, username, parmName1: nameof(email), parmName2: nameof(phone), parmName3: nameof(username));
 
         public async Task<MyUser> GetMyUserAsync() => await GetAsync<MyUser>(myUserApiUri);

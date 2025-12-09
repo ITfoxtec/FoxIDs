@@ -81,6 +81,7 @@ namespace FoxIDs.Controllers
 
         /// <summary>
         /// Create user.
+        /// Validate the password policy including password history update if a password is set. Not validated if the password is set with a password hash.
         /// </summary>
         /// <param name="createUserRequest">User.</param>
         /// <returns>User.</returns>
@@ -122,11 +123,16 @@ namespace FoxIDs.Controllers
                     }
                 }
 
+                var hasPassword = !createUserRequest.Password.IsNullOrWhiteSpace() || !createUserRequest.PasswordHashAlgorithm.IsNullOrWhiteSpace();
                 var mUser = await accountLogic.CreateUserAsync(new CreateUserObj
                 {
                     UserIdentifier = new UserIdentifier { Email = createUserRequest.Email, Phone = createUserRequest.Phone, Username = createUserRequest.Username },
                     Password = createUserRequest.Password,
-                    ChangePassword = createUserRequest.Password.IsNullOrWhiteSpace() ? false : createUserRequest.ChangePassword,
+                    PasswordHashAlgorithm = createUserRequest.PasswordHashAlgorithm,
+                    PasswordHash = createUserRequest.PasswordHash,
+                    PasswordHashSalt = createUserRequest.PasswordHashSalt,
+                    PasswordLastChanged = createUserRequest.PasswordLastChanged,
+                    ChangePassword = hasPassword ? createUserRequest.ChangePassword : false,
                     SetPasswordEmail = createUserRequest.SetPasswordEmail,
                     SetPasswordSms = createUserRequest.SetPasswordSms,
                     Claims = createUserRequest.Claims.ToClaimList(),
@@ -304,8 +310,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.UserRequest).Name}' by email '{user.Email}', phone '{user.Phone}', username '{user.Username}'.");
-                    return NotFound(typeof(Api.UserRequest).Name, new { user.Email, user.Phone, user.Username }.ToJson());
+                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.User).Name}' by email '{user.Email}', phone '{user.Phone}', username '{user.Username}'.");
+                    return NotFound(typeof(Api.User).Name, new { user.Email, user.Phone, user.Username }.ToJson());
                 }
                 throw;
             }

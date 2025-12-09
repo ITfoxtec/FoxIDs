@@ -73,10 +73,12 @@
                         }
                         else
                         {
-                            <FFieldText @bind-Value="user.Form.Model.Password" For="@(() => user.Form.Model.Password)" />
-                            <input type="hidden" @bind="user.Form.Model.Password" />
-                            <div class="mb-3">
-                                <button type="button" class="btn btn-secondary btn-sm" @onclick="@(() => ShowSetPassword(user))">Set password</button>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="flex-fill">
+                                    <FFieldText @bind-Value="user.Form.Model.Password" For="@(() => user.Form.Model.Password)" />
+                                    <input type="hidden" @bind="user.Form.Model.Password" />
+                                </div>
+                                <button type="button" class="btn btn-secondary btn-sm ml-2" @onclick="@(() => ShowSetPassword(user))">Set password</button>
                             </div>
                         }
 

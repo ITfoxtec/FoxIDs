@@ -113,7 +113,7 @@ The hashing subsystem supports evolution: hash metadata (algorithm + parameters)
 
 Currently supported hash algorithm `P2HS512:10` (definition):
 - HMAC (`RFC 2104`) with SHA-512 (`FIPS 180-4`)
-- 10 iterations
+- 10 iterations stored in the hash metadata, multiplied by 10,000 PBKDF2 rounds (100,000 total iterations)
 - Salt length: 64 bytes
 - Derived key length: 80 bytes
 

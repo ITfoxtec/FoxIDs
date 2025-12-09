@@ -28,7 +28,7 @@ namespace FoxIDs.Logic
             item.HashAlgorithm = SecretHash.DefaultHashAlgorithm;
 
             var salt = RandomGenerator.GenerateBytes(SecretHash.DefaultSaltBytes);
-            var hash = KeyDerivation.Pbkdf2(secret, salt, defaultPrf, SecretHash.DefaultIterations * 10000, SecretHash.DefaultDerivedKeyBytes);
+            var hash = KeyDerivation.Pbkdf2(secret, salt, defaultPrf, SecretHash.DefaultIterations * SecretHash.IterationFactor, SecretHash.DefaultDerivedKeyBytes);
 
             item.HashSalt = WebEncoders.Base64UrlEncode(salt);
             item.Hash = WebEncoders.Base64UrlEncode(hash);
@@ -53,7 +53,7 @@ namespace FoxIDs.Logic
             }
 
             var salt = WebEncoders.Base64UrlDecode(item.HashSalt);
-            var hash = KeyDerivation.Pbkdf2(secret, salt, defaultPrf, iterations * 10000, SecretHash.DefaultDerivedKeyBytes);
+            var hash = KeyDerivation.Pbkdf2(secret, salt, defaultPrf, iterations * SecretHash.IterationFactor, SecretHash.DefaultDerivedKeyBytes);
 
             if (WebEncoders.Base64UrlEncode(hash) == item.Hash)
             {
@@ -89,7 +89,7 @@ namespace FoxIDs.Logic
         public Task ValidateSecretDefaultTimeUsageAsync(string secret)
         {
             var salt = RandomGenerator.GenerateBytes(SecretHash.DefaultSaltBytes);
-            KeyDerivation.Pbkdf2(secret, salt, defaultPrf, SecretHash.DefaultIterations * 10000, SecretHash.DefaultDerivedKeyBytes);
+            KeyDerivation.Pbkdf2(secret, salt, defaultPrf, SecretHash.DefaultIterations * SecretHash.IterationFactor, SecretHash.DefaultDerivedKeyBytes);
 
             return Task.FromResult(string.Empty);
         }

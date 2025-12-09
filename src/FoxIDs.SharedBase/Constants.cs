@@ -441,6 +441,7 @@ namespace FoxIDs
                 public const string DefaultPostHashAlgorithm = "P2HS512";
                 public static string DefaultHashAlgorithm = $"{DefaultPostHashAlgorithm}:{DefaultIterations}";
                 public const int DefaultIterations = 10;
+                public const int IterationFactor = 10000;
                 public const int DefaultDerivedKeyBytes = 80;
                 public const int DefaultSaltBytes = 64;
 

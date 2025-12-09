@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Bulk user upsert request.
+    /// </summary>
     public class UsersRequest : IValidatableObject  
     {
         [ListLength(Constants.ControlApi.SaveAndDeleteManyMin, Constants.ControlApi.SaveAndDeleteManyMax)]

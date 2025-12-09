@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Request to change password when current password is known.
+    /// </summary>
     public class UserChangePasswordRequest : IValidatableObject
     {
         /// <summary>

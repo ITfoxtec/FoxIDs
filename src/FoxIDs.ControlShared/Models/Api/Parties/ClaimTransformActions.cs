@@ -1,5 +1,8 @@
 ﻿namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Actions available when transforming claims.
+    /// </summary>
     public enum ClaimTransformActions
     {
         If = 4,

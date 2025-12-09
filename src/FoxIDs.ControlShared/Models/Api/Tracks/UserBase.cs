@@ -5,6 +5,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Base user settings used in user create and update requests.
+    /// </summary>
     public class UserBase : IValidatableObject
     {
         [MaxLength(Constants.Models.User.EmailLength)]

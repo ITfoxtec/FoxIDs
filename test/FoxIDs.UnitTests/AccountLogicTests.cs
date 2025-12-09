@@ -83,6 +83,77 @@ namespace FoxIDs.UnitTests
             await Assert.ThrowsAsync<PasswordRiskException>(async () => await accountLogic.CreateUserAsync(new CreateUserObj { UserIdentifier = new UserIdentifier { Email = email }, Password = password }));
         }
 
+        [Fact]
+        public async Task CreateUserWithPasswordHash_SetsHashAndPasswordLastChanged()
+        {
+            var accountLogic = AccountLogicInstance(checkPasswordComplexity: false, checkPasswordRisk: false);
+            var lastChanged = 1234;
+            var user = await accountLogic.CreateUserAsync(new CreateUserObj
+            {
+                UserIdentifier = new UserIdentifier { Email = "hash@test.com" },
+                PasswordHashAlgorithm = Constants.Models.SecretHash.DefaultHashAlgorithm,
+                PasswordHash = "hash",
+                PasswordHashSalt = "salt",
+                PasswordLastChanged = lastChanged,
+                ChangePassword = true
+            });
+
+            Assert.Equal(Constants.Models.SecretHash.DefaultHashAlgorithm, user.HashAlgorithm);
+            Assert.Equal("hash", user.Hash);
+            Assert.Equal("salt", user.HashSalt);
+            Assert.Equal(lastChanged, user.PasswordLastChanged);
+            Assert.True(user.ChangePassword);
+        }
+
+        [Fact]
+        public async Task SetPasswordUserHash_SetsPasswordAndFlags()
+        {
+            var accountLogic = AccountLogicInstance(checkPasswordComplexity: false, checkPasswordRisk: false);
+            var user = await accountLogic.CreateUserAsync(new CreateUserObj { UserIdentifier = new UserIdentifier { Email = "set@test.com" }, Password = "12345678" });
+
+            var lastChanged = 5678;
+            await accountLogic.SetPasswordUserAsync(user, new SetPasswordObj
+            {
+                PasswordHashAlgorithm = Constants.Models.SecretHash.DefaultHashAlgorithm,
+                PasswordHash = "hash2",
+                PasswordHashSalt = "salt2",
+                PasswordLastChanged = lastChanged,
+                ChangePassword = true
+            });
+
+            Assert.Equal(Constants.Models.SecretHash.DefaultHashAlgorithm, user.HashAlgorithm);
+            Assert.Equal("hash2", user.Hash);
+            Assert.Equal("salt2", user.HashSalt);
+            Assert.Equal(lastChanged, user.PasswordLastChanged);
+            Assert.True(user.ChangePassword);
+            Assert.False(user.SetPasswordEmail);
+            Assert.False(user.SetPasswordSms);
+            Assert.Equal(0, user.SoftPasswordChangeStarted);
+        }
+
+        [Fact]
+        public async Task RemovePasswordUser_RemovesPassword()
+        {
+            var accountLogic = AccountLogicInstance(checkPasswordComplexity: false, checkPasswordRisk: false);
+            var user = await accountLogic.CreateUserAsync(new CreateUserObj { UserIdentifier = new UserIdentifier { Email = "remove@test.com" }, Password = "12345678" });
+
+            var lastChanged = 6789;
+            await accountLogic.SetPasswordUserAsync(user, new SetPasswordObj
+            {
+                // RemovePassword
+            });
+
+            Assert.Null(user.PasswordHistory);
+            Assert.Null(user.HashAlgorithm);
+            Assert.Null(user.Hash);
+            Assert.Null(user.HashSalt);
+            Assert.Equal(0, user.PasswordLastChanged);
+            Assert.False(user.ChangePassword);
+            Assert.False(user.SetPasswordEmail);
+            Assert.False(user.SetPasswordSms);
+            Assert.Equal(0, user.SoftPasswordChangeStarted);
+        }
+
         private BaseAccountLogic AccountLogicInstance(int passwordLength = 8, int passwordMaxLength = 50, bool checkPasswordComplexity = true, bool checkPasswordRisk = true)
         {
             var routeBinding = new RouteBinding

@@ -58,7 +58,11 @@ The headers:
 - EmailVerified
 - PhoneVerified
 - Password
+- PasswordHashAlgorithm
+- PasswordHash
+- PasswordHashSalt
 - ChangePassword
+- PasswordLastChanged
 - SetPasswordEmail
 - SetPasswordSms
 - DisableAccount
@@ -91,6 +95,8 @@ u1@somedomain.test;+4411111111;u1;false;true;true;"My1Password!";false;false;fal
 u2@somedomain.test;+4422222222;u2;false;true;true;"My2Password!";true;false;false;false;"[{""Claim"": ""role"", ""Values"": [""admin""]}, {""Claim"": ""customer_id"", ""Values"": [""1234""]}]";true
 u3@somedomain.test;+4433333333;u3;false;true;true;"My3Password!";false;false;false;true;"[{""Claim"": ""role"", ""Values"": [""admin"", ""user""]}]";false
 ```
+
+If you pre-calculate password hashes on the client, use the `PasswordHashAlgorithm`, `PasswordHash` and `PasswordHashSalt` columns and leave `Password` empty (or remove). You can optionally preserve the original password change timestamp with `PasswordLastChanged` (Unix seconds). When a password or hash is provided without `PasswordLastChanged`, the upload stamps the current time.
 
 You should add passwords and claims with the `;"";` notation. If a password contains the `"` symbol it is escaped, for example the password `My"Password` which become `;"My""Password";`
 

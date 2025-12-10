@@ -34,7 +34,7 @@ NemLog-in documentation:
   - [test](https://tu.nemlog-in.dk/oprettelse-og-administration-af-it-systemer/log-in/dokumentation-og-guides/integrationstestmiljo/), where you can find the NemLog-in IdP-metadata for test
   - [production](https://tu.nemlog-in.dk/oprettelse-og-administration-af-it-systemer/log-in/dokumentation-og-guides/produktionsmiljo/), where you can find the NemLog-in IdP-metadata for production
 - OCES3 certificates:
-  - Download the [test OCES3 certificate](https://github.com/itfoxtec/foxids/blob/main/docs/certificates/oces3_foxids_nemlog-in_test.p12) (password `F-?aGUf6.yV4`) or [create an OCES3 test certificate](create-oces3-test-certificate.md)
+  - Download the [test OCES3 certificate](https://github.com/ITfoxtec/FoxIDs/blob/main/docs/certificates/oces3_FoxIDs_NemLog-in_test.p12) (password `F-?aGUf6.yV4`) or [create an OCES3 test certificate](create-oces3-test-certificate.md)
   - Create a production OCES3 certificate in the [certificate administration](https://erhvervsadministration.nemlog-in.dk/certificates) 
 - You must be [connected to NemLog-in](https://tu.nemlog-in.dk/tilslutning/) in order to create IT systems.
 - The [NemLog-in administration portal](https://administration.nemlog-in.dk/) where you configure IT-systems 

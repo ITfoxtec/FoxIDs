@@ -119,10 +119,6 @@ namespace FoxIDs.Logic
                 case PartyTypes.Oidc:
                     return await serviceProvider.GetService<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestRedirectAsync(toUpParty, GetLogoutRequest(party, sessionId, validIdToken, postLogoutRedirectUri));
                 case PartyTypes.Saml2:
-                    if (!validIdToken)
-                    {
-                        throw new OAuthRequestException($"ID Token hint is required for SAML 2.0 authentication method.") { RouteBinding = RouteBinding };
-                    }
                     return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutRequestRedirectAsync(toUpParty, GetSamlLogoutRequest(party, sessionId));
                 case PartyTypes.TrackLink:
                     return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutUpLogic>().LogoutRequestRedirectAsync(toUpParty, GetLogoutRequest(party, sessionId, validIdToken, postLogoutRedirectUri));

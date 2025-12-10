@@ -31,7 +31,8 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.OpenApi" Version="3.0.2" />
+		<!-- Microsoft.OpenApi can not be updated to version 3.* because of compatibility issues -->
+		<PackageReference Include="Microsoft.OpenApi" Version="2.3.0" />
 		<PackageReference Include="Mollie.Api" Version="4.15.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="10.0.1" />

@@ -82,6 +82,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Create user.
         /// Validate the password policy including password history update if a password is set. Not validated if the password is set with a password hash.
+        /// Provide either a plaintext password or password hash fields, or omit the password entirely to create the user without credentials; do not send both password formats.
         /// </summary>
         /// <param name="createUserRequest">User.</param>
         /// <returns>User.</returns>

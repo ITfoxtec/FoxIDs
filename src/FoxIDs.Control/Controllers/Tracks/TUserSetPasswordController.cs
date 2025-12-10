@@ -32,6 +32,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Set the users password.
         /// Validate the password policy including password history update if a password is set. Not validated if the password is set with a password hash.
+        /// You can set a plaintext password, provide password hash fields, or leave the password fields empty to remove the current password; never include both password formats in the same request.
         /// </summary>
         /// <param name="request">User password.</param>
         /// <returns>User.</returns>

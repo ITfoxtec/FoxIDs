@@ -64,7 +64,7 @@ namespace FoxIDs.Client.Pages
                     if (authenticationResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(authenticationResponse.State), authenticationResponse.GetTypeName());
 
                     var stateSplit = authenticationResponse.State.Split(Constants.Models.OidcDownPartyTest.StateSplitKey);
-                    if (stateSplit.Length != 3)
+                    if (!(stateSplit.Length >= 3))
                     {
                         throw new Exception("Invalid state format.");
                     }

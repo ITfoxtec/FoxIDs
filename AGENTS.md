@@ -15,6 +15,11 @@
 ## Coding Style & Naming Conventions
 Stick to 4-space indentation, file-scoped namespaces, and expression-bodied members when they clarify intent. Use PascalCase for public types/members, camelCase for locals/parameters, and `_camelCase` for private readonly fields. Keep services small, constructor-inject dependencies, and place shared DTOs/contracts in the nearest `*.Shared` project. Run `dotnet format` (or VS equivalent) on touched files.
 
+## API Documentation
+- Controllers under `src/FoxIDs.Control/Controllers*` must carry XML `<summary>` and `<param>` comments on each public action so Swagger shows clear, consumer-facing descriptions of behavior, validation, and notable side effects.
+- Request/response/message types in `src/FoxIDs.ControlShared/Models/Api*` need XML `<summary>` comments on classes and properties that explain meaning, required/optional expectations, formatting, and defaults so the generated OpenAPI stays accurate.
+- Keep wording concise and update the comments whenever contracts or endpoints change; these strings go straight into the published Swagger UI/JSON.
+
 ## Testing Guidelines
 xUnit + Moq power both suites, while `MysticMind.PostgresEmbed` lets integration tests exercise persistence and token-bridge flows. Name tests `Method_State_Result` to aid filtering. Every change in `src/FoxIDs*` should include at least one unit test; storage or protocol edits need a companion integration spec plus updated fixtures in `data/`.
 

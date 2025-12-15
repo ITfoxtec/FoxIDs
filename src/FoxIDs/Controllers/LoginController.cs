@@ -576,6 +576,16 @@ namespace FoxIDs.Controllers
 
         private async Task<IActionResult> ContinueAuthenticationInternalAsync(LoginUpSequenceData sequenceData, bool newCode = false)
         {
+            if (sequenceData.UserIdentifier.IsNullOrWhiteSpace())
+            {
+                sequenceData.DoLoginIdentifierStep = true;
+                sequenceData.DoLoginPasswordAction = false;
+                sequenceData.DoLoginPasswordlessEmailAction = false;
+                sequenceData.DoLoginPasswordlessSmsAction = false;
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return new RedirectResult($"../_{SequenceString}");
+            }
+
             loginPageLogic.CheckUpParty(sequenceData);
             var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
             securityHeaderLogic.AddImgSrc(loginUpParty);
@@ -1301,10 +1311,15 @@ namespace FoxIDs.Controllers
                         ConfirmAccount = loginUpParty.CreateUser.ConfirmAccount, 
                         RequireMultiFactor = loginUpParty.CreateUser.RequireMultiFactor
                     });
-                    if (user != null)
-                    {
-                        auditLogic.LogCreateUserEvent(PartyTypes.Login, sequenceData.UpPartyId, user.UserId, claims);
+                    auditLogic.LogCreateUserEvent(PartyTypes.Login, sequenceData.UpPartyId, user.UserId, claims);
 
+                    if (password.IsNullOrWhiteSpace())
+                    {
+                        // Passwordless user created, redirect to login passwordless step.
+                        return await CreateUserStartPasswordlessLogin(sequenceData, loginUpParty, userIdentifier.Username ?? userIdentifier.Phone ?? userIdentifier.Email);
+                    }
+                    else
+                    {
                         return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                     }
                 }
@@ -1401,9 +1416,29 @@ namespace FoxIDs.Controllers
             return defaultValue;
         }
 
+        private async Task<IActionResult> CreateUserStartPasswordlessLogin(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, string userIdentifier)
+        {
+            if (loginUpParty.EnablePasswordlessSms == true)
+            {
+                sequenceData.DoLoginPasswordlessSmsAction = true;
+            }
+            else if (loginUpParty.EnablePasswordlessEmail == true)
+            {
+                sequenceData.DoLoginPasswordlessEmailAction = true;
+            }
+            else
+            {
+                throw new InvalidOperationException("Passwordless authentication not possible.");
+            }
+            sequenceData.LoginHint = userIdentifier;
+            sequenceData.DoLoginIdentifierStep = false;
+            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.LoginController, includeSequence: true, query: new Dictionary<string, string> { { "newCode", "true" } }).ToRedirectResult();
+        }
+
         private async Task<IActionResult> CreateUserStartLogin(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, string userIdentifier)
         {
-            sequenceData.UserIdentifier = userIdentifier;
+            sequenceData.LoginHint = userIdentifier;
             sequenceData.DoLoginIdentifierStep = false;
             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
             return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();

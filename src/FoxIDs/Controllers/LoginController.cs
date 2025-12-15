@@ -1311,6 +1311,8 @@ namespace FoxIDs.Controllers
                         ConfirmAccount = loginUpParty.CreateUser.ConfirmAccount, 
                         RequireMultiFactor = loginUpParty.CreateUser.RequireMultiFactor
                     });
+                    auditLogic.LogCreateUserEvent(PartyTypes.Login, sequenceData.UpPartyId, user.UserId, claims);
+
                     if (password.IsNullOrWhiteSpace())
                     {
                         // Passwordless user created, redirect to login passwordless step.
@@ -1318,8 +1320,6 @@ namespace FoxIDs.Controllers
                     }
                     else
                     {
-                        auditLogic.LogCreateUserEvent(PartyTypes.Login, sequenceData.UpPartyId, user.UserId, claims);
-
                         return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                     }
                 }

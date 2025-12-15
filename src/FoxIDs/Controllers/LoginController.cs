@@ -1418,7 +1418,6 @@ namespace FoxIDs.Controllers
 
         private async Task<IActionResult> CreateUserStartPasswordlessLogin(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, string userIdentifier)
         {
-
             if (loginUpParty.EnablePasswordlessSms == true)
             {
                 sequenceData.DoLoginPasswordlessSmsAction = true;
@@ -1429,7 +1428,7 @@ namespace FoxIDs.Controllers
             }
             else
             {
-                throw new InvalidOperationException("Authentication not possible.");
+                throw new InvalidOperationException("Passwordless authentication not possible.");
             }
             sequenceData.LoginHint = userIdentifier;
             sequenceData.DoLoginIdentifierStep = false;

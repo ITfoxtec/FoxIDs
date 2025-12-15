@@ -118,5 +118,6 @@ Currently supported hash algorithm `P2HS512:10` (definition):
 - 10 iterations stored in the hash metadata, multiplied by 10,000 PBKDF2 rounds (100,000 total iterations)
 - Salt length: 64 bytes
 - Derived key length: 80 bytes
+- Hash and salt are stored as Base64 URL encoded strings (Base64 without padding)
 
 Standard .NET libraries are used to compute the hash.

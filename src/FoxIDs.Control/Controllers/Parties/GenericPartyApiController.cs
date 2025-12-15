@@ -1,18 +1,19 @@
-﻿using FoxIDs.Infrastructure;
-using FoxIDs.Models;
-using Api = FoxIDs.Models.Api;
-using FoxIDs.Repository;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using AutoMapper;
-using System;
-using FoxIDs.Logic;
+﻿using AutoMapper;
+using FoxIDs.Infrastructure;
 using FoxIDs.Infrastructure.Security;
-using ITfoxtec.Identity;
+using FoxIDs.Logic;
+using FoxIDs.Logic.Queues;
+using FoxIDs.Models;
 using FoxIDs.Models.Config;
+using FoxIDs.Repository;
+using ITfoxtec.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using FoxIDs.Logic.Queues;
+using System.Net;
+using System.Threading.Tasks;
+using Api = FoxIDs.Models.Api;
 
 namespace FoxIDs.Controllers
 {
@@ -201,7 +202,10 @@ namespace FoxIDs.Controllers
                         mOidcDownParty.TestUrl = tempMParty.TestUrl;
                         if (!party.NewName.IsNullOrWhiteSpace())
                         {
-                            mOidcDownParty.TestUrl = mOidcDownParty.TestUrl.Replace($"/{party.Name}(", $"/{party.NewName}(").Replace($"&client_id={party.Name}&", $"&client_id={party.NewName}&");
+                            mOidcDownParty.TestUrl = mOidcDownParty.TestUrl
+                                .Replace($"/{party.Name}(", $"/{party.NewName}(")
+                                .Replace($"&client_id={party.Name}&", $"&client_id={party.NewName}&")
+                                .Replace(WebUtility.UrlEncode($"{Constants.Models.OidcDownPartyTest.StateSplitKey}{party.Name}{Constants.Models.OidcDownPartyTest.StateSplitKey}"), WebUtility.UrlEncode($"{Constants.Models.OidcDownPartyTest.StateSplitKey}{party.NewName}{Constants.Models.OidcDownPartyTest.StateSplitKey}"));
                         }
 
                         var downPartyTestLifetime = party is Api.OidcDownParty aOidcDownParty && aOidcDownParty?.TestExpireInSeconds != null ? aOidcDownParty.TestExpireInSeconds.Value : settings.DownPartyTestLifetime;

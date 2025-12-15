@@ -29,6 +29,8 @@ namespace FoxIDs.Controllers
 {
     public class TDownPartyTestController : ApiController
     {        
+        private const string testPartyV2Key = "v2";
+
         private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
@@ -82,7 +84,7 @@ namespace FoxIDs.Controllers
                     RedirectUri = testDownPartyRequest.RedirectUri,
                     Scope = new[] { DefaultOidcScopes.OpenId, DefaultOidcScopes.Profile, DefaultOidcScopes.Email, DefaultOidcScopes.Address, DefaultOidcScopes.Phone }.ToSpaceList(),
                     Nonce = RandomGenerator.GenerateNonce(),
-                    State = $"{RouteBinding.TrackName}{Constants.Models.OidcDownPartyTest.StateSplitKey}{partyName}{Constants.Models.OidcDownPartyTest.StateSplitKey}{CreateProtector(partyName).Protect(secret)}"
+                    State = $"{RouteBinding.TrackName}{Constants.Models.OidcDownPartyTest.StateSplitKey}{partyName}{Constants.Models.OidcDownPartyTest.StateSplitKey}{testPartyV2Key}{Constants.Models.OidcDownPartyTest.StateSplitKey}{CreateProtector(RouteBinding.TrackName).Protect(secret)}"
                 };
 
                 var codeChallengeRequest = new CodeChallengeSecret
@@ -210,7 +212,7 @@ namespace FoxIDs.Controllers
             if (!await ModelState.TryValidateObjectAsync(testDownPartyRequest)) return BadRequest(ModelState);
 
             var stateSplit = testDownPartyRequest.State.Split(Constants.Models.OidcDownPartyTest.StateSplitKey);
-            if (stateSplit.Length != 3)
+            if (!(stateSplit.Length >= 3))
             {
                 throw new Exception("Invalid state format.");
             }
@@ -221,14 +223,13 @@ namespace FoxIDs.Controllers
             }
 
             var partyName = stateSplit[1];
-            var clientSecret = CreateProtector(partyName).Unprotect(stateSplit[2]);
-
             await partyLogic.DeleteExporedDownParties();
 
             try
             {
                 var mParty = await tenantDataRepository.GetAsync<OidcDownParty>(await DownParty.IdFormatAsync(RouteBinding, partyName));
 
+                var clientSecret = stateSplit[2] == testPartyV2Key ? CreateProtector(RouteBinding.TrackName).Unprotect(stateSplit[3]) : CreateProtector(mParty.Name).Unprotect(stateSplit[2]);
                 (var tokenResponse, var idTokenPrincipal, var accessTokenPrincipal) = await AcquireTokensAsync(mParty, clientSecret, mParty.Nonce, testDownPartyRequest.Code);
 
                 var rpInitiatedLogoutRequest = new RpInitiatedLogoutRequest
@@ -237,7 +238,7 @@ namespace FoxIDs.Controllers
                     PostLogoutRedirectUri = mParty.Client.RedirectUris.First(),
                 };
                 var requestDictionary = rpInitiatedLogoutRequest.ToDictionary();
-                var endSessionUrl = QueryHelpers.AddQueryString(UrlCombine.Combine(GetAuthority(partyName), Constants.Routes.OAuthController, Constants.Endpoints.EndSession), requestDictionary);
+                var endSessionUrl = QueryHelpers.AddQueryString(UrlCombine.Combine(GetAuthority(mParty.Name), Constants.Routes.OAuthController, Constants.Endpoints.EndSession), requestDictionary);
 
                 var testUpPartyResultResponse = new Api.DownPartyTestResultResponse
                 {

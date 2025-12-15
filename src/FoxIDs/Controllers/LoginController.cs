@@ -1301,7 +1301,12 @@ namespace FoxIDs.Controllers
                         ConfirmAccount = loginUpParty.CreateUser.ConfirmAccount, 
                         RequireMultiFactor = loginUpParty.CreateUser.RequireMultiFactor
                     });
-                    if (user != null)
+                    if (password.IsNullOrWhiteSpace())
+                    {
+                        // Passwordless user created, redirect to login passwordless step.
+                        return await CreateUserStartPasswordlessLogin(sequenceData, loginUpParty, userIdentifier.Username ?? userIdentifier.Phone ?? userIdentifier.Email);
+                    }
+                    else
                     {
                         auditLogic.LogCreateUserEvent(PartyTypes.Login, sequenceData.UpPartyId, user.UserId, claims);
 
@@ -1401,9 +1406,30 @@ namespace FoxIDs.Controllers
             return defaultValue;
         }
 
+        private async Task<IActionResult> CreateUserStartPasswordlessLogin(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, string userIdentifier)
+        {
+
+            if (loginUpParty.EnablePasswordlessSms == true)
+            {
+                sequenceData.DoLoginPasswordlessSmsAction = true;
+            }
+            else if (loginUpParty.EnablePasswordlessEmail == true)
+            {
+                sequenceData.DoLoginPasswordlessEmailAction = true;
+            }
+            else
+            {
+                throw new InvalidOperationException("Authentication not possible.");
+            }
+            sequenceData.LoginHint = userIdentifier;
+            sequenceData.DoLoginIdentifierStep = false;
+            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.LoginController, includeSequence: true, query: new Dictionary<string, string> { { "newCode", "true" } }).ToRedirectResult();
+        }
+
         private async Task<IActionResult> CreateUserStartLogin(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, string userIdentifier)
         {
-            sequenceData.UserIdentifier = userIdentifier;
+            sequenceData.LoginHint = userIdentifier;
             sequenceData.DoLoginIdentifierStep = false;
             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
             return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();

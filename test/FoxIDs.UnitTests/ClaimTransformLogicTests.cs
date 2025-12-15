@@ -37,7 +37,7 @@ namespace FoxIDs.UnitTests
             var httpContextAccessor = HttpContextAccessorHelper.MockObject(routeBinding);
 
             var telemetryChannel = new TestTelemetryChannel();
-            var telemetryConfiguration = new TelemetryConfiguration { TelemetryChannel = telemetryChannel };
+            using var telemetryConfiguration = new TelemetryConfiguration { TelemetryChannel = telemetryChannel };
             var telemetryClient = new TelemetryClient(telemetryConfiguration);
 
             var telemetryLogger = new TelemetryLogger(new Settings { Options = new OptionsSettings { Log = LogOptions.ApplicationInsights } }, null)

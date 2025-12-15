@@ -1,8 +1,14 @@
 ﻿using FoxIDs.Logic;
 using FoxIDs.Models;
+using FoxIDs.Models.Config;
+using FoxIDs.Infrastructure;
 using FoxIDs.UnitTests.Helpers;
 using FoxIDs.UnitTests.MockHelpers;
 using ITfoxtec.Identity;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Channel;
+using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.ApplicationInsights.Extensibility;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -15,6 +21,40 @@ namespace FoxIDs.UnitTests
 {
     public class ClaimTransformLogicTests
     {
+        [Fact]
+        public async Task TransformMatchClaim_IfLogEvent_LogsClaimValue()
+        {
+            var claims = GetTestClaims();
+            var claimTransformations = new List<ClaimTransform> { new OAuthClaimTransform
+            {
+                Type = ClaimTransformTypes.MatchClaim,
+                Action = ClaimTransformActions.If,
+                Task = ClaimTransformTasks.LogEvent,
+                ClaimsIn = [JwtClaimTypes.Email]
+            } };
+
+            var routeBinding = new RouteBinding();
+            var httpContextAccessor = HttpContextAccessorHelper.MockObject(routeBinding);
+
+            var telemetryChannel = new TestTelemetryChannel();
+            var telemetryConfiguration = new TelemetryConfiguration { TelemetryChannel = telemetryChannel };
+            var telemetryClient = new TelemetryClient(telemetryConfiguration);
+
+            var telemetryLogger = new TelemetryLogger(new Settings { Options = new OptionsSettings { Log = LogOptions.ApplicationInsights } }, null)
+            {
+                ApplicationInsightsTelemetryClient = telemetryClient
+            };
+            var telemetryScopedLogger = new TelemetryScopedLogger(telemetryLogger, new TelemetryScopedProperties(), new TelemetryScopedStreamLogger(), httpContextAccessor);
+
+            var claimTransformValidationLogic = new ClaimTransformValidationLogic(httpContextAccessor);
+            var claimTransformLogic = new ClaimTransformLogic(telemetryScopedLogger, Mock.Of<IServiceProvider>(), claimTransformValidationLogic, null, httpContextAccessor);
+
+            await claimTransformLogic.TransformAsync(claimTransformations, claims);
+
+            var eventTelemetry = Assert.Single(telemetryChannel.Telemetries.OfType<EventTelemetry>());
+            Assert.Equal("andersen@abc.com", eventTelemetry.Name);
+        }
+
         [Theory]
         [InlineData("some-constant", "abc", 1)]
         [InlineData(JwtClaimTypes.Email, "abc", 2)]
@@ -819,6 +859,23 @@ namespace FoxIDs.UnitTests
 
             var claimTransformValidationLogic = new ClaimTransformValidationLogic(mockHttpContextAccessor);
             return new ClaimTransformLogic(telemetryScopedLogger, mockIServiceProvider.Object, claimTransformValidationLogic, null, mockHttpContextAccessor);
+        }
+
+        private sealed class TestTelemetryChannel : ITelemetryChannel
+        {
+            public List<ITelemetry> Telemetries { get; } = new List<ITelemetry>();
+
+            public bool? DeveloperMode { get; set; }
+            public string EndpointAddress { get; set; }
+
+            public void Dispose() { }
+
+            public void Flush() { }
+
+            public void Send(ITelemetry item)
+            {
+                Telemetries.Add(item);
+            }
         }
     }
 }

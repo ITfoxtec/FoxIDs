@@ -576,6 +576,16 @@ namespace FoxIDs.Controllers
 
         private async Task<IActionResult> ContinueAuthenticationInternalAsync(LoginUpSequenceData sequenceData, bool newCode = false)
         {
+            if (sequenceData.UserIdentifier.IsNullOrWhiteSpace())
+            {
+                sequenceData.DoLoginIdentifierStep = true;
+                sequenceData.DoLoginPasswordAction = false;
+                sequenceData.DoLoginPasswordlessEmailAction = false;
+                sequenceData.DoLoginPasswordlessSmsAction = false;
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return new RedirectResult($"../_{SequenceString}");
+            }
+
             loginPageLogic.CheckUpParty(sequenceData);
             var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
             securityHeaderLogic.AddImgSrc(loginUpParty);

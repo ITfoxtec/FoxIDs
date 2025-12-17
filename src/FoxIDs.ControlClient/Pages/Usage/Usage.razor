@@ -47,6 +47,15 @@
         <FInputTextFilter @bind-Value="searchUsageForm.Model.FilterTenantValue" For="@(() => searchUsageForm.Model.FilterTenantValue)" />
     </PageEditForm>
 
+    @{
+        var invoiceSendDoneNotPaidCount = usedList.Count(u => u.Invoices?.LastOrDefault()?.SendStatus == UsageInvoiceSendStatus.Send && u.IsDone && u.PaymentStatus != UsagePaymentStatus.Paid);
+    }
+    @if (invoiceSendDoneNotPaidCount > 0)
+    {
+        <div class="alert alert-warning" role="alert">
+            Invoice send and task is done (not paid): <strong>@invoiceSendDoneNotPaidCount</strong>
+        </div>
+    }
 
     <ul class="list-group">
         @foreach (var used in usedList)

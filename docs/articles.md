@@ -15,6 +15,8 @@
 
 # Articles
 
+Short posts and walkthroughs about FoxIDs. See more by the author on Medium: [@anders.revsgaard](https://medium.com/@anders.revsgaard/about).
+
 ## Passwordless Authentication in an AI-generated ASP.NET Core App with FoxIDs and Email-Based OTP
 
 Shows how an AI-generated ASP.NET Core application can be integrated with FoxIDs to support passwordless authentication using one-time codes delivered by email.
@@ -26,5 +28,4 @@ Shows how an AI-generated ASP.NET Core application can be integrated with FoxIDs
 Walkthrough of passwordless authentication in an ASP.NET Core application using FoxIDs with OpenID Connect and a one-time code delivered by email.
 
 [Read on Medium](https://medium.com/@anders.revsgaard/passwordless-authentication-in-asp-net-core-with-foxids-and-email-based-otp-c8b85c1c80cd)
-
 

@@ -4,6 +4,7 @@
   - [Authentication](howto-connect.md#how-to-connect-authentication-methods)
   - [Applications](howto-connect.md#how-to-connect-applications)
 - [Development](development.md)
+  - [Articles](articles.md)
   - [.NET Samples](samples.md)
   - [FoxIDs dev in VS](foxids-dev.md)
 - [SAML / OpenID Connect bridge](bridge.md)

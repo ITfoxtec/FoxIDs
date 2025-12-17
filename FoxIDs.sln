@@ -45,6 +45,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\app-reg-oauth-2.0.md = docs\app-reg-oauth-2.0.md
 		docs\app-reg-oidc.md = docs\app-reg-oidc.md
 		docs\app-reg-saml-2.0.md = docs\app-reg-saml-2.0.md
+		docs\articles.md = docs\articles.md
 		docs\auth-method-howto-oidc-amazon-cognito.md = docs\auth-method-howto-oidc-amazon-cognito.md
 		docs\auth-method-howto-oidc-azure-ad-b2c.md = docs\auth-method-howto-oidc-azure-ad-b2c.md
 		docs\auth-method-howto-oidc-facebook.md = docs\auth-method-howto-oidc-facebook.md

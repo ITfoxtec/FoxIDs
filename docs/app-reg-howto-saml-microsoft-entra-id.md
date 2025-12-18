@@ -76,7 +76,10 @@ It is not possible to configure an external SAML 2.0 identity provider in the [M
 2. Install the [Microsoft Graph](https://www.powershellgallery.com/packages/Microsoft.Graph/) PowerShell module if not already installed: `Install-Module -Name Microsoft.Graph` and select `A`
    - Optionally, install for current user: `Install-Module Microsoft.Graph -Scope CurrentUser -Force`
    - Or update the module: `Update-Module -Name Microsoft.Graph` and select `A`
-3. Connect to Microsoft Graph: `Connect-MgGraph -Scopes "Domain.ReadWrite.All,Directory.AccessAsUser.All"`
+3. Connect to Microsoft Graph: 
+   ```powershell
+   Connect-MgGraph -Scopes "Domain.ReadWrite.All,Directory.AccessAsUser.All"
+   ```
 4. Set up the configuration variables:
    ```powershell
    $domainName = "your-domain.com" # The domain name to configure federation for
@@ -94,15 +97,15 @@ It is not possible to configure an external SAML 2.0 identity provider in the [M
    New-MgDomainFederationConfiguration -DomainId $domainName `
      -IssuerUri $idpIssuer `
      -PassiveSignInUri $ssoUrl `
-     -LogoutUri $sloUrl `
+     -SignOutUri $sloUrl `
      -SigningCertificate $signingCertBase64 `
-     -PreferredAuthenticationProtocol "saml" ` 
-     -FederatedIdpMfaBehavior "acceptIfMfaDoneByFederatedIdp" `
+     -PreferredAuthenticationProtocol "saml" `
+     -FederatedIdpMfaBehavior "acceptIfMfaDoneByFederatedIdp"
    ```
    **FederatedIdpMfaBehavior** can be set to:
-   - `acceptIfMfaDoneByFederatedIdp` – Entra accepts MFA from FoxIDs; if FoxIDs didn’t do MFA, Entra will do it.
-   - `enforceMfaByFederatedIdp` – If a policy needs MFA, Entra will send the user back to FoxIDs to complete MFA.
-   - `rejectMfaByFederatedIdp` – Entra always does MFA itself; MFA at FoxIDs is ignored.
+   - `acceptIfMfaDoneByFederatedIdp` - Entra accepts MFA from FoxIDs; if FoxIDs didn't do MFA, Entra will do it.
+   - `enforceMfaByFederatedIdp` - If a policy needs MFA, Entra will send the user back to FoxIDs to complete MFA.
+   - `rejectMfaByFederatedIdp` - Entra always does MFA itself; MFA at FoxIDs is ignored.
 6. Validate the configuration:
    ```powershell
    Get-MgDomainFederationConfiguration -DomainId $domainName

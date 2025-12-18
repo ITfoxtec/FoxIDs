@@ -24,8 +24,8 @@ After successful login you can create [external users](users-external.md) and op
 For an overview of user concepts (internal users, external users and external user stores) see the [users overview](users.md).
 
 External login supports two user identifiers (username) types:
-- **Email** – the user's email
-- **Text** – a free-form text username
+- **Email** - the user's email
+- **Text** - a free-form text username
 
 If you choose the text type, the format is not validated in FoxIDs (mixed formats are allowed including using emails).  
 [Home realm discovery (HRD) based on domain](login.md#home-realm-discovery-hrd) is only available with the email type.

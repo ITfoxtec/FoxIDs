@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11222.15 d18.0
+VisualStudioVersion = 18.0.11222.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs", "src\FoxIDs\FoxIDs.csproj", "{82C6C190-C560-4A25-94C4-BF8233D5043C}"
 EndProject
@@ -124,6 +124,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\app-reg-howto-saml-google-workspace.png = docs\images\app-reg-howto-saml-google-workspace.png
 		docs\images\auth-method-howto-saml-microsoft-entra-id-binding-format-logout.png = docs\images\auth-method-howto-saml-microsoft-entra-id-binding-format-logout.png
 		docs\images\auth-method-howto-saml-microsoft-entra-id-create.png = docs\images\auth-method-howto-saml-microsoft-entra-id-create.png
+		docs\images\auth-method-howto-saml-microsoft-entra-id-sign-assertion.png = docs\images\auth-method-howto-saml-microsoft-entra-id-sign-assertion.png
 		docs\images\bridge-oidc-saml.svg = docs\images\bridge-oidc-saml.svg
 		docs\images\bridge-saml-oidc.svg = docs\images\bridge-saml-oidc.svg
 		docs\images\bridge.vsdx = docs\images\bridge.vsdx
@@ -214,8 +215,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\connections.vsdx = docs\images\connections.vsdx
 		docs\images\create_oces3_test_cert_create_user_organisation.png = docs\images\create_oces3_test_cert_create_user_organisation.png
 		docs\images\create_oces3_test_cert_info.png = docs\images\create_oces3_test_cert_info.png
-		docs\images\deployment-window-iis-add-website.png = docs\images\deployment-window-iis-add-website.png
 		docs\images\create_oces3_test_cert_name.png = docs\images\create_oces3_test_cert_name.png
+		docs\images\deployment-window-iis-add-website.png = docs\images\deployment-window-iis-add-website.png
 		docs\images\deployment-window-iis-my-cert.png = docs\images\deployment-window-iis-my-cert.png
 		docs\images\environments.vsdx = docs\images\environments.vsdx
 		docs\images\example-claim-transform-name-to-given_name-family_name.png = docs\images\example-claim-transform-name-to-given_name-family_name.png

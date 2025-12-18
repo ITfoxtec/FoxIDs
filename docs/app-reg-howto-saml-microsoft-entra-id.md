@@ -51,16 +51,18 @@ You are required to upload the SAML 2.0 signing certificate used in FoxIDs to Mi
 12. Set the **NameID format** to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
 13. Set the **Optional logged out URL** and **Optional single logout URL** to `https://login.microsoftonline.com/login.srf`
 ![Set binding, NameID format, and logout URLs in FoxIDs](images/auth-method-howto-saml-microsoft-entra-id-binding-format-logout.png)
-14. Go to the top of the application, find the **Application information** section and click **Show more**
+14. Set the **Authn response sign type** to `Sign assertion`
+![Sign the assertion](images/auth-method-howto-saml-microsoft-entra-id-sign-assertion.png)
+15. Go to the top of the application, find the **Application information** section and click **Show more**
     - Copy the **IdP Issuer**
     - Copy the **Single Sign-On URL**
     - Copy the **Single Logout URL**
     - Copy the **IdP Signing Certificate** in Base64 format
-15. Select the **Claims Transform** tab
-16. Click **Add claim transform** and click **Map** to add a NameID claim with the user's Immutable ID matching the Microsoft Entra ID user's Immutable ID.
-17. Set **New claim** to `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier` - which is the NameID claim URI
-18. Set **Select claim** to `http://schemas.foxids.com/ws/identity/claims/immutableid`
-19. Click **Update**
+16. Select the **Claims Transform** tab
+17. Click **Add claim transform** and click **Map** to add a NameID claim with the user's Immutable ID matching the Microsoft Entra ID user's Immutable ID.
+18. Set **New claim** to `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier` - which is the NameID claim URI
+19. Set **Select claim** to `http://schemas.foxids.com/ws/identity/claims/immutableid`
+20. Click **Update**
 
 > **You need to set the user's Immutable ID as a claim in FoxIDs.**  
   To set the Immutable ID on an internal user, select the **Users** tab and then **Internal Users** tab find the user and add a claim with the claim type `immutable_id` and the value of the Immutable ID in Microsoft Entra ID - it should be base64 encoded.  

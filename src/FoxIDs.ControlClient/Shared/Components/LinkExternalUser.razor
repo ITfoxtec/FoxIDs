@@ -1,7 +1,7 @@
 ﻿<div class="info-text">
     External users can be redeemed by a redemption claim type (e.g. <code>@JwtClaimTypes.Email</code>) and then automatically linked using the link claim type. You should know the redemption claim value and can optionally create users in advance.
     <br />
-    External users are linked using the link claim type (e.g. <code>sub</code>). Most of the time, the link claim value is not known in advance. You can optionally create users if you know the value.
+    External users are linked using the link claim type (e.g. <code>@JwtClaimTypes.Subject</code>). Most of the time, the link claim value is not known in advance. You can optionally create users if you know the value.
     @if (IsSaml)
     {
         <div class="small">

@@ -27441,9 +27441,134 @@
       "id": 199,
       "items": [
         {
+          "culture": "bg",
+          "value": "Въведете номера на CPR",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Introdueix el número de RCP",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Zadejte číslo CPR",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Indtast CPR-nummer",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "CPR-Nummer eingeben",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Εισάγετε τον αριθμό CPR",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Enter CPR number",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Introduzca el número CPR",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Sisestage CPR number",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Syötä elvytysnumero",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Saisir le numéro de la RCP",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Unesite CPR broj",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Sláðu inn CPR-númer",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Inserire il numero di RCP",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Įveskite CPR numerį",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Ievadiet CPR numuru",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Skriv inn HLR-nummer",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "CPR-nummer invoeren",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Wprowadź numer CPR",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Introduzir o número CPR",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Introduceți numărul CPR",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Zadajte číslo CPR",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Vnesite številko CPR",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ange CPR-nummer",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "CPR numarasını girin",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Введіть номер СРР",
+          "edit_level": 40
         }
       ]
     },
@@ -27451,9 +27576,134 @@
       "id": 200,
       "items": [
         {
+          "culture": "bg",
+          "value": "Моля, въведете номера на CPR, за да продължите.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Si us plau, introdueix el teu número de RCP per continuar.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Pro pokračování zadejte své číslo CPR.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Indtast venligst dit CPR-nummer for at fortsætte.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Bitte geben Sie Ihre CPR-Nummer ein, um fortzufahren.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Παρακαλώ εισάγετε τον αριθμό CPR σας για να συνεχίσετε.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Please enter your CPR number to continue.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Introduzca su número de RCP para continuar.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Palun sisestage oma CPR-number, et jätkata.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Anna elvytysnumerosi jatkaaksesi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Veuillez saisir votre numéro de RCP pour continuer.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Molimo unesite svoj CPR broj za nastavak.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Vinsamlegast sláðu inn CPR-númerið þitt til að halda áfram.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Inserire il numero di RCP per continuare.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Norėdami tęsti, įveskite savo CPR numerį.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Lūdzu, ievadiet savu CPR numuru, lai turpinātu.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Vennligst skriv inn ditt CPR-nummer for å fortsette.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Voer uw reanimatienummer in om verder te gaan.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Wprowadź swój numer CPR, aby kontynuować.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Introduza o seu número CPR para continuar.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Vă rugăm să introduceți numărul dvs. de RCP pentru a continua.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Ak chcete pokračovať, zadajte svoje číslo CPR.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Za nadaljevanje vnesite številko CPR.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ange ditt CPR-nummer för att fortsätta.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Devam etmek için lütfen CPR numaranızı girin.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Будь ласка, введіть свій номер CPR, щоб продовжити.",
+          "edit_level": 40
         }
       ]
     },
@@ -27461,9 +27711,134 @@
       "id": 201,
       "items": [
         {
+          "culture": "bg",
+          "value": "Невалиден формат на номера на CPR.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Format de número de RCP no vàlid.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Nesprávný formát čísla CPR.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Ugyldigt CPR-nummerformat.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Ungültiges Format der CPR-Nummer.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Μη έγκυρη μορφή αριθμού CPR.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Invalid CPR number format.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Formato de número CPR no válido.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Vale CPR-numbri formaat.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Virheellinen CPR-numeron muoto.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Format de numéro CPR non valide.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Nevažeći format broja CPR-a.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Ógilt snið fyrir CPR-númer.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Formato del numero di RCP non valido.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Netinkamas CPR numerio formatas.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Nederīgs CPR numura formāts.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Ugyldig CPR-nummerformat.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Ongeldige indeling van CPR-nummer.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Nieprawidłowy format numeru CPR.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Formato de número CPR inválido.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Format invalid al numărului CPR.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Nesprávny formát čísla CPR.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Nepravilna oblika številke CPR.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ogiltigt format för CPR-nummer.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Geçersiz CPR numarası formatı.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Неправильний формат номера CPV.",
+          "edit_level": 40
         }
       ]
     },
@@ -27471,9 +27846,134 @@
       "id": 202,
       "items": [
         {
+          "culture": "bg",
+          "value": "Номер на CPR",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Número de RCP",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Číslo CPR",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "CPR-nummer",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "CPR-Nummer",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Αριθμός CPR",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "CPR number",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Número CPR",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "CPR number",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "CPR-numero",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Numéro CPR",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Broj oživljavanja",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "CPR-númer",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Numero CPR",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "CPR numeris",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "CPR numurs",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "HLR-nummer",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "CPR-nummer",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Numer CPR",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Número CPR",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Numărul CPR",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Číslo CPR",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Številka CPR",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "CPR-nummer",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "CPR numarası",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Номер реанімації",
+          "edit_level": 40
         }
       ]
     },
@@ -27481,9 +27981,134 @@
       "id": 203,
       "items": [
         {
+          "culture": "bg",
+          "value": "Продължи",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Continua",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Pokračovat",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Fortsæt",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Weiter",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Συνεχίστε",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Continue",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Continúe en",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Jätka",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Jatka",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Continuer",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Nastaviti",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Halda áfram",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Continua",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Tęsti",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Turpināt",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Fortsett",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Ga verder",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Kontynuuj",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Continuar",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Continuați",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Pokračovať",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Nadaljuj",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Fortsätt",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Devam et",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Продовжуйте",
+          "edit_level": 40
         }
       ]
     },
@@ -27491,9 +28116,134 @@
       "id": 204,
       "items": [
         {
+          "culture": "bg",
+          "value": "Номерът на CPR не съвпада с този на потребителя.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "El número de RCP no coincideix amb l&#39;usuari.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Číslo CPR neodpovídá uživateli.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "CPR-nummeret stemmer ikke overens med brugeren.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Die CPR-Nummer stimmt nicht mit dem Benutzer überein.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Ο αριθμός CPR δεν ταιριάζει με τον χρήστη.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "CPR number does not match the user.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "El número de RCP no coincide con el usuario.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "CPR number ei vasta kasutajale.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "CPR-numero ei vastaa käyttäjää.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Le numéro de CPR ne correspond pas à l'utilisateur.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Broj CPR-a ne odgovara korisniku.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "CPR-númerið passar ekki við notandann.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Il numero di RCP non corrisponde all'utente.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "CPR numeris neatitinka naudotojo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "CPR numurs neatbilst lietotājam.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "CPR-nummeret stemmer ikke overens med brukeren.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Het reanimatienummer komt niet overeen met de gebruiker.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Numer CPR nie pasuje do użytkownika.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "O número CPR não corresponde ao utilizador.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Numărul CPR nu corespunde utilizatorului.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Číslo CPR sa nezhoduje s používateľom.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Številka CPR se ne ujema z uporabnikom.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "CPR-numret stämmer inte överens med användaren.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "CPR numarası kullanıcıyla eşleşmiyor.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Номер CPR не відповідає користувачеві.",
+          "edit_level": 40
         }
       ]
     }

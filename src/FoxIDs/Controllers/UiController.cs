@@ -158,7 +158,7 @@ namespace FoxIDs.Controllers
                     }
                     catch (Exception ex)
                     {
-                        throw new EndpointException($"NemLogin SubjectMatchesCPR failed. SubjectNameId '{subjectNameId}', EntityId '{entityId}'.", ex) { RouteBinding = RouteBinding };
+                        throw new EndpointException($"NemLog-in SubjectMatchesCPR failed. SubjectNameId '{subjectNameId}', EntityId '{entityId}'.", ex) { RouteBinding = RouteBinding };
                     }
 
                     claims.AddOrReplaceClaim(Constants.JwtClaimTypes.CprNumber, normalizedCprNumber);

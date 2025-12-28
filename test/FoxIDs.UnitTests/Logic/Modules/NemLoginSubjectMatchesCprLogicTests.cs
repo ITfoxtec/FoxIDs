@@ -1,11 +1,15 @@
 using FoxIDs.Infrastructure;
 using FoxIDs.Infrastructure.HttpClientFactory;
 using FoxIDs.Logic;
+using FoxIDs.Logic.Caches.Providers;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Models.Modules;
+using FoxIDs.Repository;
 using FoxIDs.UnitTests.Helpers;
 using FoxIDs.UnitTests.MockHelpers;
+using ITfoxtec.Identity;
+using Moq;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -23,6 +27,9 @@ namespace FoxIDs.UnitTests.Logic.Modules
         public async Task SubjectMatchesCprAsync_Production_Match_ReturnsTrue()
         {
             var routeBinding = new RouteBinding { TenantName = "tenant1", TrackName = "track1" };
+            using var certificate = CreateTestCertificate();
+            routeBinding.Key = await CreateContainedRouteTrackKeyAsync(certificate);
+
             var httpContextAccessor = HttpContextAccessorHelper.MockObject(routeBinding);
             var logger = TelemetryLoggerHelper.ScopedLoggerObject(httpContextAccessor);
 
@@ -45,9 +52,14 @@ namespace FoxIDs.UnitTests.Logic.Modules
                 }
             };
 
-            var logic = new NemLoginSubjectMatchesCprLogic(settings, logger, httpClientFactory);
+            var tenantDataRepository = new Mock<ITenantDataRepository>(MockBehavior.Loose).Object;
+            var cacheProvider = new Mock<IDataCacheProvider>(MockBehavior.Loose).Object;
+            var trackCacheLogic = new TrackCacheLogic(settings, cacheProvider, tenantDataRepository, httpContextAccessor);
+            var serviceProvider = new Mock<IServiceProvider>(MockBehavior.Loose).Object;
+            var trackKeyLogic = new TrackKeyLogic(serviceProvider, tenantDataRepository, trackCacheLogic, httpContextAccessor);
 
-            using var certificate = CreateTestCertificate();
+            var logic = new NemLoginSubjectMatchesCprLogic(settings, logger, trackKeyLogic, httpClientFactory, httpContextAccessor);
+
             var isMatch = await logic.SubjectMatchesCprAsync(
                 environment: NemLoginEnvironments.Production,
                 cprNumber: "0101011234",
@@ -66,6 +78,9 @@ namespace FoxIDs.UnitTests.Logic.Modules
         public async Task SubjectMatchesCprAsync_IntegrationTest_NoMatch_ReturnsFalse()
         {
             var routeBinding = new RouteBinding { TenantName = "tenant1", TrackName = "track1" };
+            using var certificate = CreateTestCertificate();
+            routeBinding.Key = await CreateContainedRouteTrackKeyAsync(certificate);
+
             var httpContextAccessor = HttpContextAccessorHelper.MockObject(routeBinding);
             var logger = TelemetryLoggerHelper.ScopedLoggerObject(httpContextAccessor);
 
@@ -88,9 +103,14 @@ namespace FoxIDs.UnitTests.Logic.Modules
                 }
             };
 
-            var logic = new NemLoginSubjectMatchesCprLogic(settings, logger, httpClientFactory);
+            var tenantDataRepository = new Mock<ITenantDataRepository>(MockBehavior.Loose).Object;
+            var cacheProvider = new Mock<IDataCacheProvider>(MockBehavior.Loose).Object;
+            var trackCacheLogic = new TrackCacheLogic(settings, cacheProvider, tenantDataRepository, httpContextAccessor);
+            var serviceProvider = new Mock<IServiceProvider>(MockBehavior.Loose).Object;
+            var trackKeyLogic = new TrackKeyLogic(serviceProvider, tenantDataRepository, trackCacheLogic, httpContextAccessor);
 
-            using var certificate = CreateTestCertificate();
+            var logic = new NemLoginSubjectMatchesCprLogic(settings, logger, trackKeyLogic, httpClientFactory, httpContextAccessor);
+
             var isMatch = await logic.SubjectMatchesCprAsync(
                 environment: NemLoginEnvironments.IntegrationTest,
                 cprNumber: "0101011234",
@@ -100,6 +120,17 @@ namespace FoxIDs.UnitTests.Logic.Modules
 
             Assert.False(isMatch);
             Assert.Equal(settings.Modules.NemLogin.SubjectMatchesCpr.IntegrationTestApiUrl, handler.RequestUri?.ToString());
+        }
+
+        private static async Task<RouteTrackKey> CreateContainedRouteTrackKeyAsync(X509Certificate2 certificate)
+        {
+            if (certificate == null) throw new ArgumentNullException(nameof(certificate));
+
+            return new RouteTrackKey
+            {
+                Type = TrackKeyTypes.Contained,
+                PrimaryKey = new RouteTrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(includePrivateKey: true) }
+            };
         }
 
         private sealed class StubMtlsHttpClientFactory : IMtlsHttpClientFactory
@@ -148,4 +179,3 @@ namespace FoxIDs.UnitTests.Logic.Modules
         }
     }
 }
-

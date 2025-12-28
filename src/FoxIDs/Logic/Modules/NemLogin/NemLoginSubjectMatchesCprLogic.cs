@@ -1,32 +1,35 @@
 using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure.HttpClientFactory;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Models.Modules;
 using ITfoxtec.Identity;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Net;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class NemLoginSubjectMatchesCprLogic
+    public class NemLoginSubjectMatchesCprLogic : LogicSequenceBase
     {
         private const string MatchStatus = "Match";
 
         private readonly Settings settings;
         private readonly TelemetryScopedLogger logger;
-        private readonly INemLoginHttpClientFactory httpClientFactory;
+        private readonly TrackKeyLogic trackKeyLogic;
+        private readonly IMtlsHttpClientFactory httpClientFactory;
 
-        public NemLoginSubjectMatchesCprLogic(Settings settings, TelemetryScopedLogger logger, INemLoginHttpClientFactory httpClientFactory)
+        public NemLoginSubjectMatchesCprLogic(Settings settings, TelemetryScopedLogger logger, TrackKeyLogic trackKeyLogic, IMtlsHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
+            this.trackKeyLogic = trackKeyLogic;
             this.httpClientFactory = httpClientFactory;
         }
 
-        public async Task<bool> SubjectMatchesCprAsync(X509Certificate2 clientCertificate, NemLoginEnvironments environment, string cprNumber, string subjectNameId, string entityId, CancellationToken cancellationToken)
+        public async Task<bool> SubjectMatchesCprAsync(NemLoginEnvironments environment, string cprNumber, string subjectNameId, string entityId, CancellationToken cancellationToken)
         {
             if (cprNumber.IsNullOrWhiteSpace()) throw new ArgumentNullException(nameof(cprNumber));
             if (subjectNameId.IsNullOrWhiteSpace()) throw new ArgumentNullException(nameof(subjectNameId));
@@ -44,6 +47,7 @@ namespace FoxIDs.Logic
                 throw new InvalidOperationException($"NemLog-in SubjectMatchesCPR API URL is not configured for '{environment}'.");
             }
 
+            using var clientCertificate = await trackKeyLogic.GetPrimaryMtlsX509CertificateAsync(RouteBinding.Key);
             using var httpClient = httpClientFactory.CreateClient(clientCertificate);
             logger.ScopeTrace(() => $"AuthMethod, NemLog-in SubjectMatchesCPR request, URL '{apiUrl}'.", traceType: TraceTypes.Message);
 
@@ -53,7 +57,7 @@ namespace FoxIDs.Logic
                 SubjectNameID = subjectNameId,
                 EntityID = entityId,
             };
-            logger.ScopeTrace(() => $"AuthMethod, NemLog-in SubjectMatchesCPR request '{new NemLoginSubjectMatchesCprRequest { Cpr = request.Cpr.MaskCprNumber(), SubjectNameID = request.SubjectNameID, EntityID = request.EntityID, }.ToJson()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AuthMethod, NemLog-in SubjectMatchesCPR request '{new NemLoginSubjectMatchesCprRequest { Cpr = request.Cpr.MaskCprNumber(), SubjectNameID = request.SubjectNameID, EntityID = request.EntityID }.ToJson()}'.", traceType: TraceTypes.Message);
 
             try
             {
@@ -68,7 +72,7 @@ namespace FoxIDs.Logic
                             throw new Exception("NemLog-in SubjectMatchesCPR returned an empty response body.");
                         }
 
-                        logger.ScopeTrace(() => $"AuthMethod, NemLog-in SubjectMatchesCPR response '{status}'.", traceType: TraceTypes.Message);
+                        logger.ScopeTrace(() => $"AuthMethod, NemLog-in SubjectMatchesCPR response '{status}'.", triggerEvent: true, traceType: TraceTypes.Message);
                         return MatchStatus.Equals(status, StringComparison.OrdinalIgnoreCase);
 
                     default:

@@ -7,7 +7,6 @@ using FoxIDs.Infrastructure;
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Logic;
 using FoxIDs.Models;
-using FoxIDs.Models.Modules;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.ViewModels;
 using FoxIDs.Repository;
@@ -30,12 +29,11 @@ namespace FoxIDs.Controllers
         private readonly ExtendedUiLogic extendedUiLogic;
         private readonly ExtendedUiConnectLogic extendedUiConnectLogic;
         private readonly TrackIssuerLogic trackIssuerLogic;
-        private readonly TrackKeyLogic trackKeyLogic;
         private readonly NemLoginSubjectMatchesCprLogic nemLoginSubjectMatchesCprLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly DynamicElementLogic dynamicElementLogic;
 
-        public UiController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, ClaimTransformLogic claimTransformLogic, ExtendedUiLogic extendedUiLogic, ExtendedUiConnectLogic extendedUiConnectLogic, TrackIssuerLogic trackIssuerLogic, TrackKeyLogic trackKeyLogic, NemLoginSubjectMatchesCprLogic nemLoginSubjectMatchesCprLogic, SecurityHeaderLogic securityHeaderLogic, DynamicElementLogic dynamicElementLogic) : base(logger)
+        public UiController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, ClaimTransformLogic claimTransformLogic, ExtendedUiLogic extendedUiLogic, ExtendedUiConnectLogic extendedUiConnectLogic, TrackIssuerLogic trackIssuerLogic, NemLoginSubjectMatchesCprLogic nemLoginSubjectMatchesCprLogic, SecurityHeaderLogic securityHeaderLogic, DynamicElementLogic dynamicElementLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -46,7 +44,6 @@ namespace FoxIDs.Controllers
             this.extendedUiLogic = extendedUiLogic;
             this.extendedUiConnectLogic = extendedUiConnectLogic;
             this.trackIssuerLogic = trackIssuerLogic;
-            this.trackKeyLogic = trackKeyLogic;
             this.nemLoginSubjectMatchesCprLogic = nemLoginSubjectMatchesCprLogic;
             this.securityHeaderLogic = securityHeaderLogic;
             this.dynamicElementLogic = dynamicElementLogic;
@@ -150,10 +147,9 @@ namespace FoxIDs.Controllers
                         return viewError();
                     }
 
-                    using var clientCertificate = await trackKeyLogic.GetPrimarySaml2X509CertificateAsync(RouteBinding.Key);
                     try
                     {
-                        var isMatch = await nemLoginSubjectMatchesCprLogic.SubjectMatchesCprAsync(clientCertificate, extendedUi.Modules.NemLogin.Environment, normalizedCprNumber, subjectNameId, entityId, HttpContext.RequestAborted);
+                        var isMatch = await nemLoginSubjectMatchesCprLogic.SubjectMatchesCprAsync(extendedUi.Modules.NemLogin.Environment, normalizedCprNumber, subjectNameId, entityId, HttpContext.RequestAborted);
                         if (!isMatch)
                         {
                             ModelState.AddModelError(string.Empty, localizer["CPR number does not match the user."]);
@@ -165,7 +161,7 @@ namespace FoxIDs.Controllers
                         throw new EndpointException($"NemLogin SubjectMatchesCPR failed. SubjectNameId '{subjectNameId}', EntityId '{entityId}'.", ex) { RouteBinding = RouteBinding };
                     }
 
-                    claims.AddOrReplaceClaim(Constants.JwtClaimTypes.CprNumber, cprInput.Trim());
+                    claims.AddOrReplaceClaim(Constants.JwtClaimTypes.CprNumber, normalizedCprNumber);
                 }
                 else if (extendedUi.ExternalConnectType == ExternalConnectTypes.Api)
                 {

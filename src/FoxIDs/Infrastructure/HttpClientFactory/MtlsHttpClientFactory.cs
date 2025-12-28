@@ -1,10 +1,11 @@
 using System;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Authentication;
 
-namespace FoxIDs.Logic
+namespace FoxIDs.Infrastructure.HttpClientFactory
 {
-    public class NemLoginHttpClientFactory : INemLoginHttpClientFactory
+    public class MtlsHttpClientFactory : IMtlsHttpClientFactory
     {
         private readonly TimeSpan timeout = TimeSpan.FromSeconds(30);
 
@@ -13,6 +14,7 @@ namespace FoxIDs.Logic
             if (clientCertificate == null) throw new ArgumentNullException(nameof(clientCertificate));
 
             var handler = new HttpClientHandler { ClientCertificateOptions = ClientCertificateOption.Manual };
+            handler.SslProtocols = SslProtocols.Tls12;
             handler.ClientCertificates.Add(clientCertificate);
 
             var httpClient = new HttpClient(handler, disposeHandler: true)

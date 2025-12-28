@@ -1,4 +1,5 @@
 using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure.HttpClientFactory;
 using FoxIDs.Logic;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
@@ -27,7 +28,7 @@ namespace FoxIDs.UnitTests.Logic.Modules
 
             var handler = new StubHttpMessageHandler(HttpStatusCode.OK, "\"Match\"");
             var httpClient = new HttpClient(handler);
-            var httpClientFactory = new StubNemLoginHttpClientFactory(httpClient);
+            var httpClientFactory = new StubMtlsHttpClientFactory(httpClient);
 
             var settings = new FoxIDsSettings
             {
@@ -48,7 +49,6 @@ namespace FoxIDs.UnitTests.Logic.Modules
 
             using var certificate = CreateTestCertificate();
             var isMatch = await logic.SubjectMatchesCprAsync(
-                clientCertificate: certificate,
                 environment: NemLoginEnvironments.Production,
                 cprNumber: "0101011234",
                 subjectNameId: "uuid-1",
@@ -71,7 +71,7 @@ namespace FoxIDs.UnitTests.Logic.Modules
 
             var handler = new StubHttpMessageHandler(HttpStatusCode.OK, "\"NoMatch\"");
             var httpClient = new HttpClient(handler);
-            var httpClientFactory = new StubNemLoginHttpClientFactory(httpClient);
+            var httpClientFactory = new StubMtlsHttpClientFactory(httpClient);
 
             var settings = new FoxIDsSettings
             {
@@ -92,7 +92,6 @@ namespace FoxIDs.UnitTests.Logic.Modules
 
             using var certificate = CreateTestCertificate();
             var isMatch = await logic.SubjectMatchesCprAsync(
-                clientCertificate: certificate,
                 environment: NemLoginEnvironments.IntegrationTest,
                 cprNumber: "0101011234",
                 subjectNameId: "uuid-1",
@@ -103,11 +102,11 @@ namespace FoxIDs.UnitTests.Logic.Modules
             Assert.Equal(settings.Modules.NemLogin.SubjectMatchesCpr.IntegrationTestApiUrl, handler.RequestUri?.ToString());
         }
 
-        private sealed class StubNemLoginHttpClientFactory : INemLoginHttpClientFactory
+        private sealed class StubMtlsHttpClientFactory : IMtlsHttpClientFactory
         {
             private readonly HttpClient httpClient;
 
-            public StubNemLoginHttpClientFactory(HttpClient httpClient)
+            public StubMtlsHttpClientFactory(HttpClient httpClient)
             {
                 this.httpClient = httpClient;
             }

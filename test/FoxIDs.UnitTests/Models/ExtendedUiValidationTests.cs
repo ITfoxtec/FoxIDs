@@ -32,7 +32,7 @@ namespace FoxIDs.UnitTests.Models
         }
 
         [Fact]
-        public async Task Validate_NemLoginPrivateCprMatch_LegacyEnvironment_UsesLegacyValue()
+        public async Task Validate_NemLoginPrivateCprMatch_ProductionEnvironment_PreservesValue()
         {
             var extendedUi = new ExtendedUi
             {
@@ -40,6 +40,10 @@ namespace FoxIDs.UnitTests.Models
                 Title = "Enter CPR number",
                 SubmitButtonText = "Continue",
                 PredefinedType = ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch,
+                Modules = new ExtendedUiModules
+                {
+                    NemLogin = new ExtendedUiNemLoginModule { Environment = NemLoginEnvironments.Production }
+                },
                 Elements = new List<DynamicElement>
                 {
                     new DynamicElement { Type = DynamicElementTypes.Text, Order = 0, Content = "Test" }

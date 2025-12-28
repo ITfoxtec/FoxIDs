@@ -1,5 +1,4 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
-using FoxIDs.Models.Modules;
 using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -87,7 +86,7 @@ namespace FoxIDs.Models
                 SubmitButtonText = null;
                 Elements = null;
 
-                if (PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch )
+                if (PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch)
                 {
                     if (Modules?.NemLogin == null)
                     {
@@ -97,7 +96,7 @@ namespace FoxIDs.Models
                 else
                 {
                     results.Add(new ValidationResult($"The predefined type '{PredefinedType}' is not supported.", [nameof(PredefinedType)]));
-                }                                        
+                }
             }
 
             if (ExternalConnectType == ExternalConnectTypes.Api)

@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Azure.Identity;
+using FoxIDs.Infrastructure.HttpClientFactory;
 using FoxIDs.Infrastructure.Localization;
 using FoxIDs.Logic;
 using FoxIDs.Logic.Tracks;
@@ -54,7 +55,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<ClaimTransformLogic>();
             services.AddTransient<ExternalClaimsConnectLogic>();
             services.AddTransient<DynamicElementLogic>();
-            services.AddSingleton<INemLoginHttpClientFactory, NemLoginHttpClientFactory>();
+            services.AddSingleton<IMtlsHttpClientFactory, MtlsHttpClientFactory>();
             services.AddTransient<NemLoginSubjectMatchesCprLogic>();
 
             services.AddTransient<OidcDiscoveryExposeDownLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();

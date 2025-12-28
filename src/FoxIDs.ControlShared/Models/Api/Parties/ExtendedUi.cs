@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -96,11 +97,14 @@ namespace FoxIDs.Models.Api
                 SubmitButtonText = null;
                 Elements = null;
 
+                Modules ??= new ExtendedUiModules();
                 if (PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch)
                 {
-                    if (Modules?.NemLogin == null)
+                    Modules.NemLogin ??= new ExtendedUiNemLoginModule();
+
+                    if (!Enum.IsDefined(typeof(NemLoginEnvironments), Modules.NemLogin.Environment))
                     {
-                        results.Add(new ValidationResult($"The field '{nameof(Modules.NemLogin)}' is required when the predefined type is '{PredefinedType}'.", [$"{nameof(Modules)}.{nameof(Modules.NemLogin)}"]));
+                        Modules.NemLogin.Environment = NemLoginEnvironments.IntegrationTest;
                     }
                 }
                 else

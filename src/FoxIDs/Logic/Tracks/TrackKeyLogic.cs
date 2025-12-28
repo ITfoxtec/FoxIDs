@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
+using System.Security.Cryptography.X509Certificates;
 
 namespace FoxIDs.Logic
 {
@@ -38,6 +39,24 @@ namespace FoxIDs.Logic
 
                 case TrackKeyTypes.KeyVaultRenewSelfSigned:
                     return GetPrimaryRSAKeyVault(trackKey).ToSecurityKey(trackKey.PrimaryKey.Key.Kid);
+
+                default:
+                    throw new NotSupportedException($"Track primary key type '{trackKey.Type}' not supported.");
+            }
+        }
+
+        public async Task<X509Certificate2> GetPrimaryMtlsX509CertificateAsync(RouteTrackKey trackKey)
+        {
+            await ValidatePrimaryTrackKeyAsync(trackKey);
+
+            switch (trackKey.Type)
+            {
+                case TrackKeyTypes.Contained:
+                case TrackKeyTypes.ContainedRenewSelfSigned:
+                    return trackKey.PrimaryKey.Key.ToX509Certificate(includePrivateKey: true);
+
+                case TrackKeyTypes.KeyVaultRenewSelfSigned:
+                    throw new NotSupportedException("Track key vault renew self signed does not support mTLS client authentication certificates.");
 
                 default:
                     throw new NotSupportedException($"Track primary key type '{trackKey.Type}' not supported.");

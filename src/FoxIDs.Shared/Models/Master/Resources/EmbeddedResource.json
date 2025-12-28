@@ -835,6 +835,10 @@
     {
       "name": "Continue",
       "id": 203
+    },
+    {
+      "name": "CPR number does not match the user.",
+      "id": 204
     }
   ],
   "resources": [
@@ -27479,6 +27483,16 @@
         {
           "culture": "en",
           "value": "Continue",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 204,
+      "items": [
+        {
+          "culture": "en",
+          "value": "CPR number does not match the user.",
           "edit_level": 100
         }
       ]

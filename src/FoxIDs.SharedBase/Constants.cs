@@ -1126,6 +1126,14 @@ namespace FoxIDs
             }
         }
 
+        public static class Modules
+        {
+            public static class Nemlogin
+            {
+                public const string ExtendedUiCprElementName = "cpr";
+            }
+        }
+
         public static class OAuth
         {
             public readonly static string[] DefaultResponseTypes =

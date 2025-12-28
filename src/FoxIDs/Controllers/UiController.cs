@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using FoxIDs.Infrastructure;
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Logic;
@@ -14,6 +9,11 @@ using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Controllers
 {
@@ -128,7 +128,7 @@ namespace FoxIDs.Controllers
                     var cprInput = GetCprValue(extendedUiViewModel.InputElements);
                     if (cprInput.IsNullOrWhiteSpace())
                     {
-                        ModelState.AddModelError(string.Empty, localizer["CPR number is required."]);
+                        dynamicElementLogic.SetModelElementError(ModelState, extendedUiViewModel.InputElements, Constants.Modules.Nemlogin.ExtendedUiCprElementName, "CPR number is required.");
                         return viewError();
                     }
 
@@ -143,7 +143,7 @@ namespace FoxIDs.Controllers
                     var normalizedCprNumber = NormalizeCprNumber(cprInput);
                     if (normalizedCprNumber.IsNullOrWhiteSpace())
                     {
-                        ModelState.AddModelError(string.Empty, localizer["Invalid CPR number format."]);
+                        dynamicElementLogic.SetModelElementError(ModelState, extendedUiViewModel.InputElements, Constants.Modules.Nemlogin.ExtendedUiCprElementName, "Invalid CPR number format.");
                         return viewError();
                     }
 
@@ -152,7 +152,7 @@ namespace FoxIDs.Controllers
                         var isMatch = await nemLoginSubjectMatchesCprLogic.SubjectMatchesCprAsync(extendedUi.Modules.NemLogin.Environment, normalizedCprNumber, subjectNameId, entityId, HttpContext.RequestAborted);
                         if (!isMatch)
                         {
-                            ModelState.AddModelError(string.Empty, localizer["CPR number does not match the user."]);
+                            dynamicElementLogic.SetModelElementError(ModelState, extendedUiViewModel.InputElements, Constants.Modules.Nemlogin.ExtendedUiCprElementName, "CPR number does not match the user.");
                             return viewError();
                         }
                     }
@@ -263,7 +263,7 @@ namespace FoxIDs.Controllers
 
         private static string GetCprValue(List<DynamicElementBase> inputElements)
         {
-            return inputElements?.OfType<CustomDElement>()?.Where(e => e.Name == "cpr").Select(e => e.DField1).FirstOrDefault();
+            return inputElements?.OfType<CustomDElement>()?.Where(e => e.Name == Constants.Modules.Nemlogin.ExtendedUiCprElementName).Select(e => e.DField1).FirstOrDefault();
         }
 
         private void PopulateExtendedUiDefault(ExtendedUi extendedUi)
@@ -291,7 +291,7 @@ namespace FoxIDs.Controllers
                         },
                         new DynamicElement
                         {
-                            Name = "cpr",
+                            Name = Constants.Modules.Nemlogin.ExtendedUiCprElementName,
                             Type = DynamicElementTypes.Custom,
                             Order = 2,
                             Required = true,

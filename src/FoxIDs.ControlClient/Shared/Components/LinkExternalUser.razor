@@ -56,10 +56,10 @@
 <div class="active-group active">
     <div class="card">
         <div class="card-body">
-            <div class="info-text">The claim@(IsSaml ? " JWT " : string.Empty)transforms is performed after the user has logged in and optionally signed up, but before the user is saved.</div>
-            <div class="info-text">Optionally include user claims from the authentication method (output of first-level claim transforms).</div>
-            <FInputTextList @bind-ValueList="Model.UpPartyClaims" For="@(() => Model.UpPartyClaims)" DynamicFirstRow="true" />
+            <div class="info-text">The @(IsSaml ? "JWT" : string.Empty) claim transforms is performed after the user has logged in and optionally signed up, but before the user is saved.</div>
             <OAuthClaimTransforms ClaimTransforms="Model.ClaimTransforms" />
+            <div class="info-text">Optionally select claims from the authentication method (output of first-level claim transforms) that is saving on the user.</div>
+            <FInputTextList @bind-ValueList="Model.UpPartyClaims" For="@(() => Model.UpPartyClaims)" DynamicFirstRow="true" />
         </div>
     </div>
     <label class="label-control">Create user claim transforms</label>

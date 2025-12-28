@@ -34,6 +34,10 @@
                     <div class="col-11">
                         @if (IsPredefined(extendedUi))
                         {
+                            @if (extendedUi?.PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch)
+                            {
+                                <div class="info-text">Predefined UI: NemLog-in (private) CPR match</div>
+                            }
                             <div class="form-group active-group">
                                 <input type="text" class="form-control input-control" value="@extendedUi.Name" disabled />
                                 <Label For="@(() => extendedUi.Name)" class="label-control" />
@@ -59,8 +63,8 @@
                                 if (extendedUi?.PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch)
                                 {
                                     <div class="info-text">
-                                         Predefined extended UI template. Only the environment can be changed.<br />
-                                         Output claim: <code>@Constants.JwtClaimTypes.CprNumber</code> (mapped to <code>@Constants.SamlClaimTypes.CprNumber</code>)
+                                        Only the environment can be changed in the predefined extended UI.<br />
+                                        Output claim: <code>@Constants.JwtClaimTypes.CprNumber</code> (mapped to SAML 2.0 claim <code>@Constants.SamlClaimTypes.CprNumber</code>)
                                      </div>
                                     EnsureNemLoginModule(extendedUi);
                                     <FInputSelect @bind-Value="extendedUi.Modules.NemLogin.Environment" For="@(() => extendedUi.Modules.NemLogin.Environment)">

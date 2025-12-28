@@ -293,8 +293,9 @@
                                             switch (claimTransform.Type)
                                             {
                                                 case ClaimTransformTypes.MatchClaim:
-                                                    <div class="p-0 alert alert-light font-italic small" role="alert">Use the lookup claim set to find exactly one external user based on the value of the claim. The request fails if more than one external user is found. Then add/replace the external users' claims. Use the lookup claim <code>link_claim</code> on the external user to match the user by the link claim value.</div>
+                                                    <div class="p-0 alert alert-light font-italic small" role="alert">Use the lookup claim set to find exactly one external user based on the value of the claim. The request fails if more than one external user is found. Then add/replace the external users' claims.</div>
                                                     <FInputText @bind-Value="claimTransformClaimInClaimsOut.ClaimIn" For="@(() => claimTransformClaimInClaimsOut.ClaimIn)" LabelText="Lookup claim" />
+                                                    <div class="p-0 alert alert-light font-italic small" role="alert">Use the lookup claim <code>link_claim</code> to match the external user by the link claim value.</div>
                                                     <FInputText @bind-Value="claimTransformClaimInClaimsOut.Transformation" For="@(() => claimTransformClaimInClaimsOut.Transformation)" LabelText="Lookup claim on external user" />
                                                     <SelectUpParty Model="claimTransformClaimInClaimsOut"></SelectUpParty>
                                                     <FInputTextList @bind-ValueList="claimTransformClaimInClaimsOut.ClaimsOut" For="@(() => claimTransformClaimInClaimsOut.ClaimsOut)" LabelText="Query user claims (use * to select all claims)" />
@@ -321,8 +322,9 @@
                                             switch (claimTransform.Type)
                                             {
                                                 case ClaimTransformTypes.MatchClaim:
-                                                    <div class="p-0 alert alert-light font-italic small" role="alert">Use the lookup claim set to find exactly one external user based on the value of the claim. The request fails if more than one external user is found. Then add/replace the update claim on the external user. Use the lookup claim <code>link_claim</code> on the external user to match the user by the link claim value.</div>
+                                                    <div class="p-0 alert alert-light font-italic small" role="alert">Use the lookup claim set to find exactly one external user based on the value of the claim. The request fails if more than one external user is found. Then add/replace the update claim on the external user.</div>
                                                     <FInputText @bind-Value="claimTransformClaimInClaimOut.ClaimIn" For="@(() => claimTransformClaimInClaimOut.ClaimIn)" LabelText="Lookup claim" />
+                                                    <div class="p-0 alert alert-light font-italic small" role="alert">Use the lookup claim <code>link_claim</code> to match the external user by the link claim value.</div>
                                                     <FInputText @bind-Value="claimTransformClaimInClaimOut.Transformation" For="@(() => claimTransformClaimInClaimOut.Transformation)" LabelText="Lookup claim on external user" />
                                                     <FInputText @bind-Value="claimTransformClaimInClaimOut.TransformationExtension" For="@(() => claimTransformClaimInClaimOut.TransformationExtension)" LabelText="Select claim with update value" />
                                                     <FInputText @bind-Value="claimTransformClaimInClaimOut.ClaimOut" For="@(() => claimTransformClaimInClaimOut.ClaimOut)" LabelText="Claim to update on external user" />

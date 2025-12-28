@@ -53,7 +53,7 @@ namespace FoxIDs.Logic
                 SubjectNameID = subjectNameId,
                 EntityID = entityId,
             };
-            logger.ScopeTrace(() => $"AuthMethod, NemLog-in SubjectMatchesCPR request '{new { Cpr = request.Cpr.MaskCprNumber(), request.SubjectNameID, request.EntityID, }.ToJson()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AuthMethod, NemLog-in SubjectMatchesCPR request '{new NemLoginSubjectMatchesCprRequest { Cpr = request.Cpr.MaskCprNumber(), SubjectNameID = request.SubjectNameID, EntityID = request.EntityID, }.ToJson()}'.", traceType: TraceTypes.Message);
 
             try
             {

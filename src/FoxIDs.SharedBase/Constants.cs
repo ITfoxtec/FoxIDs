@@ -1265,6 +1265,7 @@ namespace FoxIDs
             public const string LocalSub = "local_sub";
             public const string Upn = "upn";
             public const string OpenExtendedUi = "open_extended_ui";
+            public const string CprNumber = "cpr_number";
         }
 
         public static class SamlClaimTypes
@@ -1284,6 +1285,7 @@ namespace FoxIDs
             public const string PreferredUsername = "http://schemas.foxids.com/ws/identity/claims/preferredusername";
             public const string ClientId = "http://schemas.foxids.com/ws/identity/claims/clientid";
             public const string OpenExtendedUi = "http://schemas.foxids.com/ws/identity/claims/openextendedui";
+            public const string CprNumber = "http://schemas.foxids.com/identity/claims/cprnumber";
         }
 
         public static class SamlAutoMapClaimTypes
@@ -1333,6 +1335,7 @@ namespace FoxIDs
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.FamilyName, SamlClaim = ClaimTypes.Surname },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Role, SamlClaim = ClaimTypes.Role },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.ClientId, SamlClaim = SamlClaimTypes.ClientId },
+                new ClaimMap { JwtClaim = JwtClaimTypes.CprNumber, SamlClaim = SamlClaimTypes.CprNumber },
             };
 
             public class ClaimMap

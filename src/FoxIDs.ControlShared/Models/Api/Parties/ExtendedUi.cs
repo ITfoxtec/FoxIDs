@@ -13,7 +13,10 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Technical UI name")]
         public string Name { get; set; }
 
-        [Required]
+        /// <summary>
+        /// Page title. Required if <see cref="PredefinedType" /> is not set.
+        /// For predefined templates the title is populated at runtime based on <see cref="PredefinedType" />.
+        /// </summary>
         [MaxLength(Constants.Models.ExtendedUi.TitleLength)]
         [Display(Name = "Page title")]
         public string Title { get; set; }
@@ -23,9 +26,21 @@ namespace FoxIDs.Models.Api
         public string SubmitButtonText { get; set; }
 
         /// <summary>
-        /// UI elements.
+        /// Optional predefined template.
         /// </summary>
-        [ListLength(Constants.Models.ExtendedUi.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
+        public ExtendedUiPredefinedTypes? PredefinedType { get; set; }
+
+        /// <summary>
+        /// Module configuration.
+        /// </summary>
+        [ValidateComplexType]
+        public ExtendedUiModules Modules { get; set; }
+
+        /// <summary>
+        /// UI elements. Required if <see cref="PredefinedType" /> is not set.
+        /// For predefined templates the elements are populated at runtime based on <see cref="PredefinedType" />.
+        /// </summary>
+        [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
         public List<DynamicElement> Elements { get; set; }
 
         #region ExternalApi
@@ -62,6 +77,37 @@ namespace FoxIDs.Models.Api
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+
+            if (PredefinedType == null)
+            {
+                if (Title.IsNullOrWhiteSpace())
+                {
+                    results.Add(new ValidationResult($"The field '{nameof(Title)}' is required.", [nameof(Title)]));
+                }
+
+                if (Elements == null || Elements.Count < Constants.Models.ExtendedUi.ElementsMin)
+                {
+                    results.Add(new ValidationResult($"The field '{nameof(Elements)}' is required.", [nameof(Elements)]));
+                }
+            }
+            else
+            {
+                Title = null;
+                SubmitButtonText = null;
+                Elements = null;
+
+                if (PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch)
+                {
+                    if (Modules?.NemLogin == null)
+                    {
+                        results.Add(new ValidationResult($"The field '{nameof(Modules.NemLogin)}' is required when the predefined type is '{PredefinedType}'.", [$"{nameof(Modules)}.{nameof(Modules.NemLogin)}"]));
+                    }
+                }
+                else
+                {
+                    results.Add(new ValidationResult($"The predefined type '{PredefinedType}' is not supported.", [nameof(PredefinedType)]));
+                }
+            }
 
             if (ExternalConnectType == ExternalConnectTypes.Api)
             {

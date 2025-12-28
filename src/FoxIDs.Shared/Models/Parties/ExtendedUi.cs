@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using FoxIDs.Models.Modules;
 using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -14,7 +15,6 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.ExtendedUi.TitleLength)]
         [JsonProperty(PropertyName = "title")]
         public string Title { get; set; }
@@ -23,10 +23,17 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "submit_button")]
         public string SubmitButtonText { get; set; }
 
+        [JsonProperty(PropertyName = "predef_type")]
+        public ExtendedUiPredefinedTypes? PredefinedType { get; set; }
+
+        [ValidateComplexType]
+        [JsonProperty(PropertyName = "modules")]
+        public ExtendedUiModules Modules { get; set; }
+
         /// <summary>
         /// UI elements.
         /// </summary>
-        [ListLength(Constants.Models.ExtendedUi.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
+        [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
         [JsonProperty(PropertyName = "elements")]
         public List<DynamicElement> Elements { get; set; }
 
@@ -61,6 +68,37 @@ namespace FoxIDs.Models
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+
+            if (PredefinedType == null)
+            {
+                if (Title.IsNullOrWhiteSpace())
+                {
+                    results.Add(new ValidationResult($"The field '{nameof(Title)}' is required.", [nameof(Title)]));
+                }
+
+                if (Elements == null || Elements.Count < Constants.Models.ExtendedUi.ElementsMin)
+                {
+                    results.Add(new ValidationResult($"The field '{nameof(Elements)}' is required.", [nameof(Elements)]));
+                }
+            }
+            else
+            {
+                Title = null;
+                SubmitButtonText = null;
+                Elements = null;
+
+                if (PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch )
+                {
+                    if (Modules?.NemLogin == null)
+                    {
+                        results.Add(new ValidationResult($"The field '{nameof(Modules.NemLogin)}' is required when the predefined type is '{PredefinedType}'.", [$"{nameof(Modules)}.{nameof(Modules.NemLogin)}"]));
+                    }
+                }
+                else
+                {
+                    results.Add(new ValidationResult($"The predefined type '{PredefinedType}' is not supported.", [nameof(PredefinedType)]));
+                }                                        
+            }
 
             if (ExternalConnectType == ExternalConnectTypes.Api)
             {

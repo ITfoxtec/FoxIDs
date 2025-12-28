@@ -815,6 +815,26 @@
     {
       "name": "Please use a password you have not used previously.",
       "id": 198
+    },
+    {
+      "name": "Enter CPR number",
+      "id": 199
+    },
+    {
+      "name": "Please enter your CPR number to continue.",
+      "id": 200
+    },
+    {
+      "name": "Invalid CPR number format.",
+      "id": 201
+    },
+    {
+      "name": "CPR number",
+      "id": 202
+    },
+    {
+      "name": "Continue",
+      "id": 203
     }
   ],
   "resources": [
@@ -27410,6 +27430,56 @@
           "culture": "uk",
           "value": "Будь ласка, використовуйте пароль, який ви не використовували раніше.",
           "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 199,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Enter CPR number",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 200,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please enter your CPR number to continue.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 201,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Invalid CPR number format.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 202,
+      "items": [
+        {
+          "culture": "en",
+          "value": "CPR number",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 203,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Continue",
+          "edit_level": 100
         }
       ]
     }

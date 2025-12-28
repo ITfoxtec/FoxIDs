@@ -32,9 +32,19 @@
             <li class="list-group-item">
                 <div class="row">
                     <div class="col-11">
-                        <FInputText @bind-Value="extendedUi.Name" For="@(() => extendedUi.Name)" />
-                        <FInputText @bind-Value="extendedUi.Title" For="@(() => extendedUi.Title)" />
-                        <FInputText @bind-Value="extendedUi.SubmitButtonText" For="@(() => extendedUi.SubmitButtonText)" />
+                        @if (IsPredefined(extendedUi))
+                        {
+                            <div class="form-group active-group">
+                                <input type="text" class="form-control input-control" value="@extendedUi.Name" disabled />
+                                <Label For="@(() => extendedUi.Name)" class="label-control" />
+                            </div>
+                        }
+                        else
+                        {
+                            <FInputText @bind-Value="extendedUi.Name" For="@(() => extendedUi.Name)" />
+                            <FInputText @bind-Value="extendedUi.Title" For="@(() => extendedUi.Title)" />
+                            <FInputText @bind-Value="extendedUi.SubmitButtonText" For="@(() => extendedUi.SubmitButtonText)" />
+                        }
                     </div>
                     <div class="col-1 text-right">
                         <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveExtendedUi(e, extendedUi))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
@@ -44,27 +54,49 @@
                     <div class="col-11">
                         @if (extendedUi.ShowDetails)
                         {
-                            <DynamicElements Model="extendedUi" />
+                            @if (IsPredefined(extendedUi))
+                            {
+                                if (extendedUi?.PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch)
+                                {
+                                    <div class="info-text">
+                                         Predefined extended UI template. Only the environment can be changed.<br />
+                                         Output claim: <code>@Constants.JwtClaimTypes.CprNumber</code> (mapped to <code>@Constants.SamlClaimTypes.CprNumber</code>)
+                                     </div>
+                                    EnsureNemLoginModule(extendedUi);
+                                    <FInputSelect @bind-Value="extendedUi.Modules.NemLogin.Environment" For="@(() => extendedUi.Modules.NemLogin.Environment)">
+                                        <option value="@NemLoginEnvironments.Production">Production</option>
+                                        <option value="@NemLoginEnvironments.IntegrationTest">Integration test</option>
+                                    </FInputSelect>
+                                }
+                                else
+                                {
+                                    throw new NotImplementedException($"Predefined extended UI type '{extendedUi.PredefinedType}' is not implemented.");
+                                }
+                            }
+                             else
+                             {
+                                <DynamicElements Model="extendedUi" />
 
-                            <div class="info-text">The claims from the dynamic elements are added, unless you call an API, in which case the claims returned from the API are added instead.</div>
-                            <div class="pt-2">
-                                <div class="active-group active">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="info-text">Optionally call an API on submit to validate input and return claims or an error.</div>
-                                            <FInputTextList @bind-ValueList="extendedUi.ExternalClaimsIn" For="@(() => extendedUi.ExternalClaimsIn)" DynamicFirstRow="true" />
-                                            <FInputText @bind-Value="extendedUi.ApiUrl" For="@(() => extendedUi.ApiUrl)" />
-                                            <FInputText @bind-Value="extendedUi.Secret" For="@(() => extendedUi.Secret)" />
-                                            <div class="info-text">The generic error message is displayed for the user if the API returns a generic error.</div>
-                                            <FInputText @bind-Value="extendedUi.ErrorMessage" For="@(() => extendedUi.ErrorMessage)" />
+                                <div class="info-text">The claims from the dynamic elements are added, unless you call an API, in which case the claims returned from the API are added instead.</div>
+                                <div class="pt-2">
+                                    <div class="active-group active">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="info-text">Optionally call an API on submit to validate input and return claims or an error.</div>
+                                                <FInputTextList @bind-ValueList="extendedUi.ExternalClaimsIn" For="@(() => extendedUi.ExternalClaimsIn)" DynamicFirstRow="true" />
+                                                <FInputText @bind-Value="extendedUi.ApiUrl" For="@(() => extendedUi.ApiUrl)" />
+                                                <FInputText @bind-Value="extendedUi.Secret" For="@(() => extendedUi.Secret)" />
+                                                <div class="info-text">The generic error message is displayed for the user if the API returns a generic error.</div>
+                                                <FInputText @bind-Value="extendedUi.ErrorMessage" For="@(() => extendedUi.ErrorMessage)" />
+                                            </div>
                                         </div>
+                                        <label class="label-control">API validation</label>
                                     </div>
-                                    <label class="label-control">API validation</label>
                                 </div>
-                            </div>
 
-                            <div class="info-text">The claim transforms run after successful completion of this external UI. You can optionally select the next external UI page by adding the claim type <code>@Constants.JwtClaimTypes.OpenExtendedUi</code> @(IsSaml ? "(JWT claim only)" : string.Empty) with the next extended UI page name.</div>
-                            <OAuthClaimTransforms ClaimTransforms="extendedUi.ClaimTransforms" />
+                                <div class="info-text">The claim transforms run after successful completion of this external UI. You can optionally select the next external UI page by adding the claim type <code>@Constants.JwtClaimTypes.OpenExtendedUi</code> @(IsSaml ? "(JWT claim only)" : string.Empty) with the next extended UI page name.</div>
+                                <OAuthClaimTransforms ClaimTransforms="extendedUi.ClaimTransforms" />
+                            }
                         }
                         else
                         {
@@ -89,14 +121,22 @@
         }
     </ul>
     <ValidationMessage For="@(() => Model)" />
-    <button type="button" class="btn btn-link btn-xs" @onclick="AddExtendedUi"><span class="oi oi-plus" aria-hidden="true"></span> Add extended UI</button>
+    <div class="btn-group" role="group">
+        <button id="btnGroupExtendedUi" type="button" class="btn btn-link btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="oi oi-plus" aria-hidden="true"></span> Add extended UI
+        </button>
+        <div class="dropdown-menu" aria-labelledby="btnGroupExtendedUi">
+            <h6 class="dropdown-header">Modules</h6>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="AddNemLoginPrivateCprMatchExtendedUi">NemLog-in (private) CPR match</button>
+        </div>
+    </div>
 </div>
 
 @code {
     [Parameter]
     public List<ExtendedUiViewModel> Model { get; set; }
 
-    private void AddExtendedUi(MouseEventArgs e)
+    private void AddBlankExtendedUi(MouseEventArgs e)
     {
         var extendedUi = new ExtendedUiViewModel
             {
@@ -106,10 +146,41 @@
         Model.Add(extendedUi);
     }
 
+    private void AddNemLoginPrivateCprMatchExtendedUi(MouseEventArgs e)
+    {
+        var extendedUi = new ExtendedUiViewModel
+        {
+            Name = RandomName.GenerateDefaultName(Model.Select(p => p.Name)),
+            PredefinedType = ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch,
+            Modules = new ExtendedUiModules
+            {
+                NemLogin = new ExtendedUiNemLoginModule { Environment = NemLoginEnvironments.IntegrationTest }
+            },
+            ShowDetails = true
+        };
+        Model.Add(extendedUi);
+    }
+
+    private static void EnsureNemLoginModule(ExtendedUiViewModel extendedUi)
+    {
+        if (extendedUi == null || extendedUi.PredefinedType != ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch)
+        {
+            return;
+        }
+
+        extendedUi.Modules ??= new ExtendedUiModules();
+        if (extendedUi.PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch)
+        {
+              extendedUi.Modules.NemLogin ??= new ExtendedUiNemLoginModule { Environment = NemLoginEnvironments.IntegrationTest };
+        }
+    }
+
     private void RemoveExtendedUi(MouseEventArgs e, ExtendedUiViewModel removeExtendedUi)
     {
         Model.Remove(removeExtendedUi);
     }
+
+    private static bool IsPredefined(ExtendedUiViewModel extendedUi) => extendedUi?.PredefinedType != null;
 
     [Parameter]
     public bool IsSaml { get; set; }

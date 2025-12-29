@@ -25,7 +25,7 @@ The dynamic elements consist of fixed fields a customisable field and both text 
 
 **Select extended UI page**  
 You select an extended UI page in the login flow by adding the claim type `open_extended_ui` with the extended UI page name in the first-level claim transforms.
-In a SAML 2.0 authentication method optionally select with the corresponding SAML 2.0 claim `http://schemas.foxids.com/ws/identity/claims/openextendedui` in the first-level claim transforms.  
+In a SAML 2.0 authentication method select the extended UI page with the corresponding SAML 2.0 claim `http://schemas.foxids.com/ws/identity/claims/openextendedui` in the first-level claim transforms.  
 Subsequently extended UI pages can be selected in the extended UI claim transforms by adding the claim type `open_extended_ui` (JWT claim only) with the next extended UI page name.
 
 **Example**  
@@ -37,7 +37,7 @@ In English:
 In Danish:  
 ![Extended UI with Social security number field in Danish](images/extended-ui-sample1-dk.png)
 
-The example page is configured in a SAML 2.0 authentication method with three elements.
+The example page is configured in a authentication method in the **Extended UI** tab with three elements.
 
 ![Configure Extended UI with Social security number input field](images/configure-extended-ui-ssn.png)
 

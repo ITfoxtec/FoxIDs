@@ -1,9 +1,9 @@
 <!--
 {
     "title":  "Extended UI",
-    "description":  "You can extend the login user interface (UI) flow with custom login pages built with dynamic elements. The extended UIs fully support culture and multiple languages. It is possible to create multiple custom UIs with different dynamic e...",
+    "description":  "Extend the login flow with custom pages built from dynamic elements, optional API validation, and claims created from user input in FoxIDs.",
     "ogTitle":  "Extended UI",
-    "ogDescription":  "You can extend the login user interface (UI) flow with custom login pages built with dynamic elements. The extended UIs fully support culture and multiple languages. It is possible to create multiple custom UIs with different dynamic e...",
+    "ogDescription":  "Extend the login flow with custom pages built from dynamic elements, optional API validation, and claims created from user input in FoxIDs.",
     "ogType":  "article",
     "ogImage":  "/images/foxids_logo.png",
     "twitterCard":  "summary_large_image",

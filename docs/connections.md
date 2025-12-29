@@ -1,9 +1,9 @@
 <!--
 {
     "title":  "Connections",
-    "description":  "FoxIDs is configured with authentication methods and application registrations. Authentication methods authenticate the internal users or optionally by trust to an external Identity Provider (IdP). Applications and APIs are connected to ...",
+    "description":  "Learn how authentication methods and application registrations connect users, apps, and APIs to FoxIDs across login, OpenID Connect, OAuth 2.0, and SAML 2.0.",
     "ogTitle":  "Connections",
-    "ogDescription":  "FoxIDs is configured with authentication methods and application registrations. Authentication methods authenticate the internal users or optionally by trust to an external Identity Provider (IdP). Applications and APIs are connected to ...",
+    "ogDescription":  "Learn how authentication methods and application registrations connect users, apps, and APIs to FoxIDs across login, OpenID Connect, OAuth 2.0, and SAML 2.0.",
     "ogType":  "article",
     "ogImage":  "/images/foxids_logo.png",
     "twitterCard":  "summary_large_image",

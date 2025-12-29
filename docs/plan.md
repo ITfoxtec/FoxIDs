@@ -1,9 +1,9 @@
 <!--
 {
     "title":  "Plans",
-    "description":  "FoxIDs is a cloud application designed as a container with multi-tenant support. FoxIDs can be deployed and use by e.g., a single company or deployed as a shared cloud container and used by multiple organisations, companies or everyone w...",
+    "description":  "Overview of FoxIDs plans for shared cloud deployments, including how plans are defined in the master tenant and linked to tenants for billing.",
     "ogTitle":  "Plans",
-    "ogDescription":  "FoxIDs is a cloud application designed as a container with multi-tenant support. FoxIDs can be deployed and use by e.g., a single company or deployed as a shared cloud container and used by multiple organisations, companies or everyone w...",
+    "ogDescription":  "Overview of FoxIDs plans for shared cloud deployments, including how plans are defined in the master tenant and linked to tenants for billing.",
     "ogType":  "article",
     "ogImage":  "/images/foxids_logo.png",
     "twitterCard":  "summary_large_image",

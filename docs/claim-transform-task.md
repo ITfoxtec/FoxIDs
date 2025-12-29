@@ -1,9 +1,9 @@
 <!--
 {
     "title":  "Claim transforms and claim tasks",
-    "description":  "Each FoxIDs authentication method and application registration handles claims and supports claim transformations and claim tasks. This means that multiple sets of claim transforms and claim tasks can be executed for each user authentic...",
+    "description":  "Configure claim transforms and claim tasks to add, replace, remove, or validate claims during authentication and token issuance in FoxIDs.",
     "ogTitle":  "Claim transforms and claim tasks",
-    "ogDescription":  "Each FoxIDs authentication method and application registration handles claims and supports claim transformations and claim tasks. This means that multiple sets of claim transforms and claim tasks can be executed for each user authentic...",
+    "ogDescription":  "Configure claim transforms and claim tasks to add, replace, remove, or validate claims during authentication and token issuance in FoxIDs.",
     "ogType":  "article",
     "ogImage":  "/images/foxids_logo.png",
     "twitterCard":  "summary_large_image",
@@ -23,11 +23,11 @@ Additional subsets of claim transforms and claim tasks can be performed if a use
 
 ![Claim transform flow diagram](images/claim-transform.svg)
 
-If you create a new claim with a first-level claim transform or claim task, the claim is local to the authentication method other then a Login authentication method.  
-In an authentication method, the claim is forwarded if the claim type is added to the `Forward claims` list, or if `*` (default) is in the list.  
+If you create a new claim with a first-level claim transform or claim task, the claim is local to the authentication method, except for a Login authentication method.  
+In an authentication method, the claim is forwarded if the claim type is added to the `Forward claims` list, or if `*` (default) is included in the list.  
 
 If you create a new claim with a claim transform or claim task, the claim is local to the application registration.  
-In an application registration, you need to add the claim or `*` to the `Issue claims` list. Alternatively, for OpenID Connect, add the claim to a scope's `Voluntary claims` list and request the scope from your application.
+In an application registration, you must add the claim or `*` to the `Issue claims` list. Alternatively, for OpenID Connect, add the claim to a scope's `Voluntary claims` list and request the scope from your application.
 
 Please see the [claim transform examples](#claim-transform-examples).
 

@@ -391,7 +391,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="info-text" role="alert">
-                                The first-level claim transforms of <code>SAML 2.0</code> claims is executed after the user has logged in and before the optional extended UI and the optional external users is created or loaded. The claims is mapped from <code>SAML 2.0</code> to <code>JWT</code> claims after the claim transforms.
+                                The first-level claim transforms of <code>SAML 2.0</code> claims is executed after the user has logged in and before the optional extended UI and the optional external users is created or loaded. The claims is mapped from <code>SAML 2.0</code> to <code>JWT</code> claims after the claim transforms, if they are forwarded.
                             </div>
                             <SamlClaimTransforms ClaimTransforms="samlUpParty.Form.Model.ClaimTransforms" />
                             @if (!samlUpParty.Form.Model.DisableUserAuthenticationTrust)

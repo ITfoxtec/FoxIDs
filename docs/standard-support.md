@@ -1,9 +1,9 @@
 <!--
 {
     "title":  "Supported standards",
-    "description":  "- All tokens are JSON Web Token (JWT) - RFC 7519 - OpenID Connect 1.0 supported in both application registrations and authentication methods - OpenID Connect Core 1.0 - Client Authentication methods: client_secret_basic, client_secret_po...",
+    "description":  "Overview of the standards and protocols supported by FoxIDs, including JWT, OpenID Connect, OAuth 2.0, and SAML 2.0.",
     "ogTitle":  "Supported standards",
-    "ogDescription":  "- All tokens are JSON Web Token (JWT) - RFC 7519 - OpenID Connect 1.0 supported in both application registrations and authentication methods - OpenID Connect Core 1.0 - Client Authentication methods: client_secret_basic, client_secret_po...",
+    "ogDescription":  "Overview of the standards and protocols supported by FoxIDs, including JWT, OpenID Connect, OAuth 2.0, and SAML 2.0.",
     "ogType":  "article",
     "ogImage":  "/images/foxids_logo.png",
     "twitterCard":  "summary_large_image",

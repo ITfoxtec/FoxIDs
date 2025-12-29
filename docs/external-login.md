@@ -1,9 +1,9 @@
 <!--
 {
     "title":  "External Login - API",
-    "description":  "With external login you can authenticate users in an existing user database through an API call. You implement the API; FoxIDs calls it with a username and password, and the API validates the combination and returns success or failure. U...",
+    "description":  "Authenticate users against an existing user database by implementing an external login API that validates credentials and returns claims to FoxIDs.",
     "ogTitle":  "External Login - API",
-    "ogDescription":  "With external login you can authenticate users in an existing user database through an API call. You implement the API; FoxIDs calls it with a username and password, and the API validates the combination and returns success or failure. U...",
+    "ogDescription":  "Authenticate users against an existing user database by implementing an external login API that validates credentials and returns claims to FoxIDs.",
     "ogType":  "article",
     "ogImage":  "/images/foxids_logo.png",
     "twitterCard":  "summary_large_image",

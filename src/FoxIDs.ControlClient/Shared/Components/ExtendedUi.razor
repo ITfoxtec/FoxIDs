@@ -2,16 +2,7 @@
 <div class="info-text">
     Create on or more extended UIs which can be shown for the user in the login flow.
     <div class="pb-2"></div>
-    You select an extended UI page in the login flow by adding the claim type <code>@Constants.JwtClaimTypes.OpenExtendedUi</code> with the extended UI page name in the first-level claim transforms.
-    @if (IsSaml)
-    {
-        <div class="small">
-            Optionally select with the corresponding SAML 2.0 claim in first-level claim transforms:<br />
-            <ul>
-                <li><code>@Constants.JwtClaimTypes.OpenExtendedUi</code> equals to <code>@Constants.SamlClaimTypes.OpenExtendedUi</code></li>
-            </ul>
-        </div>
-    }
+    You select an extended UI page in the login flow by adding the claim type <code>@(IsSaml? Constants.SamlClaimTypes.OpenExtendedUi : Constants.JwtClaimTypes.OpenExtendedUi)</code> with the extended UI page name in the @(IsSaml ? "SAML " : string.Empty)first-level claim transforms.
     Subsequently extended UI pages can be selected in the extended UI claim transforms.
     <div class="pb-2"></div>
     In order to support multiple languages, the different texts are written as English texts and translations are added under Settings and Texts.
@@ -131,7 +122,7 @@
         </button>
         <div class="dropdown-menu" aria-labelledby="btnGroupExtendedUi">
             <h6 class="dropdown-header">General</h6>
-            <button type="button" class="dropdown-item btn btn-link" @onclick="AddBlankExtendedUi">Add blank UI</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="AddBlankExtendedUi">Add blank extended UI</button>
             <div class="dropdown-divider"></div>
             <h6 class="dropdown-header">Modules</h6>
             <button type="button" class="dropdown-item btn btn-link" @onclick="AddNemLoginPrivateCprMatchExtendedUi">Add NemLog-in (private) CPR match UI</button>

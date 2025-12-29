@@ -1325,8 +1325,7 @@ namespace FoxIDs
                 new ClaimMap { JwtClaim = JwtClaimTypes.AuthMethodIssuer, SamlClaim = SamlClaimTypes.AuthMethodIssuer },
                 new ClaimMap { JwtClaim = JwtClaimTypes.AccessToken, SamlClaim = SamlClaimTypes.AccessToken },
                 new ClaimMap { JwtClaim = JwtClaimTypes.LocalSub, SamlClaim = SamlClaimTypes.LocalNameIdentifier },
-                new ClaimMap { JwtClaim = JwtClaimTypes.OpenExtendedUi, SamlClaim = SamlClaimTypes.OpenExtendedUi },
-                new ClaimMap { JwtClaim = JwtClaimTypes.OpenExtendedUi, SamlClaim = JwtClaimTypes.OpenExtendedUi } // also accept JWT claim in SAML claims
+                new ClaimMap { JwtClaim = JwtClaimTypes.OpenExtendedUi, SamlClaim = SamlClaimTypes.OpenExtendedUi }
             };
 
             /// <summary>

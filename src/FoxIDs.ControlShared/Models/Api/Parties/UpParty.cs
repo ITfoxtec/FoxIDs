@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
@@ -28,6 +28,11 @@ namespace FoxIDs.Models.Api
         /// </summary>
         [Required]
         public PartyTypes Type { get; set; }
+
+        /// <summary>
+        /// Optional authentication method module type.
+        /// </summary>
+        public UpPartyModuleTypes? ModuleType { get; set; }
 
         /// <summary>
         /// Available profiles for the party.

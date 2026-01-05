@@ -33,6 +33,7 @@ namespace FoxIDs.Client.Logic
                 clientSettings.EnablePayment = controlClientSettings.EnablePayment;
                 clientSettings.PaymentTestMode = controlClientSettings.PaymentTestMode;
                 clientSettings.MollieProfileId = controlClientSettings.MollieProfileId;
+                clientSettings.ModuleAssets = controlClientSettings.ModuleAssets;
 
                 clientSettings.HideBrandingSettings = controlClientSettings.ClientUi?.HideBrandingSettings ?? false;
                 clientSettings.HideSmsSettings = controlClientSettings.ClientUi?.HideSmsSettings ?? false;

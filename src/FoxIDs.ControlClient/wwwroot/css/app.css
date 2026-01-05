@@ -929,7 +929,6 @@ img.logo {
     background-color: rgba(252, 126, 1, 0.10);
     border-color: rgba(252, 126, 1, 0.30);
 }
-
 .main-container .alert.alert-danger,
 .modal-body .alert.alert-danger {
     position: sticky;

@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
+using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System;
@@ -67,6 +67,9 @@ namespace FoxIDs.Models
 
         [JsonProperty(PropertyName = "party_binding_pattern")]
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
+
+        [JsonProperty(PropertyName = "module_type")]
+        public UpPartyModuleTypes? ModuleType { get; set; }
 
         [ListLength(Constants.Models.ExtendedUi.UisMin, Constants.Models.ExtendedUi.UisMax)]
         [JsonProperty(PropertyName = "extended_uis")]

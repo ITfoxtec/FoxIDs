@@ -1,4 +1,5 @@
-﻿using FoxIDs.Client.Models.ViewModels;
+using FoxIDs.Client.Logic.Modules;
+using FoxIDs.Client.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,9 @@ namespace FoxIDs.Client.Pages.Components
 {
     public partial class ESamlUpParty : UpPartyBase
     {
+        [Inject]
+        public NemLoginUpPartyLogic NemLoginUpPartyLogic { get; set; }
+
         [Inject]
         public HelpersService HelpersService { get; set; }
 
@@ -78,6 +82,12 @@ namespace FoxIDs.Client.Pages.Components
         {
             return samlUpParty.Map<SamlUpPartyViewModel>(afterMap =>
             {
+                if (afterMap.ModuleType == UpPartyModuleTypes.NemLogin)
+                {
+                    NemLoginUpPartyLogic.EnsureNemLoginModule(afterMap);
+                    NemLoginUpPartyLogic.InitializeNemLoginTemplateModel(afterMap);
+                }
+
                 afterMap.InitName = afterMap.Name;
                 if (afterMap.Profiles?.Count() > 0)
                 {
@@ -175,6 +185,13 @@ namespace FoxIDs.Client.Pages.Components
                 model.Claims = new List<string> { "*" };
                 model.DisableLoginHint = true;
                 model.IdPInitiatedGrantLifetime = 30;
+
+                if (samlUpParty.ModuleType == UpPartyModuleTypes.NemLogin)
+                {
+                    model.ModuleType = samlUpParty.ModuleType;
+                    NemLoginUpPartyLogic.EnsureNemLoginModule(model);
+                    NemLoginUpPartyLogic.ApplyNemLoginCreateDefaults(model);
+                }
             }
         }
 
@@ -324,6 +341,8 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
+                PrepareModulesBeforeSave(generalSamlUpParty);
+
                 generalSamlUpParty.Form.Model.ClaimTransforms.MapSamlClaimTransformsBeforeMap();
                 generalSamlUpParty.Form.Model.ExtendedUis.MapExtendedUisBeforeMap();
                 generalSamlUpParty.Form.Model.ExitClaimTransforms.MapOAuthClaimTransformsBeforeMap();
@@ -334,7 +353,7 @@ namespace FoxIDs.Client.Pages.Components
                     if (generalSamlUpParty.Form.Model.AuthnContextComparisonViewModel != SamlAuthnContextComparisonTypesVievModel.Null)
                     {
                         afterMap.AuthnContextComparison = (SamlAuthnContextComparisonTypes)Enum.Parse(typeof(SamlAuthnContextComparisonTypes), generalSamlUpParty.Form.Model.AuthnContextComparisonViewModel.ToString());
-                    }                    
+                    }
 
                     if (generalSamlUpParty.Form.Model.IsManual)
                     {
@@ -372,9 +391,10 @@ namespace FoxIDs.Client.Pages.Components
                 if (generalSamlUpParty.CreateMode)
                 {
                     var samlUpPartyResult = await UpPartyService.CreateSamlUpPartyAsync(samlUpParty);
+                    await UpdateModuelsAfterSave(generalSamlUpParty);
                     generalSamlUpParty.Form.UpdateModel(ToViewModel(generalSamlUpParty, samlUpPartyResult));
                     generalSamlUpParty.CreateMode = false;
-                    toastService.ShowSuccess("SAML 2.0 application created.");
+                    ShowSuccess(samlUpPartyResult, true);
                     generalSamlUpParty.Name = samlUpPartyResult.Name;
                     generalSamlUpParty.DisplayName = samlUpPartyResult.DisplayName;
                     generalSamlUpParty.Profiles = samlUpPartyResult.Profiles?.Map<List<UpPartyProfile>>();
@@ -400,8 +420,9 @@ namespace FoxIDs.Client.Pages.Components
                     }
 
                     var samlUpPartyResult = await UpPartyService.UpdateSamlUpPartyAsync(samlUpParty);
+                    await UpdateModuelsAfterSave(generalSamlUpParty);
                     generalSamlUpParty.Form.UpdateModel(ToViewModel(generalSamlUpParty, samlUpPartyResult));
-                    toastService.ShowSuccess("SAML 2.0 application updated.");
+                    ShowSuccess(samlUpPartyResult, false);
                     generalSamlUpParty.Name = samlUpPartyResult.Name;
                     generalSamlUpParty.DisplayName = samlUpPartyResult.DisplayName;
                     generalSamlUpParty.Profiles = samlUpPartyResult.Profiles?.Map<List<UpPartyProfile>>();
@@ -417,6 +438,29 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     throw;
                 }
+            }
+        }
+
+        private void PrepareModulesBeforeSave(GeneralSamlUpPartyViewModel generalSamlUpParty)
+        {
+            NemLoginUpPartyLogic.PrepareNemLoginBeforeSave(generalSamlUpParty.Form.Model);
+        }
+        private async Task UpdateModuelsAfterSave(GeneralSamlUpPartyViewModel generalSamlUpParty)
+        {
+            await NemLoginUpPartyLogic.UpdateNemLoginEnvironmentAsync(generalSamlUpParty.Form.Model);
+        }
+
+        private void ShowSuccess(SamlUpParty samlUpPartyResult, bool isCreated)
+        {
+            var subText = isCreated ? "created" : "updated";
+
+            if (samlUpPartyResult.ModuleType == UpPartyModuleTypes.NemLogin)
+            {
+                toastService.ShowSuccess($"NemLog-in authentication method {subText}.");
+            }
+            else
+            {
+                toastService.ShowSuccess($"SAML 2.0 application {subText}.");
             }
         }
 

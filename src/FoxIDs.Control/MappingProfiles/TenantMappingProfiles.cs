@@ -278,6 +278,12 @@ namespace FoxIDs.MappingProfiles
             CreateMap<OAuthUpClientProfile, Api.OidcUpClientProfile>()
                 .ReverseMap();
 
+            CreateMap<SamlUpPartyModules, Api.SamlUpPartyModules>()
+                .ReverseMap();
+
+            CreateMap<SamlUpPartyNemLoginModule, Api.SamlUpPartyNemLoginModule>()
+                .ReverseMap();
+
             CreateMap<SamlUpParty, Api.SamlUpParty>()
                 .ForMember(d => d.Issuer, opt => opt.MapFrom(s => s.Issuers.First()))
                 .ForMember(d => d.AuthnRequestBinding, opt => opt.MapFrom(s => s.AuthnBinding.RequestBinding))

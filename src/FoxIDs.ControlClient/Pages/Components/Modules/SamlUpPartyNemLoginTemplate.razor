@@ -1,0 +1,302 @@
+@namespace FoxIDs.Client.Pages.Components.Modules
+
+@{
+    var nemLoginSector = Model?.Modules?.NemLogin?.Sector ?? default;
+    var isNemLoginPrivateSector = Model != null && NemLoginUpPartyLogic.IsPrivateSector(nemLoginSector);
+    var isNemLoginOiosaml400 = Model != null && NemLoginUpPartyLogic.IsOiosaml400Sector(nemLoginSector);
+}
+
+@if (Model != null)
+{
+    @if (ShowStandardSettings)
+    {
+        <div class="card bg-light border mb-3 mt-2">
+            <div class="card-body">
+                <div class="info-text" role="alert">
+                    You are viewing the standard SAML settings. Switching back will reapply the NemLog-in template defaults and may overwrite your changes.
+                </div>
+                @if (!showSwitchToTemplateConfirm)
+                {
+                    <button type="button" class="btn btn-link pl-2" @onclick="RequestSwitchToTemplate">Switch back to NemLog-in template</button>
+                }
+                else
+                {
+                    <div class="alert alert-warning" role="alert">
+                        <div>Reapplying the NemLog-in template overwrites standard SAML changes. Continue?</div>
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-outline-dark" @onclick="ConfirmSwitchToTemplateAsync">Switch back</button>
+                            <button type="button" class="btn btn-secondary" @onclick="CancelSwitchToTemplate">Cancel</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        EnsureSamlUpPartySummaryDefaults();
+        <div class="card bg-light border mb-3 mt-2">
+            <div class="card-body">
+                <h6 class="card-title mt-1 mb-3">Application information</h6>
+                <FFieldTextClipboard @bind-Value="Model.Metadata" For="@(() => Model.Metadata)" Class="pb-0" />
+                @if (!Model.Metadata.IsNullOrWhiteSpace())
+                {
+                    <a class="btn btn-link btn-xs pl-0 pb-3" href="@Model.Metadata" target="_blank" rel="noopener noreferrer" download>
+                        <span class="oi oi-cloud-download" aria-hidden="true"></span> Download metadata
+                    </a>
+                }
+                @if (GeneralSamlUpParty.ShowAdvanced)
+                {
+                    <FFieldTextClipboard @bind-Value="Model.MetadataEntityId" For="@(() => Model.MetadataEntityId)" />
+                    <FFieldTextClipboard @bind-Value="Model.MetadataAcs" For="@(() => Model.MetadataAcs)" />
+                }
+            </div>
+        </div>
+
+        <div class="card mb-4 mt-2">
+            <div class="card-body">
+                <h6 class="card-title mt-1 mb-3">NemLog-in template</h6>
+
+                <div class="info-text" role="alert">
+                    Configures a NemLog-in tailored SAML 2.0 authentication method based on OIOSAML 4.
+                    On create and update the environment is updated with certificate and log settings. Consider using a separate environment for NemLog-in.
+                </div>
+
+            <div class="active-group active">
+                <div class="card">
+                    <div class="card-body pt-3">
+                        <FInputSelect TValue="NemLoginSectors" @bind-Value="Model.Modules.NemLogin.Sector" For="@(() => Model.Modules.NemLogin.Sector)" OnValidChange="NemLoginSectorChanged">
+                            <option value="@NemLoginSectors.PublicOiosaml303">Public sector (OIOSAML 3.0.3)</option>
+                            <option value="@NemLoginSectors.PrivateOiosaml303">Private sector (OIOSAML 3.0.3)</option>
+                            <option value="@NemLoginSectors.PublicOiosaml400">Public sector (OIOSAML 4.0.0 Beta)</option>
+                            <option value="@NemLoginSectors.PrivateOiosaml400">Private sector (OIOSAML 4.0.0 Beta)</option>
+                        </FInputSelect>
+
+                        @if (isNemLoginPrivateSector)
+                        {
+                            <FInputToggle @bind-Value="Model.Modules.NemLogin.RequestCpr" For="@(() => Model.Modules.NemLogin.RequestCpr)" TextType="y.n" OnValidChange="NemLoginCprFlowChanged" />
+                            @if (Model.Modules.NemLogin.RequestCpr)
+                            {
+                                <FInputToggle @bind-Value="Model.Modules.NemLogin.SaveCprOnExternalUsers" For="@(() => Model.Modules.NemLogin.SaveCprOnExternalUsers)" TextType="y.n" OnValidChange="NemLoginCprFlowChanged" />
+                            }
+                        }
+
+                        <FInputSelect TValue="NemLoginEnvironments" @bind-Value="Model.Modules.NemLogin.Environment" For="@(() => Model.Modules.NemLogin.Environment)" OnValidChange="NemLoginEnvironmentChanged">
+                            <option value="@NemLoginEnvironments.IntegrationTest">Integration test</option>
+                            <option value="@NemLoginEnvironments.Production">Production</option>
+                        </FInputSelect>
+                        <FInputText @bind-Value="Model.MetadataUrl" For="@(() => Model.MetadataUrl)" LabelText="NemLog-in metadata URL" />
+                    </div>
+                </div>
+                <label class="label-control">Sector and environment</label>
+            </div>
+
+            <div class="active-group active">
+                <div class="card">
+                    <div class="card-body">
+                        @if (!Model.Modules.NemLogin.NemLoginTrackCertificateError.IsNullOrWhiteSpace())
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                    @Model.Modules.NemLogin.NemLoginTrackCertificateError
+                            </div>
+                        }
+                        @if (Model.Modules.NemLogin.Environment == NemLoginEnvironments.Production)
+                        {
+                            <div class="info-text">
+                                NemLog-in requires a production OCES3 certificate in the environment primary certificate.
+                                The certificate is required. Create a production OCES3 certificate in the <a href="https://erhvervsadministration.nemlog-in.dk/certificates" target="_blank">certificate administration</a>.
+                            </div>
+
+                            <FInputPassword @bind-Value="Model.Modules.NemLogin.NemLoginTrackCertificatePassword" For="@(() => Model.Modules.NemLogin.NemLoginTrackCertificatePassword)" LabelText="Certificate password" />
+
+                            <div class="form-group active-group active">
+                                <div class="drag-drop-zone input-control">
+                                    <InputFile @key="Model.Modules.NemLogin.NemLoginTrackCertificateInputFileKey" OnChange="@(async (e) => await OnNemLoginTrackCertificateFileSelectedAsync(e))" />
+                                    @Model.Modules.NemLogin.NemLoginTrackCertificateFileStatus
+                                </div>
+                                <label class="label-control">Production OCES3 certificate (.p12)</label>
+                                <button type="button" class="btn btn-outline-dark @(Model.Modules.NemLogin.NemLoginTrackCertificateBase64Url.IsNullOrWhiteSpace() ? "disabled" : string.Empty) mt-3" @onclick="@(async () => await ReadNemLoginTrackCertificateAsync(useDefaultTestCertificate: false))">Read and use certificate</button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="info-text">
+                                The integration test certificate is optional. If not provided, the default test certificate is used when updating the environment. Upload a different test certificate to override the default.
+                            </div>
+                            @if (Model.Modules.NemLogin.NemLoginTrackCertificateEdit || !Model.Modules.NemLogin.NemLoginTrackCertificateBase64Url.IsNullOrWhiteSpace())
+                            {
+                                <FInputPassword @bind-Value="Model.Modules.NemLogin.NemLoginTrackCertificatePassword" For="@(() => Model.Modules.NemLogin.NemLoginTrackCertificatePassword)" LabelText="Certificate password (optional)" />
+
+                                <div class="form-group active-group active">
+                                    <div class="drag-drop-zone input-control">
+                                        <InputFile @key="Model.Modules.NemLogin.NemLoginTrackCertificateInputFileKey" OnChange="@(async (e) => await OnNemLoginTrackCertificateFileSelectedAsync(e))" />
+                                        @Model.Modules.NemLogin.NemLoginTrackCertificateFileStatus
+                                    </div>
+                                    <label class="label-control">Integration test certificate (.p12) (optional)</label>
+
+                                    <div class="d-flex flex-wrap align-items-center mt-3">
+                                        <button type="button" class="btn btn-outline-dark" @onclick="@(async () => await ReadNemLoginTrackCertificateAsync(useDefaultTestCertificate: true))">Read and use certificate</button>
+                                        <button type="button" class="btn btn-link ml-2" @onclick="@(async () => await UseDefaultNemLoginTestCertificateAsync())">Use default test certificate</button>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-link pl-0" @onclick="@EnableNemLoginTrackCertificateEdit">Change certificate</button>
+                            }
+                        }
+
+                        @if (Model.Modules.NemLogin.NemLoginTrackCertificateInfo != null)
+                        {
+                            <ul class="list-group mb-2">
+                                <li class="list-group-item p-0">
+                                    <div class="d-flex">
+                                        <div class="mr-auto p-2">
+                                            @if (!Model.Modules.NemLogin.NemLoginTrackCertificateInfo.Name.IsNullOrWhiteSpace())
+                                            {
+                                                <div class="small text-muted">@Model.Modules.NemLogin.NemLoginTrackCertificateInfo.Name</div>
+                                            }
+                                            <strong>@Model.Modules.NemLogin.NemLoginTrackCertificateInfo.Subject</strong><br />
+                                            <span class="@(Model.Modules.NemLogin.NemLoginTrackCertificateInfo.IsValid ? "" : "text-danger")">Valid from @Model.Modules.NemLogin.NemLoginTrackCertificateInfo.ValidFrom.ToDateText() to @Model.Modules.NemLogin.NemLoginTrackCertificateInfo.ValidTo.ToDateText()</span><br />
+                                            <span>Thumbprint: @Model.Modules.NemLogin.NemLoginTrackCertificateInfo.Thumbprint</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        }
+                    </div>
+                </div>
+                <label class="label-control">Certificate</label>
+            </div>
+
+            @if (isNemLoginOiosaml400)
+            {
+                <div class="active-group active">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="info-text" role="alert">
+                                Selecting profiles configures the AuthnRequest extensions and the claims NemLog-in returns, and updates the SP metadata. If you change profiles, upload the updated metadata to NemLog-in again.
+                            </div>
+
+                            @foreach (var option in NemLoginUpPartyLogic.AttributeProfileOptions)
+                            {
+                                var isSelected = Model.Modules.NemLogin.NemLoginRequestedAttributeProfiles?.Any(p => p.Equals(option.Id, StringComparison.OrdinalIgnoreCase)) == true;
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" checked="@isSelected" @onchange="@((e) => NemLoginRequestedAttributeProfileChanged(option.Id, e))" />
+                                    <label class="form-check-label">@option.DisplayName</label>
+                                    <div class="small text-muted">@option.Id</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <label class="label-control">Requested attribute profiles</label>
+                </div>
+            }
+
+            <div class="active-group active">
+                <div class="card">
+                    <div class="card-body pt-3">
+                        <FInputSelect TValue="string" @bind-Value="Model.Modules.NemLogin.NemLoginMinimumLoa" For="@(() => Model.Modules.NemLogin.NemLoginMinimumLoa)" OnValidChange="NemLoginMinimumLoaChanged">
+                            <option value=""></option>
+                            @if (isNemLoginOiosaml400)
+                            {
+                                <option value="https://data.gov.dk/concept/core/loa/Low">Low</option>
+                                <option value="https://data.gov.dk/concept/core/loa/Substantial">Substantial</option>
+                                <option value="https://data.gov.dk/concept/core/loa/High">High</option>
+                            }
+                            else
+                            {
+                                <option value="https://data.gov.dk/concept/core/nsis/loa/Low">Low</option>
+                                <option value="https://data.gov.dk/concept/core/nsis/loa/Substantial">Substantial</option>
+                                <option value="https://data.gov.dk/concept/core/nsis/loa/High">High</option>
+                            }
+                        </FInputSelect>
+                    </div>
+                </div>
+                <label class="label-control">Level of assurance</label>
+            </div>
+
+            @if (!isNemLoginOiosaml400)
+            {
+                <div class="active-group active">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="info-text" role="alert">
+                                Optional ID types and credential types are sent as authn context class references.
+                            </div>
+
+                            <div class="small text-muted">Possible ID types</div>
+                            @foreach (var option in NemLoginUpPartyLogic.Oiosaml303IdTypeOptions)
+                            {
+                                var isSelected = Model.AuthnContextClassReferences?.Any(v => v.Equals(option.Id, StringComparison.OrdinalIgnoreCase)) == true;
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" checked="@isSelected" @onchange="@((e) => NemLoginOiosaml303IdTypeChanged(option.Id, e))" />
+                                    <label class="form-check-label">@option.DisplayName</label>
+                                    <div class="small text-muted">@option.Id</div>
+                                </div>
+                            }
+
+                            <div class="small text-muted mt-3">Possible credential types</div>
+                            @foreach (var option in NemLoginUpPartyLogic.Oiosaml303CredentialTypeOptions)
+                            {
+                                var isSelected = Model.AuthnContextClassReferences?.Any(v => v.Equals(option.Id, StringComparison.OrdinalIgnoreCase)) == true;
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" checked="@isSelected" @onchange="@((e) => NemLoginOiosaml303CredentialTypeChanged(option.Id, e))" />
+                                    <label class="form-check-label">@option.DisplayName</label>
+                                    <div class="small text-muted">@option.Id</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <label class="label-control">Authentication context</label>
+                </div>
+            }
+
+            <div class="active-group active">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="info-text" role="alert">
+                            Creates an authentication method profile per app-switch (Android/iOS). You can allow both the main authentication method and the app-switch profiles for each application.
+                        </div>
+                        <FInputToggle @bind-Value="Model.Modules.NemLogin.NemLoginAppSwitchAndroidEnabled" For="@(() => Model.Modules.NemLogin.NemLoginAppSwitchAndroidEnabled)" TextType="y.n" OnValidChange="NemLoginAuthnRequestExtensionsChanged" />
+                        @if (Model.Modules.NemLogin.NemLoginAppSwitchAndroidEnabled)
+                        {
+                            <FInputText @bind-Value="Model.Modules.NemLogin.NemLoginAppSwitchAndroidReturnUrl" For="@(() => Model.Modules.NemLogin.NemLoginAppSwitchAndroidReturnUrl)" />
+                        }
+                        <FInputToggle @bind-Value="Model.Modules.NemLogin.NemLoginAppSwitchIosEnabled" For="@(() => Model.Modules.NemLogin.NemLoginAppSwitchIosEnabled)" TextType="y.n" OnValidChange="NemLoginAuthnRequestExtensionsChanged" />
+                        @if (Model.Modules.NemLogin.NemLoginAppSwitchIosEnabled)
+                        {
+                            <FInputText @bind-Value="Model.Modules.NemLogin.NemLoginAppSwitchIosReturnUrl" For="@(() => Model.Modules.NemLogin.NemLoginAppSwitchIosReturnUrl)" />
+                        }
+                    </div>
+                </div>
+                <label class="label-control">MitID app-switch</label>
+            </div>
+
+            @if (!Model.DisableUserAuthenticationTrust)
+            {
+                <div class="mt-2">
+                    <SamlMetadataContactPersons Model="Model" />
+                </div>
+            }
+
+            <div class="mt-2">
+                @if (!showSwitchToStandardConfirm)
+                {
+                    <button type="button" class="btn btn-link pl-0" @onclick="RequestSwitchToStandard">Switch to standard SAML settings</button>
+                }
+                else
+                {
+                    <div class="alert alert-warning" role="alert">
+                        <div>Switching to standard SAML settings exposes all SAML options and stops the NemLog-in template guidance. Continue?</div>
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-outline-dark" @onclick="ConfirmSwitchToStandardAsync">Continue</button>
+                            <button type="button" class="btn btn-secondary" @onclick="CancelSwitchToStandard">Cancel</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    }
+}

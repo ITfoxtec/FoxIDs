@@ -1,0 +1,198 @@
+<EntityDescriptor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:a="urn:oasis:names:tc:SAML:2.0:assertion" xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+    ID="_dfbaf1be-7d69-4497-b386-9de4886ec6a3" entityID="https://saml.nemlog-in.dk">
+    <IDPSSODescriptor WantAuthnRequestsSigned="true"
+        protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol https://data.gov.dk/saml/profile/oio/4">
+        <KeyDescriptor use="signing">
+            <KeyInfo xmlns="http://www.w3.org/2000/09/xmldsig#">
+                <X509Data>
+                    <X509Certificate>MIIGYzCCBJegAwIBAgIUQJAq2pp1skyengLavgNwFWK8DxIwQQYJKoZIhvcNAQEK MDSgDzANBglghkgBZQMEAgEFAKEcMBoGCSqGSIb3DQEBCDANBglghkgBZQMEAgEF AKIDAgEgMFYxLTArBgNVBAMMJERlbiBEYW5za2UgU3RhdCBPQ0VTIHVkc3RlZGVu ZGUtQ0EgMTEYMBYGA1UECgwPRGVuIERhbnNrZSBTdGF0MQswCQYDVQQGEwJESzAe Fw0yMzAzMjIxMzE2MDlaFw0yNjAzMjExMzE2MDhaMIGaMRYwFAYDVQQDDA1OZW1M b2ctaW4gSWRQMTcwNQYDVQQFEy5VSTpESy1POkc6NjdkZjA2ODctYzljZC00NTgz LTk4MTAtN2U0YzFmNDhiYzAyMSEwHwYDVQQKDBhEaWdpdGFsaXNlcmluZ3NzdHly ZWxzZW4xFzAVBgNVBGEMDk5UUkRLLTM0MDUxMTc4MQswCQYDVQQGEwJESzCCAaIw DQYJKoZIhvcNAQEBBQADggGPADCCAYoCggGBALyU5xRyIwnQy5lUlrmtyjaXW9x5 xm8uUfs7gi1H3uNqgR3ONQbkwInrcE9htBnM/8FH61ywud6jTFxkqwRKDj/FDOHA EbnkpRPPDyGfNkezXJ+MbDZqkYl3inVsdrskj8vVclUFej8uqILowEKUzrEuP+ui SmBYewioB1MhsQLFbLlBYD9niLcA46R9CNofZyPVYSgJqrRDDciAzat0fBy8xEAA 5dyJz317o/4pov/X6Zz8DjS2pnK+FzPztpOPcp6IZbGDBf3JDbVbpcM46vYoejRr iI5S2Y3uc2J6waYp+Klx2gzihmJX3zLRncvdUgqamA9jPgWuxS1zhJvhsrM5buei TE0CLAAaEsjmwHoi2eu3SjEkMh2W7iBhwl2Un7dSN+Nem8kEXF+02nL1ZxI103sC lDaqlJ4Aoi7ZmMXkGctvTxy8DXHLaLvNLDGkkM3TtEubLn92yHL4l+f+pWdM6joC RmtyRjRFq7MKE0SYIHC0DGDqAEdfTSUxBfNj9wIDAQABo4IBejCCAXYwDAYDVR0T AQH/BAIwADAfBgNVHSMEGDAWgBRMAeLKc7zDvjgKOD02sFx0nHuXuTBzBggrBgEF BQcBAQRnMGUwPwYIKwYBBQUHMAKGM2h0dHA6Ly9jYTEuZ292LmRrL29jZXMvaXNz dWluZy8xL2NhY2VydC9pc3N1aW5nLmNlcjAiBggrBgEFBQcwAYYWaHR0cDovL2Nh MS5nb3YuZGsvb2NzcDAhBgNVHSAEGjAYMAgGBgQAj3oBATAMBgoqgVCBKQEBAQMH MDsGCCsGAQUFBwEDBC8wLTArBggrBgEFBQcLAjAfBgcEAIvsSQECMBSGEmh0dHBz Oi8vdWlkLmdvdi5kazBBBgNVHR8EOjA4MDagNKAyhjBodHRwOi8vY2ExLmdvdi5k ay9vY2VzL2lzc3VpbmcvMS9jcmwvaXNzdWluZy5jcmwwHQYDVR0OBBYEFED9K1bm hCoAEIoaJYgJt+uBmb+FMA4GA1UdDwEB/wQEAwIFoDBBBgkqhkiG9w0BAQowNKAP MA0GCWCGSAFlAwQCAQUAoRwwGgYJKoZIhvcNAQEIMA0GCWCGSAFlAwQCAQUAogMC ASADggGBAG+K25B/OiGKvfLtcWkpqZ65RGPAfE7jlYKMrBltPqDb7z3y2ltwkC4L UBXSywA7Lc9k9Nu/a5gZ9cfc6CRhKOkZii6QXxuexnsttGTuhzO6jBCD9m1Si+WS 9tYx64WcRaklLDxOglL3Z0i6H3V1QwTe1hJs3r0XYnRO5EZO9uSDvjuNuPqNRJyQ dG5X+Bfd9OgdQZrYdcvDIkO6iHGgfo5SQBzygp9Jo0vShJ338ln6uTsJv8ouV4gR PC8+RWoGduEYYau9RPPdX7AxGnW6ZYp6MHf5aV7m1nJ4HKI+gsMXfh6FPrzn9gfr /CLYITYJMKvZ43lRo5BNEtprk0AOK3lXQMjHDFLnEMQFg4vYDwae8mSq30UPO/7n gEF+RnxtWVay9smiFDgTOEw0j9aXsZ1eo/y4/B6B/f/RDxRcNkf0FWfqtp4cI2BB pzf+Oc+GV3dsP0zcMMlazbFGpv6OeKlFxVEYZnG0Hk45VpYxBmJ4+zJUWO3EMgfA KRb+05XQcQ==</X509Certificate>
+                </X509Data>
+            </KeyInfo>
+        </KeyDescriptor>
+        <Extensions>
+            <SupportedAttributeProfiles xmlns="https://data.gov.dk/eid/saml/extensions">
+                <Profile>https://data.gov.dk/eid/Person/DK</Profile>
+                <Profile>https://data.gov.dk/eid/Person/DK/WithoutCPR</Profile>
+                <Profile>https://data.gov.dk/eid/Person/DK/Anonymous</Profile>
+                <Profile>https://data.gov.dk/eid/Professional/DK</Profile>
+                <Profile>https://data.gov.dk/eid/Professional/DK/Anonymous</Profile>
+                <Profile>https://data.gov.dk/eid/Person/EU</Profile>
+                <Profile>https://data.gov.dk/eid/Professional/EU</Profile>
+            </SupportedAttributeProfiles>
+        </Extensions>
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+            Location="https://login.nemlog-in.dk/idp/saml/4.0/" />
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+            Location="https://login.nemlog-in.dk/idp/saml/4.0/" />
+        <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+        <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</NameIDFormat>
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+            Location="https://login.nemlog-in.dk/idp/saml/4.0/" />
+        <a:Attribute Name="https://data.gov.dk/model/core/specVersion" FriendlyName="SpecVer"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/bootstrapToken"
+            FriendlyName="BootstrapToken"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/privilegesIntermediate"
+            FriendlyName="Privileges" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/concept/core/nsis/loa"
+            FriendlyName="NSIS Level of Assurance"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/concept/core/nsis/ial"
+            FriendlyName="Identity Assurance Level"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/concept/core/nsis/aal"
+            FriendlyName="Authentication Assurance Level"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/fullName" FriendlyName="Full Name"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/firstName" FriendlyName="First Name"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/lastName" FriendlyName="Last Name"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/alias" FriendlyName="Alias"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/email" FriendlyName="Email"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/cprNumber" FriendlyName="CPR Number"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/age" FriendlyName="Age"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/cprUuid" FriendlyName="CPR UUID"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/dateOfBirth"
+            FriendlyName="Date of Birth"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/person/pid" FriendlyName="PID"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/professional/uuid/persistent"
+            FriendlyName="Professional Persistent UUID"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/professional/rid" FriendlyName="RID"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/professional/cvr" FriendlyName="CVR"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/professional/orgName"
+            FriendlyName="Organization Name"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/professional/productionUnit"
+            FriendlyName="Production Unit"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/professional/seNumber"
+            FriendlyName="SE Number" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/professional/authorizedToRepresent"
+            FriendlyName="Authorized To Represent"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/concept/core/eid/profile"
+            FriendlyName="Attribute Profile"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/concept/core/eid/provider"
+            FriendlyName="Identity Provider"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/concept/core/loa" FriendlyName="Level of Assurance"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eidas/loa"
+            FriendlyName="eIDAS Level of Assurance"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/eidas/memberState"
+            FriendlyName="eIDAS Member State"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/nsis/cpr_ial"
+            FriendlyName="CPR Identity Assurance Level"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/professional/isRobot"
+            FriendlyName="Is Robot" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="https://data.gov.dk/model/core/eid/allowQualifiedSigning"
+            FriendlyName="Allow Qualified Signing"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/naturalperson/PersonIdentifier"
+            FriendlyName="eIDAS Person Identifier"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/naturalperson/CurrentFamilyName"
+            FriendlyName="eIDAS Last Name"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/naturalperson/CurrentGivenName"
+            FriendlyName="eIDAS First Name"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/naturalperson/DateOfBirth"
+            FriendlyName="eIDAS Date of Birth"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/naturalperson/BirthName"
+            FriendlyName="eIDAS Birth Name"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/naturalperson/PlaceOfBirth"
+            FriendlyName="eIDAS Place of Birth"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/naturalperson/CurrentAddress"
+            FriendlyName="eIDAS Person Address"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/naturalperson/Gender"
+            FriendlyName="eIDAS Gender" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/naturalperson/Nationality"
+            FriendlyName="eIDAS Nationality"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/naturalperson/CountryOfBirth"
+            FriendlyName="eIDAS Country of Birth"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/naturalperson/TownOfBirth"
+            FriendlyName="eIDAS Town of Birth"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/naturalperson/CountryOfResidence"
+            FriendlyName="eIDAS Country of Residence"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/naturalperson/PhoneNumber"
+            FriendlyName="eIDAS Phone Number"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/naturalperson/EmailAddress"
+            FriendlyName="eIDAS Email Address"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute
+            Name="http://eidas.europa.eu/attributes/naturalperson/PowerOfRepresentationScope"
+            FriendlyName="eIDAS Power of Representation Scope"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/legalperson/LegalPersonIdentifier"
+            FriendlyName="eIDAS Legal Person Identifier"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/legalperson/LegalName"
+            FriendlyName="eIDAS Legal Name"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/legalperson/LegalPersonAddress"
+            FriendlyName="eIDAS Legal Person Address"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/legalperson/VATRegistrationNumber"
+            FriendlyName="eIDAS VAT Registration Number"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/legalperson/TaxReference"
+            FriendlyName="eIDAS TAX Reference"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/legalperson/D-2012-17-EUIdentifier"
+            FriendlyName="eIDAS EU Identifier"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/legalperson/LEI"
+            FriendlyName="eIDAS Legal Entity Identifier"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/legalperson/EORI"
+            FriendlyName="eIDAS Economic Operator Registration and Identification"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/legalperson/SEED"
+            FriendlyName="eIDAS System for Exchange of Excise Data"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/legalperson/SIC"
+            FriendlyName="eIDAS Standard Industrial Classification"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/legalperson/LegalPhoneNumber"
+            FriendlyName="eIDAS Legal Phone Number"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        <a:Attribute Name="http://eidas.europa.eu/attributes/legalperson/LegalEmailAddress"
+            FriendlyName="eIDAS Legal Email Address"
+            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+    </IDPSSODescriptor>
+    <ContactPerson contactType="technical">
+        <Company>NemLog-in</Company>
+        <GivenName />
+        <SurName />
+        <EmailAddress>nemlogin@digst.dk</EmailAddress>
+        <TelephoneNumber />
+    </ContactPerson>
+</EntityDescriptor>

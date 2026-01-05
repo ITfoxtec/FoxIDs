@@ -185,7 +185,10 @@ namespace FoxIDs.Logic
                 try
                 {
                     saml2AuthnRequest.Extensions = new Extensions();
-                    saml2AuthnRequest.Extensions.Element.Add(System.Xml.Linq.XElement.Parse(party.AuthnRequestExtensionsXml));
+                    foreach (var element in ParseAuthnRequestExtensionsXml(party.AuthnRequestExtensionsXml))
+                    {
+                        saml2AuthnRequest.Extensions.Element.Add(element);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -197,7 +200,10 @@ namespace FoxIDs.Logic
                 try
                 {
                     saml2AuthnRequest.Extensions = new Extensions();
-                    saml2AuthnRequest.Extensions.Element.Add(System.Xml.Linq.XElement.Parse(profile.AuthnRequestExtensionsXml));
+                    foreach (var element in ParseAuthnRequestExtensionsXml(profile.AuthnRequestExtensionsXml))
+                    {
+                        saml2AuthnRequest.Extensions.Element.Add(element);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -213,6 +219,12 @@ namespace FoxIDs.Logic
             securityHeaderLogic.AddFormActionAllowAll();
 
             return binding.ToSamlActionResult();
+        }
+
+        private static IReadOnlyCollection<System.Xml.Linq.XElement> ParseAuthnRequestExtensionsXml(string authnRequestExtensionsXml)
+        {
+            var wrapper = System.Xml.Linq.XElement.Parse($"<root>{authnRequestExtensionsXml}</root>");
+            return wrapper.Elements().ToList();
         }
 
         private SamlUpPartyProfile GetProfile(SamlUpParty party, SamlUpSequenceData samlUpSequenceData)

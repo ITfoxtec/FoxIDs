@@ -176,7 +176,7 @@ namespace FoxIDs.Client.Pages
             paginationToken = dataUpParties.PaginationToken;
         }
 
-        private GeneralUpPartyViewModel ShowCreateUpParty(PartyTypes type, bool tokenExchange = false)
+        private GeneralUpPartyViewModel ShowCreateUpParty(PartyTypes type, bool tokenExchange = false, UpPartyModuleTypes? moduleType = null)
         {
             GeneralUpPartyViewModel newUpParty = null;
             if (type == PartyTypes.Login)
@@ -208,6 +208,7 @@ namespace FoxIDs.Client.Pages
                 samlUpParty.CreateMode = true;
                 samlUpParty.Edit = true;
                 samlUpParty.TokenExchange = tokenExchange;
+                samlUpParty.ModuleType = moduleType;
                 newUpParty = samlUpParty;
             }
             else if (type == PartyTypes.TrackLink)
@@ -262,6 +263,11 @@ namespace FoxIDs.Client.Pages
 
         private string GetUpPartyTypeLabel(UpParty upParty)
         {
+            if (upParty.Type == PartyTypes.Saml2 && upParty.ModuleType == UpPartyModuleTypes.NemLogin)
+            {
+                return "SAML 2.0 - NemLog-in";
+            }
+
             return upParty.Type switch
             {
                 PartyTypes.Login => "User Login UI",
@@ -287,7 +293,7 @@ namespace FoxIDs.Client.Pages
             StateHasChanged();
         }
 
-        private async Task ChangeNewUpPartyStateAsync(string appTitle = null, PartyTypes? type = null, bool tokenExchange = false)
+        private async Task ChangeNewUpPartyStateAsync(string appTitle = null, PartyTypes? type = null, bool tokenExchange = false, UpPartyModuleTypes? moduleType = null)
         {
             if (!type.HasValue)
             {
@@ -310,7 +316,7 @@ namespace FoxIDs.Client.Pages
             }
             else if(type.HasValue)
             {
-                var newUpParty = ShowCreateUpParty(type.Value, tokenExchange);
+                var newUpParty = ShowCreateUpParty(type.Value, tokenExchange, moduleType);
                 if (newUpParty != null)
                 {
                     upParties.Insert(0, newUpParty);

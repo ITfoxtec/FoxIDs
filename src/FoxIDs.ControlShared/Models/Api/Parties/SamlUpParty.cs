@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
+using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Saml2.Schemas;
 using System;
@@ -26,6 +26,17 @@ namespace FoxIDs.Models.Api
 
         [MaxLength(Constants.Models.Party.NoteLength)]
         public string Note { get; set; }
+
+        /// <summary>
+        /// Optional authentication method module type.
+        /// </summary>
+        public UpPartyModuleTypes? ModuleType { get; set; }
+
+        /// <summary>
+        /// Module configuration.
+        /// </summary>
+        [ValidateComplexType]
+        public SamlUpPartyModules Modules { get; set; }
 
         [Required]
         public PartyUpdateStates UpdateState { get; set; } = PartyUpdateStates.Automatic;
@@ -336,6 +347,26 @@ namespace FoxIDs.Models.Api
             {
                 results.Add(new ValidationResult($"The number of claims transforms in '{nameof(ClaimTransforms)}' and '{nameof(ExitClaimTransforms)}' can be a  of {Constants.Models.Claim.TransformsMax} combined.", [nameof(ClaimTransforms), nameof(ExitClaimTransforms)]));
             }
+
+            if (ModuleType == null)
+            {
+                Modules = null;
+            }
+            else
+            {
+                if (ModuleType == UpPartyModuleTypes.NemLogin)
+                {
+                    if (Modules?.NemLogin == null)
+                    {
+                        results.Add(new ValidationResult($"The field '{nameof(Modules.NemLogin)}' is required when the module type is '{ModuleType}'.", [$"{nameof(Modules)}.{nameof(Modules.NemLogin)}"]));
+                    }
+                }
+                else
+                {
+                    results.Add(new ValidationResult($"The module type '{ModuleType}' is not supported.", [nameof(ModuleType)]));
+                }
+            }
+
             return results;
         }
     }

@@ -48,6 +48,13 @@
                                     <div class="py-2">Identity Provider that support SAML 2.0.</div>
                                 </button>
                             </div>
+                            <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
+                                <button type="button" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" @onclick="@(async () => await ChangeNewUpPartyStateAsync("NemLog-in", PartyTypes.Saml2, moduleType: UpPartyModuleTypes.NemLogin))">
+                                    <h5 class="py-2">NemLog-in <div class="small pt-2"><div class="badge badge-light border">SAML 2.0</div></div></h5>
+                                    <div class="py-2 font-italic">Danish IdP with MitID (OIOSAML 4).</div>
+                                    <div class="py-2">Creates a NemLog-in tailored SAML 2.0 authentication method.</div>
+                                </button>
+                            </div>
 
                             @if (newUpPartyModal.ShowAll)
                             {

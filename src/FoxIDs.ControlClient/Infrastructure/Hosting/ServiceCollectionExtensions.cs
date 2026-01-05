@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Client.Logic;
+using FoxIDs.Client.Logic.Modules;
 using FoxIDs.Client.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -30,6 +31,7 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             services.AddScoped<MetadataLogic>();
             services.AddScoped<ClipboardLogic>();
             services.AddScoped<ServerErrorLogic>();
+            services.AddScoped<NemLoginUpPartyLogic>();
 
             return services;
         }

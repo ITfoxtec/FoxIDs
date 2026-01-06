@@ -268,19 +268,28 @@ namespace FoxIDs.Client.Logic.Modules
 
             ApplyNemLoginCprFlow(model);
         }
-        public bool PrepareNemLoginBeforeSave(SamlUpPartyViewModel model, out string errorMessage)
-        {
-            errorMessage = null;
-            if (model?.ModuleType != UpPartyModuleTypes.NemLogin)
-            {
-                return true;
-            }
 
+        public bool PrepareNemLoginBeforeSave(SamlUpPartyViewModel model)
+        {
             EnsureNemLoginModule(model);
 
+            var isValid = true;
+            model.Modules.NemLogin.MetadataContactPersonsError = null;
             if (model.Modules.NemLogin.Environment == NemLoginEnvironments.Production && !HasCompleteNemLoginContactPerson(model.MetadataContactPersons))
             {
-                errorMessage = "At least one metadata contact person must include company, given name, surname, email address, and telephone number for NemLog-in.";
+                model.Modules.NemLogin.MetadataContactPersonsError = "At least one metadata contact person must include company, given name, surname, email address, and telephone number for NemLog-in.";
+                isValid = false;
+            }
+
+            model.Modules.NemLogin.NemLoginTrackCertificateError = null;
+            if (model.Modules.NemLogin.NemLoginTrackCertificateInfo == null)
+            {
+                model.Modules.NemLogin.NemLoginTrackCertificateError = $"NemLog-in requires a {(model.Modules.NemLogin.Environment == NemLoginEnvironments.Production ? "production" : "test")} OCES3 certificate.";
+                isValid = false;
+            }
+
+            if(!isValid)
+            {
                 return false;
             }
 
@@ -455,11 +464,6 @@ namespace FoxIDs.Client.Logic.Modules
         }
         public async Task UpdateNemLoginEnvironmentAsync(SamlUpPartyViewModel model)
         {
-            if (model?.ModuleType != UpPartyModuleTypes.NemLogin)
-            {
-                return;
-            }
-
             EnsureNemLoginModule(model);
 
             try

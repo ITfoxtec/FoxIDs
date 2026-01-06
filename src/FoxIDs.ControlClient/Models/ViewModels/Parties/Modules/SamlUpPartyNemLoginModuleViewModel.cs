@@ -37,6 +37,8 @@ public class SamlUpPartyNemLoginModuleViewModel : SamlUpPartyNemLoginModule, IVa
 
     public string NemLoginTrackCertificateError { get; set; }
 
+    public string MetadataContactPersonsError { get; set; }
+
     public bool NemLoginTrackCertificateEdit { get; set; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

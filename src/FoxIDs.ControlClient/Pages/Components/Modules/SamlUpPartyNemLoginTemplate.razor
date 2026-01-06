@@ -95,7 +95,7 @@
                     <div class="card-body">
                         @if (!Model.Modules.NemLogin.NemLoginTrackCertificateError.IsNullOrWhiteSpace())
                         {
-                            <div class="alert alert-danger" role="alert">
+                            <div class="alert alert-danger mt-2" role="alert">
                                     @Model.Modules.NemLogin.NemLoginTrackCertificateError
                             </div>
                         }
@@ -273,7 +273,14 @@
             </div>
 
             <div class="mt-2">
-                <SamlMetadataContactPersons Model="Model" />
+                    @if (!Model.Modules.NemLogin.MetadataContactPersonsError.IsNullOrWhiteSpace())
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @Model.Modules.NemLogin.MetadataContactPersonsError
+                        </div>
+                    }
+
+                    <SamlMetadataContactPersons Model="Model" />
             </div>
 
             <div class="mt-2">

@@ -446,18 +446,19 @@ namespace FoxIDs.Client.Pages.Components
 
         private bool PrepareModulesBeforeSave(GeneralSamlUpPartyViewModel generalSamlUpParty)
         {
-            generalSamlUpParty.Form.ClearFieldError(nameof(generalSamlUpParty.Form.Model.MetadataContactPersons));
-            if (!NemLoginUpPartyLogic.PrepareNemLoginBeforeSave(generalSamlUpParty.Form.Model, out var errorMessage))
+            if (generalSamlUpParty.Form.Model?.ModuleType == UpPartyModuleTypes.NemLogin)
             {
-                generalSamlUpParty.Form.SetFieldError(nameof(generalSamlUpParty.Form.Model.MetadataContactPersons), errorMessage);
-                return false;
+                return NemLoginUpPartyLogic.PrepareNemLoginBeforeSave(generalSamlUpParty.Form.Model);
             }
 
-            return true;
+            return true;                
         }
         private async Task UpdateModuelsAfterSave(GeneralSamlUpPartyViewModel generalSamlUpParty)
         {
-            await NemLoginUpPartyLogic.UpdateNemLoginEnvironmentAsync(generalSamlUpParty.Form.Model);
+            if (generalSamlUpParty.Form.Model?.ModuleType == UpPartyModuleTypes.NemLogin)
+            {
+                await NemLoginUpPartyLogic.UpdateNemLoginEnvironmentAsync(generalSamlUpParty.Form.Model);
+            }
         }
 
         private void ShowSuccess(SamlUpParty samlUpPartyResult, bool isCreated)

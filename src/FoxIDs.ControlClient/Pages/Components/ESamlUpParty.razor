@@ -8,6 +8,8 @@
     var showStandardSamlSettings = !isNemLogin || samlUpParty?.ShowStandardSettings == true;
 }
 
+@if (samlUpParty != null)
+{
 <PageEditForm @ref="samlUpParty.Form" TModel="SamlUpPartyViewModel" OnAfterInit="@(async m => await SamlUpPartyViewModelAfterInitAsync(samlUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditSamlUpPartyValidSubmitAsync(samlUpParty, editContext))">
     <div class="modal-header sticky-header">
         <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
@@ -538,3 +540,4 @@
         <button type="button" class="btn btn-secondary" @onclick="@(() => UpPartyCancelAsync(UpParty))">@(@UpParty.CreateMode ? "Cancel" : "Close")</button>
     </div>
 </PageEditForm>
+}

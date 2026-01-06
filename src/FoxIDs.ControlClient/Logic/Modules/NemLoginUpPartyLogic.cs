@@ -277,7 +277,7 @@ namespace FoxIDs.Client.Logic.Modules
             model.Modules.NemLogin.MetadataContactPersonsError = null;
             if (model.Modules.NemLogin.Environment == NemLoginEnvironments.Production && !HasCompleteNemLoginContactPerson(model.MetadataContactPersons))
             {
-                model.Modules.NemLogin.MetadataContactPersonsError = "At least one metadata contact person must include company, given name, surname, email address, and telephone number for NemLog-in.";
+                model.Modules.NemLogin.MetadataContactPersonsError = "At least one metadata contact person must include company and email address for NemLog-in.";
                 isValid = false;
             }
 
@@ -1116,10 +1116,7 @@ namespace FoxIDs.Client.Logic.Modules
             foreach (var contactPerson in contactPersons)
             {
                 if (contactPerson.Company.IsNullOrWhiteSpace() ||
-                    contactPerson.GivenName.IsNullOrWhiteSpace() ||
-                    contactPerson.Surname.IsNullOrWhiteSpace() ||
-                    contactPerson.EmailAddress.IsNullOrWhiteSpace() ||
-                    contactPerson.TelephoneNumber.IsNullOrWhiteSpace())
+                    contactPerson.EmailAddress.IsNullOrWhiteSpace())
                 {
                     continue;
                 }

@@ -526,11 +526,6 @@ namespace FoxIDs.Client.Logic.Modules
             }
         }
 
-        public Task<CertificateAndPassword> GetDefaultTestCertificateAsync()
-        {
-            return DownloadNemLoginTestCertificateAsync();
-        }
-
         private string GetNemLoginMetadataUrl(NemLoginEnvironments environment, NemLoginSectors sector)
         {
             var nemLoginAssets = clientSettings?.ModuleAssets?.NemLogin;
@@ -1359,7 +1354,8 @@ namespace FoxIDs.Client.Logic.Modules
 
             return extendedUi.Name;
         }
-        private async Task<CertificateAndPassword> DownloadNemLoginTestCertificateAsync()
+
+        public async Task<CertificateAndPassword> DownloadNemLoginTestCertificateAsync()
         {
             using var httpClient = httpClientFactory.CreateClient(BaseService.HttpClientLogicalName);
 

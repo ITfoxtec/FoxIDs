@@ -161,9 +161,9 @@ public partial class SamlUpPartyNemLoginTemplate : ComponentBase
                     Password = Model.Modules.NemLogin.NemLoginTrackCertificatePassword
                 };
             }
-            else if (useDefaultTestCertificate)
+            else if (useDefaultTestCertificate && Model.Modules.NemLogin.Environment != NemLoginEnvironments.Production)
             {
-                certificate = await NemLoginUpPartyLogic.GetDefaultTestCertificateAsync();
+                certificate = await NemLoginUpPartyLogic.DownloadNemLoginTestCertificateAsync();
             }
             else
             {

@@ -8,6 +8,6 @@ namespace FoxIDs.Models.Config
         /// NemLogin module configuration.
         /// </summary>
         [ValidateComplexType]
-        public NemLoginSettings NemLogin { get; set; }
+        public NemLoginSettings NemLogin { get; set; } = new NemLoginSettings();
     }
 }

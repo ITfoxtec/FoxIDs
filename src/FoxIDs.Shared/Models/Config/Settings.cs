@@ -53,7 +53,7 @@ namespace FoxIDs.Models.Config
         /// Modules configuration.
         /// </summary>
         [ValidateComplexType]
-        public ModulesSettings Modules { get; set; }
+        public ModulesSettings Modules { get; set; } = new ModulesSettings();
 
         /// <summary>
         /// OpenSearch configuration.

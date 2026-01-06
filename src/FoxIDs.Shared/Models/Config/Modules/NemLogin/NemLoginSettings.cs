@@ -5,20 +5,15 @@ namespace FoxIDs.Models.Config
     public class NemLoginSettings
     {
         /// <summary>
-        /// Enable NemLog-in module.
-        /// </summary>
-        public bool Enabled { get; set; }
-
-        /// <summary>
         /// SubjectMatchesCPR supporting service configuration.
         /// </summary>
         [ValidateComplexType]
-        public NemLoginSubjectMatchesCprSettings SubjectMatchesCpr { get; set; }
+        public NemLoginSubjectMatchesCprSettings SubjectMatchesCpr { get; set; } = new NemLoginSubjectMatchesCprSettings();
 
         /// <summary>
         /// NemLog-in metadata and certificate assets configuration.
         /// </summary>
         [ValidateComplexType]
-        public NemLoginAssetsSettings Assets { get; set; }
+        public NemLoginAssetsSettings Assets { get; set; } = new NemLoginAssetsSettings();
     }
 }

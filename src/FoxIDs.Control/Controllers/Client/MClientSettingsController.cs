@@ -45,11 +45,7 @@ namespace FoxIDs.Controllers.Client
                 ModuleAssets = new Api.ModuleAssetsSettings()
             };
 
-            if (settings.Modules?.NemLogin?.Enabled == true)
-            {
-                var nemLoginAssets = settings.Modules.NemLogin.Assets ?? new NemLoginAssetsSettings();
-                controlClientSettings.ModuleAssets.NemLogin = mapper.Map<Api.NemLoginAssetsSettings>(nemLoginAssets);
-            }
+            controlClientSettings.ModuleAssets.NemLogin = mapper.Map<Api.NemLoginAssetsSettings>(settings.Modules.NemLogin.Assets);
 
             return Ok(controlClientSettings);
         }

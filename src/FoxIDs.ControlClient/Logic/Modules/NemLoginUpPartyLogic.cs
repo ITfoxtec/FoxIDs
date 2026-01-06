@@ -268,14 +268,21 @@ namespace FoxIDs.Client.Logic.Modules
 
             ApplyNemLoginCprFlow(model);
         }
-        public void PrepareNemLoginBeforeSave(SamlUpPartyViewModel model)
+        public bool PrepareNemLoginBeforeSave(SamlUpPartyViewModel model, out string errorMessage)
         {
+            errorMessage = null;
             if (model?.ModuleType != UpPartyModuleTypes.NemLogin)
             {
-                return;
+                return true;
             }
 
             EnsureNemLoginModule(model);
+
+            if (model.Modules.NemLogin.Environment == NemLoginEnvironments.Production && !HasCompleteNemLoginContactPerson(model.MetadataContactPersons))
+            {
+                errorMessage = "At least one metadata contact person must include company, given name, surname, email address, and telephone number for NemLog-in.";
+                return false;
+            }
 
             model.IsManual = false;
             if (model.MetadataUrl.IsNullOrWhiteSpace())
@@ -293,6 +300,7 @@ namespace FoxIDs.Client.Logic.Modules
             UpdateNemLoginAuthnRequestExtensionsXml(model);
 
             ApplyNemLoginCprFlow(model);
+            return true;
         }
 
         public void HandleEnvironmentChanged(SamlUpPartyViewModel model, NemLoginEnvironments environment)
@@ -1097,6 +1105,30 @@ namespace FoxIDs.Client.Logic.Modules
             {
                 model.AuthnContextComparisonViewModel = SamlAuthnContextComparisonTypesVievModel.Minimum;
             }
+        }
+
+        private static bool HasCompleteNemLoginContactPerson(IEnumerable<SamlMetadataContactPerson> contactPersons)
+        {
+            if (contactPersons == null)
+            {
+                return false;
+            }
+
+            foreach (var contactPerson in contactPersons)
+            {
+                if (contactPerson.Company.IsNullOrWhiteSpace() ||
+                    contactPerson.GivenName.IsNullOrWhiteSpace() ||
+                    contactPerson.Surname.IsNullOrWhiteSpace() ||
+                    contactPerson.EmailAddress.IsNullOrWhiteSpace() ||
+                    contactPerson.TelephoneNumber.IsNullOrWhiteSpace())
+                {
+                    continue;
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         private static HashSet<string> GetNemLoginLoaValues(bool isOiosaml303)

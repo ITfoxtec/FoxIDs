@@ -341,7 +341,10 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
-                PrepareModulesBeforeSave(generalSamlUpParty);
+                if (!PrepareModulesBeforeSave(generalSamlUpParty))
+                {
+                    return;
+                }
 
                 generalSamlUpParty.Form.Model.ClaimTransforms.MapSamlClaimTransformsBeforeMap();
                 generalSamlUpParty.Form.Model.ExtendedUis.MapExtendedUisBeforeMap();
@@ -441,9 +444,16 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
-        private void PrepareModulesBeforeSave(GeneralSamlUpPartyViewModel generalSamlUpParty)
+        private bool PrepareModulesBeforeSave(GeneralSamlUpPartyViewModel generalSamlUpParty)
         {
-            NemLoginUpPartyLogic.PrepareNemLoginBeforeSave(generalSamlUpParty.Form.Model);
+            generalSamlUpParty.Form.ClearFieldError(nameof(generalSamlUpParty.Form.Model.MetadataContactPersons));
+            if (!NemLoginUpPartyLogic.PrepareNemLoginBeforeSave(generalSamlUpParty.Form.Model, out var errorMessage))
+            {
+                generalSamlUpParty.Form.SetFieldError(nameof(generalSamlUpParty.Form.Model.MetadataContactPersons), errorMessage);
+                return false;
+            }
+
+            return true;
         }
         private async Task UpdateModuelsAfterSave(GeneralSamlUpPartyViewModel generalSamlUpParty)
         {

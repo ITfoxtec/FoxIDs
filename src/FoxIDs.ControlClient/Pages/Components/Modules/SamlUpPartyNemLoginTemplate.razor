@@ -85,7 +85,6 @@
                             <option value="@NemLoginEnvironments.IntegrationTest">Integration test</option>
                             <option value="@NemLoginEnvironments.Production">Production</option>
                         </FInputSelect>
-                        <FInputText @bind-Value="Model.MetadataUrl" For="@(() => Model.MetadataUrl)" LabelText="NemLog-in metadata URL" />
                     </div>
                 </div>
                 <label class="label-control">Sector and environment</label>
@@ -273,12 +272,9 @@
                 <label class="label-control">MitID app-switch</label>
             </div>
 
-            @if (!Model.DisableUserAuthenticationTrust)
-            {
-                <div class="mt-2">
-                    <SamlMetadataContactPersons Model="Model" />
-                </div>
-            }
+            <div class="mt-2">
+                <SamlMetadataContactPersons Model="Model" />
+            </div>
 
             <div class="mt-2">
                 @if (!showSwitchToStandardConfirm)

@@ -4,6 +4,7 @@
     var nemLoginSector = Model?.Modules?.NemLogin?.Sector ?? default;
     var isNemLoginPrivateSector = Model != null && NemLoginUpPartyLogic.IsPrivateSector(nemLoginSector);
     var isNemLoginOiosaml400 = Model != null && NemLoginUpPartyLogic.IsOiosaml400Sector(nemLoginSector);
+    var isCreateMode = GeneralSamlUpParty?.CreateMode == true;
 }
 
 @if (Model != null)
@@ -38,17 +39,21 @@
         <div class="card bg-light border mb-3 mt-2">
             <div class="card-body">
                 <h6 class="card-title mt-1 mb-3">Application information</h6>
-                <FFieldTextClipboard @bind-Value="Model.Metadata" For="@(() => Model.Metadata)" Class="pb-0" />
-                @if (!Model.Metadata.IsNullOrWhiteSpace())
+                @if (isCreateMode)
                 {
-                    <a class="btn btn-link btn-xs pl-0 pb-3" href="@Model.Metadata" target="_blank" rel="noopener noreferrer" download>
-                        <span class="oi oi-cloud-download" aria-hidden="true"></span> Download metadata
-                    </a>
+                    <div class="info-text" role="alert">
+                        The metadata will be ready for download after you create the authentication method.
+                    </div>
                 }
-                @if (GeneralSamlUpParty.ShowAdvanced)
+                else
                 {
-                    <FFieldTextClipboard @bind-Value="Model.MetadataEntityId" For="@(() => Model.MetadataEntityId)" />
-                    <FFieldTextClipboard @bind-Value="Model.MetadataAcs" For="@(() => Model.MetadataAcs)" />
+                    <FFieldTextClipboard @bind-Value="Model.Metadata" For="@(() => Model.Metadata)" Class="pb-0" />
+                    @if (!Model.Metadata.IsNullOrWhiteSpace())
+                    {
+                        <a class="btn btn-link btn-xs pl-0 pb-3" href="@Model.Metadata" target="_blank" rel="noopener noreferrer" download>
+                            <span class="oi oi-cloud-download" aria-hidden="true"></span> Download metadata
+                        </a>
+                    }
                 }
             </div>
         </div>
@@ -58,8 +63,9 @@
                 <h6 class="card-title mt-1 mb-3">NemLog-in template</h6>
 
                 <div class="info-text" role="alert">
-                    Configures a NemLog-in tailored SAML 2.0 authentication method based on OIOSAML 4.
-                    On create and update the environment is updated with certificate and log settings. Consider using a separate environment for NemLog-in.
+                    Configures a NemLog-in tailored SAML 2.0 authentication method based on OIOSAML. During creation and updates, the FoxIDs environment is automatically updated with the required certificates and logging settings.
+                    <br />
+                    It is recommended to use a dedicated FoxIDs environment for NemLog-in, both for integration testing and production.
                 </div>
 
             <div class="active-group active">
@@ -68,8 +74,8 @@
                         <FInputSelect TValue="NemLoginSectors" @bind-Value="Model.Modules.NemLogin.Sector" For="@(() => Model.Modules.NemLogin.Sector)" OnValidChange="NemLoginSectorChanged">
                             <option value="@NemLoginSectors.PublicOiosaml303">Public sector (OIOSAML 3.0.3)</option>
                             <option value="@NemLoginSectors.PrivateOiosaml303">Private sector (OIOSAML 3.0.3)</option>
-                            <option value="@NemLoginSectors.PublicOiosaml400">Public sector (OIOSAML 4.0.0 Beta)</option>
-                            <option value="@NemLoginSectors.PrivateOiosaml400">Private sector (OIOSAML 4.0.0 Beta)</option>
+                          @*<option value="@NemLoginSectors.PublicOiosaml400">Public sector (OIOSAML 4.0.0 Beta)</option>
+                            <option value="@NemLoginSectors.PrivateOiosaml400">Private sector (OIOSAML 4.0.0 Beta)</option>*@
                         </FInputSelect>
 
                         @if (isNemLoginPrivateSector)
@@ -102,8 +108,8 @@
                         @if (Model.Modules.NemLogin.Environment == NemLoginEnvironments.Production)
                         {
                             <div class="info-text">
-                                NemLog-in requires a production OCES3 certificate in the environment primary certificate.
-                                The certificate is required. Create a production OCES3 certificate in the <a href="https://erhvervsadministration.nemlog-in.dk/certificates" target="_blank">certificate administration</a>.
+                                NemLog-in requires a production OCES3 certificate as the FoxIDs environments primary certificate.
+                                Create a production OCES3 certificate in the <a href="https://erhvervsadministration.nemlog-in.dk/certificates" target="_blank">certificate administration</a>.
                             </div>
 
                             <FInputPassword @bind-Value="Model.Modules.NemLogin.NemLoginTrackCertificatePassword" For="@(() => Model.Modules.NemLogin.NemLoginTrackCertificatePassword)" LabelText="Certificate password" />
@@ -120,7 +126,7 @@
                         else
                         {
                             <div class="info-text">
-                                The integration test certificate is optional. If not provided, the default test certificate is used when updating the environment. Upload a different test certificate to override the default.
+                                The integration test certificate is optional. If not provided, the default test certificate is used when updating the FoxIDs environment. Upload a different test certificate to override the default.
                             </div>
                             @if (Model.Modules.NemLogin.NemLoginTrackCertificateEdit || !Model.Modules.NemLogin.NemLoginTrackCertificateBase64Url.IsNullOrWhiteSpace())
                             {

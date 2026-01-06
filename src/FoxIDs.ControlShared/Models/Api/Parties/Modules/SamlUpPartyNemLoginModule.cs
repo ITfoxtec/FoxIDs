@@ -11,6 +11,7 @@ namespace FoxIDs.Models.Api
         /// NemLog-in environment.
         /// </summary>
         [Required]
+        [Display(Name = "NemLog-in environment")]
         public NemLoginEnvironments Environment { get; set; }
 
         /// <summary>

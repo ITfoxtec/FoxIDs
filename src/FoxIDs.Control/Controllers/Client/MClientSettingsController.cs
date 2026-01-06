@@ -29,7 +29,6 @@ namespace FoxIDs.Controllers.Client
             var displayVersion = assembly.GetDisplayVersion();
             var majorMinorVersion = assembly.GetName().Version?.ToString(2) ?? string.Empty;
 
-
             var controlClientSettings = new Api.ControlClientSettings
             {
                 FoxIDsEndpoint = settings.FoxIDsEndpoint,

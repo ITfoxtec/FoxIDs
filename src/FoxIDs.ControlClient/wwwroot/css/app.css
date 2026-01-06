@@ -807,6 +807,12 @@ img.logo {
     padding: 0.5rem 0.5rem 0.7rem 0.5rem;
 }
 
+.up-party-template-section {
+    background: linear-gradient(90deg, rgba(255, 241, 224, 0) 0%, rgba(252, 126, 1, 0.04) 2%, rgba(252, 126, 1, 0.06) 8%, rgba(252, 126, 1, 0.06) 92%, rgba(252, 126, 1, 0.04) 98%, rgba(255, 241, 224, 0) 100%);
+    margin: 0.5rem -2.3rem;
+    padding: 0.5rem 2.3rem;
+}
+
 .docs-link {
     color: #df8935 !important;
 }

@@ -13,6 +13,7 @@ using Moq;
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
@@ -58,14 +59,15 @@ namespace FoxIDs.UnitTests.Logic.Modules
             var serviceProvider = new Mock<IServiceProvider>(MockBehavior.Loose).Object;
             var trackKeyLogic = new TrackKeyLogic(serviceProvider, tenantDataRepository, trackCacheLogic, httpContextAccessor);
 
-            var logic = new NemLoginSubjectMatchesCprLogic(settings, logger, trackKeyLogic, httpClientFactory, httpContextAccessor);
+            var logic = new NemLoginSubjectMatchesCprLogic(settings, logger, trackKeyLogic, null, null, httpClientFactory, httpContextAccessor);
 
-            var isMatch = await logic.SubjectMatchesCprAsync(
-                environment: NemLoginEnvironments.Production,
-                cprNumber: "0101011234",
-                subjectNameId: "uuid-1",
-                entityId: "entity-1",
-                cancellationToken: CancellationToken.None);
+            var isMatch = await InvokeSubjectMatchesCprAsync(
+                logic,
+                NemLoginEnvironments.Production,
+                "0101011234",
+                "uuid-1",
+                "entity-1",
+                CancellationToken.None);
 
             Assert.True(isMatch);
             Assert.Equal(settings.Modules.NemLogin.SubjectMatchesCpr.ProductionApiUrl, handler.RequestUri?.ToString());
@@ -109,17 +111,29 @@ namespace FoxIDs.UnitTests.Logic.Modules
             var serviceProvider = new Mock<IServiceProvider>(MockBehavior.Loose).Object;
             var trackKeyLogic = new TrackKeyLogic(serviceProvider, tenantDataRepository, trackCacheLogic, httpContextAccessor);
 
-            var logic = new NemLoginSubjectMatchesCprLogic(settings, logger, trackKeyLogic, httpClientFactory, httpContextAccessor);
+            var logic = new NemLoginSubjectMatchesCprLogic(settings, logger, trackKeyLogic, null, null, httpClientFactory, httpContextAccessor);
 
-            var isMatch = await logic.SubjectMatchesCprAsync(
-                environment: NemLoginEnvironments.IntegrationTest,
-                cprNumber: "0101011234",
-                subjectNameId: "uuid-1",
-                entityId: "entity-1",
-                cancellationToken: CancellationToken.None);
+            var isMatch = await InvokeSubjectMatchesCprAsync(
+                logic,
+                NemLoginEnvironments.IntegrationTest,
+                "0101011234",
+                "uuid-1",
+                "entity-1",
+                CancellationToken.None);
 
             Assert.False(isMatch);
             Assert.Equal(settings.Modules.NemLogin.SubjectMatchesCpr.IntegrationTestApiUrl, handler.RequestUri?.ToString());
+        }
+
+        private static Task<bool> InvokeSubjectMatchesCprAsync(NemLoginSubjectMatchesCprLogic logic, NemLoginEnvironments environment, string cprNumber, string subjectNameId, string entityId, CancellationToken cancellationToken)
+        {
+            var method = typeof(NemLoginSubjectMatchesCprLogic).GetMethod("SubjectMatchesCprAsync", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (method == null)
+            {
+                throw new InvalidOperationException("NemLoginSubjectMatchesCprLogic.SubjectMatchesCprAsync was not found.");
+            }
+
+            return (Task<bool>)method.Invoke(logic, new object[] { environment, cprNumber, subjectNameId, entityId, cancellationToken });
         }
 
         private static async Task<RouteTrackKey> CreateContainedRouteTrackKeyAsync(X509Certificate2 certificate)

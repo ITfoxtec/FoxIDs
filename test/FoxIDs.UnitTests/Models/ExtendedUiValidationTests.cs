@@ -18,6 +18,10 @@ namespace FoxIDs.UnitTests.Models
                 Title = "Enter CPR number",
                 SubmitButtonText = "Continue",
                 PredefinedType = ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch,
+                Modules = new ExtendedUiModules
+                {
+                    NemLogin = new ExtendedUiNemLoginModule { Environment = NemLoginEnvironments.IntegrationTest }
+                },
                 Elements = new List<DynamicElement>
                 {
                     new DynamicElement { Type = DynamicElementTypes.Text, Order = 0, Content = "Test" }
@@ -93,6 +97,10 @@ namespace FoxIDs.UnitTests.Models
                 Title = "Should not be stored",
                 SubmitButtonText = "Should not be stored",
                 PredefinedType = ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch,
+                Modules = new ExtendedUiModules
+                {
+                    NemLogin = new ExtendedUiNemLoginModule { Environment = NemLoginEnvironments.IntegrationTest }
+                },
                 Elements = new List<DynamicElement>
                 {
                     new DynamicElement { Type = DynamicElementTypes.Text, Order = 1, Content = "Should not be stored" }

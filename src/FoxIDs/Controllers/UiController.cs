@@ -29,11 +29,10 @@ namespace FoxIDs.Controllers
         private readonly ExtendedUiLogic extendedUiLogic;
         private readonly ExtendedUiConnectLogic extendedUiConnectLogic;
         private readonly TrackIssuerLogic trackIssuerLogic;
-        private readonly NemLoginSubjectMatchesCprLogic nemLoginSubjectMatchesCprLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly DynamicElementLogic dynamicElementLogic;
 
-        public UiController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, ClaimTransformLogic claimTransformLogic, ExtendedUiLogic extendedUiLogic, ExtendedUiConnectLogic extendedUiConnectLogic, TrackIssuerLogic trackIssuerLogic, NemLoginSubjectMatchesCprLogic nemLoginSubjectMatchesCprLogic, SecurityHeaderLogic securityHeaderLogic, DynamicElementLogic dynamicElementLogic) : base(logger)
+        public UiController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, ClaimTransformLogic claimTransformLogic, ExtendedUiLogic extendedUiLogic, ExtendedUiConnectLogic extendedUiConnectLogic, TrackIssuerLogic trackIssuerLogic, SecurityHeaderLogic securityHeaderLogic, DynamicElementLogic dynamicElementLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -44,7 +43,6 @@ namespace FoxIDs.Controllers
             this.extendedUiLogic = extendedUiLogic;
             this.extendedUiConnectLogic = extendedUiConnectLogic;
             this.trackIssuerLogic = trackIssuerLogic;
-            this.nemLoginSubjectMatchesCprLogic = nemLoginSubjectMatchesCprLogic;
             this.securityHeaderLogic = securityHeaderLogic;
             this.dynamicElementLogic = dynamicElementLogic;
         }
@@ -149,7 +147,7 @@ namespace FoxIDs.Controllers
 
                     try
                     {
-                        var isMatch = await nemLoginSubjectMatchesCprLogic.SubjectMatchesCprAsync(extendedUi.Modules.NemLogin.Environment, normalizedCprNumber, subjectNameId, entityId, HttpContext.RequestAborted);
+                        var isMatch = await serviceProvider.GetService<NemLoginSubjectMatchesCprLogic>().SubjectMatchesCprAsync(extendedUi.Modules.NemLogin.Environment, normalizedCprNumber, subjectNameId, entityId, HttpContext.RequestAborted);
                         if (!isMatch)
                         {
                             dynamicElementLogic.SetModelElementError(ModelState, extendedUiViewModel.InputElements, Constants.Modules.Nemlogin.ExtendedUiCprElementName, "CPR number does not match the user.");

@@ -125,6 +125,8 @@ namespace FoxIDs.Client.Logic.Modules
         private readonly HelpersService helpersService;
         private readonly IHttpClientFactory httpClientFactory;
         private readonly IToastService toastService;
+        private Task<CertificateAndPassword> testCertificateTask;
+        private Task<JwkWithCertificateInfo> testCertificateKeyTask;
 
         public NemLoginUpPartyLogic(
             ClientSettings clientSettings,
@@ -491,8 +493,8 @@ namespace FoxIDs.Client.Logic.Modules
                     }
                     else
                     {
-                        var certificateAndPassword = await DownloadNemLoginTestCertificateAsync();
-                        await UploadTrackPrimaryCertificateAsync(certificateAndPassword);
+                        var defaultCertificateKey = await GetNemLoginTestCertificateKeyAsync();
+                        await UploadTrackPrimaryCertificateAsync(defaultCertificateKey);
                     }
                 }
                 else
@@ -1358,6 +1360,42 @@ namespace FoxIDs.Client.Logic.Modules
 
         public async Task<CertificateAndPassword> DownloadNemLoginTestCertificateAsync()
         {
+            if (testCertificateTask == null)
+            {
+                testCertificateTask = DownloadNemLoginTestCertificateInternalAsync();
+            }
+
+            try
+            {
+                return await testCertificateTask;
+            }
+            catch
+            {
+                testCertificateTask = null;
+                throw;
+            }
+        }
+
+        public async Task<JwkWithCertificateInfo> GetNemLoginTestCertificateKeyAsync()
+        {
+            if (testCertificateKeyTask == null)
+            {
+                testCertificateKeyTask = GetNemLoginTestCertificateKeyInternalAsync();
+            }
+
+            try
+            {
+                return await testCertificateKeyTask;
+            }
+            catch
+            {
+                testCertificateKeyTask = null;
+                throw;
+            }
+        }
+
+        private async Task<CertificateAndPassword> DownloadNemLoginTestCertificateInternalAsync()
+        {
             using var httpClient = httpClientFactory.CreateClient(BaseService.HttpClientLogicalName);
 
             var nemLoginAssets = clientSettings?.ModuleAssets?.NemLogin;
@@ -1385,9 +1423,20 @@ namespace FoxIDs.Client.Logic.Modules
             };
         }
 
+        private async Task<JwkWithCertificateInfo> GetNemLoginTestCertificateKeyInternalAsync()
+        {
+            var certificateAndPassword = await DownloadNemLoginTestCertificateAsync();
+            return await helpersService.ReadCertificateAsync(certificateAndPassword);
+        }
+
         private async Task UploadTrackPrimaryCertificateAsync(CertificateAndPassword certificateAndPassword)
         {
             var jwkWithCertificateInfo = await helpersService.ReadCertificateAsync(certificateAndPassword);
+            await UploadTrackPrimaryCertificateAsync(jwkWithCertificateInfo);
+        }
+
+        private async Task UploadTrackPrimaryCertificateAsync(JwkWithCertificateInfo jwkWithCertificateInfo)
+        {
             await trackService.UpdateTrackKeyContainedAsync(new TrackKeyItemContainedRequest
             {
                 IsPrimary = true,

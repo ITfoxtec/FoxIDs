@@ -151,19 +151,21 @@ public partial class SamlUpPartyNemLoginTemplate : ComponentBase
 
         try
         {
-            CertificateAndPassword certificate;
+            JwkWithCertificateInfo jwkWithCertificateInfo;
             var hasCustomCertificate = !Model.Modules.NemLogin.NemLoginTrackCertificateBase64Url.IsNullOrWhiteSpace();
             if (hasCustomCertificate)
             {
-                certificate = new CertificateAndPassword
+                var certificate = new CertificateAndPassword
                 {
                     EncodeCertificate = Model.Modules.NemLogin.NemLoginTrackCertificateBase64Url,
                     Password = Model.Modules.NemLogin.NemLoginTrackCertificatePassword
                 };
+
+                jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(certificate);
             }
             else if (useDefaultTestCertificate && Model.Modules.NemLogin.Environment != NemLoginEnvironments.Production)
             {
-                certificate = await NemLoginUpPartyLogic.DownloadNemLoginTestCertificateAsync();
+                jwkWithCertificateInfo = await NemLoginUpPartyLogic.GetNemLoginTestCertificateKeyAsync();
             }
             else
             {
@@ -171,7 +173,6 @@ public partial class SamlUpPartyNemLoginTemplate : ComponentBase
                 return;
             }
 
-            var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(certificate);
             if (!jwkWithCertificateInfo.HasPrivateKey())
             {
                 Model.Modules.NemLogin.NemLoginTrackCertificateError = "Private key is required. Maybe a password is required to unlock the private key.";

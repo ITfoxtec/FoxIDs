@@ -5,14 +5,11 @@ using FoxIDs.Models;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.ViewModels;
 using FoxIDs.Repository;
-using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Controllers
@@ -28,11 +25,10 @@ namespace FoxIDs.Controllers
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly ExtendedUiLogic extendedUiLogic;
         private readonly ExtendedUiConnectLogic extendedUiConnectLogic;
-        private readonly TrackIssuerLogic trackIssuerLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly DynamicElementLogic dynamicElementLogic;
 
-        public UiController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, ClaimTransformLogic claimTransformLogic, ExtendedUiLogic extendedUiLogic, ExtendedUiConnectLogic extendedUiConnectLogic, TrackIssuerLogic trackIssuerLogic, SecurityHeaderLogic securityHeaderLogic, DynamicElementLogic dynamicElementLogic) : base(logger)
+        public UiController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, ClaimTransformLogic claimTransformLogic, ExtendedUiLogic extendedUiLogic, ExtendedUiConnectLogic extendedUiConnectLogic, SecurityHeaderLogic securityHeaderLogic, DynamicElementLogic dynamicElementLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -42,7 +38,6 @@ namespace FoxIDs.Controllers
             this.claimTransformLogic = claimTransformLogic;
             this.extendedUiLogic = extendedUiLogic;
             this.extendedUiConnectLogic = extendedUiConnectLogic;
-            this.trackIssuerLogic = trackIssuerLogic;
             this.securityHeaderLogic = securityHeaderLogic;
             this.dynamicElementLogic = dynamicElementLogic;
         }
@@ -123,43 +118,11 @@ namespace FoxIDs.Controllers
                 var claims = step.Claims.ToClaimList();
                 if (extendedUi.PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch)
                 {
-                    var cprInput = GetCprValue(extendedUiViewModel.InputElements);
-                    if (cprInput.IsNullOrWhiteSpace())
+                    var nemloginActionResult = await serviceProvider.GetService<NemLoginSubjectMatchesCprLogic>().HandleInputAsync(extendedUiUpParty, extendedUi, extendedUiViewModel, claims, ModelState, viewError);
+                    if (nemloginActionResult != null)
                     {
-                        dynamicElementLogic.SetModelElementError(ModelState, extendedUiViewModel.InputElements, Constants.Modules.Nemlogin.ExtendedUiCprElementName, "CPR number is required.");
-                        return viewError();
+                        return nemloginActionResult;
                     }
-
-                    var subjectNameId = GetSubjectNameId(claims);
-                    if (subjectNameId.IsNullOrWhiteSpace())
-                    {
-                        throw new InvalidOperationException($"Unable to locate subject name identifier in claim '{JwtClaimTypes.Subject}'.");
-                    }
-
-                    var entityId = !extendedUiUpParty.SpIssuer.IsNullOrWhiteSpace() ? extendedUiUpParty.SpIssuer : trackIssuerLogic.GetIssuer();
-
-                    var normalizedCprNumber = NormalizeCprNumber(cprInput);
-                    if (normalizedCprNumber.IsNullOrWhiteSpace())
-                    {
-                        dynamicElementLogic.SetModelElementError(ModelState, extendedUiViewModel.InputElements, Constants.Modules.Nemlogin.ExtendedUiCprElementName, "Invalid CPR number format.");
-                        return viewError();
-                    }
-
-                    try
-                    {
-                        var isMatch = await serviceProvider.GetService<NemLoginSubjectMatchesCprLogic>().SubjectMatchesCprAsync(extendedUi.Modules.NemLogin.Environment, normalizedCprNumber, subjectNameId, entityId, HttpContext.RequestAborted);
-                        if (!isMatch)
-                        {
-                            dynamicElementLogic.SetModelElementError(ModelState, extendedUiViewModel.InputElements, Constants.Modules.Nemlogin.ExtendedUiCprElementName, "CPR number does not match the user.");
-                            return viewError();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new EndpointException($"NemLog-in SubjectMatchesCPR failed. SubjectNameId '{subjectNameId}', EntityId '{entityId}'.", ex) { RouteBinding = RouteBinding };
-                    }
-
-                    claims.AddOrReplaceClaim(Constants.JwtClaimTypes.CprNumber, normalizedCprNumber);
                 }
                 else if (extendedUi.ExternalConnectType == ExternalConnectTypes.Api)
                 {
@@ -259,11 +222,6 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private static string GetCprValue(List<DynamicElementBase> inputElements)
-        {
-            return inputElements?.OfType<CustomDElement>()?.Where(e => e.Name == Constants.Modules.Nemlogin.ExtendedUiCprElementName).Select(e => e.DField1).FirstOrDefault();
-        }
-
         private void PopulateExtendedUiDefault(ExtendedUi extendedUi)
         {
             if (extendedUi?.PredefinedType == null)
@@ -273,63 +231,12 @@ namespace FoxIDs.Controllers
 
             if (extendedUi.PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch)
             {
-                extendedUi.Title = "Enter CPR number";
-                extendedUi.SubmitButtonText = "Continue";
-
-                if (extendedUi.Elements?.Any() != true)
-                {
-                    extendedUi.Elements = new List<DynamicElement>
-                    {
-                        new DynamicElement
-                        {
-                            Name = "cpr_info",
-                            Type = DynamicElementTypes.Text,
-                            Order = 1,
-                            Content = "Please enter your CPR number to continue."
-                        },
-                        new DynamicElement
-                        {
-                            Name = Constants.Modules.Nemlogin.ExtendedUiCprElementName,
-                            Type = DynamicElementTypes.Custom,
-                            Order = 2,
-                            Required = true,
-                            DisplayName = "CPR number",
-                            MaxLength = 20,
-                            RegEx = @"^\s*\d{6}[- ]?\d{4}\s*$",
-                            ErrorMessage = "Invalid CPR number format.",
-                            ClaimOut = Constants.JwtClaimTypes.CprNumber
-                        }
-                    };
-                }
-
-                return;
+                serviceProvider.GetService<NemLoginSubjectMatchesCprLogic>().PopulateExtendedUi(extendedUi);
             }
-
-            throw new NotSupportedException($"Predefined extended UI type '{extendedUi.PredefinedType}' not supported.");
-        }
-
-        private static string NormalizeCprNumber(string cprNumber)
-        {
-            if (cprNumber.IsNullOrWhiteSpace())
+            else
             {
-                return null;
+                throw new NotSupportedException($"Predefined extended UI type '{extendedUi.PredefinedType}' not supported.");
             }
-
-            var digitsOnly = new string(cprNumber.Where(char.IsDigit).ToArray());
-            return digitsOnly.Length == 10 ? digitsOnly : null;
-        }
-
-        private static string GetSubjectNameId(List<Claim> claims)
-        {
-            var subject = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
-
-            if (subject.IsNullOrWhiteSpace())
-            {
-                return null;
-            }
-
-            var delimiterIndex = subject.IndexOf('|');
-            return delimiterIndex > -1 && subject.Length > delimiterIndex + 1 ? subject.Substring(delimiterIndex + 1) : subject;
         }
     }
 }

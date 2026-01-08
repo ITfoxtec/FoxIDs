@@ -26,7 +26,7 @@
                     <div class="col-11">
                         @if (IsModule(extendedUi))
                         {
-                            <ExtendedUiNemLoginModule Section="ExtendedUiNemModuleComponenttion.HeaderInfo" ExtendedUi="extendedUi" />
+                            <ExtendedUiNemLoginPrivateCprMatch Section="ExtendedUiModuleSections.HeaderInfo" ExtendedUi="extendedUi" />
                             <div class="form-group active-group">
                                 <input type="text" class="form-control input-control" value="@extendedUi.Name" disabled />
                                 <Label For="@(() => extendedUi.Name)" class="label-control" />
@@ -49,7 +49,7 @@
                         {
                             @if (IsModule(extendedUi))
                             {
-                                <ExtendedUiNemLoginModule Section="ExtendedUiNemLogModuleComponentn.Details" ExtendedUi="extendedUi" />
+                                <ExtendedUiNemLoginPrivateCprMatch Section="ExtendedUiModuleSections.Details" ExtendedUi="extendedUi" />
                             }
                              else
                              {
@@ -105,10 +105,10 @@
         </button>
         <div class="dropdown-menu" aria-labelledby="btnGroupExtendedUi">
             <h6 class="dropdown-header">General</h6>
-            <button type="button" class="dropdown-item btn btn-link" @onclick="AddBlankExtendedUi">Add blank extended UI</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="AddBlankExtendedUi">Add extended UI (customisable)</button>
             <div class="dropdown-divider"></div>
             <h6 class="dropdown-header">Modules</h6>
-            <ExtendedUiNemLoginModule Section="ExtendedUiNemLoginMModuleComponentenuItem" Model="Model" />
+            <ExtendedUiNemLoginPrivateCprMatch Section="ExtendedUiModuleSections.MenuItem" Model="Model" />
         </div>
     </div>
 </div>

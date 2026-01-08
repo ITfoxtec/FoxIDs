@@ -56,7 +56,7 @@
                                 {
                                     <div class="info-text">
                                         Only the environment can be changed in the predefined extended UI.<br />
-                                        Input claim: <code>@JwtClaimTypes.Subject</code> (mapped to SAML 2.0 NameID claim <code>@ClaimTypes.NameIdentifier</code>)<br />
+                                        Input claim: <code>@JwtClaimTypes.Subject</code> (mapped to SAML 2.0 claim <code>@ClaimTypes.NameIdentifier</code> which is the NameID)<br />
                                         Output claim: <code>@Constants.JwtClaimTypes.Modules.CprNumber</code> (mapped to SAML 2.0 claim <code>@Constants.SamlClaimTypes.Modules.CprNumber</code>)
                                      </div>
                                     EnsureNemLoginModule(extendedUi);

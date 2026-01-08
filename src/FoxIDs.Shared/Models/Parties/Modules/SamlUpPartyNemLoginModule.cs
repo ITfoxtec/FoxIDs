@@ -21,4 +21,3 @@ namespace FoxIDs.Models
         public bool SaveCprOnExternalUsers { get; set; }
     }
 }
-

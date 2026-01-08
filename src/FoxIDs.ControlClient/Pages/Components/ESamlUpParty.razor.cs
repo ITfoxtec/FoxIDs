@@ -86,6 +86,11 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     NemLoginUpPartyLogic.EnsureNemLoginModule(afterMap);
                     NemLoginUpPartyLogic.InitializeNemLoginTemplateModel(afterMap);
+                    generalSamlUpParty.ShowStandardSettings = afterMap.Modules?.ShowStandardSettings == true;
+                }
+                else
+                {
+                    generalSamlUpParty.ShowStandardSettings = false;
                 }
 
                 afterMap.InitName = afterMap.Name;
@@ -191,6 +196,7 @@ namespace FoxIDs.Client.Pages.Components
                     model.ModuleType = samlUpParty.ModuleType;
                     NemLoginUpPartyLogic.EnsureNemLoginModule(model);
                     NemLoginUpPartyLogic.ApplyNemLoginCreateDefaults(model);
+                    samlUpParty.ShowStandardSettings = model.Modules?.ShowStandardSettings == true;
                 }
             }
         }

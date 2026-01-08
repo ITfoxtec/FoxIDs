@@ -291,6 +291,7 @@ public partial class SamlUpPartyNemLoginTemplate : ComponentBase
     private async Task ConfirmSwitchToStandardAsync()
     {
         showSwitchToStandardConfirm = false;
+        Model.Modules.ShowStandardSettings = true;
         await ShowStandardSettingsChanged.InvokeAsync(true);
     }
 
@@ -313,6 +314,7 @@ public partial class SamlUpPartyNemLoginTemplate : ComponentBase
         NemLoginUpPartyLogic.ApplyNemLoginCreateDefaults(Model);
         Model.Modules.NemLogin.NemLoginTrackCertificateEdit = false;
         GeneralSamlUpParty.ShowAdvanced = false;
+        Model.Modules.ShowStandardSettings = false;
         await ShowStandardSettingsChanged.InvokeAsync(false);
     }
 }

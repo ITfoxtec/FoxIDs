@@ -65,7 +65,7 @@ namespace FoxIDs.Logic
                         MaxLength = 20,
                         RegEx = @"^\s*\d{6}[- ]?\d{4}\s*$",
                         ErrorMessage = "Invalid CPR number format.",
-                        ClaimOut = Constants.JwtClaimTypes.CprNumber
+                        ClaimOut = Constants.JwtClaimTypes.Modules.CprNumber
                     }
                 };
             }
@@ -109,7 +109,7 @@ namespace FoxIDs.Logic
                 throw new EndpointException($"NemLog-in SubjectMatchesCPR failed. SubjectNameId '{subjectNameId}', EntityId '{entityId}'.", ex) { RouteBinding = RouteBinding };
             }
 
-            claims.AddOrReplaceClaim(Constants.JwtClaimTypes.CprNumber, normalizedCprNumber);
+            claims.AddOrReplaceClaim(Constants.JwtClaimTypes.Modules.CprNumber, normalizedCprNumber);
             return null;
         }
 

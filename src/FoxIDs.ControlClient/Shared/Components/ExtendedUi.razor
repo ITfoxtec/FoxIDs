@@ -1,4 +1,5 @@
 ﻿@using FoxIDs.Util
+@using System.Security.Claims
 <div class="info-text">
     Create on or more extended UIs which can be shown for the user in the login flow.
     <div class="pb-2"></div>
@@ -55,7 +56,8 @@
                                 {
                                     <div class="info-text">
                                         Only the environment can be changed in the predefined extended UI.<br />
-                                        Output claim: <code>@Constants.JwtClaimTypes.CprNumber</code> (mapped to SAML 2.0 claim <code>@Constants.SamlClaimTypes.CprNumber</code>)
+                                        Input claim: <code>@JwtClaimTypes.Subject</code> (mapped to SAML 2.0 NameID claim <code>@ClaimTypes.NameIdentifier</code>)<br />
+                                        Output claim: <code>@Constants.JwtClaimTypes.Modules.CprNumber</code> (mapped to SAML 2.0 claim <code>@Constants.SamlClaimTypes.Modules.CprNumber</code>)
                                      </div>
                                     EnsureNemLoginModule(extendedUi);
                                     <FInputSelect @bind-Value="extendedUi.Modules.NemLogin.Environment" For="@(() => extendedUi.Modules.NemLogin.Environment)">

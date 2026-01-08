@@ -115,7 +115,7 @@ namespace FoxIDs
                 return value;
             }
 
-            if (type == Constants.JwtClaimTypes.CprNumber || type == Constants.SamlClaimTypes.CprNumber)
+            if (type == Constants.JwtClaimTypes.Modules.CprNumber || type == Constants.SamlClaimTypes.Modules.CprNumber)
             {
                 return value.MaskCprNumber();
             }

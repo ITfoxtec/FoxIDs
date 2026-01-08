@@ -29,9 +29,12 @@ namespace FoxIDs.Client.Logic.Modules
         private const string NemLoginCprTransformPrefix = "nl_cpr_";
         private const string NemLoginCprTransformOpenExtendedUiName = NemLoginCprTransformPrefix + "opn";
         private const string NemLoginCprTransformQueryExternalUserName = NemLoginCprTransformPrefix + "qry";
-        private const string NemLoginCprTransformMapToSamlName = NemLoginCprTransformPrefix + "map";
         private const string NemLoginCprTransformRemoveJwtName = NemLoginCprTransformPrefix + "rmv";
         private const string NemLoginCprTransformOpenUiNoMatchName = NemLoginCprTransformPrefix + "nmt";
+        private const string NemLoginCprTransformGuardName = NemLoginCprTransformPrefix + "grd";
+        private const string NemLoginCprSubjectUuidPattern = ".*/eid/person/uuid/.*";
+        private const string NemLoginCprSubjectUuidWithEmptyCprPattern = ".*/eid/person/uuid/.*\\|$";
+        private static readonly string NemLoginCprGuardClaimType = $"{Constants.ClaimTransformClaimTypes.Namespace}nemlogin_cpr_guard";
         private const string NemLoginCprExtendedUiName = "cpr_match";
         private const string NemLoginOiosaml400LoaPrefix = "https://data.gov.dk/concept/core/loa/";
         private const string NemLoginOiosaml303LoaPrefix = "https://data.gov.dk/concept/core/nsis/loa/";
@@ -568,7 +571,6 @@ namespace FoxIDs.Client.Logic.Modules
             {
                 "https://data.gov.dk/concept/core/nsis/loa",
                 "https://data.gov.dk/model/core/eid/cprNumber",
-                "https://data.gov.dk/model/core/eid/cprUuid",
                 "https://data.gov.dk/model/core/eid/email",
                 "https://data.gov.dk/model/core/eid/firstName",
                 "https://data.gov.dk/model/core/eid/lastName",
@@ -681,7 +683,6 @@ namespace FoxIDs.Client.Logic.Modules
                     else
                     {
                         requestedAttributes.Add("https://data.gov.dk/model/core/eid/cprNumber");
-                        requestedAttributes.Add("https://data.gov.dk/model/core/eid/cprUuid");
                     }
                 }
                 else if (profileId.StartsWith("https://data.gov.dk/eid/Professional/DK", StringComparison.OrdinalIgnoreCase))
@@ -1221,10 +1222,12 @@ namespace FoxIDs.Client.Logic.Modules
                 model.ClaimTransforms.Add(new SamlClaimTransformClaimInClaimOutViewModel
                 {
                     Name = NemLoginCprTransformOpenExtendedUiName,
-                    Type = ClaimTransformTypes.Constant,
+                    Type = ClaimTransformTypes.RegexMatch,
                     Action = ClaimTransformActions.Add,
+                    ClaimIn = ClaimTypes.NameIdentifier,
                     ClaimOut = Constants.SamlClaimTypes.OpenExtendedUi,
-                    Transformation = cprExtendedUiName
+                    Transformation = NemLoginCprSubjectUuidPattern,
+                    TransformationExtension = cprExtendedUiName
                 });
 
                 RemoveNemLoginCprExternalUserConfiguration(model);
@@ -1238,18 +1241,23 @@ namespace FoxIDs.Client.Logic.Modules
                 Task = ClaimTransformTasks.QueryExternalUser,
                 Action = ClaimTransformActions.Replace,
                 ClaimIn = ClaimTypes.NameIdentifier,
-                ClaimsOut = new List<string> { Constants.JwtClaimTypes.CprNumber },
+                ClaimsOut = new List<string> { Constants.JwtClaimTypes.Modules.CprNumber },
                 Transformation = Constants.ClaimTransformClaimTypes.ExternalUserLink,
                 UpPartyName = model.Name
             });
 
-            model.ClaimTransforms.Add(new SamlClaimTransformClaimInClaimOutViewModel
+            model.ClaimTransforms.Add(new SamlClaimTransformClaimsInClaimOutViewModel
             {
-                Name = NemLoginCprTransformMapToSamlName,
-                Type = ClaimTransformTypes.Map,
+                Name = NemLoginCprTransformGuardName,
+                Type = ClaimTransformTypes.Concatenate,
                 Action = ClaimTransformActions.Replace,
-                ClaimIn = Constants.JwtClaimTypes.CprNumber,
-                ClaimOut = Constants.SamlClaimTypes.CprNumber
+                ClaimsIn = new List<string>
+                {
+                    ClaimTypes.NameIdentifier,
+                    Constants.JwtClaimTypes.Modules.CprNumber
+                },
+                ClaimOut = NemLoginCprGuardClaimType,
+                Transformation = "{0}|{1}"
             });
 
             model.ClaimTransforms.Add(new SamlClaimTransformClaimInClaimOutViewModel
@@ -1257,17 +1265,18 @@ namespace FoxIDs.Client.Logic.Modules
                 Name = NemLoginCprTransformRemoveJwtName,
                 Type = ClaimTransformTypes.MatchClaim,
                 Action = ClaimTransformActions.Remove,
-                ClaimOut = Constants.JwtClaimTypes.CprNumber
+                ClaimOut = Constants.JwtClaimTypes.Modules.CprNumber
             });
 
             model.ClaimTransforms.Add(new SamlClaimTransformClaimInClaimOutViewModel
             {
                 Name = NemLoginCprTransformOpenUiNoMatchName,
-                Type = ClaimTransformTypes.MatchClaim,
-                Action = ClaimTransformActions.ReplaceIfNot,
-                ClaimIn = Constants.SamlClaimTypes.CprNumber,
+                Type = ClaimTransformTypes.RegexMatch,
+                Action = ClaimTransformActions.Add,
+                ClaimIn = NemLoginCprGuardClaimType,
                 ClaimOut = Constants.SamlClaimTypes.OpenExtendedUi,
-                Transformation = cprExtendedUiName
+                Transformation = NemLoginCprSubjectUuidWithEmptyCprPattern,
+                TransformationExtension = cprExtendedUiName
             });
 
             model.LinkExternalUser ??= new LinkExternalUserViewModel();
@@ -1278,7 +1287,7 @@ namespace FoxIDs.Client.Logic.Modules
             model.LinkExternalUser.OverwriteClaims = true;
             model.LinkExternalUser.UpPartyClaims ??= new List<string>();
             model.LinkExternalUser.UpPartyClaims = model.LinkExternalUser.UpPartyClaims
-                .Concat(new[] { Constants.JwtClaimTypes.CprNumber })
+                .Concat([Constants.JwtClaimTypes.Modules.CprNumber])
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .OrderBy(c => c, StringComparer.OrdinalIgnoreCase)
                 .ToList();
@@ -1294,7 +1303,7 @@ namespace FoxIDs.Client.Logic.Modules
             if (model.LinkExternalUser.UpPartyClaims?.Count > 0)
             {
                 model.LinkExternalUser.UpPartyClaims = model.LinkExternalUser.UpPartyClaims
-                    .Where(c => !c.Equals(Constants.JwtClaimTypes.CprNumber, StringComparison.OrdinalIgnoreCase))
+                    .Where(c => !c.Equals(Constants.JwtClaimTypes.Modules.CprNumber, StringComparison.OrdinalIgnoreCase))
                     .ToList();
 
                 if (model.LinkExternalUser.UpPartyClaims.Count == 0)

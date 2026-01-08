@@ -1,0 +1,75 @@
+@using FoxIDs.Util
+@using System.Security.Claims
+
+@if (Section == ExtendedUiModuleSections.MenuItem)
+{
+    <button type="button" class="dropdown-item btn btn-link" @onclick="AddNemLoginPrivateCprMatchExtendedUi">Add NemLog-in (private) CPR match UI</button>
+}
+else if (Section == ExtendedUiModuleSections.HeaderInfo)
+{
+    if (IsNemLoginModule())
+    {
+        <div class="info-text">Module UI: NemLog-in (private) CPR match</div>
+    }
+}
+else if (Section == ExtendedUiModuleSections.Details)
+{
+    if (IsNemLoginModule())
+    {
+        <div class="info-text">
+            In the module extended UI, only the environment setting can be modified.<br />
+            <div class="mt-1">
+                Input claim: <code>@JwtClaimTypes.Subject</code><br />
+                Mapped to SAML 2.0 claim <code>@ClaimTypes.NameIdentifier</code> (NameID)
+            </div>
+            <div class="mt-1">
+                Output claim: <code>@Constants.JwtClaimTypes.Modules.CprNumber</code><br />
+                Mapped to SAML 2.0 claim <code>@Constants.SamlClaimTypes.Modules.CprNumber</code>
+            </div>
+        </div>
+        EnsureNemLoginModule();
+        <FInputSelect @bind-Value="ExtendedUi.Modules.NemLogin.Environment" For="@(() => ExtendedUi.Modules.NemLogin.Environment)">
+            <option value="@NemLoginEnvironments.Production">Production</option>
+            <option value="@NemLoginEnvironments.IntegrationTest">Integration test</option>
+        </FInputSelect>
+    }
+}
+
+@code {
+    [Parameter]
+    public ExtendedUiModuleSections Section { get; set; }
+
+    [Parameter]
+    public ExtendedUiViewModel ExtendedUi { get; set; }
+
+    [Parameter]
+    public List<ExtendedUiViewModel> Model { get; set; }
+
+    private void AddNemLoginPrivateCprMatchExtendedUi(MouseEventArgs e)
+    {
+        if (Model == null)
+        {
+            return;
+        }
+
+        var extendedUi = new ExtendedUiViewModel
+        {
+            Name = RandomName.GenerateDefaultName(Model.Select(p => p.Name)),
+            ModuleType = ExtendedUiModuleTypes.NemLoginPrivateCprMatch,
+            Modules = new ExtendedUiModules
+            {
+                NemLogin = new ExtendedUiNemLoginModule { Environment = NemLoginEnvironments.IntegrationTest }
+            },
+            ShowDetails = true
+        };
+        Model.Add(extendedUi);
+    }
+
+    private bool IsNemLoginModule() => ExtendedUi?.ModuleType == ExtendedUiModuleTypes.NemLoginPrivateCprMatch;
+
+    private void EnsureNemLoginModule()
+    {
+        ExtendedUi.Modules ??= new ExtendedUiModules();
+        ExtendedUi.Modules.NemLogin ??= new ExtendedUiNemLoginModule { Environment = NemLoginEnvironments.IntegrationTest };
+    }
+}

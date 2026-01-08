@@ -1,5 +1,5 @@
 ﻿@using FoxIDs.Util
-@using System.Security.Claims
+@using FoxIDs.Client.Shared.Components.Modules
 <div class="info-text">
     Create on or more extended UIs which can be shown for the user in the login flow.
     <div class="pb-2"></div>
@@ -26,10 +26,7 @@
                     <div class="col-11">
                         @if (IsModule(extendedUi))
                         {
-                            @if (extendedUi?.ModuleType == ExtendedUiModuleTypes.NemLoginPrivateCprMatch)
-                            {
-                                <div class="info-text">Module UI: NemLog-in (private) CPR match</div>
-                            }
+                            <ExtendedUiNemLoginModule Section="ExtendedUiNemModuleComponenttion.HeaderInfo" ExtendedUi="extendedUi" />
                             <div class="form-group active-group">
                                 <input type="text" class="form-control input-control" value="@extendedUi.Name" disabled />
                                 <Label For="@(() => extendedUi.Name)" class="label-control" />
@@ -52,29 +49,7 @@
                         {
                             @if (IsModule(extendedUi))
                             {
-                                if (extendedUi?.ModuleType == ExtendedUiModuleTypes.NemLoginPrivateCprMatch)
-                                {
-                                    <div class="info-text">
-                                        In the module extended UI, only the environment setting can be modified.<br />
-                                        <div class="mt-1">
-                                            Input claim: <code>@JwtClaimTypes.Subject</code><br />
-                                            Mapped to SAML 2.0 claim <code>@ClaimTypes.NameIdentifier</code> (NameID)
-                                        </div>
-                                        <div class="mt-1">
-                                            Output claim: <code>@Constants.JwtClaimTypes.Modules.CprNumber</code><br />
-                                            Mapped to SAML 2.0 claim <code>@Constants.SamlClaimTypes.Modules.CprNumber</code>
-                                        </div>
-                                     </div>
-                                    EnsureNemLoginModule(extendedUi);
-                                    <FInputSelect @bind-Value="extendedUi.Modules.NemLogin.Environment" For="@(() => extendedUi.Modules.NemLogin.Environment)">
-                                        <option value="@NemLoginEnvironments.Production">Production</option>
-                                        <option value="@NemLoginEnvironments.IntegrationTest">Integration test</option>
-                                    </FInputSelect>
-                                }
-                                else
-                                {
-                                    throw new NotImplementedException($"Extended UI module type '{extendedUi.ModuleType}' is not implemented.");
-                                }
+                                <ExtendedUiNemLoginModule Section="ExtendedUiNemLogModuleComponentn.Details" ExtendedUi="extendedUi" />
                             }
                              else
                              {
@@ -133,7 +108,7 @@
             <button type="button" class="dropdown-item btn btn-link" @onclick="AddBlankExtendedUi">Add blank extended UI</button>
             <div class="dropdown-divider"></div>
             <h6 class="dropdown-header">Modules</h6>
-            <button type="button" class="dropdown-item btn btn-link" @onclick="AddNemLoginPrivateCprMatchExtendedUi">Add NemLog-in (private) CPR match UI</button>
+            <ExtendedUiNemLoginModule Section="ExtendedUiNemLoginMModuleComponentenuItem" Model="Model" />
         </div>
     </div>
 </div>
@@ -150,35 +125,6 @@
                 ShowDetails = true
             };
         Model.Add(extendedUi);
-    }
-
-    private void AddNemLoginPrivateCprMatchExtendedUi(MouseEventArgs e)
-    {
-        var extendedUi = new ExtendedUiViewModel
-        {
-            Name = RandomName.GenerateDefaultName(Model.Select(p => p.Name)),
-            ModuleType = ExtendedUiModuleTypes.NemLoginPrivateCprMatch,
-            Modules = new ExtendedUiModules
-            {
-                NemLogin = new ExtendedUiNemLoginModule { Environment = NemLoginEnvironments.IntegrationTest }
-            },
-            ShowDetails = true
-        };
-        Model.Add(extendedUi);
-    }
-
-    private static void EnsureNemLoginModule(ExtendedUiViewModel extendedUi)
-    {
-        if (extendedUi == null || extendedUi.ModuleType != ExtendedUiModuleTypes.NemLoginPrivateCprMatch)
-        {
-            return;
-        }
-
-        extendedUi.Modules ??= new ExtendedUiModules();
-        if (extendedUi.ModuleType == ExtendedUiModuleTypes.NemLoginPrivateCprMatch)
-        {
-              extendedUi.Modules.NemLogin ??= new ExtendedUiNemLoginModule { Environment = NemLoginEnvironments.IntegrationTest };
-        }
     }
 
     private void RemoveExtendedUi(MouseEventArgs e, ExtendedUiViewModel removeExtendedUi)

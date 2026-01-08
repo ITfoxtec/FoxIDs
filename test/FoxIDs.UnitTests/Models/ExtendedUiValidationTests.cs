@@ -17,7 +17,7 @@ namespace FoxIDs.UnitTests.Models
                 Name = "nemlogin_cpr",
                 Title = "Enter CPR number",
                 SubmitButtonText = "Continue",
-                PredefinedType = ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch,
+                ModuleType = ExtendedUiModuleTypes.NemLoginPrivateCprMatch,
                 Modules = new ExtendedUiModules
                 {
                     NemLogin = new ExtendedUiNemLoginModule { Environment = NemLoginEnvironments.IntegrationTest }
@@ -43,7 +43,7 @@ namespace FoxIDs.UnitTests.Models
                 Name = "nemlogin_cpr",
                 Title = "Enter CPR number",
                 SubmitButtonText = "Continue",
-                PredefinedType = ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch,
+                ModuleType = ExtendedUiModuleTypes.NemLoginPrivateCprMatch,
                 Modules = new ExtendedUiModules
                 {
                     NemLogin = new ExtendedUiNemLoginModule { Environment = NemLoginEnvironments.Production }
@@ -96,7 +96,7 @@ namespace FoxIDs.UnitTests.Models
                 Name = "nemlogin_cpr",
                 Title = "Should not be stored",
                 SubmitButtonText = "Should not be stored",
-                PredefinedType = ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch,
+                ModuleType = ExtendedUiModuleTypes.NemLoginPrivateCprMatch,
                 Modules = new ExtendedUiModules
                 {
                     NemLogin = new ExtendedUiNemLoginModule { Environment = NemLoginEnvironments.IntegrationTest }

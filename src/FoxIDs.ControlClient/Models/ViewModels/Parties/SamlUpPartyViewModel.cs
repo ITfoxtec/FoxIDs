@@ -283,7 +283,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool EnableIdPInitiated { get; set; }
 
         [Range(-1, Constants.Models.SamlParty.Up.IdPInitiatedGrantLifetimeMax)]
-        [Display(Name = "IdP-Initiated Login grant lifetime for OpenID Connect applications (active if greater than 0)")]
+        [Display(Name = "IdP-Initiated Login - OpenID Connect grant lifetime")]
         public int? IdPInitiatedGrantLifetime { get; set; }
 
         [ValidateComplexType]

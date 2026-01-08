@@ -400,8 +400,26 @@
                             <SamlMetadataAttributeConsumingServices Model="samlUpParty.Form.Model" />
                             <SamlMetadataOrganization Model="samlUpParty.Form.Model" />
                             <SamlMetadataContactPersons Model="samlUpParty.Form.Model" />
-                            <FInputToggle @bind-Value="samlUpParty.Form.Model.EnableIdPInitiated" For="@(() => samlUpParty.Form.Model.EnableIdPInitiated)" TextType="e.d" />
-                            <FInputNumberN @bind-Value="samlUpParty.Form.Model.IdPInitiatedGrantLifetime" For="@(() => samlUpParty.Form.Model.IdPInitiatedGrantLifetime)" />
+
+                            <div class="active-group active">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="info-text" role="alert">
+                                            Optionally enable IdP-Initiated Login and configuring the lifetime for transferring the identity to a OpenID Connect application.
+                                        </div>
+
+                                        <FInputToggle @bind-Value="samlUpParty.Form.Model.EnableIdPInitiated" For="@(() => samlUpParty.Form.Model.EnableIdPInitiated)" TextType="e.d" />
+                                        @if (samlUpParty.Form.Model.EnableIdPInitiated)
+                                        {
+                                            <div class="info-text" role="alert">
+                                                The IdP-Initiated Login OpenID Connect application grants is active if greater than 0.
+                                            </div>
+                                            <FInputNumberN @bind-Value="samlUpParty.Form.Model.IdPInitiatedGrantLifetime" For="@(() => samlUpParty.Form.Model.IdPInitiatedGrantLifetime)" />
+                                        }
+                                    </div>
+                                </div>
+                                <label class="label-control">Requested attribute profiles</label>
+                            </div>
                         }
                     }
                 }

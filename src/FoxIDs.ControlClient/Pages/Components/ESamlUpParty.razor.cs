@@ -189,7 +189,7 @@ namespace FoxIDs.Client.Pages.Components
                 }
                 model.Claims = new List<string> { "*" };
                 model.DisableLoginHint = true;
-                model.IdPInitiatedGrantLifetime = 30;
+                OnEnableIdPInitiatedChanged(model, model.EnableIdPInitiated);
 
                 if (samlUpParty.ModuleType == UpPartyModuleTypes.NemLogin)
                 {
@@ -198,6 +198,21 @@ namespace FoxIDs.Client.Pages.Components
                     NemLoginUpPartyLogic.ApplyNemLoginCreateDefaults(model);
                     samlUpParty.ShowStandardSettings = model.Modules?.ShowStandardSettings == true;
                 }
+            }
+        }
+
+        private void OnEnableIdPInitiatedChanged(SamlUpPartyViewModel model, bool enableIdPInitiated)
+        {
+            if (enableIdPInitiated)
+            {
+                if (!(model.IdPInitiatedGrantLifetime > 0))
+                {
+                    model.IdPInitiatedGrantLifetime = 30;
+                }
+            }
+            else
+            {
+                model.IdPInitiatedGrantLifetime = null;
             }
         }
 

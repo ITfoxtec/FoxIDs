@@ -405,20 +405,20 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="info-text" role="alert">
-                                            Optionally enable IdP-Initiated Login and configuring the lifetime for transferring the identity to a OpenID Connect application.
+                                                <DocsLink Page="auth-method-saml-2.0" Fragment="idp-initiated-login">IdP-Initiated Login</DocsLink> starts at the IdP with an unsolicited SAML response. This flow is less secure and disabled by default, so enable it only when required. The IdP must send relay state with <code>app_name</code> and <code>app_type</code> and can include <code>app_redirect</code>.
                                         </div>
 
-                                        <FInputToggle @bind-Value="samlUpParty.Form.Model.EnableIdPInitiated" For="@(() => samlUpParty.Form.Model.EnableIdPInitiated)" TextType="e.d" />
+                                        <FInputToggle @bind-Value="samlUpParty.Form.Model.EnableIdPInitiated" For="@(() => samlUpParty.Form.Model.EnableIdPInitiated)" TextType="e.d" OnValidChange="@(value => OnEnableIdPInitiatedChanged(samlUpParty.Form.Model, value))" />
                                         @if (samlUpParty.Form.Model.EnableIdPInitiated)
                                         {
                                             <div class="info-text" role="alert">
-                                                The IdP-Initiated Login OpenID Connect application grants is active if greater than 0.
+                                                OpenID Connect does not support IdP-Initiated login. FoxIDs can store a short-lived grant to forward the IdP-Initiated response to an OIDC app without another IdP round-trip. Set a lifetime to enable the grant, or leave it blank to fall back to SP-Initiated login.
                                             </div>
                                             <FInputNumberN @bind-Value="samlUpParty.Form.Model.IdPInitiatedGrantLifetime" For="@(() => samlUpParty.Form.Model.IdPInitiatedGrantLifetime)" />
                                         }
                                     </div>
                                 </div>
-                                <label class="label-control">Requested attribute profiles</label>
+                                <label class="label-control">IdP-Initiated Login</label>
                             </div>
                         }
                     }

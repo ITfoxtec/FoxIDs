@@ -312,6 +312,7 @@ public partial class SamlUpPartyNemLoginTemplate : ComponentBase
         NemLoginUpPartyLogic.EnsureNemLoginModule(Model);
         NemLoginUpPartyLogic.ApplyNemLoginCreateDefaults(Model);
         Model.Modules.NemLogin.NemLoginTrackCertificateEdit = false;
+        GeneralSamlUpParty.ShowAdvanced = false;
         await ShowStandardSettingsChanged.InvokeAsync(false);
     }
 }

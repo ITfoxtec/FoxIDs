@@ -30,7 +30,7 @@ namespace FoxIDs.Client.Models.ViewModels
         {
             var results = new List<ValidationResult>();
 
-            if (PredefinedType == null)
+            if (ModuleType == null)
             {
                 if (Title.IsNullOrWhiteSpace())
                 {

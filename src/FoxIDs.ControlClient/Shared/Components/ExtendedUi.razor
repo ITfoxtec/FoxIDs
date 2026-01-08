@@ -24,11 +24,11 @@
             <li class="list-group-item">
                 <div class="row">
                     <div class="col-11">
-                        @if (IsPredefined(extendedUi))
+                        @if (IsModule(extendedUi))
                         {
-                            @if (extendedUi?.PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch)
+                            @if (extendedUi?.ModuleType == ExtendedUiModuleTypes.NemLoginPrivateCprMatch)
                             {
-                                <div class="info-text">Predefined UI: NemLog-in (private) CPR match</div>
+                                <div class="info-text">Module UI: NemLog-in (private) CPR match</div>
                             }
                             <div class="form-group active-group">
                                 <input type="text" class="form-control input-control" value="@extendedUi.Name" disabled />
@@ -50,14 +50,20 @@
                     <div class="col-11">
                         @if (extendedUi.ShowDetails)
                         {
-                            @if (IsPredefined(extendedUi))
+                            @if (IsModule(extendedUi))
                             {
-                                if (extendedUi?.PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch)
+                                if (extendedUi?.ModuleType == ExtendedUiModuleTypes.NemLoginPrivateCprMatch)
                                 {
                                     <div class="info-text">
-                                        Only the environment can be changed in the predefined extended UI.<br />
-                                        Input claim: <code>@JwtClaimTypes.Subject</code> (mapped to SAML 2.0 claim <code>@ClaimTypes.NameIdentifier</code> which is the NameID)<br />
-                                        Output claim: <code>@Constants.JwtClaimTypes.Modules.CprNumber</code> (mapped to SAML 2.0 claim <code>@Constants.SamlClaimTypes.Modules.CprNumber</code>)
+                                        In the module extended UI, only the environment setting can be modified.<br />
+                                        <div class="mt-1">
+                                            Input claim: <code>@JwtClaimTypes.Subject</code><br />
+                                            Mapped to SAML 2.0 claim <code>@ClaimTypes.NameIdentifier</code> (NameID)
+                                        </div>
+                                        <div class="mt-1">
+                                            Output claim: <code>@Constants.JwtClaimTypes.Modules.CprNumber</code><br />
+                                            Mapped to SAML 2.0 claim <code>@Constants.SamlClaimTypes.Modules.CprNumber</code>
+                                        </div>
                                      </div>
                                     EnsureNemLoginModule(extendedUi);
                                     <FInputSelect @bind-Value="extendedUi.Modules.NemLogin.Environment" For="@(() => extendedUi.Modules.NemLogin.Environment)">
@@ -67,7 +73,7 @@
                                 }
                                 else
                                 {
-                                    throw new NotImplementedException($"Predefined extended UI type '{extendedUi.PredefinedType}' is not implemented.");
+                                    throw new NotImplementedException($"Extended UI module type '{extendedUi.ModuleType}' is not implemented.");
                                 }
                             }
                              else
@@ -151,7 +157,7 @@
         var extendedUi = new ExtendedUiViewModel
         {
             Name = RandomName.GenerateDefaultName(Model.Select(p => p.Name)),
-            PredefinedType = ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch,
+            ModuleType = ExtendedUiModuleTypes.NemLoginPrivateCprMatch,
             Modules = new ExtendedUiModules
             {
                 NemLogin = new ExtendedUiNemLoginModule { Environment = NemLoginEnvironments.IntegrationTest }
@@ -163,13 +169,13 @@
 
     private static void EnsureNemLoginModule(ExtendedUiViewModel extendedUi)
     {
-        if (extendedUi == null || extendedUi.PredefinedType != ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch)
+        if (extendedUi == null || extendedUi.ModuleType != ExtendedUiModuleTypes.NemLoginPrivateCprMatch)
         {
             return;
         }
 
         extendedUi.Modules ??= new ExtendedUiModules();
-        if (extendedUi.PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch)
+        if (extendedUi.ModuleType == ExtendedUiModuleTypes.NemLoginPrivateCprMatch)
         {
               extendedUi.Modules.NemLogin ??= new ExtendedUiNemLoginModule { Environment = NemLoginEnvironments.IntegrationTest };
         }
@@ -180,7 +186,7 @@
         Model.Remove(removeExtendedUi);
     }
 
-    private static bool IsPredefined(ExtendedUiViewModel extendedUi) => extendedUi?.PredefinedType != null;
+    private static bool IsModule(ExtendedUiViewModel extendedUi) => extendedUi?.ModuleType != null;
 
     [Parameter]
     public bool IsSaml { get; set; }

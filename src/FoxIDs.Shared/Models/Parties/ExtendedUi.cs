@@ -22,8 +22,8 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "submit_button")]
         public string SubmitButtonText { get; set; }
 
-        [JsonProperty(PropertyName = "predef_type")]
-        public ExtendedUiPredefinedTypes? PredefinedType { get; set; }
+        [JsonProperty(PropertyName = "module_type")]
+        public ExtendedUiModuleTypes? ModuleType { get; set; }
 
         [ValidateComplexType]
         [JsonProperty(PropertyName = "modules")]
@@ -68,7 +68,7 @@ namespace FoxIDs.Models
         {
             var results = new List<ValidationResult>();
 
-            if (PredefinedType == null)
+            if (ModuleType == null)
             {
                 if (Title.IsNullOrWhiteSpace())
                 {
@@ -86,16 +86,16 @@ namespace FoxIDs.Models
                 SubmitButtonText = null;
                 Elements = null;
 
-                if (PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch)
+                if (ModuleType == ExtendedUiModuleTypes.NemLoginPrivateCprMatch)
                 {
                     if (Modules?.NemLogin == null)
                     {
-                        results.Add(new ValidationResult($"The field '{nameof(Modules.NemLogin)}' is required when the predefined type is '{PredefinedType}'.", [$"{nameof(Modules)}.{nameof(Modules.NemLogin)}"]));
+                        results.Add(new ValidationResult($"The field '{nameof(Modules.NemLogin)}' is required when the module type is '{ModuleType}'.", [$"{nameof(Modules)}.{nameof(Modules.NemLogin)}"]));
                     }
                 }
                 else
                 {
-                    results.Add(new ValidationResult($"The predefined type '{PredefinedType}' is not supported.", [nameof(PredefinedType)]));
+                    results.Add(new ValidationResult($"The module type '{ModuleType}' is not supported.", [nameof(ModuleType)]));
                 }
             }
 

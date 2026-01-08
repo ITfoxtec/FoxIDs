@@ -116,7 +116,7 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace(() => "Extended UI post.");
                 var claims = step.Claims.ToClaimList();
-                if (extendedUi.PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch)
+                if (extendedUi.ModuleType == ExtendedUiModuleTypes.NemLoginPrivateCprMatch)
                 {
                     var nemloginActionResult = await serviceProvider.GetService<NemLoginSubjectMatchesCprLogic>().HandleInputAsync(extendedUiUpParty, extendedUi, extendedUiViewModel, claims, ModelState, viewError);
                     if (nemloginActionResult != null)
@@ -224,18 +224,18 @@ namespace FoxIDs.Controllers
 
         private void PopulateExtendedUiDefault(ExtendedUi extendedUi)
         {
-            if (extendedUi?.PredefinedType == null)
+            if (extendedUi?.ModuleType == null)
             {
                 return;
             }
 
-            if (extendedUi.PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch)
+            if (extendedUi.ModuleType == ExtendedUiModuleTypes.NemLoginPrivateCprMatch)
             {
                 serviceProvider.GetService<NemLoginSubjectMatchesCprLogic>().PopulateExtendedUi(extendedUi);
             }
             else
             {
-                throw new NotSupportedException($"Predefined extended UI type '{extendedUi.PredefinedType}' not supported.");
+                throw new NotSupportedException($"Extended UI module type '{extendedUi.ModuleType}' not supported.");
             }
         }
     }

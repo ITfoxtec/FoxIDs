@@ -1206,7 +1206,7 @@ namespace FoxIDs.Client.Logic.Modules
             var isCprEnabled = IsPrivateSectorInternal(model.Modules.NemLogin.Sector) && model.Modules.NemLogin.RequestCpr;
             if (!isCprEnabled)
             {
-                model.ExtendedUis?.RemoveAll(e => e.PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch);
+                model.ExtendedUis?.RemoveAll(e => e.ModuleType == ExtendedUiModuleTypes.NemLoginPrivateCprMatch);
                 model.ClaimTransforms?.RemoveAll(IsNemLoginCprTransform);
                 RemoveNemLoginCprExternalUserConfiguration(model);
                 return;
@@ -1339,13 +1339,13 @@ namespace FoxIDs.Client.Logic.Modules
         {
             model.ExtendedUis ??= new List<ExtendedUiViewModel>();
 
-            var extendedUi = model.ExtendedUis.FirstOrDefault(e => e.PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch);
+            var extendedUi = model.ExtendedUis.FirstOrDefault(e => e.ModuleType == ExtendedUiModuleTypes.NemLoginPrivateCprMatch);
             if (extendedUi == null)
             {
                 extendedUi = new ExtendedUiViewModel
                 {
                     Name = NemLoginCprExtendedUiName,
-                    PredefinedType = ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch,
+                    ModuleType = ExtendedUiModuleTypes.NemLoginPrivateCprMatch,
                     Modules = new ExtendedUiModules
                     {
                         NemLogin = new ExtendedUiNemLoginModule

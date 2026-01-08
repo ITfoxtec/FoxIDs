@@ -15,8 +15,8 @@ namespace FoxIDs.Models.Api
         public string Name { get; set; }
 
         /// <summary>
-        /// Page title. Required if <see cref="PredefinedType" /> is not set.
-        /// For predefined templates the title is populated at runtime based on <see cref="PredefinedType" />.
+        /// Page title. Required if <see cref="ModuleType" /> is not set.
+        /// For module templates the title is populated at runtime based on <see cref="ModuleType" />.
         /// </summary>
         [MaxLength(Constants.Models.ExtendedUi.TitleLength)]
         [Display(Name = "Page title")]
@@ -27,9 +27,9 @@ namespace FoxIDs.Models.Api
         public string SubmitButtonText { get; set; }
 
         /// <summary>
-        /// Optional predefined template.
+        /// Optional module template.
         /// </summary>
-        public ExtendedUiPredefinedTypes? PredefinedType { get; set; }
+        public ExtendedUiModuleTypes? ModuleType { get; set; }
 
         /// <summary>
         /// Module configuration.
@@ -38,8 +38,8 @@ namespace FoxIDs.Models.Api
         public ExtendedUiModules Modules { get; set; }
 
         /// <summary>
-        /// UI elements. Required if <see cref="PredefinedType" /> is not set.
-        /// For predefined templates the elements are populated at runtime based on <see cref="PredefinedType" />.
+        /// UI elements. Required if <see cref="ModuleType" /> is not set.
+        /// For module templates the elements are populated at runtime based on <see cref="ModuleType" />.
         /// </summary>
         [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
         public List<DynamicElement> Elements { get; set; }
@@ -79,7 +79,7 @@ namespace FoxIDs.Models.Api
         {
             var results = new List<ValidationResult>();
 
-            if (PredefinedType == null)
+            if (ModuleType == null)
             {
                 if (Title.IsNullOrWhiteSpace())
                 {
@@ -98,7 +98,7 @@ namespace FoxIDs.Models.Api
                 Elements = null;
 
                 Modules ??= new ExtendedUiModules();
-                if (PredefinedType == ExtendedUiPredefinedTypes.NemLoginPrivateCprMatch)
+                if (ModuleType == ExtendedUiModuleTypes.NemLoginPrivateCprMatch)
                 {
                     Modules.NemLogin ??= new ExtendedUiNemLoginModule();
 
@@ -109,7 +109,7 @@ namespace FoxIDs.Models.Api
                 }
                 else
                 {
-                    results.Add(new ValidationResult($"The predefined type '{PredefinedType}' is not supported.", [nameof(PredefinedType)]));
+                    results.Add(new ValidationResult($"The module type '{ModuleType}' is not supported.", [nameof(ModuleType)]));
                 }
             }
 

@@ -1,9 +1,9 @@
 namespace FoxIDs.Models.Api
 {
     /// <summary>
-    /// Predefined extended UI templates.
+    /// Extended UI module types.
     /// </summary>
-    public enum ExtendedUiPredefinedTypes
+    public enum ExtendedUiModuleTypes
     {
         /// <summary>
          /// NemLog-in (private) SubjectMatchesCPR validation and CPR claim issuance.

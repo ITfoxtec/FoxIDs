@@ -107,7 +107,7 @@
             <button type="button" class="dropdown-item btn btn-link" @onclick="AddBlankExtendedUi">Add extended UI (customisable)</button>
             <div class="dropdown-divider"></div>
             <h6 class="dropdown-header">Modules</h6>
-            <ExtendedUiNemLoginPrivateCprMatch Section="ExtendedUiModuleSections.MenuItem" Model="Model" />
+            <ExtendedUiNemLoginPrivateCprMatch Section="ExtendedUiModuleSections.MenuItem" Model="Model" OnChanged="OnModuleChanged" />
         </div>
     </div>
 </div>
@@ -132,6 +132,11 @@
     }
 
     private static bool IsModule(ExtendedUiViewModel extendedUi) => extendedUi?.ModuleType != null;
+
+    private void OnModuleChanged()
+    {
+        StateHasChanged();
+    }
 
     [Parameter]
     public bool IsSaml { get; set; }

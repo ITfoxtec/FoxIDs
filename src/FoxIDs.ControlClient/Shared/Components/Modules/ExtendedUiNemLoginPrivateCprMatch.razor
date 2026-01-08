@@ -45,7 +45,10 @@ else if (Section == ExtendedUiModuleSections.Details)
     [Parameter]
     public List<ExtendedUiViewModel> Model { get; set; }
 
-    private void AddNemLoginPrivateCprMatchExtendedUi(MouseEventArgs e)
+    [Parameter]
+    public EventCallback OnChanged { get; set; }
+
+    private async Task AddNemLoginPrivateCprMatchExtendedUi(MouseEventArgs e)
     {
         if (Model == null)
         {
@@ -63,6 +66,11 @@ else if (Section == ExtendedUiModuleSections.Details)
             ShowDetails = true
         };
         Model.Add(extendedUi);
+
+        if (OnChanged.HasDelegate)
+        {
+            await OnChanged.InvokeAsync();
+        }
     }
 
     private bool IsNemLoginModule() => ExtendedUi?.ModuleType == ExtendedUiModuleTypes.NemLoginPrivateCprMatch;

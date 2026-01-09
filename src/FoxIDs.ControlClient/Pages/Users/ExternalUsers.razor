@@ -125,6 +125,10 @@
                                 <FFieldText @bind-Value="externalUser.Form.Model.UpPartyName" For="@(() => externalUser.Form.Model.UpPartyName)" />
                             }
                             <FFieldText @bind-Value="externalUser.Form.Model.UserId" For="@(() => externalUser.Form.Model.UserId)" />
+                            @if (!externalUser.Form.Model.ExpireAtText.IsNullOrWhiteSpace())
+                            {
+                                <FFieldText @bind-Value="externalUser.Form.Model.ExpireAtText" For="@(() => externalUser.Form.Model.ExpireAtText)" />
+                            }
                         }
                         <FInputToggle @bind-Value="externalUser.Form.Model.DisableAccount" For="@(() => externalUser.Form.Model.DisableAccount)" Negation="true" TextType="e.d" />
 
@@ -185,9 +189,15 @@
             else
             {
                 <button type="button" class="btn btn-link text-left pl-0" style="min-width: 0; overflow: hidden;" @onclick="@(async () => await ShowUpdateExternalUserAsync(externalUser))">
-                    <span class="d-flex align-items-center flex-nowrap text-truncate overflow-hidden" style="min-width: 0;">
-                        <span class="badge badge-light border mr-2 mt-1 flex-shrink-0 d-inline-flex">@GetInfoTextType(externalUser)</span>
-                        <span class="text-truncate" style="min-width: 0">@GetInfoText(externalUser, includeIdentifiers: true)</span>
+                    <span class="d-flex flex-column text-truncate overflow-hidden" style="min-width: 0;">
+                        <span class="d-flex align-items-center flex-nowrap text-truncate overflow-hidden" style="min-width: 0;">
+                            <span class="badge badge-light border mr-2 mt-1 flex-shrink-0 d-inline-flex">@GetInfoTextType(externalUser)</span>
+                            <span class="text-truncate" style="min-width: 0">@GetInfoText(externalUser, includeIdentifiers: true)</span>
+                        </span>
+                        @if (!externalUser.ExpireAtText.IsNullOrWhiteSpace())
+                        {
+                            <span class="text-muted small text-truncate" style="min-width: 0;">Expire at: @externalUser.ExpireAtText</span>
+                        }
                     </span>
                 </button>
             }

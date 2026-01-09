@@ -4,6 +4,7 @@ using ITfoxtec.Identity;
 using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -18,6 +19,7 @@ namespace FoxIDs.Client.Models.ViewModels
             LinkClaimValue = externalUser.LinkClaimValue;
             RedemptionClaimValue = externalUser.RedemptionClaimValue;
             UserId = externalUser.UserId;
+            ExpireAt = externalUser.ExpireAt;
             DisableAccount = externalUser.DisableAccount;
 
             LoadName(externalUser.Claims);
@@ -26,6 +28,18 @@ namespace FoxIDs.Client.Models.ViewModels
         public string Name { get; private set; }
 
         public string UpPartyDisplayName { get; set; }
+
+        [Display(Name = "Expire at")]
+        public string ExpireAtText
+        {
+            get
+            {
+                return ExpireAt.HasValue && ExpireAt.Value > 0
+                    ? DateTimeOffset.FromUnixTimeSeconds(ExpireAt.Value).ToUniversalTime().ToLocalTime().ToString()
+                    : string.Empty;
+            }
+            set { }
+        }
 
         public bool Edit { get; set; }
 

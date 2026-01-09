@@ -77,7 +77,7 @@ namespace FoxIDs.Client.Pages.Users
             externalUserFilterForm?.ClearError();
             try
             {
-                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(null));
+                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(null, null));
             }
             catch (TokenUnavailableException)
             {
@@ -95,7 +95,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             try
             {
-                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(externalUserFilterForm.Model.FilterValue));
+                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(externalUserFilterForm.Model.FilterValue, externalUserFilterForm.Model.FilterValue));
             }
             catch (FoxIDsApiException ex)
             {
@@ -114,7 +114,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             try
             {
-                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(externalUserFilterForm.Model.FilterValue, paginationToken: paginationToken), addUsers: true);
+                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(externalUserFilterForm.Model.FilterValue, externalUserFilterForm.Model.FilterValue, paginationToken: paginationToken), addUsers: true);
             }
             catch (TokenUnavailableException)
             {

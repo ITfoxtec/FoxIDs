@@ -44,11 +44,12 @@ namespace FoxIDs.Controllers
         /// <param name="filterPhone">Filter by phone.</param>
         /// <param name="filterUsername">Filter by username.</param>
         /// <param name="filterUserId">Filter by user ID.</param>
+        /// <param name="filterClaimValue">Filter by claim value.</param>
         /// <param name="paginationToken">The pagination token.</param>
         /// <returns>Users.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.User>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.PaginationResponse<Api.User>>> GetUsers(string filterEmail = null, string filterPhone = null, string filterUsername = null, string filterUserId = null, string paginationToken = null)
+        public async Task<ActionResult<Api.PaginationResponse<Api.User>>> GetUsers(string filterEmail = null, string filterPhone = null, string filterUsername = null, string filterUserId = null, string filterClaimValue = null, string paginationToken = null)
         {
             try
             {
@@ -56,9 +57,10 @@ namespace FoxIDs.Controllers
                 filterPhone = filterPhone?.Trim();
                 filterUsername = filterUsername?.Trim();
                 filterUserId = filterUserId?.Trim();
+                filterClaimValue = filterClaimValue?.Trim();
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
 
-                var whereQuery = LinqFilterExpression.CreateUserFilterExpression(filterEmail, filterPhone, filterUsername, filterUserId);
+                var whereQuery = LinqFilterExpression.CreateUserFilterExpression(filterEmail, filterPhone, filterUsername, filterUserId, filterClaimValue);
 
                 (var mUsers, var nextPaginationToken) = await tenantDataRepository.GetManyAsync<User>(idKey, whereQuery: whereQuery, paginationToken: paginationToken);
       
@@ -77,8 +79,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.User).Name}' by filter email '{filterEmail}', phone '{filterPhone}', username '{filterUsername}', userId '{filterUserId}'.");
-                    return NotFound(typeof(Api.User).Name, new { filterEmail, filterPhone, filterUsername, filterUserId }.ToJson());
+                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.User).Name}' by filter email '{filterEmail}', phone '{filterPhone}', username '{filterUsername}', userId '{filterUserId}', claim value '{filterClaimValue}'.");
+                    return NotFound(typeof(Api.User).Name, new { filterEmail, filterPhone, filterUsername, filterUserId, filterClaimValue }.ToJson());
                 }
                 throw;
             }

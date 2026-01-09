@@ -13,7 +13,7 @@ namespace FoxIDs.Client.Services
         public ExternalUserService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
 
-        public async Task<PaginationResponse<ExternalUser>> GetExternalUsersAsync(string filterValue, string paginationToken = null) => await GetListAsync<ExternalUser>(listApiUri, filterValue, parmName1: nameof(filterValue), paginationToken: paginationToken);
+        public async Task<PaginationResponse<ExternalUser>> GetExternalUsersAsync(string filterValue, string paginationToken = null) => await GetListAsync<ExternalUser>(listApiUri, filterValue, parmValue2: filterValue, parmName1: nameof(filterValue), parmName2: "filterClaimValue", paginationToken: paginationToken);
 
         public async Task<ExternalUser> GetExternalUserAsync(string upPartyName, string linkClaimValue, string redemptionClaimValue) => await GetAsync<ExternalUserId, ExternalUser>(apiUri, new ExternalUserId { UpPartyName = upPartyName, LinkClaimValue = linkClaimValue, RedemptionClaimValue = redemptionClaimValue });
         public async Task<ExternalUser> CreateExternalUserAsync(ExternalUserRequest externalUser) => await PostResponseAsync<ExternalUserRequest, ExternalUser>(apiUri, externalUser);

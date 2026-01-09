@@ -59,6 +59,7 @@ namespace FoxIDs.Logic
                             var oldExternalIserId = externalUser.Id;
                             externalUser.Id = await ExternalUser.IdFormatAsync(RouteBinding, party.Name, await linkClaimValue.HashIdStringAsync());
                             externalUser.LinkClaimValue = linkClaimValue;
+                            ExtendExternalUserLifetime(externalUser, now);
                             await tenantDataRepository.CreateAsync(externalUser);
                             await tenantDataRepository.DeleteAsync<ExternalUser>(oldExternalIserId);
                         }
@@ -80,6 +81,11 @@ namespace FoxIDs.Logic
                 {
                     if (!externalUser.DisableAccount)
                     {
+                        if (ExtendExternalUserLifetime(externalUser, now))
+                        {
+                            await tenantDataRepository.UpdateAsync(externalUser);
+                        }
+
                         var externalUserClaims = GetExternalUserClaim(party, externalUser);
                         logger.ScopeTrace(() => $"AuthMethod, External user output JWT claims '{externalUserClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                         return (externalUserClaims, null, false);
@@ -209,6 +215,24 @@ namespace FoxIDs.Logic
             }
 
             return externalUser;
+        }
+
+        private static bool ExtendExternalUserLifetime(ExternalUser externalUser, long now)
+        {
+            var lifetimeSeconds = externalUser?.ExpireInSeconds ?? 0;
+            if (lifetimeSeconds <= 0)
+            {
+                return false;
+            }
+
+            var newExpireAt = now + lifetimeSeconds;
+            if (externalUser.ExpireAt != newExpireAt)
+            {
+                externalUser.ExpireAt = newExpireAt;
+                return true;
+            }
+
+            return false;
         }
 
         private List<Claim> GetExternalUserClaim<TProfile>(UpPartyWithExternalUser<TProfile> party, ExternalUser externalUser) where TProfile : UpPartyProfile

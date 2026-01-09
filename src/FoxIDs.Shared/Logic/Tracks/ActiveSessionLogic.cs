@@ -379,7 +379,7 @@ namespace FoxIDs.Logic
                 (!queryBySessionId || s.SessionId == sessionId) &&
                 (!queryByDownPartyName || (s.DownPartyLinks != null && s.DownPartyLinks.Any(d => d.Name == downPartyName))) &&
                 (!queryByUpPartyName || (s.UpPartyLinks != null && s.UpPartyLinks.Any(u => u.Name == upPartyName))) &&
-                (!queryByUpPartyType || (s.UpPartyLinks != null && s.UpPartyLinks.Any(u => u.Type == upPartyType)));;
+                (!queryByUpPartyType || (s.UpPartyLinks != null && s.UpPartyLinks.Any(u => u.Type == upPartyType.Value)));
         }
     }
 }

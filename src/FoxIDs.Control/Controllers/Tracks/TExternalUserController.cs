@@ -40,6 +40,8 @@ namespace FoxIDs.Controllers
         {
             try
             {
+                await DeleteExpiredExternalUsersAsync();
+
                 if (!await ModelState.TryValidateObjectAsync(userRequest)) return BadRequest(ModelState);
                 userRequest = ToLowerAndLower(userRequest);
 
@@ -118,6 +120,8 @@ namespace FoxIDs.Controllers
         {
             try
             {
+                await DeleteExpiredExternalUsersAsync();
+
                 if (!await ModelState.TryValidateObjectAsync(userRequest)) return BadRequest(ModelState);
                 userRequest = ToLowerAndLower(userRequest);
 
@@ -220,6 +224,8 @@ namespace FoxIDs.Controllers
         {
             try
             {
+                await DeleteExpiredExternalUsersAsync();
+
                 if (!await ModelState.TryValidateObjectAsync(userRequest)) return BadRequest(ModelState);
 
                 var mExternalUser = await GetExternalUserAsync(userRequest);
@@ -235,6 +241,13 @@ namespace FoxIDs.Controllers
                 }
                 throw;
             }
+        }
+
+        private async Task DeleteExpiredExternalUsersAsync()
+        {
+            var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+            var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            await tenantDataRepository.DeleteManyAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.ExternalUser) && u.ExpireAt > 0 && u.ExpireAt < now);
         }
 
         private async Task CheckIfRedemptionClaimValueExists(string upPartyName, string redemptionClaimValue)

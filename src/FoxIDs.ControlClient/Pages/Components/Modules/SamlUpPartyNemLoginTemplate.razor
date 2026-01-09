@@ -84,6 +84,10 @@
                             @if (Model.Modules.NemLogin.RequestCpr)
                             {
                                 <FInputToggle @bind-Value="Model.Modules.NemLogin.SaveCprOnExternalUsers" For="@(() => Model.Modules.NemLogin.SaveCprOnExternalUsers)" TextType="y.n" OnValidChange="NemLoginCprFlowChanged" />
+                                @if (Model.Modules.NemLogin.SaveCprOnExternalUsers && Model.LinkExternalUser != null)
+                                {
+                                    <FInputNumber @bind-Value="Model.LinkExternalUser.ExternalUserLifetime" For="@(() => Model.LinkExternalUser.ExternalUserLifetime)" />
+                                }
                             }
                         }
 

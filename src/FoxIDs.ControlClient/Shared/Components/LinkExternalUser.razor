@@ -24,6 +24,7 @@
 
 <FInputToggle @bind-Value="Model.AutoCreateUser" For="@(() => Model.AutoCreateUser)" TextType="y.n" />
 <FInputToggle @bind-Value="Model.RequireUser" For="@(() => Model.RequireUser)" TextType="y.n" />
+<FInputNumber @bind-Value="Model.ExternalUserLifetime" For="@(() => Model.ExternalUserLifetime)" />
 
 @if (IsSaml)
 {

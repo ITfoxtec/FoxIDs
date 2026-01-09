@@ -272,6 +272,10 @@ namespace FoxIDs.Client.Logic.Modules
             UpdateNemLoginAuthnRequestExtensionsXml(model);
 
             ApplyNemLoginCprFlow(model);
+            if (model.LinkExternalUser != null)
+            {
+                model.LinkExternalUser.ExternalUserLifetime = 0;
+            }
         }
 
         public bool PrepareNemLoginBeforeSave(SamlUpPartyViewModel model)
@@ -464,8 +468,7 @@ namespace FoxIDs.Client.Logic.Modules
                 return;
             }
 
-            EnsureNemLoginModule(model);
-            ApplyNemLoginCprFlow(model);
+            ApplyNemLoginCprFlow(model, true);
         }
         public async Task UpdateNemLoginEnvironmentAsync(SamlUpPartyViewModel model)
         {
@@ -1194,7 +1197,7 @@ namespace FoxIDs.Client.Logic.Modules
             var prefix = isOiosaml303 ? NemLoginOiosaml303LoaPrefix : NemLoginOiosaml400LoaPrefix;
             return $"{prefix}{level}";
         }
-        private void ApplyNemLoginCprFlow(SamlUpPartyViewModel model)
+        private void ApplyNemLoginCprFlow(SamlUpPartyViewModel model, bool setExternalUserLifetime = false)
         {
             if (model?.ModuleType != UpPartyModuleTypes.NemLogin)
             {
@@ -1280,6 +1283,10 @@ namespace FoxIDs.Client.Logic.Modules
             });
 
             model.LinkExternalUser ??= new LinkExternalUserViewModel();
+            if (setExternalUserLifetime)
+            {
+                model.LinkExternalUser.ExternalUserLifetime = 0;
+            }
             model.LinkExternalUser.AutoCreateUser = true;
             model.LinkExternalUser.RequireUser = false;
             model.LinkExternalUser.LinkClaimType = JwtClaimTypes.Subject;
@@ -1322,6 +1329,8 @@ namespace FoxIDs.Client.Logic.Modules
                 model.LinkExternalUser.OverwriteClaims = false;
                 model.LinkExternalUser.LinkClaimType = null;
             }
+
+            model.LinkExternalUser.ExternalUserLifetime = 0;
         }
 
         private static bool IsNemLoginCprTransform(ClaimTransformViewModel transform)

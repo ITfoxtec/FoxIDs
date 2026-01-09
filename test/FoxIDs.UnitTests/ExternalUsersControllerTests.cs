@@ -101,6 +101,13 @@ namespace FoxIDs.UnitTests
 
             var tenantDataRepositoryMock = new Mock<ITenantDataRepository>(MockBehavior.Strict);
             tenantDataRepositoryMock
+                .Setup(r => r.DeleteManyAsync<ExternalUser>(
+                    It.IsAny<Track.IdKey>(),
+                    It.IsAny<Expression<Func<ExternalUser, bool>>>(),
+                    It.IsAny<TelemetryScopedLogger>()))
+                .ReturnsAsync(0);
+
+            tenantDataRepositoryMock
                 .Setup(r => r.GetManyAsync<ExternalUser>(
                     It.IsAny<Track.IdKey>(),
                     It.IsAny<Expression<Func<ExternalUser, bool>>>(),

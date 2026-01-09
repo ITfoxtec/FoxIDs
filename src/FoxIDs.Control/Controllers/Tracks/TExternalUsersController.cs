@@ -42,6 +42,8 @@ namespace FoxIDs.Controllers
         {
             try
             {
+                await DeleteExpiredExternalUsersAsync();
+
                 filterValue = filterValue?.Trim();
                 filterClaimValue = filterClaimValue?.Trim();
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
@@ -69,6 +71,13 @@ namespace FoxIDs.Controllers
                 }
                 throw;
             }
+        }
+
+        private async Task DeleteExpiredExternalUsersAsync()
+        {
+            var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+            var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            await tenantDataRepository.DeleteManyAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType) && u.ExpireAt > 0 && u.ExpireAt < now);
         }
 
         private async Task<(IReadOnlyCollection<ExternalUser> mExternalUsers, string nextPaginationToken)> QueryExternalUsersInternal(string filterValue, string filterClaimValue, string paginationToken, Track.IdKey idKey)

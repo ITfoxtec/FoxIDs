@@ -16,6 +16,12 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "require_user")]
         public bool RequireUser { get; set; }
 
+        /// <summary>
+        /// External user lifetime in seconds. 0 to disable expiration.
+        /// </summary>
+        [JsonProperty(PropertyName = "external_user_lifetime")]
+        public int ExternalUserLifetime { get; set; }
+
         [Required]
         [MaxLength(Constants.Models.Claim.JwtTypeLength)]
         [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]

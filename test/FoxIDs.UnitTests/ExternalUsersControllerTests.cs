@@ -22,7 +22,7 @@ namespace FoxIDs.UnitTests
         [Fact]
         public async Task GetExternalUsers_FilterClaimValue_ReturnsExternalUser()
         {
-            var controller = CreateController(out _);
+            var controller = CreateController();
 
             var result = await controller.GetExternalUsers(filterValue: null, filterClaimValue: "claim-value");
 
@@ -36,7 +36,7 @@ namespace FoxIDs.UnitTests
         [Fact]
         public async Task GetExternalUsers_FilterValueAndClaimValue_ReturnsUsersFromEitherFilter()
         {
-            var controller = CreateController(out _);
+            var controller = CreateController();
 
             var result = await controller.GetExternalUsers(filterValue: "link-two", filterClaimValue: "claim-value");
 
@@ -48,7 +48,7 @@ namespace FoxIDs.UnitTests
             Assert.Contains(response.Data, user => user.UserId == "user-2");
         }
 
-        private static TExternalUsersController CreateController(out List<ExternalUser> externalUsers)
+        private static TExternalUsersController CreateController()
         {
             var httpContext = new DefaultHttpContext
             {
@@ -63,7 +63,7 @@ namespace FoxIDs.UnitTests
             var httpContextAccessor = new HttpContextAccessor { HttpContext = httpContext };
             var logger = TelemetryLoggerHelper.ScopedLoggerObject(httpContextAccessor);
 
-            externalUsers = new List<ExternalUser>
+            var externalUsers = new List<ExternalUser>
             {
                 new ExternalUser
                 {

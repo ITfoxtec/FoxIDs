@@ -87,7 +87,7 @@ namespace FoxIDs.Controllers
             else if (filterValue.IsNullOrWhiteSpace())
             {
                 return await tenantDataRepository.GetManyAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType) &&
-                    u.Claims != null && u.Claims.Any(c => c.Values.Any(v => v.Contains(filterClaimValue, StringComparison.CurrentCultureIgnoreCase))), paginationToken: paginationToken);
+                    u.Claims.Any(c => c.Values.Any(v => v.Contains(filterClaimValue, StringComparison.CurrentCultureIgnoreCase))), paginationToken: paginationToken);
             }
             else
             {
@@ -95,7 +95,7 @@ namespace FoxIDs.Controllers
                     ((u.LinkClaimValue != null && u.LinkClaimValue.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase)) ||
                     (u.RedemptionClaimValue != null && u.RedemptionClaimValue.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase)) ||
                     u.UserId.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase) ||
-                    (u.Claims != null && u.Claims.Any(c => c.Values.Any(v => v.Contains(filterClaimValue, StringComparison.CurrentCultureIgnoreCase))))), paginationToken: paginationToken);
+                    u.Claims.Any(c => c.Values.Any(v => v.Contains(filterClaimValue, StringComparison.CurrentCultureIgnoreCase)))), paginationToken: paginationToken);
             }
         }
     }

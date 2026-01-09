@@ -12,7 +12,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Optional require external user")]
         public bool RequireUser { get; set; }
 
-        [Display(Name = "External user lifetime in seconds (0 to disable)")]
+        [Display(Name = "External user lifetime in seconds (0 to disable, sliding expiration)")]
         public int ExternalUserLifetime { get; set; }
 
         [Required]

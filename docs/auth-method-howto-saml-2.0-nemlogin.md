@@ -28,7 +28,7 @@ NemLog-in for private sector is a low-cost way to offer MitID login. NemLog-in a
 | One-time NemLog-in onboarding fee | 4,500 DKK |
 | NemLog-in price per login | 0.02 DKK |
 | MitID base price per login (applies to all MitID brokers) | 0.175 DKK |
-| Total price per login | 0.195 DKK |
+| **Total price per login** | **0.195 DKK** |
 | FoxIDs Pro plan per month (includes 2,000 logins per month) | 223.80 DKK |
 | FoxIDs price per login | 0.038 DKK |
 

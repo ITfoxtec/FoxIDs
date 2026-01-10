@@ -204,7 +204,11 @@
 
             <div class="active-group active">
                 <div class="card">
-                    <div class="card-body pt-3">
+                    <div class="card-body">
+                        <div class="info-text" role="alert">
+                            Optional set a minimum level of assurance (LoA).
+                        </div>
+
                         <FInputSelect TValue="string" @bind-Value="Model.Modules.NemLogin.NemLoginMinimumLoa" For="@(() => Model.Modules.NemLogin.NemLoginMinimumLoa)" OnValidChange="NemLoginMinimumLoaChanged">
                             <option value=""></option>
                             @if (isNemLoginOiosaml400)
@@ -229,7 +233,7 @@
             {
                 <div class="active-group active">
                     <div class="card">
-                        <div class="card-body">
+                        <div class="card-body mb-2">
                             <div class="info-text" role="alert">
                                 Optional ID types and credential types are sent as authn context class references.
                             </div>
@@ -265,7 +269,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="info-text" role="alert">
-                            Creates an authentication method profile per app-switch (Android/iOS). You can allow both the main authentication method and the app-switch profiles for each application.
+                            Optional configure app-switch which creates an authentication method profile per app-switch (Android, name: <code>android</code> / iOS, name: <code>ios</code>). You can allow (select) the app-switch profiles for each FoxIDs application configuration.
                         </div>
                         <FInputToggle @bind-Value="Model.Modules.NemLogin.NemLoginAppSwitchAndroidEnabled" For="@(() => Model.Modules.NemLogin.NemLoginAppSwitchAndroidEnabled)" TextType="y.n" OnValidChange="NemLoginAuthnRequestExtensionsChanged" />
                         @if (Model.Modules.NemLogin.NemLoginAppSwitchAndroidEnabled)

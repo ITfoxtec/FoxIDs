@@ -17,7 +17,7 @@
 
 Use the NemLog-in template to configure a SAML 2.0 authentication method with OIOSAML 3.0.3 defaults. The template guides you through the public or private sector setup and generates the metadata you upload to NemLog-in.
 
-This guide covers OIOSAML 3.0.3 only. OIOSAML 4.0.0 is not covered at this time.
+This guide covers [OIOSAML 3.0.3](https://digst.dk/media/1gxag1pn/oiosaml-web-sso-profile-303.pdf) only. [OIOSAML 4.0.0](https://digst.dk/media/o2qcga0n/oiosaml-websso-profile-400.pdf) is not covered at this time.
 
 By configuring a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and an [OpenID Connect application registration](app-reg-oidc.md) FoxIDs becomes a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. FoxIDs then handles the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application.
 

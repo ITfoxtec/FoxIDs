@@ -291,7 +291,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\howto-saml-nemlogin-template-cpr.png = docs\images\howto-saml-nemlogin-template-cpr.png
 		docs\images\howto-saml-nemlogin-template-download-metadata.png = docs\images\howto-saml-nemlogin-template-download-metadata.png
 		docs\images\howto-saml-nemlogin-template-it-system.png = docs\images\howto-saml-nemlogin-template-it-system.png
-		docs\images\howto-saml-nemlogin-template-overview.png = docs\images\howto-saml-nemlogin-template-overview.png
 		docs\images\howto-saml-nemlogin-template-select.png = docs\images\howto-saml-nemlogin-template-select.png
 		docs\images\howto-saml-nemlogin-template-settings.png = docs\images\howto-saml-nemlogin-template-settings.png
 		docs\images\howto-saml-nemlogin3-auth-attributes.png = docs\images\howto-saml-nemlogin3-auth-attributes.png

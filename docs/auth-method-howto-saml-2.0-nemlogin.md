@@ -19,9 +19,25 @@ Use the NemLog-in template to configure a SAML 2.0 authentication method with OI
 
 This guide covers [OIOSAML 3.0.3](https://digst.dk/media/1gxag1pn/oiosaml-web-sso-profile-303.pdf) only. [OIOSAML 4.0.0](https://digst.dk/media/o2qcga0n/oiosaml-websso-profile-400.pdf) is not covered at this time.
 
-By configuring a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and an [OpenID Connect application registration](app-reg-oidc.md) FoxIDs becomes a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. FoxIDs then handles the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application.
+## Pricing
 
-![NemLog-in template overview](images/howto-saml-nemlogin-template-overview.png)
+NemLog-in for private sector is a low-cost way to offer MitID login. NemLog-in adds 0.02 DKK on top of the MitID base price (which applies to all brokers) and NemLog-in has no monthly fee. The tradeoff is that NemLog-in uses SAML 2.0 (OIOSAML) and has additional requirements. FoxIDs handles this and lets you connect your application with OpenID Connect.
+
+| Item | Price |
+| --- | --- |
+| One-time NemLog-in onboarding fee | 4,500 DKK |
+| NemLog-in price per login | 0.02 DKK |
+| MitID base price per login (applies to all MitID brokers) | 0.175 DKK |
+| Total price per login | 0.195 DKK |
+| FoxIDs Pro plan per month (includes 2,000 logins per month) | 223.80 DKK |
+| FoxIDs price per login | 0.038 DKK |
+
+> The same price applies for both MitID private users and MitID employee users.
+
+NemLog-in is free to use for the public sector.
+
+## OpenID Connect bridge
+By configuring a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and an [OpenID Connect application registration](app-reg-oidc.md) FoxIDs becomes a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. FoxIDs then handles the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application.
 
 ## Get started with NemLog-in
 

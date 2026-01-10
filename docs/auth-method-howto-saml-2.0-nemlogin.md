@@ -146,8 +146,12 @@ When you create an IT system in NemLog-in it has two tabs: integration test and 
 1. Create a FoxIDs NemLog-in connection for integration test with the template
 2. In the [NemLog-in administration portal](https://administration.nemlog-in.dk/), upload the SP metadata to the integration test tab and provision to integration test
 3. Upload the test report:
-   - [Integration test report for public sector](https://cms.nemlog-in.dk/media/ozgd4sgz/nemlog-in-integrationstestrapport-til-offentlige-it-systemer.pdf)
-   - [Integration test report for private sector](https://cms.nemlog-in.dk/media/liplqxki/nemlog-in-integrationstestrapport-til-private-tjenester.pdf)
+   - Public sector:
+     - [Integration test report (NemLog-in)](https://cms.nemlog-in.dk/media/ozgd4sgz/nemlog-in-integrationstestrapport-til-offentlige-it-systemer.pdf)
+     - [Integration test report (FoxIDs pre-filled)](https://www.foxids.com/assets/modules/nemlogin/nemlog-in-integrationstestrapport-offentlige.pdf)
+   - Private sector:
+     - [Integration test report (NemLog-in)](https://cms.nemlog-in.dk/media/liplqxki/nemlog-in-integrationstestrapport-til-private-tjenester.pdf)
+     - [Integration test report (FoxIDs pre-filled)](https://www.foxids.com/assets/modules/nemlogin/nemlog-in-integrationstestrapport-private.pdf)
 4. After approval, the production tab opens
 5. Create a FoxIDs NemLog-in connection for production with the template
 6. Upload the SP metadata to the production tab and provision to production

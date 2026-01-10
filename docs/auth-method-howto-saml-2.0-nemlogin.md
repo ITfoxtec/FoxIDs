@@ -28,7 +28,7 @@ By configuring a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a
 Before you can create IT systems for NemLog-in, your organization must be connected. This is only necessary once per organization.
 
 1. Follow the NemLog-in onboarding steps at https://tu.nemlog-in.dk/tilslutning/ (one-time per organization)
-2. Once the organization is connected, create IT systems in the [NemLog-in administration portal](https://administration.nemlog-in.dk/). Each IT systems integration test or production tab corresponds to a FoxIDs authentication method.
+2. Once the organization is connected, create IT systems in the [NemLog-in administration portal](https://administration.nemlog-in.dk/). Each IT system integration test or production tab corresponds to a FoxIDs authentication method.
 
 Other useful resources:
 - The [NemLog-in development portal](https://tu.nemlog-in.dk/oprettelse-og-administration-af-it-systemer/) with documentation for test and production environments
@@ -84,11 +84,15 @@ NemLog-in requires an OCES3 certificate.
 - Integration test: the template can use a default test certificate, which you can replace if needed
 - Production: upload your own OCES3 certificate. You can create a production OCES3 certificate in the [certificate administration](https://erhvervsadministration.nemlog-in.dk/certificates)
 
+An OCES3 certificate is valid for 3 years. Update the NemLog-in template before the certificate expires and update the certificate in NemLog-in.
+
 ![NemLog-in certificate setup](images/howto-saml-nemlogin-template-certificate.png)
 
 **5) Metadata URL and IdP metadata**
 
 The template pre-fills the NemLog-in IdP metadata URL for the selected environment.
+
+When NemLog-in changes certificate, the change is provisioned automatically. The NemLog-in template uses NemLog-in metadata exposed via the FoxIDs website, which we keep updated, and the template automatically loads the new metadata.
 
 **6) Level of assurance (optional)**
 
@@ -117,6 +121,8 @@ And possible credential types:
 
 **8) App-switch**
 
+Optionally configure app-switch which creates an authentication method profile per app-switch (Android, name: `android` / iOS, name: `ios`). You can allow (select) the app-switch profiles for each FoxIDs application configuration.
+
 ![Android and iOS app-switch settings](images/howto-saml-nemlogin-template-app-switch.png)
 
 **9) Add contact person**
@@ -135,14 +141,19 @@ If you change attributes or authentication context later, you must upload the me
 
 ## Configure the NemLog-in IT system
 
-1. In the [NemLog-in administration portal](https://administration.nemlog-in.dk/), select the IT system
-2. Upload the SP metadata you downloaded from FoxIDs
-3. Save the technical details
-4. For integration test, provision to integration test and apply
+When you create an IT system in NemLog-in it has two tabs: integration test and production.
+
+1. Create a FoxIDs NemLog-in connection for integration test with the template
+2. In the [NemLog-in administration portal](https://administration.nemlog-in.dk/), upload the SP metadata to the integration test tab and provision to integration test
+3. Upload the test report:
+   - [Integration test report for public sector](https://cms.nemlog-in.dk/media/ozgd4sgz/nemlog-in-integrationstestrapport-til-offentlige-it-systemer.pdf)
+   - [Integration test report for private sector](https://cms.nemlog-in.dk/media/liplqxki/nemlog-in-integrationstestrapport-til-private-tjenester.pdf)
+4. After approval, the production tab opens
+5. Create a FoxIDs NemLog-in connection for production with the template
+6. Upload the SP metadata to the production tab and provision to production
+7. You are now in production with MitID
 
 ![Upload NemLog-in metadata](images/howto-saml-nemlogin-template-it-system.png)
-
-> To configure production, you must upload a test report, have it approved, and then repeat the FoxIDs and NemLog-in configuration in production.
 
 ## Legacy
 

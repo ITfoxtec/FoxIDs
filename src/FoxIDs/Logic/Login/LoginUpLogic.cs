@@ -45,13 +45,16 @@ namespace FoxIDs.Logic
             this.hrdLogic = hrdLogic;
         }
 
-        public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, ILoginRequest loginRequest, bool isAutoRedirect = false, string hrdLoginUpPartyName = null)
+        public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, ILoginRequest loginRequest, bool isAutoRedirect = false, string hrdLoginUpPartyName = null, bool logPlanUsage = true)
         {
             logger.ScopeTrace(() => $"AuthMethod, Login redirect ({(!isAutoRedirect ? "one" : "auto selected")} authentication method link).");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
-            planUsageLogic.LogLoginEvent(PartyTypes.Login);
+            if (logPlanUsage)
+            {
+                planUsageLogic.LogLoginEvent(PartyTypes.Login);
+            }
 
             if (!isAutoRedirect)
             {

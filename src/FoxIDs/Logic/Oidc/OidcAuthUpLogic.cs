@@ -64,13 +64,16 @@ namespace FoxIDs.Logic
             this.httpClientFactory = httpClientFactory;
         }
 
-        public async Task<IActionResult> AuthenticationRequestRedirectAsync(UpPartyLink partyLink, ILoginRequest loginRequest, string hrdLoginUpPartyName = null)
+        public async Task<IActionResult> AuthenticationRequestRedirectAsync(UpPartyLink partyLink, ILoginRequest loginRequest, string hrdLoginUpPartyName = null, bool logPlanUsage = true)
         {
             logger.ScopeTrace(() => "AuthMethod, OIDC Authentication request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
-            planUsageLogic.LogLoginEvent(PartyTypes.Oidc);
+            if (logPlanUsage)
+            {
+                planUsageLogic.LogLoginEvent(PartyTypes.Oidc);
+            }
 
             await loginRequest.ValidateObjectAsync();
 
@@ -107,7 +110,7 @@ namespace FoxIDs.Logic
 
             oidcUpSequenceData.ClientId = ResolveClientId(party);
             oidcUpSequenceData.RedirectUri = loginCallBackUrl;
-            oidcUpSequenceData.Nonce = nonce;  
+            oidcUpSequenceData.Nonce = nonce;
             if (party.Client.EnablePkce)
             {
                 var codeVerifier = RandomGenerator.Generate(64);
@@ -196,7 +199,7 @@ namespace FoxIDs.Logic
                     if (!nameValueCollection.ContainsKey(additionalParameter.Name))
                     {
                         nameValueCollection.Add(additionalParameter.Name, additionalParameter.Value);
-                    }                        
+                    }
                 }
                 logger.ScopeTrace(() => $"AuthMethod, AdditionalParameters request '{{{string.Join(", ", additionalParameters.Select(p => $"\"{p.Name}\": \"{p.Value}\""))}}}'.", traceType: TraceTypes.Message);
             }
@@ -614,7 +617,7 @@ namespace FoxIDs.Logic
                     {
                         throw;
                     }
-                    catch (Exception ex) 
+                    catch (Exception ex)
                     {
                         throw new EndpointException($"Unexpected status code. Status code={response.StatusCode}", ex) { RouteBinding = RouteBinding };
                     }
@@ -628,7 +631,7 @@ namespace FoxIDs.Logic
             {
                 if (!client.ClientSecret.IsNullOrEmpty())
                 {
-                    logger.ScopeTrace(() => $"AuthMethod, Client credentials basic '{ new ClientCredentials { ClientSecret = $"{(client.ClientSecret?.Length > 10 ? client.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJson() }'.", traceType: TraceTypes.Message);
+                    logger.ScopeTrace(() => $"AuthMethod, Client credentials basic '{new ClientCredentials { ClientSecret = $"{(client.ClientSecret?.Length > 10 ? client.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJson()}'.", traceType: TraceTypes.Message);
                     request.Headers.Authorization = new AuthenticationHeaderValue(IdentityConstants.BasicAuthentication.Basic, $"{clientId.OAuthUrlDencode()}:{client.ClientSecret.OAuthUrlDencode()}".Base64Encode());
                 }
             }
@@ -640,7 +643,7 @@ namespace FoxIDs.Logic
                     {
                         ClientSecret = client.ClientSecret,
                     };
-                    logger.ScopeTrace(() => $"AuthMethod, Client credentials post '{ new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJson() }'.", traceType: TraceTypes.Message);
+                    logger.ScopeTrace(() => $"AuthMethod, Client credentials post '{new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJson()}'.", traceType: TraceTypes.Message);
                     requestDictionary = requestDictionary.AddToDictionary(clientCredentials);
                 }
             }
@@ -733,7 +736,7 @@ namespace FoxIDs.Logic
                 var jwtToken = JwtHandler.ReadToken(idToken);
                 (string issuer, string tokenIssuer) = ValidateIdTokenIssuer(party, jwtToken);
 
-                var claimsPrincipal = await oidcJwtUpLogic.ValidateIdTokenAsync(idToken, issuer, party, sequenceData.ClientId);              
+                var claimsPrincipal = await oidcJwtUpLogic.ValidateIdTokenAsync(idToken, issuer, party, sequenceData.ClientId);
                 var nonce = claimsPrincipal.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Nonce);
                 if (!sequenceData.Nonce.Equals(nonce, StringComparison.Ordinal))
                 {
@@ -807,7 +810,7 @@ namespace FoxIDs.Logic
                     case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyLink.Id, SamlConvertLogic.ErrorToSamlStatus(error), jwtClaims: claims);
                     case PartyTypes.TrackLink:
-                        return await serviceProvider.GetService<TrackLinkAuthDownLogic>().AuthResponseAsync(sequenceData.DownPartyLink.Id, claims, error, errorDescription);                        
+                        return await serviceProvider.GetService<TrackLinkAuthDownLogic>().AuthResponseAsync(sequenceData.DownPartyLink.Id, claims, error, errorDescription);
 
                     default:
                         throw new NotSupportedException();

@@ -1,9 +1,9 @@
 <!--
 {
     "title":  "Connect to NemLog-in with SAML 2.0 (Template)",
-    "description":  "Use the NemLog-in template to configure an OIOSAML 3.0.3 SAML 2.0 authentication method for public or private sector and upload metadata to NemLog-in.",
+    "description":  "Use the NemLog-in template to configure a SAML 2.0 authentication method with OIOSAML 3.0.3 defaults and generate NemLog-in metadata.",
     "ogTitle":  "Connect to NemLog-in with SAML 2.0 (Template)",
-    "ogDescription":  "Use the NemLog-in template to configure an OIOSAML 3.0.3 SAML 2.0 authentication method for public or private sector and upload metadata to NemLog-in.",
+    "ogDescription":  "Use the NemLog-in template to configure a SAML 2.0 authentication method with OIOSAML 3.0.3 defaults and generate NemLog-in metadata.",
     "ogType":  "article",
     "ogImage":  "/images/foxids_logo.png",
     "twitterCard":  "summary_large_image",

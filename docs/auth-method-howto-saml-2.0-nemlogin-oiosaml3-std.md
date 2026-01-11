@@ -1,9 +1,9 @@
 <!--
 {
     "title":  "Connect to NemLog-in with SAML 2.0 (Legacy standard configuration)",
-    "description":  "Legacy guide for configuring NemLog-in OIOSAML 3.0.3 using the standard SAML 2.0 settings in FoxIDs.",
+    "description":  "Legacy guide for configuring NemLog-in (OIOSAML 3.0.3) with the standard SAML 2.0 settings in FoxIDs.",
     "ogTitle":  "Connect to NemLog-in with SAML 2.0 (Legacy standard configuration)",
-    "ogDescription":  "Legacy guide for configuring NemLog-in OIOSAML 3.0.3 using the standard SAML 2.0 settings in FoxIDs.",
+    "ogDescription":  "Legacy guide for configuring NemLog-in (OIOSAML 3.0.3) with the standard SAML 2.0 settings in FoxIDs.",
     "ogType":  "article",
     "ogImage":  "/images/foxids_logo.png",
     "twitterCard":  "summary_large_image",

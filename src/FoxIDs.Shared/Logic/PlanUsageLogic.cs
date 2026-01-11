@@ -184,7 +184,7 @@ namespace FoxIDs.Logic
                 }
             }
 
-            return Math.Round(rating, 1);
+            return Math.Round(rating, 2);
         }
 
         public async Task VerifyCanSendSmsAsync()

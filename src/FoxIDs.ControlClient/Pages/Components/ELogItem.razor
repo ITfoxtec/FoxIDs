@@ -106,6 +106,11 @@
         {
             <div>@Constants.Logs.Results.DownPartyId.GetDisplayLogKey(): @downPartyId.GetDisplayLogValue()</div>
         }
+        var downPartyType = @Item.Values.GetValue(Constants.Logs.Results.DownPartyType);
+        if (!downPartyType.IsNullOrWhiteSpace())
+        {
+            <div>@Constants.Logs.Results.DownPartyType.GetDisplayLogKey(): @downPartyType.GetDisplayLogValue()</div>
+        }
         var upPartyId = @Item.Values.GetValue(Constants.Logs.Results.UpPartyId);
         if (!upPartyId.IsNullOrWhiteSpace())
         {
@@ -161,6 +166,11 @@
         if (!downPartyId.IsNullOrWhiteSpace())
         {
             <div>@Constants.Logs.Results.DownPartyId.GetDisplayLogKey(): @downPartyId.GetDisplayLogValue()</div>
+        }
+        var downPartyType = @Item.Values.GetValue(Constants.Logs.Results.DownPartyType);
+        if (!downPartyType.IsNullOrWhiteSpace())
+        {
+            <div>@Constants.Logs.Results.DownPartyType.GetDisplayLogKey(): @downPartyType.GetDisplayLogValue()</div>
         }
         var upPartyId = @Item.Values.GetValue(Constants.Logs.Results.UpPartyId);
         if (!upPartyId.IsNullOrWhiteSpace())

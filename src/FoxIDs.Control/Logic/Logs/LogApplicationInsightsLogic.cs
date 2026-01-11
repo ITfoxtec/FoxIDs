@@ -262,6 +262,7 @@ namespace FoxIDs.Logic
                     OperationId = GetOperationId(row),
                     Values = GetValues(row, [Constants.Logs.Results.Name, Constants.Logs.Results.OperationName])
                 };
+                AddProperties(row, item.Values);
                 items.Add(item);
             }
 
@@ -286,6 +287,7 @@ namespace FoxIDs.Logic
                     OperationId = GetOperationId(row),
                     Values = GetValues(row, [Constants.Logs.Results.Name, Constants.Logs.Results.Sum, Constants.Logs.Results.OperationName])
                 };
+                AddProperties(row, item.Values);
                 items.Add(item);
             }
 
@@ -294,6 +296,7 @@ namespace FoxIDs.Logic
 
         private string GetGeneralQueryExtend() =>
 @$"| extend {Constants.Logs.DownPartyId} = Properties.{Constants.Logs.DownPartyId} 
+| extend {Constants.Logs.DownPartyType} = Properties.{Constants.Logs.DownPartyType} 
 | extend {Constants.Logs.UpPartyId} = Properties.{Constants.Logs.UpPartyId} 
 | extend {Constants.Logs.SessionId} = Properties.{Constants.Logs.SessionId} 
 | extend {Constants.Logs.ExternalSessionId} = Properties.{Constants.Logs.ExternalSessionId}
@@ -304,6 +307,7 @@ namespace FoxIDs.Logic
         private string GetGeneralQueryWhere(string filter) =>
 @$"{Constants.Logs.ClientIP} contains '{filter}' or 
 {Constants.Logs.DownPartyId} contains '{filter}' or 
+{Constants.Logs.DownPartyType} contains '{filter}' or 
 {Constants.Logs.UpPartyId} contains '{filter}' or 
 {Constants.Logs.SequenceId} contains '{filter}' or 
 {Constants.Logs.SessionId} contains '{filter}' or 
@@ -319,11 +323,11 @@ namespace FoxIDs.Logic
             var tenantTrackConditions = new List<string>();
             if (!tenantName.IsNullOrEmpty())
             {
-            tenantTrackConditions.Add($"{Constants.Logs.TenantName} == '{tenantName}'");
+                tenantTrackConditions.Add($"{Constants.Logs.TenantName} == '{tenantName}'");
             }
             if (!trackName.IsNullOrEmpty())
             {
-            tenantTrackConditions.Add($"{Constants.Logs.TrackName} == '{trackName}'");
+                tenantTrackConditions.Add($"{Constants.Logs.TrackName} == '{trackName}'");
             }
 
             var tenantTrackWhereClause = tenantTrackConditions.Any()

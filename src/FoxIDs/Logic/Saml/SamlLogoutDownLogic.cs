@@ -54,6 +54,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, SAML Logout request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.Saml2.ToString());
             var party = await tenantDataRepository.GetAsync<SamlDownParty>(partyId);
             ValidatePartyLogoutSupport(party);
             await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.Saml2);
@@ -190,6 +191,7 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> LogoutResponseAsync(string partyId, Saml2StatusCodes status = Saml2StatusCodes.Success, string sessionIndex = null)
         {
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.Saml2.ToString());
 
             var party = await tenantDataRepository.GetAsync<SamlDownParty>(partyId);
             ValidatePartyLogoutSupport(party);
@@ -199,7 +201,7 @@ namespace FoxIDs.Logic
             return await LogoutResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState, status, sessionIndex);
         }
 
-        private Task<IActionResult> LogoutResponseAsync(SamlDownParty party, Saml2Configuration samlConfig, string inResponseTo, string relayState, Saml2StatusCodes status, string sessionIndex = null) 
+        private Task<IActionResult> LogoutResponseAsync(SamlDownParty party, Saml2Configuration samlConfig, string inResponseTo, string relayState, Saml2StatusCodes status, string sessionIndex = null)
         {
             logger.ScopeTrace(() => $"AppReg, SAML Logout response{(status != Saml2StatusCodes.Success ? " error" : string.Empty)}, Status code '{status}'.");
 
@@ -249,12 +251,13 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, SAML Single Logout request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.Saml2.ToString());
             var party = await tenantDataRepository.GetAsync<SamlDownParty>(partyId);
             if (!ValidatePartySingleLogoutSupport(party))
             {
                 return await singleLogoutLogic.HandleSingleLogoutDownAsync(sequenceData);
             }
-            
+
             var claims = await claimsOAuthDownLogic.FromJwtToSamlClaimsAsync(sequenceData.Claims.ToClaimList());
 
             switch (party.LogoutBinding.RequestBinding)
@@ -311,6 +314,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, SAML Single Logout response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.Saml2.ToString());
             var party = await tenantDataRepository.GetAsync<SamlDownParty>(partyId);
 
             if (samlHttpRequest.Binding is Saml2RedirectBinding || samlHttpRequest.Binding is Saml2PostBinding)
@@ -331,7 +335,7 @@ namespace FoxIDs.Logic
             var saml2LogoutResponse = new Saml2LogoutResponse(samlConfig);
             samlHttpRequest.Binding.ReadSamlResponse(samlHttpRequest, saml2LogoutResponse);
             logger.ScopeTrace(() => $"SAML Single Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
-            
+
             ValidateLogoutResponse(party, saml2LogoutResponse);
             await sequenceLogic.ValidateExternalSequenceIdAsync(samlHttpRequest.Binding.RelayState);
 

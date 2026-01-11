@@ -54,6 +54,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, SAML Authn request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.Saml2.ToString());
             var party = await tenantDataRepository.GetAsync<SamlDownParty>(partyId);
             await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.Saml2);
 
@@ -250,6 +251,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => $"AppReg, SAML Authn response{(status != Saml2StatusCodes.Success ? " error" : string.Empty)}, Status code '{status}'.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.Saml2.ToString());
 
             var party = await tenantDataRepository.GetAsync<SamlDownParty>(partyId);
 
@@ -299,7 +301,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private Task<IActionResult> AuthnResponseAsync(SamlDownParty party, SamlDownSequenceData sequenceData, Saml2Configuration samlConfig, string inResponseTo, string relayState, string acsUrl, Saml2StatusCodes status, IEnumerable<Claim> claims = null) 
+        private Task<IActionResult> AuthnResponseAsync(SamlDownParty party, SamlDownSequenceData sequenceData, Saml2Configuration samlConfig, string inResponseTo, string relayState, string acsUrl, Saml2StatusCodes status, IEnumerable<Claim> claims = null)
         {
             logger.ScopeTrace(() => $"AppReg, SAML Authn response{(status != Saml2StatusCodes.Success ? " error" : string.Empty)}, Status code '{status}'.");
 

@@ -94,6 +94,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, Environment Link auth response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.TrackLink.ToString());
             var party = await tenantDataRepository.GetAsync<TrackLinkUpParty>(partyId);
 
             var keySequenceString = HttpContext.Request.Query[Constants.Routes.KeySequenceKey];

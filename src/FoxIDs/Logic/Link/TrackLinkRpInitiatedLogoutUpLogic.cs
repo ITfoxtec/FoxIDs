@@ -87,7 +87,7 @@ namespace FoxIDs.Logic
                 else
                 {
                     return await SingleLogoutDoneAsync(party.Id);
-                }                
+                }
             }
 
             await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
@@ -132,6 +132,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, Environment Link RP initiated logout response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.TrackLink.ToString());
             var party = await tenantDataRepository.GetAsync<TrackLinkUpParty>(partyId);
 
             var keySequenceString = HttpContext.Request.Query[Constants.Routes.KeySequenceKey];

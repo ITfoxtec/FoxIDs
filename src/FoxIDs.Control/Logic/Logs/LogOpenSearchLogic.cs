@@ -111,7 +111,7 @@ namespace FoxIDs.Logic
                 Type = type,
                 Timestamp = item.Timestamp.ToUnixTimeSeconds(),
                 SequenceId = item.SequenceId,
-                OperationId = item.OperationId,                
+                OperationId = item.OperationId,
                 Values = GetValues(type, item),
                 Details = GetDetails(type, item)
             };
@@ -153,6 +153,7 @@ namespace FoxIDs.Logic
             AddValue(values, nameof(item.UpPartyClientId), item.UpPartyClientId);
             AddValue(values, nameof(item.UpPartyStatus), item.UpPartyStatus);
             AddValue(values, nameof(item.DownPartyId), item.DownPartyId);
+            AddValue(values, nameof(item.DownPartyType), item.DownPartyType);
             AddValue(values, nameof(item.DownPartyClientId), item.DownPartyClientId);
             AddValue(values, nameof(item.ExternalSequenceId), item.ExternalSequenceId);
             AddValue(values, nameof(item.AccountAction), item.AccountAction);
@@ -216,7 +217,7 @@ namespace FoxIDs.Logic
             {
                 return logItemDetails;
             }
-            else 
+            else
             {
                 return null;
             }
@@ -255,7 +256,7 @@ namespace FoxIDs.Logic
 
         private IEnumerable<string> GetIndexName()
         {
-            foreach(var name in GetIndexBaseName()) { yield return name; }
+            foreach (var name in GetIndexBaseName()) { yield return name; }
 
             if (settings.OpenSearchQuery != null && !string.IsNullOrWhiteSpace(settings.OpenSearchQuery?.CrossClusterSearchClusterName))
             {
@@ -278,11 +279,11 @@ namespace FoxIDs.Logic
             {
                 boolQuery = boolQuery.MustNot(m => m.Exists(e => e.Field(f => f.UsageType)) || m.Exists(e => e.Field(f => f.AuditDataAction)));
             }
-           
+
             boolQuery = boolQuery.Must(m =>
                     m.Term(t => t.TenantName, tenantName) &&
                     m.Term(t => t.TrackName, trackName) &&
-                    MustBeLogType(m, logRequest) && 
+                    MustBeLogType(m, logRequest) &&
                     m.MultiMatch(ma => ma
                         .Fields(fs => fs
                             .Field(f => f.Message)
@@ -292,6 +293,7 @@ namespace FoxIDs.Logic
                             .Field(f => f.RequestMethod)
                             .Field(f => f.ClientIP)
                             .Field(f => f.DownPartyId)
+                            .Field(f => f.DownPartyType)
                             .Field(f => f.UpPartyId)
                             .Field(f => f.SequenceId)
                             .Field(f => f.SessionId)

@@ -32,6 +32,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AppReg, OIDC UserInfo request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantDataRepository.GetAsync<TParty>(partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, party.Type.ToString());
 
             try
             {
@@ -61,12 +62,12 @@ namespace FoxIDs.Logic
         private Dictionary<string, object> ToClaimsResult(IEnumerable<Claim> claims)
         {
             var claimsResult = new Dictionary<string, object>();
-            if(claims?.Count() > 0)
+            if (claims?.Count() > 0)
             {
                 var claimGroups = claims.GroupBy(c => c.Type).Select(cg => new { cg.Key, Values = claims.Where(c => c.Type == cg.Key).Select(c => c.Value) });
-                foreach(var item in claimGroups)
+                foreach (var item in claimGroups)
                 {
-                    if(item.Values.Count() == 1)
+                    if (item.Values.Count() == 1)
                     {
                         claimsResult.Add(item.Key, item.Values.First());
                     }

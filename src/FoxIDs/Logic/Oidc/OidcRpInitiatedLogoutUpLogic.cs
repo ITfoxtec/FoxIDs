@@ -51,6 +51,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AuthMethod, OIDC End session request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Oidc.ToString());
 
             await logoutRequest.ValidateObjectAsync();
 
@@ -79,6 +80,7 @@ namespace FoxIDs.Logic
                 throw new Exception("Invalid authentication method id.");
             }
             logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Oidc.ToString());
 
             var party = await tenantDataRepository.GetAsync<OidcUpParty>(sequenceData.UpPartyId);
             logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);
@@ -136,7 +138,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"AuthMethod, End session request '{rpInitiatedLogoutRequest.ToJson()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = rpInitiatedLogoutRequest.ToDictionary();
 
-            if(party.Issuers.Any(i => i.Contains("amazonaws.com", StringComparison.OrdinalIgnoreCase)))
+            if (party.Issuers.Any(i => i.Contains("amazonaws.com", StringComparison.OrdinalIgnoreCase)))
             {
                 nameValueCollection.Add("logout_uri", rpInitiatedLogoutRequest.PostLogoutRedirectUri);
                 logger.ScopeTrace(() => $"AuthMethod, End session add custom 'logout_uri={rpInitiatedLogoutRequest.PostLogoutRedirectUri}' parameter for Amazon AWS Cognito.");
@@ -161,6 +163,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => $"AuthMethod, OIDC End session response.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Oidc.ToString());
 
             var party = await tenantDataRepository.GetAsync<OidcUpParty>(partyId);
             logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);

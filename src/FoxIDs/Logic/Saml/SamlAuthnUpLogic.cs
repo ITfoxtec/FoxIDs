@@ -69,6 +69,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AuthMethod, SAML Authn request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Saml2.ToString());
 
             if (logPlanUsage)
             {
@@ -93,6 +94,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AuthMethod, SAML Authn request.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Saml2.ToString());
             var samlUpSequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(partyName: partyId.PartyIdToName(), remove: false);
             if (!samlUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
@@ -243,6 +245,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => $"AuthMethod, SAML Authn response.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Saml2.ToString());
 
             var party = await tenantDataRepository.GetAsync<SamlUpParty>(partyId);
 
@@ -753,6 +756,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AuthMethod, SAML validate token exchange subject token.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Saml2.ToString());
 
             var party = await tenantDataRepository.GetAsync<SamlUpParty>(partyId);
 

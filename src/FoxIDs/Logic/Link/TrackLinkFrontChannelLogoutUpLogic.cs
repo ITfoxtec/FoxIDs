@@ -44,6 +44,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AuthMethod, Environment Link front channel logout.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.TrackLink.ToString());
             var party = await tenantDataRepository.GetAsync<TrackLinkUpParty>(partyId);
 
             var keySequenceString = HttpContext.Request.Query[Constants.Routes.KeySequenceKey];

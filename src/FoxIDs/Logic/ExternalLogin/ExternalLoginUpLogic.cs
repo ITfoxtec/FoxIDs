@@ -48,6 +48,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AuthMethod, External Login redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.ExternalLogin.ToString());
 
             if (logPlanUsage)
             {
@@ -75,6 +76,7 @@ namespace FoxIDs.Logic
             try
             {
                 logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
+                logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.ExternalLogin.ToString());
 
                 var extendedUiActionResult = await HandleExtendedUiAsync(extLoginUpParty, sequenceData, claims);
                 if (extendedUiActionResult != null)
@@ -210,6 +212,7 @@ namespace FoxIDs.Logic
 
             await sequenceLogic.RemoveSequenceDataAsync<ExternalLoginUpSequenceData>();
             logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.ExternalLogin.ToString());
 
             logger.ScopeTrace(() => $"Response, Application type '{sequenceData.DownPartyLink.Type}'.");
             switch (sequenceData.DownPartyLink.Type)

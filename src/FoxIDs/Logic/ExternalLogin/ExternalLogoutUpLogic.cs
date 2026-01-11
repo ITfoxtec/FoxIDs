@@ -30,6 +30,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AppReg, External Login redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.ExternalLogin.ToString());
 
             await logoutRequest.ValidateObjectAsync();
 
@@ -51,6 +52,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, External Login response.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.ExternalLogin.ToString());
 
             logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
 

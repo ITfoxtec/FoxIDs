@@ -16,6 +16,7 @@ namespace FoxIDs.Models
         public string ClientIP { get; set; }
         public string UserAgent { get; set; }
         public string UpPartyId { get; set; }
+        public string UpPartyType { get; set; }
         public string DownPartyId { get; set; }
         public string DownPartyType { get; set; }
     }

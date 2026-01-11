@@ -69,6 +69,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AuthMethod, OIDC Authentication request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Oidc.ToString());
 
             if (logPlanUsage)
             {
@@ -99,6 +100,7 @@ namespace FoxIDs.Logic
                 throw new Exception("Invalid authentication method id.");
             }
             logger.SetScopeProperty(Constants.Logs.UpPartyId, oidcUpSequenceData.UpPartyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Oidc.ToString());
 
             var party = await tenantDataRepository.GetAsync<TParty>(oidcUpSequenceData.UpPartyId);
             logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);
@@ -238,6 +240,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => $"AuthMethod, OIDC Authentication response.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Oidc.ToString());
 
             var party = await tenantDataRepository.GetAsync<TParty>(partyId);
             logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);

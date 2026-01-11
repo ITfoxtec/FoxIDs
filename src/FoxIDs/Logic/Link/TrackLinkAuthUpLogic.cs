@@ -52,6 +52,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AuthMethod, Environment Link auth request.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.TrackLink.ToString());
 
             if (logPlanUsage)
             {

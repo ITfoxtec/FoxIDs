@@ -298,6 +298,7 @@ namespace FoxIDs.Logic
 @$"| extend {Constants.Logs.DownPartyId} = Properties.{Constants.Logs.DownPartyId} 
 | extend {Constants.Logs.DownPartyType} = Properties.{Constants.Logs.DownPartyType} 
 | extend {Constants.Logs.UpPartyId} = Properties.{Constants.Logs.UpPartyId} 
+| extend {Constants.Logs.UpPartyType} = Properties.{Constants.Logs.UpPartyType} 
 | extend {Constants.Logs.SessionId} = Properties.{Constants.Logs.SessionId} 
 | extend {Constants.Logs.ExternalSessionId} = Properties.{Constants.Logs.ExternalSessionId}
 | extend {Constants.Logs.UserId} = Properties.{Constants.Logs.UserId} 
@@ -309,6 +310,7 @@ namespace FoxIDs.Logic
 {Constants.Logs.DownPartyId} contains '{filter}' or 
 {Constants.Logs.DownPartyType} contains '{filter}' or 
 {Constants.Logs.UpPartyId} contains '{filter}' or 
+{Constants.Logs.UpPartyType} contains '{filter}' or 
 {Constants.Logs.SequenceId} contains '{filter}' or 
 {Constants.Logs.SessionId} contains '{filter}' or 
 {Constants.Logs.ExternalSessionId} contains '{filter}' or 

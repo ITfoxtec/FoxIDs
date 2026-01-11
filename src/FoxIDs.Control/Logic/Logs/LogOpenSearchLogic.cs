@@ -150,6 +150,7 @@ namespace FoxIDs.Logic
             AddValue(values, nameof(item.TrackName), item.TrackName);
             AddValue(values, nameof(item.GrantType), item.GrantType);
             AddValue(values, nameof(item.UpPartyId), item.UpPartyId);
+            AddValue(values, nameof(item.UpPartyType), item.UpPartyType);
             AddValue(values, nameof(item.UpPartyClientId), item.UpPartyClientId);
             AddValue(values, nameof(item.UpPartyStatus), item.UpPartyStatus);
             AddValue(values, nameof(item.DownPartyId), item.DownPartyId);
@@ -295,6 +296,7 @@ namespace FoxIDs.Logic
                             .Field(f => f.DownPartyId)
                             .Field(f => f.DownPartyType)
                             .Field(f => f.UpPartyId)
+                            .Field(f => f.UpPartyType)
                             .Field(f => f.SequenceId)
                             .Field(f => f.SessionId)
                             .Field(f => f.ExternalSessionId)

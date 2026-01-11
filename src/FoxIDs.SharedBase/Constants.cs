@@ -184,6 +184,7 @@ namespace FoxIDs
             public const string TrackName = "TrackName";
             public const string GrantType = "GrantType";
             public const string UpPartyId = "UpPartyId";
+            public const string UpPartyType = "UpPartyType";
             public const string UpPartyClientId = "UpPartyClientId";
             public const string UpPartyStatus = "UpPartyStatus";
             public const string DownPartyId = "DownPartyId";
@@ -236,6 +237,7 @@ namespace FoxIDs
                 public const string SessionId = "SessionId";
                 public const string AppRoleInstance = "AppRoleInstance";
                 public const string UpPartyId = "UpPartyId";
+                public const string UpPartyType = "UpPartyType";
                 public const string DownPartyId = "DownPartyId";
                 public const string DownPartyType = "DownPartyType";
                 public const string UserId = "UserId";

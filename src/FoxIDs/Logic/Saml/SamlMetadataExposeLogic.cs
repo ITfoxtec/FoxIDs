@@ -37,6 +37,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AuthMethod, SP Metadata request.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Saml2.ToString());
             var party = RouteBinding.UpParty != null ? await tenantDataRepository.GetAsync<SamlUpParty>(partyId) : null;
             var signMetadata = party != null ? party.SignMetadata : false;
 

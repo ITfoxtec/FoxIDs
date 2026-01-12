@@ -130,7 +130,7 @@ namespace FoxIDs.Logic
 
                 throw new InvalidOperationException($"Unknown authentication method type '{sequenceData.UpPartyLinks.FirstOrDefault()?.Type}' in single logout.");
             }
-           
+
             return await HandleSingleLogoutDownAsync(sequenceData);
         }
 
@@ -142,7 +142,7 @@ namespace FoxIDs.Logic
                 {
                     DownPartyLink = sequenceData.DownPartyLink,
                     SessionId = sequenceData.SessionId,
-                    PostLogoutRedirect = true,                    
+                    PostLogoutRedirect = true,
                 };
             }
             return null;
@@ -206,6 +206,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => $"Single Logout response, Authentication type {upPartyType}.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Login.ToString());
 
             switch (upPartyType)
             {

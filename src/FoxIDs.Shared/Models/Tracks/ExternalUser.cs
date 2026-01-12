@@ -58,6 +58,18 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "redemption_claim_value")]
         public string RedemptionClaimValue { get; set; }
 
+        /// <summary>
+        /// External user expiration time.
+        /// </summary>
+        [JsonProperty(PropertyName = "expire_at")]
+        public long? ExpireAt { get; set; }
+
+        /// <summary>
+        /// 0 to disable expiration.
+        /// </summary>
+        [JsonProperty(PropertyName = "expire_in_seconds")]
+        public int? ExpireInSeconds { get; set; }
+
         [JsonProperty(PropertyName = "disable_account")]
         public bool DisableAccount { get; set; }
 

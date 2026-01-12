@@ -39,6 +39,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, Environment Link auth request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.TrackLink.ToString());
             var party = await tenantDataRepository.GetAsync<TrackLinkDownParty>(partyId);
             await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.TrackLink);
 
@@ -53,7 +54,7 @@ namespace FoxIDs.Logic
             var sequenceData = await sequenceLogic.SaveSequenceDataAsync(new TrackLinkDownSequenceData(GetLoginRequest(party, keySequenceData))
             {
                 KeyName = party.Name,
-                UpPartySequenceString = keySequenceString 
+                UpPartySequenceString = keySequenceString
             });
 
             (var toUpParties, _) = await serviceProvider.GetService<SessionUpPartyLogic>().GetSessionOrRouteBindingUpParty(RouteBinding.ToUpParties);
@@ -103,6 +104,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, Environment Link auth response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.TrackLink.ToString());
             var party = await tenantDataRepository.GetAsync<TrackLinkDownParty>(partyId);
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkDownSequenceData>(remove: false, allowNull: allowNullSequenceData);

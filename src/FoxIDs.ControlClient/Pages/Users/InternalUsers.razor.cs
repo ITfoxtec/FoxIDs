@@ -74,7 +74,7 @@ namespace FoxIDs.Client.Pages.Users
             try
             {
                 passwordPolicies = TrackSelectedLogic.Track.PasswordPolicies;
-                SetGeneralUsers(await UserService.GetUsersAsync(null, null, null, null));
+                SetGeneralUsers(await UserService.GetUsersAsync(null, null, null, null, null));
             }
             catch (TokenUnavailableException)
             {
@@ -91,7 +91,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             try
             {
-                SetGeneralUsers(await UserService.GetUsersAsync(userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue));
+                SetGeneralUsers(await UserService.GetUsersAsync(userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue));
             }
             catch (FoxIDsApiException ex)
             {
@@ -110,7 +110,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             try
             {
-                SetGeneralUsers(await UserService.GetUsersAsync(userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, paginationToken: paginationToken), addUsers: true);
+                SetGeneralUsers(await UserService.GetUsersAsync(userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, paginationToken: paginationToken), addUsers: true);
             }
             catch (TokenUnavailableException)
             {

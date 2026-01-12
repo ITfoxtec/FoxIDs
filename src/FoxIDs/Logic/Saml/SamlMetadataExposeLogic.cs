@@ -37,6 +37,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AuthMethod, SP Metadata request.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Saml2.ToString());
             var party = RouteBinding.UpParty != null ? await tenantDataRepository.GetAsync<SamlUpParty>(partyId) : null;
             var signMetadata = party != null ? party.SignMetadata : false;
 
@@ -81,7 +82,7 @@ namespace FoxIDs.Logic
             if (party?.MetadataAttributeConsumingServices?.Count() > 0)
             {
                 var attributeConsumingServices = new List<AttributeConsumingService>();
-                foreach(var aItem in party.MetadataAttributeConsumingServices)
+                foreach (var aItem in party.MetadataAttributeConsumingServices)
                 {
                     var attributeConsumingService = new AttributeConsumingService { ServiceName = new LocalizedNameType(aItem.ServiceName.Name, aItem.ServiceName.Lang) };
                     attributeConsumingService.RequestedAttributes = aItem.RequestedAttributes.Select(ra => string.IsNullOrEmpty(ra.NameFormat) ? new RequestedAttribute(ra.Name, ra.IsRequired) : new RequestedAttribute(ra.Name, ra.IsRequired, ra.NameFormat));
@@ -107,6 +108,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, IdP Metadata request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.Saml2.ToString());
             var party = RouteBinding.DownParty != null ? await tenantDataRepository.GetAsync<SamlDownParty>(partyId) : null;
             var signMetadata = party != null ? party.SignMetadata : false;
 
@@ -163,7 +165,7 @@ namespace FoxIDs.Logic
         {
             var nowLocal = DateTimeOffset.UtcNow.LocalDateTime;
             var days = 0;
-            foreach (var cert in trackCertificates) 
+            foreach (var cert in trackCertificates)
             {
                 var tempDays = Convert.ToInt32((cert.NotAfter - nowLocal).TotalDays);
                 if (tempDays > days)
@@ -171,7 +173,7 @@ namespace FoxIDs.Logic
                     days = tempDays;
                 }
             }
-            if(days > 0)
+            if (days > 0)
             {
                 days = days - 1;
             }

@@ -47,8 +47,9 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, OIDC Authentication request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.Oidc.ToString());
             var party = await tenantDataRepository.GetAsync<TParty>(partyId);
-            if(party.Client == null)
+            if (party.Client == null)
             {
                 throw new NotSupportedException("Application Client not configured.");
             }
@@ -72,7 +73,7 @@ namespace FoxIDs.Logic
                 ValidateAuthenticationRequest(party.Client, authenticationRequest, codeChallengeSecret);
                 logger.ScopeTrace(() => "AppReg, OIDC Authentication request accepted.", triggerEvent: true);
 
-                if(!authenticationRequest.UiLocales.IsNullOrWhiteSpace())
+                if (!authenticationRequest.UiLocales.IsNullOrWhiteSpace())
                 {
                     await sequenceLogic.SetCultureAsync(authenticationRequest.UiLocales.ToSpaceList());
                 }
@@ -195,7 +196,7 @@ namespace FoxIDs.Logic
 
                 if (client.RequirePkce)
                 {
-                    if(responseTypes.Where(rt => !rt.Equals(IdentityConstants.ResponseTypes.Code)).Any())
+                    if (responseTypes.Where(rt => !rt.Equals(IdentityConstants.ResponseTypes.Code)).Any())
                     {
                         throw new OAuthRequestException($"Require '{IdentityConstants.ResponseTypes.Code}' flow with PKCE.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
                     }
@@ -246,14 +247,14 @@ namespace FoxIDs.Logic
 
         private void ValidateResponseType(TClient client, AuthenticationRequest authenticationRequest, string[] responseTypes)
         {
-            foreach(var partyResponseTypes in client.ResponseTypes.Select(rt => rt.ToSpaceList()))
+            foreach (var partyResponseTypes in client.ResponseTypes.Select(rt => rt.ToSpaceList()))
             {
-                if(responseTypes.Count() == partyResponseTypes.Count())
+                if (responseTypes.Count() == partyResponseTypes.Count())
                 {
                     var tempPartyResponseTypes = new List<string>(partyResponseTypes);
                     foreach (var responseTypeItem in responseTypes)
                     {
-                        if(tempPartyResponseTypes.Contains(responseTypeItem))
+                        if (tempPartyResponseTypes.Contains(responseTypeItem))
                         {
                             tempPartyResponseTypes.Remove(responseTypeItem);
                         }
@@ -262,7 +263,7 @@ namespace FoxIDs.Logic
                             break;
                         }
                     }
-                    if(tempPartyResponseTypes.Count() == 0)
+                    if (tempPartyResponseTypes.Count() == 0)
                     {
                         //All Response Types match.
                         return;
@@ -277,6 +278,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, OIDC Authentication response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.Oidc.ToString());
             var party = await tenantDataRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
             {
@@ -300,7 +302,7 @@ namespace FoxIDs.Logic
                 var issuer = serviceProvider.GetService<TrackIssuerLogic>().GetIssuer(); // Matching issuer and authority is not support.
                 return new RedirectResult(QueryHelpers.AddQueryString(idPInitiatedLink.DownPartyRedirectUrl, JwtClaimTypes.Issuer, issuer));
             }
-          
+
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
 
             try
@@ -424,6 +426,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, OIDC Authentication error response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.Oidc.ToString());
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(remove: true, allowNull: allowNullSequenceData);
             if (allowNullSequenceData && sequenceData == null)
@@ -438,6 +441,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "OIDC Authentication error response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, party.Id);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.Oidc.ToString());
 
             if (sequenceData != null)
             {

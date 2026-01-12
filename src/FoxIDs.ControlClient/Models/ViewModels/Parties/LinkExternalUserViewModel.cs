@@ -16,6 +16,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Require a user")]
         public bool RequireUser { get; set; }
 
+        [Display(Name = "External user lifetime in seconds (0 to disable, sliding expiration)")]
+        public int ExternalUserLifetime { get; set; } = 0;
+
         [MaxLength(Constants.Models.Claim.JwtTypeLength)]
         [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
         [Display(Name = "Link claim type")]

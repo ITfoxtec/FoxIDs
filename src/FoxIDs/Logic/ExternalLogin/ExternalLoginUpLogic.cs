@@ -43,13 +43,17 @@ namespace FoxIDs.Logic
             this.hrdLogic = hrdLogic;
         }
 
-        public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, ILoginRequest loginRequest, string hrdLoginUpPartyName = null)
+        public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, ILoginRequest loginRequest, string hrdLoginUpPartyName = null, bool logPlanUsage = true)
         {
             logger.ScopeTrace(() => "AuthMethod, External Login redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.ExternalLogin.ToString());
 
-            planUsageLogic.LogLoginEvent(PartyTypes.ExternalLogin);
+            if (logPlanUsage)
+            {
+                planUsageLogic.LogLoginEvent(PartyTypes.ExternalLogin);
+            }
 
             await loginRequest.ValidateObjectAsync();
 
@@ -72,6 +76,7 @@ namespace FoxIDs.Logic
             try
             {
                 logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
+                logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.ExternalLogin.ToString());
 
                 var extendedUiActionResult = await HandleExtendedUiAsync(extLoginUpParty, sequenceData, claims);
                 if (extendedUiActionResult != null)
@@ -148,7 +153,7 @@ namespace FoxIDs.Logic
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: true);
             var party = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(externalUserSequenceData.UpPartyId);
-            
+
             try
             {
                 return await LoginResponsePostAsync(party, sequenceData, externalUserSequenceData.Claims?.ToClaimList(), externalUserClaims);
@@ -207,6 +212,7 @@ namespace FoxIDs.Logic
 
             await sequenceLogic.RemoveSequenceDataAsync<ExternalLoginUpSequenceData>();
             logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.ExternalLogin.ToString());
 
             logger.ScopeTrace(() => $"Response, Application type '{sequenceData.DownPartyLink.Type}'.");
             switch (sequenceData.DownPartyLink.Type)

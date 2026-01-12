@@ -17,6 +17,10 @@ namespace FoxIDs.Models
             Type = PartyTypes.Saml2;
         }
 
+        [ValidateComplexType]
+        [JsonProperty(PropertyName = "modules")]
+        public SamlUpPartyModules Modules { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "update_state")]
         public PartyUpdateStates UpdateState { get; set; } = PartyUpdateStates.Manual;
@@ -157,6 +161,22 @@ namespace FoxIDs.Models
             {
                 results.Add(new ValidationResult($"The number of claims transforms in '{nameof(ClaimTransforms)}' and '{nameof(ExitClaimTransforms)}' can be a  of {Constants.Models.Claim.TransformsMax} combined.", [nameof(ClaimTransforms), nameof(ExitClaimTransforms)]));
             }
+
+            if (ModuleType != null)
+            {
+                if (ModuleType == UpPartyModuleTypes.NemLogin)
+                {
+                    if (Modules?.NemLogin == null)
+                    {
+                        results.Add(new ValidationResult($"The field '{nameof(Modules.NemLogin)}' is required when the module type is '{ModuleType}'.", [$"{nameof(Modules)}.{nameof(Modules.NemLogin)}"]));
+                    }
+                }
+                else
+                {
+                    results.Add(new ValidationResult($"The module type '{ModuleType}' is not supported.", [nameof(ModuleType)]));
+                }
+            }
+
             return results;
         }
     }

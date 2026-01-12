@@ -9,7 +9,7 @@ namespace FoxIDs.Client.Models.ViewModels
     public class ExtendedUiViewModel : ExtendedUi, IDynamicElementsViewModel
     {
         [ValidateComplexType]
-        [ListLength(Constants.Models.ExtendedUi.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
+        [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
         public new List<DynamicElementViewModel> Elements { get; set; } = new List<DynamicElementViewModel>();
 
         [ValidateComplexType]
@@ -29,6 +29,25 @@ namespace FoxIDs.Client.Models.ViewModels
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+
+            if (ModuleType == null)
+            {
+                if (Title.IsNullOrWhiteSpace())
+                {
+                    results.Add(new ValidationResult($"The field '{nameof(Title)}' is required.", [nameof(Title)]));
+                }
+
+                if (Elements == null || Elements.Count < Constants.Models.ExtendedUi.ElementsMin)
+                {
+                    results.Add(new ValidationResult($"The field '{nameof(Elements)}' is required.", [nameof(Elements)]));
+                }
+            }
+            else
+            {
+                Title = null;
+                SubmitButtonText = null;
+                Elements = null;
+            }
 
             if (!ApiUrl.IsNullOrWhiteSpace())
             {

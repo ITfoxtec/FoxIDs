@@ -47,13 +47,17 @@ namespace FoxIDs.Logic
             this.claimValidationLogic = claimValidationLogic;
         }
 
-        public async Task<IActionResult> AuthRequestAsync(UpPartyLink partyLink, ILoginRequest loginRequest, string hrdLoginUpPartyName = null)
+        public async Task<IActionResult> AuthRequestAsync(UpPartyLink partyLink, ILoginRequest loginRequest, string hrdLoginUpPartyName = null, bool logPlanUsage = true)
         {
             logger.ScopeTrace(() => "AuthMethod, Environment Link auth request.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.TrackLink.ToString());
 
-            planUsageLogic.LogLoginEvent(PartyTypes.TrackLink);
+            if (logPlanUsage)
+            {
+                planUsageLogic.LogLoginEvent(PartyTypes.TrackLink);
+            }
 
             await loginRequest.ValidateObjectAsync();
 
@@ -91,6 +95,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, Environment Link auth response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.TrackLink.ToString());
             var party = await tenantDataRepository.GetAsync<TrackLinkUpParty>(partyId);
 
             var keySequenceString = HttpContext.Request.Query[Constants.Routes.KeySequenceKey];
@@ -117,7 +122,7 @@ namespace FoxIDs.Logic
                 c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthProfileMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType &&
                 c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType).ToList();
             claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, party.Name);
-            if(!sequenceData.UpPartyProfileName.IsNullOrEmpty())
+            if (!sequenceData.UpPartyProfileName.IsNullOrEmpty())
             {
                 claims.AddClaim(Constants.JwtClaimTypes.AuthProfileMethod, sequenceData.UpPartyProfileName);
             }

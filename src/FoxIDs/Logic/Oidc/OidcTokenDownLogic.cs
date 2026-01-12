@@ -38,6 +38,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AppReg, OIDC Token request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantDataRepository.GetAsync<TParty>(partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, party.Type.ToString());
             if (party.Client == null)
             {
                 throw new NotSupportedException("Application Client not configured.");

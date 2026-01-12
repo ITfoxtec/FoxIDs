@@ -54,6 +54,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<ClaimTransformLogic>();
             services.AddTransient<ExternalClaimsConnectLogic>();
             services.AddTransient<DynamicElementLogic>();
+            services.AddTransient<NemLoginSubjectMatchesCprLogic>();
 
             services.AddTransient<OidcDiscoveryExposeDownLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
             services.AddTransient<OidcDiscoveryExposeDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();

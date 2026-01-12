@@ -29,16 +29,17 @@ namespace FoxIDs.Logic
         public async Task<Api.UsageLogResponse> GetTrackUsageLogAsync(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool isMasterTenant = false, bool isMasterTrack = false)
         {
             var items = await QueryDbAsync(logRequest, tenantName, trackName, isMasterTenant, isMasterTrack);
+            var excludeTrackLinkLogins = isMasterTrack;
 
             if (!logRequest.OnlyDbQuery)
             {
                 switch (settings.Options.Log)
                 {
                     case LogOptions.OpenSearchAndStdoutErrors:
-                        items = await serviceProvider.GetService<UsageLogOpenSearchLogic>().QueryLogsAsync(logRequest, tenantName, trackName, items);
+                        items = await serviceProvider.GetService<UsageLogOpenSearchLogic>().QueryLogsAsync(logRequest, tenantName, trackName, excludeTrackLinkLogins, items);
                         break;
                     case LogOptions.ApplicationInsights:
-                        items = await serviceProvider.GetService<UsageLogApplicationInsightsLogic>().QueryLogsAsync(logRequest, tenantName, trackName, isMasterTenant, items);
+                        items = await serviceProvider.GetService<UsageLogApplicationInsightsLogic>().QueryLogsAsync(logRequest, tenantName, trackName, isMasterTenant, excludeTrackLinkLogins, items);
                         break;
                     default:
                         throw new NotSupportedException();

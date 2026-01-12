@@ -25,13 +25,13 @@ namespace FoxIDs.Logic
             this.logAnalyticsWorkspaceProvider = logAnalyticsWorkspaceProvider;
         }
 
-        public async Task<List<Api.UsageLogItem>> QueryLogsAsync(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool isMasterTenant, List<Api.UsageLogItem> items)
+        public async Task<List<Api.UsageLogItem>> QueryLogsAsync(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool isMasterTenant, bool excludeTrackLinkLogins, List<Api.UsageLogItem> items)
         {
             var dayPointer = 0;
             var hourPointer = 0;
             List<Api.UsageLogItem> dayItemsPointer = items;
             List<Api.UsageLogItem> itemsPointer = items;
-            var rows = await LoadUsageEventsAsync(tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope, logRequest.TimeOffset), logRequest, isMasterTenant);
+            var rows = await LoadUsageEventsAsync(tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope, logRequest.TimeOffset), logRequest, isMasterTenant, excludeTrackLinkLogins);
             foreach (var row in rows)
             {
                 if (logRequest.SummarizeLevel != Api.UsageLogSummarizeLevels.Month)
@@ -133,7 +133,7 @@ namespace FoxIDs.Logic
         {
             var item = row.GetDouble("UsageCount");
             double realCount = item.HasValue ? item.Value : 0.0;
-            
+
             double extraCount = 0.0;
             var addItem = row.GetDouble("UsageAddRating");
             extraCount = addItem.HasValue ? addItem.Value : 0.0;
@@ -145,7 +145,7 @@ namespace FoxIDs.Logic
         {
             var item = row.GetDouble("UsageCount");
             double itemCount = item.HasValue ? item.Value : 0.0;
-            
+
             double smsCount = 0.0;
             var smsItem = row.GetDouble("UsageSms");
             smsCount = smsItem.HasValue ? smsItem.Value : 0.0;
@@ -198,9 +198,9 @@ namespace FoxIDs.Logic
         private string GetLogAnalyticsWorkspaceId()
         {
             return settings.ApplicationInsights.WorkspaceId;
-        } 
+        }
 
-        private async Task<IReadOnlyList<LogsTableRow>> LoadUsageEventsAsync(string tenantName, string trackName, QueryTimeRange queryTimeRange, Api.UsageLogRequest logRequest, bool isMasterTenant)
+        private async Task<IReadOnlyList<LogsTableRow>> LoadUsageEventsAsync(string tenantName, string trackName, QueryTimeRange queryTimeRange, Api.UsageLogRequest logRequest, bool isMasterTenant, bool excludeTrackLinkLogins)
         {
             if (!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApi && !logRequest.IncludeAdditional)
             {
@@ -213,7 +213,7 @@ namespace FoxIDs.Logic
             var preOrderSummarizeBy = logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month ? string.Empty : $"bin(TimeGenerated, 1{(logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Day ? "d" : "h")}), ";
             var preSortBy = logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month ? string.Empty : "TimeGenerated asc";
 
-            var eventsQuery = GetQuery("AppEvents", GetWhereDataSlice(tenantName, trackName), where, preOrderSummarizeBy, preSortBy, isMasterTenant);
+            var eventsQuery = GetQuery("AppEvents", GetWhereDataSlice(tenantName, trackName), where, preOrderSummarizeBy, preSortBy, isMasterTenant, excludeTrackLinkLogins);
             Response<LogsQueryResult> response = await logAnalyticsWorkspaceProvider.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(), eventsQuery, queryTimeRange);
             return response.Value.Table.Rows;
         }
@@ -257,19 +257,24 @@ namespace FoxIDs.Logic
             return string.Join(" and ", whereDataSlice);
         }
 
-    private string GetQuery(string fromType, string whereDataSlice, string where, string preOrderSummarizeBy, string preSortBy, bool isMasterTenant)
+        private string GetQuery(string fromType, string whereDataSlice, string where, string preOrderSummarizeBy, string preSortBy, bool isMasterTenant, bool excludeTrackLinkLogins)
         {
+            var usageCountQuery = excludeTrackLinkLogins
+                ? $"sum(iif({Constants.Logs.UsageType} == '{UsageLogTypes.Login}' and tostring({Constants.Logs.DownPartyType}) == '{PartyTypes.TrackLink}', 0, 1))"
+                : "count()";
+
             return
 @$"{GetFromTypeAndUnion(fromType, isMasterTenant)}
 | extend {Constants.Logs.TenantName} = Properties.{Constants.Logs.TenantName}
 | extend {Constants.Logs.TrackName} = Properties.{Constants.Logs.TrackName}
 | extend {Constants.Logs.UsageType} = Properties.{Constants.Logs.UsageType}
+| extend {Constants.Logs.DownPartyType} = Properties.{Constants.Logs.DownPartyType}
 | extend {Constants.Logs.UsageAddRating} = Properties.{Constants.Logs.UsageAddRating}
 | extend {Constants.Logs.UsageSms} = Properties.{Constants.Logs.UsageSms}
 | extend {Constants.Logs.UsageSmsPrice} = Properties.{Constants.Logs.UsageSmsPrice}
 | extend {Constants.Logs.UsageEmail} = Properties.{Constants.Logs.UsageEmail}
 {(whereDataSlice.IsNullOrEmpty() ? string.Empty : $"| where {whereDataSlice} ")}| where {where}
-| summarize UsageCount = count(), UsageAddRating = sum(todouble({Constants.Logs.UsageAddRating})), UsageSms = sum(todouble({Constants.Logs.UsageSms})), UsageSmsPrice = sum(todouble({Constants.Logs.UsageSmsPrice})), UsageEmail = sum(todouble({Constants.Logs.UsageEmail})) by {preOrderSummarizeBy}tostring({Constants.Logs.UsageType})
+| summarize UsageCount = {usageCountQuery}, UsageAddRating = sum(todouble({Constants.Logs.UsageAddRating})), UsageSms = sum(todouble({Constants.Logs.UsageSms})), UsageSmsPrice = sum(todouble({Constants.Logs.UsageSmsPrice})), UsageEmail = sum(todouble({Constants.Logs.UsageEmail})) by {preOrderSummarizeBy}tostring({Constants.Logs.UsageType})
 {(preSortBy.IsNullOrEmpty() ? string.Empty : $"| sort by {preSortBy}")}";
         }
 

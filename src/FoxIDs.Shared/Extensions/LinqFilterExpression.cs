@@ -1,5 +1,6 @@
 using FoxIDs.Models;
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace FoxIDs
@@ -16,24 +17,28 @@ namespace FoxIDs
         /// <param name="filterPhone">Filter by phone (partial match)</param>
         /// <param name="filterUsername">Filter by username (case insensitive partial match)</param>
         /// <param name="filterUserId">Filter by user ID (case insensitive partial match)</param>
+        /// <param name="filterClaimValue">Filter by user claim value (case insensitive partial match)</param>
         /// <returns>Expression to filter users</returns>
         public static Expression<Func<User, bool>> CreateUserFilterExpression(
             string filterEmail = null, 
             string filterPhone = null, 
             string filterUsername = null, 
-            string filterUserId = null)
+            string filterUserId = null,
+            string filterClaimValue = null)
         {
             var queryFilters = !string.IsNullOrWhiteSpace(filterEmail) || 
                               !string.IsNullOrWhiteSpace(filterPhone) || 
                               !string.IsNullOrWhiteSpace(filterUsername) || 
-                              !string.IsNullOrWhiteSpace(filterUserId);
+                              !string.IsNullOrWhiteSpace(filterUserId) ||
+                              !string.IsNullOrWhiteSpace(filterClaimValue);
 
             Expression<Func<User, bool>> whereQuery = u => !queryFilters ? u.DataType.Equals(UserDataType) :
                 u.DataType.Equals(UserDataType) && (
                     (!string.IsNullOrWhiteSpace(filterEmail) && u.Email.Contains(filterEmail, StringComparison.CurrentCultureIgnoreCase)) ||
                     (!string.IsNullOrWhiteSpace(filterPhone) && u.Phone.Contains(filterPhone, StringComparison.CurrentCultureIgnoreCase)) ||
                     (!string.IsNullOrWhiteSpace(filterUsername) && u.Username.Contains(filterUsername, StringComparison.CurrentCultureIgnoreCase)) ||
-                    (!string.IsNullOrWhiteSpace(filterUserId) && u.UserId.Contains(filterUserId, StringComparison.CurrentCultureIgnoreCase))
+                    (!string.IsNullOrWhiteSpace(filterUserId) && u.UserId.Contains(filterUserId, StringComparison.CurrentCultureIgnoreCase)) ||
+                    (!string.IsNullOrWhiteSpace(filterClaimValue) && u.Claims.Any(c => c.Values.Any(v => v.Contains(filterClaimValue, StringComparison.CurrentCultureIgnoreCase))))
                 );
 
             return whereQuery;

@@ -271,12 +271,10 @@ namespace FoxIDs.Client.Pages.Components
             scopesViewModel.Remove(removeScope);
         }
 
-        private void AddOAuthScopeVoluntaryClaim(MouseEventArgs e, OAuthDownScope scope)
+        private void AddOAuthScopeVoluntaryClaim(MouseEventArgs e, OAuthDownScopeViewModel scope)
         {
-            if (scope.VoluntaryClaims == null)
-            {
-                scope.VoluntaryClaims = new List<OAuthDownClaim>();
-            }
+            scope.ShowVoluntaryClaims = true;
+            scope.VoluntaryClaims ??= new List<OAuthDownClaim>();
             scope.VoluntaryClaims.Add(new OAuthDownClaim());
         }
 

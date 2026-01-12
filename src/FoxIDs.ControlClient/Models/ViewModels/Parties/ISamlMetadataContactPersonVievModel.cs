@@ -8,7 +8,7 @@ namespace FoxIDs.Client.Models.ViewModels
     public interface ISamlMetadataContactPersonVievModel
     {
         [ListLength(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
-        [Display(Name = "Optional contact persons in metadata")]
+        [Display(Name = "Contact persons in metadata")]
         List<SamlMetadataContactPerson> MetadataContactPersons { get; set; }
     }
 }

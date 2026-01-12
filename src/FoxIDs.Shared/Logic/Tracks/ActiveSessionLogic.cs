@@ -368,6 +368,7 @@ namespace FoxIDs.Logic
             var queryByDownPartyName = !downPartyName.IsNullOrWhiteSpace();
             var queryByUpPartyName = !upPartyName.IsNullOrWhiteSpace();
             var queryByUpPartyType = upPartyType.HasValue;
+            var queryByUpPartyTypeValue = upPartyType.GetValueOrDefault();
 
             return s => s.DataType.Equals(Constants.Models.DataType.ActiveSession) &&
                 (
@@ -379,7 +380,7 @@ namespace FoxIDs.Logic
                 (!queryBySessionId || s.SessionId == sessionId) &&
                 (!queryByDownPartyName || (s.DownPartyLinks != null && s.DownPartyLinks.Any(d => d.Name == downPartyName))) &&
                 (!queryByUpPartyName || (s.UpPartyLinks != null && s.UpPartyLinks.Any(u => u.Name == upPartyName))) &&
-                (!queryByUpPartyType || (s.UpPartyLinks != null && s.UpPartyLinks.Any(u => u.Type == upPartyType)));;
+                (!queryByUpPartyType || (s.UpPartyLinks != null && s.UpPartyLinks.Any(u => u.Type == queryByUpPartyTypeValue)));
         }
     }
 }

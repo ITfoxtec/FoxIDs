@@ -1,9 +1,9 @@
 <!--
 {
     "title":  "External users",
-    "description":  "You can use just-in-time (JIT) provisioning to create external users and associate them with an external identity. An external user is associated with one authentication method (OpenID Connect, SAML 2.0, External Login, or Environment Li...",
+    "description":  "Use just-in-time provisioning to create external users linked to an authentication method and store per-user claims in FoxIDs.",
     "ogTitle":  "External users",
-    "ogDescription":  "You can use just-in-time (JIT) provisioning to create external users and associate them with an external identity. An external user is associated with one authentication method (OpenID Connect, SAML 2.0, External Login, or Environment Li...",
+    "ogDescription":  "Use just-in-time provisioning to create external users linked to an authentication method and store per-user claims in FoxIDs.",
     "ogType":  "article",
     "ogImage":  "/images/foxids_logo.png",
     "twitterCard":  "summary_large_image",

@@ -46,6 +46,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AuthMethod, Environment Link RP initiated logout request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.TrackLink.ToString());
 
             await logoutRequest.ValidateObjectAsync();
 
@@ -74,6 +75,7 @@ namespace FoxIDs.Logic
                 throw new Exception("Invalid authentication method id.");
             }
             logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.TrackLink.ToString());
 
             var party = await tenantDataRepository.GetAsync<TrackLinkUpParty>(sequenceData.UpPartyId);
 
@@ -87,7 +89,7 @@ namespace FoxIDs.Logic
                 else
                 {
                     return await SingleLogoutDoneAsync(party.Id);
-                }                
+                }
             }
 
             await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
@@ -132,6 +134,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, Environment Link RP initiated logout response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.TrackLink.ToString());
             var party = await tenantDataRepository.GetAsync<TrackLinkUpParty>(partyId);
 
             var keySequenceString = HttpContext.Request.Query[Constants.Routes.KeySequenceKey];

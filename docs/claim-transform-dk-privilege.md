@@ -1,9 +1,9 @@
 <!--
 {
     "title":  "DK privilege - claim transforms",
-    "description":  "FoxIDs supports converting the DK XML privilege to JSON, making tokens readable and the privilege structure easter to work with. The DK privilege is used in the Danish NemLog-in and Context Handler (in Danish called Fælleskommunal Adgang...",
+    "description":  "Convert DK privilege XML to JSON with FoxIDs claim transforms for NemLog-in and Context Handler integrations.",
     "ogTitle":  "DK privilege - claim transforms",
-    "ogDescription":  "FoxIDs supports converting the DK XML privilege to JSON, making tokens readable and the privilege structure easter to work with. The DK privilege is used in the Danish NemLog-in and Context Handler (in Danish called Fælleskommunal Adgang...",
+    "ogDescription":  "Convert DK privilege XML to JSON with FoxIDs claim transforms for NemLog-in and Context Handler integrations.",
     "ogType":  "article",
     "ogImage":  "/images/foxids_logo.png",
     "twitterCard":  "summary_large_image",
@@ -16,7 +16,7 @@
 # DK privilege - claim transforms
 
 FoxIDs supports converting the DK XML privilege to JSON, making tokens readable and the privilege structure easter to work with. 
-The DK privilege is used in the Danish [NemLog-in](auth-method-howto-saml-2.0-nemlogin.md) and [Context Handler (in Danish called Fælleskommunal Adgangsstyring)](howto-saml-2.0-context-handler.md).
+The DK privilege is used in the Danish [NemLog-in](auth-method-howto-saml-2.0-nemlogin.md) and [Context Handler (in Danish called FÃ¦lleskommunal Adgangsstyring)](howto-saml-2.0-context-handler.md).
 
 Supported privilege standard: 
 

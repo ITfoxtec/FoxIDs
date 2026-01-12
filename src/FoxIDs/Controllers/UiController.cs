@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using FoxIDs.Infrastructure;
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Logic;
@@ -11,6 +8,9 @@ using FoxIDs.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Controllers
 {
@@ -51,6 +51,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExtendedUiUpSequenceData>(remove: false);
                 var extendedUiUpParty = await tenantDataRepository.GetAsync<UpParty>(sequenceData.UpPartyId);
                 (var extendedUi, var stateString) = await extendedUiLogic.GetExtendedUiAndStateStringAsync(sequenceData, extendedUiUpParty.ExtendedUis, step);
+                PopulateExtendedUiDefault(extendedUi);
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(await sequenceLogic.GetUiUpPartyIdAsync());
                 securityHeaderLogic.AddImgSrc(loginUpParty);
@@ -86,6 +87,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExtendedUiUpSequenceData>(remove: false);
                 var extendedUiUpParty = await tenantDataRepository.GetAsync<UpParty>(sequenceData.UpPartyId);
                 (var extendedUi, var step) = await extendedUiLogic.GetExtendedUiAndStepAsync(sequenceData, extendedUiUpParty.ExtendedUis, extendedUiViewModel.State);
+                PopulateExtendedUiDefault(extendedUi);
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(await sequenceLogic.GetUiUpPartyIdAsync());
                 securityHeaderLogic.AddImgSrc(loginUpParty);
@@ -114,7 +116,15 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace(() => "Extended UI post.");
                 var claims = step.Claims.ToClaimList();
-                if (extendedUi.ExternalConnectType == ExternalConnectTypes.Api)
+                if (extendedUi.ModuleType == ExtendedUiModuleTypes.NemLoginPrivateCprMatch)
+                {
+                    var nemloginActionResult = await serviceProvider.GetService<NemLoginSubjectMatchesCprLogic>().HandleInputAsync(extendedUiUpParty, extendedUi, extendedUiViewModel, claims, ModelState, viewError);
+                    if (nemloginActionResult != null)
+                    {
+                        return nemloginActionResult;
+                    }
+                }
+                else if (extendedUi.ExternalConnectType == ExternalConnectTypes.Api)
                 {
                     try
                     {
@@ -209,6 +219,23 @@ namespace FoxIDs.Controllers
             catch (Exception ex)
             {
                 throw new EndpointException($"Extended UI failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        private void PopulateExtendedUiDefault(ExtendedUi extendedUi)
+        {
+            if (extendedUi?.ModuleType == null)
+            {
+                return;
+            }
+
+            if (extendedUi.ModuleType == ExtendedUiModuleTypes.NemLoginPrivateCprMatch)
+            {
+                serviceProvider.GetService<NemLoginSubjectMatchesCprLogic>().PopulateExtendedUi(extendedUi);
+            }
+            else
+            {
+                throw new NotSupportedException($"Extended UI module type '{extendedUi.ModuleType}' not supported.");
             }
         }
     }

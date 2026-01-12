@@ -1,9 +1,9 @@
 <!--
 {
     "title":  "External Login - API",
-    "description":  "With external login you can authenticate users in an existing user database through an API call. You implement the API; FoxIDs calls it with a username and password, and the API validates the combination and returns success or failure. U...",
+    "description":  "Authenticate users against an existing user database by implementing an external login API that validates credentials and returns claims to FoxIDs.",
     "ogTitle":  "External Login - API",
-    "ogDescription":  "With external login you can authenticate users in an existing user database through an API call. You implement the API; FoxIDs calls it with a username and password, and the API validates the combination and returns success or failure. U...",
+    "ogDescription":  "Authenticate users against an existing user database by implementing an external login API that validates credentials and returns claims to FoxIDs.",
     "ogType":  "article",
     "ogImage":  "/images/foxids_logo.png",
     "twitterCard":  "summary_large_image",
@@ -24,8 +24,8 @@ After successful login you can create [external users](users-external.md) and op
 For an overview of user concepts (internal users, external users and external user stores) see the [users overview](users.md).
 
 External login supports two user identifiers (username) types:
-- **Email** – the user's email
-- **Text** – a free-form text username
+- **Email** - the user's email
+- **Text** - a free-form text username
 
 If you choose the text type, the format is not validated in FoxIDs (mixed formats are allowed including using emails).  
 [Home realm discovery (HRD) based on domain](login.md#home-realm-discovery-hrd) is only available with the email type.

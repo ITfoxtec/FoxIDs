@@ -1,14 +1,14 @@
-﻿using FoxIDs.Infrastructure;
+﻿using AutoMapper;
+using FoxIDs.Infrastructure;
+using FoxIDs.Logic;
+using FoxIDs.Logic.Queues;
 using FoxIDs.Models;
-using Api = FoxIDs.Models.Api;
+using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using AutoMapper;
-using FoxIDs.Logic;
-using FoxIDs.Models.Config;
-using FoxIDs.Logic.Queues;
+using Api = FoxIDs.Models.Api;
 
 namespace FoxIDs.Controllers
 {
@@ -18,11 +18,13 @@ namespace FoxIDs.Controllers
     public class TSamlUpPartyController : GenericPartyApiController<Api.SamlUpParty, Api.SamlClaimTransform, SamlUpParty>
     {
         private readonly ValidateApiModelSamlPartyLogic validateApiModelSamlPartyLogic;
+        private readonly ValidateModelSamlPartyLogic validateModelSamlPartyLogic;
         private readonly SamlMetadataReadUpLogic samlMetadataReadUpLogic;
 
-        public TSamlUpPartyController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PartyLogic partyLogic, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateModelGenericPartyLogic validateModelGenericPartyLogic, ValidateApiModelSamlPartyLogic validateApiModelSamlPartyLogic, SamlMetadataReadUpLogic samlMetadataReadUpLogic) : base(settings, logger, mapper, tenantDataRepository, partyLogic, downPartyCacheLogic, upPartyCacheLogic, downPartyAllowUpPartiesQueueLogic, validateApiModelGenericPartyLogic, validateModelGenericPartyLogic)
+        public TSamlUpPartyController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PartyLogic partyLogic, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateModelGenericPartyLogic validateModelGenericPartyLogic, ValidateApiModelSamlPartyLogic validateApiModelSamlPartyLogic, ValidateModelSamlPartyLogic validateModelSamlPartyLogic, SamlMetadataReadUpLogic samlMetadataReadUpLogic) : base(settings, logger, mapper, tenantDataRepository, partyLogic, downPartyCacheLogic, upPartyCacheLogic, downPartyAllowUpPartiesQueueLogic, validateApiModelGenericPartyLogic, validateModelGenericPartyLogic)
         {
             this.validateApiModelSamlPartyLogic = validateApiModelSamlPartyLogic;
+            this.validateModelSamlPartyLogic = validateModelSamlPartyLogic;
             this.samlMetadataReadUpLogic = samlMetadataReadUpLogic;
         }
 
@@ -42,7 +44,9 @@ namespace FoxIDs.Controllers
         /// <returns>SAML 2.0 authentication method.</returns>
         [ProducesResponseType(typeof(Api.SamlUpParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.SamlUpParty>> PostSamlUpParty([FromBody] Api.SamlUpParty party) => await Post(party, ap => new ValueTask<bool>(validateApiModelSamlPartyLogic.ValidateApiModel(ModelState, ap)), async (ap, mp) => await samlMetadataReadUpLogic.PopulateModelAsync(ModelState, mp));
+        public async Task<ActionResult<Api.SamlUpParty>> PostSamlUpParty([FromBody] Api.SamlUpParty party) => await Post(party, 
+            ap => new ValueTask<bool>(validateApiModelSamlPartyLogic.ValidateApiModel(ModelState, ap)),
+            async (ap, mp) => await samlMetadataReadUpLogic.PopulateModelAsync(ModelState, mp));
 
         /// <summary>
         /// Update SAML 2.0 authentication method.
@@ -51,7 +55,10 @@ namespace FoxIDs.Controllers
         /// <returns>SAML 2.0 authentication method.</returns>
         [ProducesResponseType(typeof(Api.SamlUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.SamlUpParty>> PutSamlUpParty([FromBody] Api.SamlUpParty party) => await Put(party, ap => new ValueTask<bool>(validateApiModelSamlPartyLogic.ValidateApiModel(ModelState, ap)), async (ap, mp) => await samlMetadataReadUpLogic.PopulateModelAsync(ModelState, mp));
+        public async Task<ActionResult<Api.SamlUpParty>> PutSamlUpParty([FromBody] Api.SamlUpParty party) => await Put(party,
+            ap => new ValueTask<bool>(validateApiModelSamlPartyLogic.ValidateApiModel(ModelState, ap)),
+            async (ap, mp) => await samlMetadataReadUpLogic.PopulateModelAsync(ModelState, mp),
+            (ap, mp) => validateModelSamlPartyLogic.ValidateModelAsync(ModelState, ap, mp));
 
         /// <summary>
         /// Delete SAML 2.0 authentication method.

@@ -89,6 +89,12 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.Trim().ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.Trim().ToLower()).GetAwaiter().GetResult()));
 
+            CreateMap<ExtendedUiModules, Api.ExtendedUiModules>()
+                .ReverseMap();
+
+            CreateMap<ExtendedUiNemLoginModule, Api.ExtendedUiNemLoginModule>()
+                .ReverseMap();
+
             CreateMap<ExtendedUi, Api.ExtendedUi>()
                 .ForMember(d => d.Secret, opt => opt.MapFrom(s => s.Secret.GetShortSecret(true)))
                 .ForMember(d => d.SecretLoaded, opt => opt.MapFrom(s => s.Secret.GetShortSecret(true)))
@@ -270,6 +276,12 @@ namespace FoxIDs.MappingProfiles
             CreateMap<OAuthUpPartyProfile, Api.OidcUpPartyProfile>()
                 .ReverseMap();
             CreateMap<OAuthUpClientProfile, Api.OidcUpClientProfile>()
+                .ReverseMap();
+
+            CreateMap<SamlUpPartyModules, Api.SamlUpPartyModules>()
+                .ReverseMap();
+
+            CreateMap<SamlUpPartyNemLoginModule, Api.SamlUpPartyNemLoginModule>()
                 .ReverseMap();
 
             CreateMap<SamlUpParty, Api.SamlUpParty>()

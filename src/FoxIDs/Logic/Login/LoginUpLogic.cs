@@ -45,13 +45,17 @@ namespace FoxIDs.Logic
             this.hrdLogic = hrdLogic;
         }
 
-        public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, ILoginRequest loginRequest, bool isAutoRedirect = false, string hrdLoginUpPartyName = null)
+        public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, ILoginRequest loginRequest, bool isAutoRedirect = false, string hrdLoginUpPartyName = null, bool logPlanUsage = true)
         {
             logger.ScopeTrace(() => $"AuthMethod, Login redirect ({(!isAutoRedirect ? "one" : "auto selected")} authentication method link).");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Login.ToString());
 
-            planUsageLogic.LogLoginEvent(PartyTypes.Login);
+            if (logPlanUsage)
+            {
+                planUsageLogic.LogLoginEvent(PartyTypes.Login);
+            }
 
             if (!isAutoRedirect)
             {
@@ -77,6 +81,7 @@ namespace FoxIDs.Logic
             (var loginName, var toUpParties) = hrdLogic.GetLoginUpPartyNameAndToUpParties();
             var partyId = await UpParty.IdFormatAsync(RouteBinding, loginName);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Login.ToString());
 
             await loginRequest.ValidateObjectAsync();
 
@@ -142,7 +147,7 @@ namespace FoxIDs.Logic
                         {
                             if (ipar.Contains('-') || ipar.Contains('/'))
                             {
-                                if(IPAddressRange.Parse(ipar).Contains(HttpContext.Connection.RemoteIpAddress))
+                                if (IPAddressRange.Parse(ipar).Contains(HttpContext.Connection.RemoteIpAddress))
                                 {
                                     // A profile is not possible.
                                     return new UpPartyLink { Name = up.Name, Type = up.Type };
@@ -158,7 +163,7 @@ namespace FoxIDs.Logic
                             }
                         }
                     }
-                } 
+                }
             }
 
             // 2) Select specified authentication method by domain
@@ -223,7 +228,7 @@ namespace FoxIDs.Logic
 
         private IEnumerable<HrdUpPartySequenceData> ToHrdUpPartis(IEnumerable<UpPartyLink> toUpParties)
         {
-            foreach(var up in toUpParties)
+            foreach (var up in toUpParties)
             {
                 yield return new HrdUpPartySequenceData
                 {
@@ -249,6 +254,7 @@ namespace FoxIDs.Logic
             try
             {
                 logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
+                logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Login.ToString());
 
                 var extendedUiActionResult = await HandleExtendedUiAsync(loginUpParty, sequenceData, claims);
                 if (extendedUiActionResult != null)
@@ -336,6 +342,7 @@ namespace FoxIDs.Logic
 
             await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
             logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Login.ToString());
 
             logger.ScopeTrace(() => $"Response, Application type '{sequenceData.DownPartyLink.Type}'.");
             switch (sequenceData.DownPartyLink.Type)

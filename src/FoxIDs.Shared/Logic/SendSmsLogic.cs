@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure.HttpClientFactory;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Models.External.Sms;
@@ -9,7 +10,6 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
@@ -20,12 +20,14 @@ namespace FoxIDs.Logic
         private readonly Settings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IHttpClientFactory httpClientFactory;
+        private readonly IMtlsHttpClientFactory mtlsHttpClientFactory;
 
-        public SendSmsLogic(Settings settings, TelemetryScopedLogger logger, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SendSmsLogic(Settings settings, TelemetryScopedLogger logger, IHttpClientFactory httpClientFactory, IMtlsHttpClientFactory mtlsHttpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
             this.httpClientFactory = httpClientFactory;
+            this.mtlsHttpClientFactory = mtlsHttpClientFactory;
         }
 
         public async Task SendSmsAsync(string phone, SmsContent smsContent)
@@ -172,14 +174,8 @@ namespace FoxIDs.Logic
                 };
                 logger.ScopeTrace(() => $"SMS to '{smsSettings.Type}', Telia SMS API request '{smsApiRequest.ToJson()}'.", traceType: TraceTypes.Message);
 
-                var httpClientHandler = new HttpClientHandler
-                {
-                    ClientCertificateOptions = ClientCertificateOption.Manual,
-                    SslProtocols = SslProtocols.Tls12,
-                    ClientCertificates = { smsSettings.Key.ToX509Certificate(includePrivateKey: true) }
-                };
-
-                using var httpClient = new HttpClient(httpClientHandler, disposeHandler: true);
+                using var clientCertificate = smsSettings.Key.ToX509Certificate(includePrivateKey: true);
+                using var httpClient = mtlsHttpClientFactory.CreateClient(clientCertificate);
                 httpClient.SetAuthorizationHeaderBearer(smsSettings.ClientSecret);
                 try
                 {

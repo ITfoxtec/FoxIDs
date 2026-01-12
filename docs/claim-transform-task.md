@@ -1,9 +1,9 @@
 <!--
 {
     "title":  "Claim transforms and claim tasks",
-    "description":  "Each FoxIDs authentication method and application registration handle claims and they support claim transformations and claim tasks. This means that multiple sets of claim transforms and claim tasks can be executed on each user authentic...",
+    "description":  "Configure claim transforms and claim tasks to add, replace, remove, or validate claims during authentication and token issuance in FoxIDs.",
     "ogTitle":  "Claim transforms and claim tasks",
-    "ogDescription":  "Each FoxIDs authentication method and application registration handle claims and they support claim transformations and claim tasks. This means that multiple sets of claim transforms and claim tasks can be executed on each user authentic...",
+    "ogDescription":  "Configure claim transforms and claim tasks to add, replace, remove, or validate claims during authentication and token issuance in FoxIDs.",
     "ogType":  "article",
     "ogImage":  "/images/foxids_logo.png",
     "twitterCard":  "summary_large_image",
@@ -15,19 +15,21 @@
 
 # Claim transforms and claim tasks
 
-Each FoxIDs authentication method and application registration handle [claims](claim.md) and they support claim transformations and claim tasks. 
-This means that multiple sets of claim transforms and claim tasks can be executed on each user authentication. 
-First executing claim transforms and claim tasks on the authentication method and then claim transforms and claim tasks on the application registration. 
+Each FoxIDs authentication method and application registration handles [claims](claim.md) and supports claim transformations and claim tasks.
+This means that multiple sets of claim transforms and claim tasks can be executed for each user authentication.
+First, claim transforms and claim tasks are executed on the authentication method, and then on the application registration.
 
 Additional subsets of claim transforms and claim tasks can be performed if a user or an external user is created.
 
 ![Claim transform flow diagram](images/claim-transform.svg)
 
-> If you create a new claim with a claim transform or claim tasks, the claim is local in the authentication method or application registration.  
-> In an authentication method the claim is forwarded by adding the claim or `*` (default) is in the `Forward claims` list.  
-> In a application registration you need to add the claim or `*`to the `Issue claims` list or alternative for OpenID Connect add the claim to a scopes `Voluntary claims` list and request the scope from your application.
+If you create a new claim with a first-level claim transform or claim task, the claim is local to the authentication method, except for a Login authentication method.  
+In an authentication method, the claim is forwarded if the claim type is added to the `Forward claims` list, or if `*` (default) is included in the list.  
 
-Please see the [claim transform examples](#claim-transform-examples)
+If you create a new claim with a claim transform or claim task, the claim is local to the application registration.  
+In an application registration, you must add the claim or `*` to the `Issue claims` list. Alternatively, for OpenID Connect, add the claim to a scope's `Voluntary claims` list and request the scope from your application.
+
+Please see the [claim transform examples](#claim-transform-examples).
 
 > Enable `Log claim trace` in the [log settings](logging.md#log-settings) to see the claims before and after transformation in the [logs](logging.md). 
 
@@ -39,79 +41,79 @@ And claim tasks.
 
 ![FoxIDs authentication method claim task](images/configure-claim-task-auth-method.png)
 
-Similarly, claim transforms and claim tasks can be configured as first and second level in a OpenID Connect application registration.
+Similarly, claim transforms and claim tasks can be configured as first-level and second-level in an OpenID Connect authentication method.
 
 ![FoxIDs application registration claim transform](images/configure-claim-transform-app-reg.png)
 
-> Claims are by default represented as JWT claims. If the authentication method is SAML 2.0 the claims in the first-level is represented as SAML 2.0 claims.
-If the application registration is SAML 2.0 the claims is represented as SAML 2.0 claims.
+> Claims are by default represented as JWT claims. If the authentication method is SAML 2.0, the first-level claims are represented as SAML 2.0 claims.
+> If the application registration is SAML 2.0, the claims are represented as SAML 2.0 claims.
 
-A claim transform and claim task will do one of op to seven different actions depending on the particular claim transform or claim task type.
+A claim transform and claim task will do one of up to seven different actions depending on the particular claim transform or claim task type.
 
 Claim transform and claim task actions:
 
 - `Add claim` - add a new claim
 - `Add claim, if not match` - do the add action if the condition does not match
-- `Replace claim` - add a new claim and remove existing claims if one or mere exist
+- `Replace claim` - add a new claim and remove existing claims if one or more exist
 - `Replace claim, if not match` - do the replace action if the condition does not match
-- `Remove claim` - remove the claims if one or mere exist
-- `If match` - do the action if the condition match
+- `Remove claim` - remove the claims if one or more exist
+- `If match` - do the action if the condition matches
 - `If not match` - do the action if the condition does not match
 
-The claim transforms and claim tasks is executed in order and the actions is therefore executed in order. This means that it is possible to create a local variable by adding a claim and later in the sequence take decisions based on the claim. 
-A claim is local in the claim transforms and claim tasks set if it start with `_local:`
+Claim transforms and claim tasks are executed in order, and the actions are therefore executed in order. This means that it is possible to create a local variable by adding a claim and later in the sequence make decisions based on the claim.
+A claim is local in the claim transforms and claim tasks set if it starts with `_local:`.
 
-With the `Add claim, if not match` actions it is possible to add a claim (local variable) if another claim or a claim with a value do not exist.
+With the `Add claim, if not match` action it is possible to add a claim (local variable) if another claim or a claim value does not exist.
 
 Claim transform types that support all actions:
 
-- `Match claim` - do the action if the claim type match
+- `Match claim` - do the action if the claim type matches
 - `Match claim and value` - do the action if the claim type and claim value match
-- `Regex match` - do the action if the claim type match and claim value match the regular expression
+- `Regex match` - do the action if the claim type matches and the claim value matches the regular expression
 
-Claim transform types that support `Add claim` and `Replace claim` and `Add claim, if new claim do not exist` actions:
+Claim transform types that support `Add claim`, `Replace claim` and `Add claim, if new claim does not exist` actions:
 
-- `Map` - do the action if the claim type match, then map the claim value to a new claim
-- `Regex map` - do the action if the claim type match and claim value match the regular expression group, then map the group value to a new claim
+- `Map` - do the action if the claim type matches, then map the claim value to a new claim
+- `Regex map` - do the action if the claim type matches and the claim value matches the regular expression group, then map the group value to a new claim
 
 Claim transform types that support `Add claim` and `Replace claim` actions:
 
 - `Constant` - always do the action (add/replace a claim with a constant value)
 - `Concatenate` - do the action if one or more of the claim types match, then concatenate the claim values to a new claim
-- `External claims API` - Call an [external API](#external-claims---api) with the selected claims to add/replace claims with external claims
-- `DK XML privilege to JSON` - Converting the [DK privilege to JSON](claim-transform-dk-privilege). 
+- `External claims API` - call an [external API](#external-claims---api) with the selected claims to add/replace claims with external claims
+- `DK XML privilege to JSON` - convert the [DK privilege to JSON](claim-transform-dk-privilege).
 
 Claim task types that support `Add claim` and `Replace claim` actions:
 
-- `Query internal user` - Match the claim and find exactly one internal user based on the value of the claim. The request will fail if more than one user is found. Then add/replace the users' claims.
-- `Query external user` - Match the claim and find exactly one external user based on the value of the claim. The request will fail if more than one user is found. Then add/replace the users' claims.
+- `Query internal user` - match the claim and find exactly one internal user based on the value of the claim. The request will fail if more than one user is found. Then add/replace the user's claims.
+- `Query external user` - match the claim and find exactly one external user based on the value of the claim. The request will fail if more than one user is found. Then add/replace the user's claims.
 
 Claim task types that support `If match` and `If not match` actions:
 
-- `Match claim and return error` - Return an error if the claim type match/not match.
-- `Match claim and value and return error` - Return an error if the claim type and value match/not match.
-- `Regex match and return error` - Return an error if the claim type and claim value match/not match the regular expression.
-- `Match claim and start authentication` - Start a new login flow by initiating a authentication method if the claim type match/not match.
-- `Match claim and value and start authentication` - Start a new login flow by initiating a authentication method if the claim type and value match/not match.
-- `Regex match and start authentication` - Start a new login flow by initiating a authentication method if the claim type and claim value match/not match the regular expression.
+- `Match claim and return error` - return an error if the claim type matches/does not match.
+- `Match claim and value and return error` - return an error if the claim type and value match/do not match.
+- `Regex match and return error` - return an error if the claim type and claim value match/do not match the regular expression.
+- `Match claim and start authentication` - start a new login flow by initiating an authentication method if the claim type matches/does not match.
+- `Match claim and value and start authentication` - start a new login flow by initiating an authentication method if the claim type and value match/do not match.
+- `Regex match and start authentication` - start a new login flow by initiating an authentication method if the claim type and claim value match/do not match the regular expression.
 
-> The start authentication claim tasks can be used to do step-up if the user is logged in with one-factor and another factor is required. Or if additional information (claims) is required.
+> The start authentication claim tasks can be used for step-up when the user is logged in with one factor and another factor is required, or if additional information (claims) is required.
 
 ## External claims - API
-You can [call your own API](#implement-api) from FoxIDs with a claim transformation. The API is called with claims and the claims returned form the API can be added with a add or replace action. 
+You can [call your own API](#implement-api) from FoxIDs with a claim transformation. The API is called with claims and the claims returned from the API can be added with an add or replace action.
 The API is only called if at least one selected claim exists. You can use `*` to select and send all claims to your API.
 
-Use case sceneries
+Use case scenarios:
 - Call your API from an authentication method each time a user is authenticated either in FoxIDs or with an external identity provider. 
   You can then find the user in your database and return a user ID and maybe a customer ID or basically anything of relevance. For example, you can also create the user in your database.
-- Call your API from an application registration with the user ID (`sub`) and query the users' roles in your database. You API would then either return an empty list or a list of role claims or maybe a more complex rights structurer. 
+- Call your API from an application registration with the user ID (`sub`) and query the user's roles in your database. Your API would then either return an empty list or a list of role claims or maybe a more complex rights structure.
 
 ### Implement API
 
 You need to implement a simple API that FoxIDs calls when the claim transformation is executed.  
 Please have a look at the [sample code](#api-sample).
 
-The API has a base URL, and the functionality is divided into folders. Currently, only the `claims` folder (functionality) for requesting a list of claims is support.  
+The API has a base URL, and the functionality is divided into folders. Currently, only the `claims` folder (functionality) for requesting a list of claims is supported.  
 
 If the base URL for the API is `https://somewhere.org/myclaimsstore` the URL for the `claims` folder will be `https://somewhere.org/myclaimsstore/claims`.
 
@@ -161,15 +163,15 @@ The API must return HTTP code 401 (Unauthorized) and an `error` (required) if th
 If other errors occur, the API should return HTTP code 500 or another appropriate error code.  
 It is recommended to add a technical error message `ErrorMessage` for diagnostics (it is only logged; never shown to the end user).
 
-> Error messages returned from the API in `ErrorMessage` is NOT displayed for the user only logged.
+> Error messages returned from the API in `ErrorMessage` are NOT displayed to the user; they are only logged.
 
 ### API Sample
-The sample [ExternalClaimsApiSample](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalClaimsApiSample) show how to implement the API in ASP.NET Core.
+The sample [ExternalClaimsApiSample](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalClaimsApiSample) shows how to implement the API in ASP.NET Core.
 
-You can user this [Postman collection](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalClaimsApiSample/external-claims-api.postman_collection.json) to call and test your API with [Postman](https://www.postman.com/downloads/).
+You can use this [Postman collection](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalClaimsApiSample/external-claims-api.postman_collection.json) to call and test your API with [Postman](https://www.postman.com/downloads/).
 
 ### Configure 
-Configure to call your API in a claims transformation in [FoxIDs Control Client](control.md#foxids-control-client).
+Configure FoxIDs to call your API from a claim transformation in [FoxIDs Control Client](control.md#foxids-control-client).
 
  1. Navigate to the **Claim Transform** section
  2. Click **Add claim transform**
@@ -186,7 +188,7 @@ Configure to call your API in a claims transformation in [FoxIDs Control Client]
 ### Split the `name` claim into the two claims `given_name` and `family_name`
 
 The transformation will split the value in the `name` claim at the first occurring space and respectively add the `given_name` and `family_name` claims, if they do not already exist.  
-If there are more than one space in the `name` claim value. New `given_name` and `family_name` claims will not be added because they already exist.
+If there is more than one space in the `name` claim value, new `given_name` and `family_name` claims will not be added because they already exist.
 
 Use two `Regex map` claim transformations.
 
@@ -198,9 +200,9 @@ Use two `Regex map` claim transformations.
 
 ### Remove the default added authentication method name from `sub`
 
-The authentication method name is default added to the `sub` claim value as a post name divided by a pipe e.g., `some-auth-method|my-external-user-id`.
+The authentication method name is added by default to the `sub` claim value as a prefix divided by a pipe e.g., `some-auth-method|my-external-user-id`.
 
-You can do a replace claim on the `sub` claim to remove the default added post value.
+You can use a replace claim on the `sub` claim to remove the default-added prefix value.
 
 The transformation will split the value in the `sub` claim and replace the claim with a new `sub` only containing the original ID.
 

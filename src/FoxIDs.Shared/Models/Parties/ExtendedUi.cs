@@ -14,7 +14,6 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.ExtendedUi.TitleLength)]
         [JsonProperty(PropertyName = "title")]
         public string Title { get; set; }
@@ -23,10 +22,17 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "submit_button")]
         public string SubmitButtonText { get; set; }
 
+        [JsonProperty(PropertyName = "module_type")]
+        public ExtendedUiModuleTypes? ModuleType { get; set; }
+
+        [ValidateComplexType]
+        [JsonProperty(PropertyName = "modules")]
+        public ExtendedUiModules Modules { get; set; }
+
         /// <summary>
         /// UI elements.
         /// </summary>
-        [ListLength(Constants.Models.ExtendedUi.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
+        [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
         [JsonProperty(PropertyName = "elements")]
         public List<DynamicElement> Elements { get; set; }
 
@@ -61,6 +67,37 @@ namespace FoxIDs.Models
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+
+            if (ModuleType == null)
+            {
+                if (Title.IsNullOrWhiteSpace())
+                {
+                    results.Add(new ValidationResult($"The field '{nameof(Title)}' is required.", [nameof(Title)]));
+                }
+
+                if (Elements == null || Elements.Count < Constants.Models.ExtendedUi.ElementsMin)
+                {
+                    results.Add(new ValidationResult($"The field '{nameof(Elements)}' is required.", [nameof(Elements)]));
+                }
+            }
+            else
+            {
+                Title = null;
+                SubmitButtonText = null;
+                Elements = null;
+
+                if (ModuleType == ExtendedUiModuleTypes.NemLoginPrivateCprMatch)
+                {
+                    if (Modules?.NemLogin == null)
+                    {
+                        results.Add(new ValidationResult($"The field '{nameof(Modules.NemLogin)}' is required when the module type is '{ModuleType}'.", [$"{nameof(Modules)}.{nameof(Modules.NemLogin)}"]));
+                    }
+                }
+                else
+                {
+                    results.Add(new ValidationResult($"The module type '{ModuleType}' is not supported.", [nameof(ModuleType)]));
+                }
+            }
 
             if (ExternalConnectType == ExternalConnectTypes.Api)
             {

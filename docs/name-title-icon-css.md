@@ -175,6 +175,37 @@ div.page-content::before {
 
 ![Configure login box with CSS](images/configure-login-css-sample-test.png)
 
+Show the select where to login (HRD) section before the login box.
+```CSS
+.col-md.page-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.col-md.page-content form {
+  order: 2;
+}
+
+.col-md.page-content #form-filter {
+  order: 1;
+}
+
+#form-filter {
+  display: flex;
+  flex-direction: column;
+}
+
+#form-filter .info-message-filter {
+  display: none;
+}
+
+#form-filter .dividing-line {
+  order: 999;
+}
+```
+
+![Configure HRD before login box with CSS](images/configure-hrd-login-css-sample-test.png)
+
 ## Add HTML to the Login UI
 
 You can change the login page by adding text and HTML elements. There are placeholders for the input fields (username / password etc.), buttons, links and authentication choices (HRD). You can place the text and HTML elements between the placeholders and change the order of the placeholders.

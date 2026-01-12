@@ -79,7 +79,7 @@ namespace FoxIDs.Controllers
                     {
                         sequenceData.DoLoginPasswordAction = true;
                     }
-                    else if(passwordLessEmail)
+                    else if (passwordLessEmail)
                     {
                         sequenceData.DoLoginPasswordlessEmailAction = true;
                     }
@@ -202,6 +202,9 @@ namespace FoxIDs.Controllers
             }
         }
 
+        /// <summary>
+        /// This method is called when user select another authentication method than the HRD login method.
+        /// </summary>
         private async Task<IActionResult> GoToUpParty(LoginUpSequenceData sequenceData, UpPartyLink selectedUpParty)
         {
             await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
@@ -218,17 +221,17 @@ namespace FoxIDs.Controllers
             switch (selectedUpParty.Type)
             {
                 case PartyTypes.Login:
-                    return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.HrdLoginUpPartyName);
+                    return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.HrdLoginUpPartyName, logPlanUsage: false);
                 case PartyTypes.OAuth2:
                     throw new NotImplementedException();
                 case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.UpPartyId.PartyIdToName());
+                    return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.UpPartyId.PartyIdToName(), logPlanUsage: false);
                 case PartyTypes.Saml2:
-                    return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.UpPartyId.PartyIdToName());
+                    return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.UpPartyId.PartyIdToName(), logPlanUsage: false);
                 case PartyTypes.TrackLink:
-                    return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.UpPartyId.PartyIdToName());
+                    return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.UpPartyId.PartyIdToName(), logPlanUsage: false);
                 case PartyTypes.ExternalLogin:
-                    return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.UpPartyId.PartyIdToName());
+                    return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.UpPartyId.PartyIdToName(), logPlanUsage: false);
                 default:
                     throw new NotSupportedException($"Connection type '{selectedUpParty.Type}' not supported.");
             }
@@ -299,7 +302,7 @@ namespace FoxIDs.Controllers
                 else if (loginUpParty.EnableUsernameIdentifier)
                 {
                     identifierViewModel.UsernameIdentifier = new UsernameIdentifierViewModel { Username = userIdentifier };
-                }                          
+                }
                 else
                 {
                     throw new NotSupportedException();
@@ -433,7 +436,7 @@ namespace FoxIDs.Controllers
                         {
                             return await GoToUpParty(sequenceData, autoSelectedUpParty);
                         }
-                    } 
+                    }
                 }
 
                 if (!sequenceData.ToUpParties.Where(up => up.Name == loginUpParty.Name).Any())
@@ -1155,7 +1158,7 @@ namespace FoxIDs.Controllers
                         return View("LoggedIn", new LoggedInViewModel
                         {
                             Title = loginUpParty.Title ?? RouteBinding.DisplayName,
-                            IconUrl = loginUpParty.IconUrl, 
+                            IconUrl = loginUpParty.IconUrl,
                             Css = loginUpParty.Css,
                             Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty)
                         });
@@ -1189,9 +1192,9 @@ namespace FoxIDs.Controllers
                 loginUpParty = loginUpParty ?? await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty);
                 logger.ScopeTrace(() => "Show logged out dialog.");
-                return View("loggedOut", new LoggedOutViewModel 
+                return View("loggedOut", new LoggedOutViewModel
                 {
-                    Title = loginUpParty.Title ?? RouteBinding.DisplayName, 
+                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
                     Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty)
@@ -1208,7 +1211,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                
+
                 securityHeaderLogic.AddImgSrc(loginUpParty);
                 securityHeaderLogic.AddImgSrcFromDynamicElements(loginUpParty.CreateUser?.Elements);
                 if (!loginUpParty.EnableCreateUser)
@@ -1224,11 +1227,11 @@ namespace FoxIDs.Controllers
                 }
 
                 logger.ScopeTrace(() => "Show create user dialog.");
-                return View(nameof(CreateUser), new CreateUserViewModel 
+                return View(nameof(CreateUser), new CreateUserViewModel
                 {
-                    SequenceString = SequenceString, 
-                    Title = loginUpParty.Title ?? RouteBinding.DisplayName, 
-                    IconUrl = loginUpParty.IconUrl, 
+                    SequenceString = SequenceString,
+                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
+                    IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
                     InputElements = dynamicElementLogic.ToUiElementsViewModel(loginUpParty.CreateUser.Elements).ToList(),
                     Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty)
@@ -1255,7 +1258,7 @@ namespace FoxIDs.Controllers
                 if (!loginUpParty.EnableCreateUser)
                 {
                     throw new InvalidOperationException("Create user not enabled.");
-                }                
+                }
                 PopulateCreateUserDefault(loginUpParty);
                 createUser.InputElements = dynamicElementLogic.ToUiElementsViewModel(loginUpParty.CreateUser.Elements, createUser.InputElements).ToList();
 
@@ -1306,9 +1309,9 @@ namespace FoxIDs.Controllers
                     var user = await accountLogic.CreateUserAsync(new CreateUserObj
                     {
                         UserIdentifier = userIdentifier,
-                        Password = password, 
-                        Claims = claims, 
-                        ConfirmAccount = loginUpParty.CreateUser.ConfirmAccount, 
+                        Password = password,
+                        Claims = claims,
+                        ConfirmAccount = loginUpParty.CreateUser.ConfirmAccount,
                         RequireMultiFactor = loginUpParty.CreateUser.RequireMultiFactor
                     });
                     auditLogic.LogCreateUserEvent(PartyTypes.Login, sequenceData.UpPartyId, user.UserId, claims);
@@ -1517,7 +1520,7 @@ namespace FoxIDs.Controllers
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
-                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);                
+                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);

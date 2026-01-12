@@ -15,6 +15,12 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Require a user")]
         public bool RequireUser { get; set; }
 
+        /// <summary>
+        /// External user lifetime in seconds. 0 disables expiration, sliding expiration on login.
+        /// </summary>
+        [Display(Name = "External user lifetime in seconds (0 to disable, sliding expiration)")]
+        public int ExternalUserLifetime { get; set; }
+
         [Required]
         [MaxLength(Constants.Models.Claim.JwtTypeLength)]
         [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]

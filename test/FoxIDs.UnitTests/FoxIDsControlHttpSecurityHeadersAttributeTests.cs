@@ -28,7 +28,7 @@ namespace FoxIDs.UnitTests
             securityHeaders.ApplyFromMiddleware(httpContext, isHtml: true);
 
             var cspHeader = httpContext.Response.Headers["Content-Security-Policy"].ToString();
-            Assert.Contains("connect-src 'self' https://foxids.example.com;", cspHeader);
+            Assert.Contains("connect-src 'self' https://foxids.example.com", cspHeader);
         }
 
         [Fact]

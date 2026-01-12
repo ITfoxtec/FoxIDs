@@ -35,7 +35,13 @@ namespace FoxIDs.Infrastructure.Filters
                 {
                     connectSrc = connectSrc.ConcatOnce(settings.FoxIDsEndpoint.UrlToOrigin());
                 }
+                connectSrc = connectSrc.ConcatOnce(GetModuleAssetOrigins());
                 return connectSrc;
+            }
+
+            private IEnumerable<string> GetModuleAssetOrigins()
+            {
+                yield return "https://www.foxids.com".UrlToOrigin();
             }
 
             protected override string CspScriptSrc(HttpContext httpContext)

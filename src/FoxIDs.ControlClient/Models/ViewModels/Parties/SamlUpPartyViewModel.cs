@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using FoxIDs.Infrastructure.DataAnnotations;
@@ -28,6 +28,11 @@ namespace FoxIDs.Client.Models.ViewModels
         [MaxLength(Constants.Models.Party.NoteLength)]
         [Display(Name = "Your notes")]
         public string Note { get; set; }
+
+        public UpPartyModuleTypes? ModuleType { get; set; }
+
+        [ValidateComplexType]
+        public SamlUpPartyModulesViewModel Modules { get; set; }
 
         public bool IsManual { get; set; }
 
@@ -278,7 +283,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool EnableIdPInitiated { get; set; }
 
         [Range(-1, Constants.Models.SamlParty.Up.IdPInitiatedGrantLifetimeMax)]
-        [Display(Name = "IdP-Initiated Login grant lifetime for OpenID Connect applications (active if greater than 0)")]
+        [Display(Name = "IdP-Initiated Login - OpenID Connect grant lifetime")]
         public int? IdPInitiatedGrantLifetime { get; set; }
 
         [ValidateComplexType]
@@ -323,6 +328,7 @@ namespace FoxIDs.Client.Models.ViewModels
             {
                 results.Add(new ValidationResult($"The number of claims transforms in '{nameof(ClaimTransforms)}' and '{nameof(ExitClaimTransforms)}' can be a  of {Constants.Models.Claim.TransformsMax} combined.", [nameof(ClaimTransforms), nameof(ExitClaimTransforms)]));
             }
+
             return results;
         }
     }

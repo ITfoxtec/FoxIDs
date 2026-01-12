@@ -43,6 +43,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, End session request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.Oidc.ToString());
             var party = await tenantDataRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
             {
@@ -56,7 +57,7 @@ namespace FoxIDs.Logic
                 "GET" => party.Client.ResponseMode == IdentityConstants.ResponseModes.Query ? HttpContext.Request.Query.ToDictionary() : throw new NotSupportedException($"GET not supported by response mode '{party.Client.ResponseMode}'."),
                 _ => throw new NotSupportedException($"Request method not supported by response mode '{party.Client.ResponseMode}'")
             };
-           
+
             var rpInitiatedLogoutRequest = formOrQueryDictionary.ToObject<RpInitiatedLogoutRequest>();
 
             try
@@ -203,12 +204,12 @@ namespace FoxIDs.Logic
         {
             rpInitiatedLogoutRequest.Validate();
 
-            if (!rpInitiatedLogoutRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace() && 
-                !client.RedirectUris.Any(u => client.DisableAbsoluteUris ? 
-                    rpInitiatedLogoutRequest.PostLogoutRedirectUri?.StartsWith(u, StringComparison.InvariantCultureIgnoreCase) == true : 
+            if (!rpInitiatedLogoutRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace() &&
+                !client.RedirectUris.Any(u => client.DisableAbsoluteUris ?
+                    rpInitiatedLogoutRequest.PostLogoutRedirectUri?.StartsWith(u, StringComparison.InvariantCultureIgnoreCase) == true :
                     u.Equals(rpInitiatedLogoutRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase)) &&
                 !(client.DisableAbsoluteUris ?
-                    client.PostLogoutRedirectUri != null && rpInitiatedLogoutRequest.PostLogoutRedirectUri?.StartsWith(client.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase) == true : 
+                    client.PostLogoutRedirectUri != null && rpInitiatedLogoutRequest.PostLogoutRedirectUri?.StartsWith(client.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase) == true :
                     client.PostLogoutRedirectUri?.Equals(rpInitiatedLogoutRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase) == true))
             {
                 throw new OAuthRequestException($"Invalid post logout redirect URI '{rpInitiatedLogoutRequest.PostLogoutRedirectUri}'.");
@@ -219,6 +220,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, End session response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.Oidc.ToString());
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
 

@@ -54,5 +54,10 @@
         /// UI feature flag configuration.
         /// </summary>
         public ControlClientUiSettings ClientUi { get; set; }
+
+        /// <summary>
+        /// Module asset URLs used by the Control UI.
+        /// </summary>
+        public ModuleAssetsSettings ModuleAssets { get; set; }
     }
 }

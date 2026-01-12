@@ -106,10 +106,20 @@
         {
             <div>@Constants.Logs.Results.DownPartyId.GetDisplayLogKey(): @downPartyId.GetDisplayLogValue()</div>
         }
+        var downPartyType = @Item.Values.GetValue(Constants.Logs.Results.DownPartyType);
+        if (!downPartyType.IsNullOrWhiteSpace())
+        {
+            <div>@Constants.Logs.Results.DownPartyType.GetDisplayLogKey(): @downPartyType.GetDisplayLogValue()</div>
+        }
         var upPartyId = @Item.Values.GetValue(Constants.Logs.Results.UpPartyId);
         if (!upPartyId.IsNullOrWhiteSpace())
         {
             <div>@Constants.Logs.Results.UpPartyId.GetDisplayLogKey(): @upPartyId.GetDisplayLogValue()</div>
+        }
+        var upPartyType = @Item.Values.GetValue(Constants.Logs.Results.UpPartyType);
+        if (!upPartyType.IsNullOrWhiteSpace())
+        {
+            <div>@Constants.Logs.Results.UpPartyType.GetDisplayLogKey(): @upPartyType.GetDisplayLogValue()</div>
         }
         var userId = @Item.Values.GetValue(Constants.Logs.Results.UserId);
         if (!userId.IsNullOrWhiteSpace())
@@ -162,10 +172,20 @@
         {
             <div>@Constants.Logs.Results.DownPartyId.GetDisplayLogKey(): @downPartyId.GetDisplayLogValue()</div>
         }
+        var downPartyType = @Item.Values.GetValue(Constants.Logs.Results.DownPartyType);
+        if (!downPartyType.IsNullOrWhiteSpace())
+        {
+            <div>@Constants.Logs.Results.DownPartyType.GetDisplayLogKey(): @downPartyType.GetDisplayLogValue()</div>
+        }
         var upPartyId = @Item.Values.GetValue(Constants.Logs.Results.UpPartyId);
         if (!upPartyId.IsNullOrWhiteSpace())
         {
             <div>@Constants.Logs.Results.UpPartyId.GetDisplayLogKey(): @upPartyId.GetDisplayLogValue()</div>
+        }
+        var upPartyType = @Item.Values.GetValue(Constants.Logs.Results.UpPartyType);
+        if (!upPartyType.IsNullOrWhiteSpace())
+        {
+            <div>@Constants.Logs.Results.UpPartyType.GetDisplayLogKey(): @upPartyType.GetDisplayLogValue()</div>
         }
     }
 

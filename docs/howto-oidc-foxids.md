@@ -1,9 +1,9 @@
 <!--
 {
     "title":  "Interconnect FoxIDs with OpenID Connect",
-    "description":  "FoxIDs environments can be connected with OpenID Connect and thereby authenticating end users in another FoxIDs environment or an external Identity Provider (IdP) configured as an authentication method. FoxIDs environments can be interco...",
+    "description":  "Connect FoxIDs environments using OpenID Connect to enable cross-environment authentication, logout, and session handling within or across tenants.",
     "ogTitle":  "Interconnect FoxIDs with OpenID Connect",
-    "ogDescription":  "FoxIDs environments can be connected with OpenID Connect and thereby authenticating end users in another FoxIDs environment or an external Identity Provider (IdP) configured as an authentication method. FoxIDs environments can be interco...",
+    "ogDescription":  "Connect FoxIDs environments using OpenID Connect to enable cross-environment authentication, logout, and session handling within or across tenants.",
     "ogType":  "article",
     "ogImage":  "/images/foxids_logo.png",
     "twitterCard":  "summary_large_image",

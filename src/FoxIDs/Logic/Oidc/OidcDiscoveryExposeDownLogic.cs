@@ -30,6 +30,10 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AppReg, OpenID configuration request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = RouteBinding.DownParty != null ? await tenantDataRepository.GetAsync<TParty>(partyId) : null;
+            if (RouteBinding.DownParty != null)
+            {
+                logger.SetScopeProperty(Constants.Logs.DownPartyType, RouteBinding.DownParty.Type.ToString());
+            }
 
             var oidcDiscovery = new OidcDiscovery
             {
@@ -55,7 +59,7 @@ namespace FoxIDs.Logic
                 oidcDiscovery.ClaimsSupported = oidcDiscovery.ClaimsSupported.ConcatOnce(Constants.DefaultClaims.IdToken).ConcatOnce(Constants.DefaultClaims.AccessToken)
                     .ConcatOnce(party.Client.Claims?.Where(c => c.Claim?.Contains('*') != true)?.Select(c => c.Claim).ToList()).ConcatOnce(party.Client.Scopes?.Where(s => s.VoluntaryClaims != null).SelectMany(s => s.VoluntaryClaims?.Select(c => c.Claim)).ToList());
 
-                if(party?.Client.RequirePkce == true)
+                if (party?.Client.RequirePkce == true)
                 {
                     oidcDiscovery.CodeChallengeMethodsSupported = [IdentityConstants.CodeChallengeMethods.Plain, IdentityConstants.CodeChallengeMethods.S256];
                 }
@@ -78,6 +82,10 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, OpenID configuration keys request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            if (RouteBinding.DownParty != null)
+            {
+                logger.SetScopeProperty(Constants.Logs.DownPartyType, RouteBinding.DownParty.Type.ToString());
+            }
 
             var jonWebKeySet = new JsonWebKeySet() { Keys = new List<JsonWebKey>() };
             if (!RouteBinding.Key.PrimaryKey.ExternalKeyIsNotReady)

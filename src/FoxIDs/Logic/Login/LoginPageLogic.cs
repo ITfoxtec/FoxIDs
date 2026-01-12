@@ -46,6 +46,7 @@ namespace FoxIDs.Logic
                 throw new Exception("Invalid authentication method id.");
             }
             logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Login.ToString());
 
             if (RouteBinding.UpParty.Type != partyType)
             {
@@ -73,7 +74,7 @@ namespace FoxIDs.Logic
 
         private bool UserAndLoginUpPartySupportMultiFactor(User user, LoginUpParty loginUpParty)
         {
-            if(!(user.DisableTwoFactorApp && user.DisableTwoFactorSms && user.DisableTwoFactorEmail) && !(loginUpParty.DisableTwoFactorApp && loginUpParty.DisableTwoFactorSms && loginUpParty.DisableTwoFactorEmail))
+            if (!(user.DisableTwoFactorApp && user.DisableTwoFactorSms && user.DisableTwoFactorEmail) && !(loginUpParty.DisableTwoFactorApp && loginUpParty.DisableTwoFactorSms && loginUpParty.DisableTwoFactorEmail))
             {
                 return true;
             }
@@ -91,7 +92,7 @@ namespace FoxIDs.Logic
 
         public DownPartySessionLink GetDownPartyLink(UpParty upParty, ILoginUpSequenceDataBase sequenceData) => upParty.DisableSingleLogout ? null : sequenceData.DownPartyLink;
 
-        public async Task<IActionResult> LoginResponseSequenceAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, User user, IEnumerable<string> authMethods = null, LoginResponseSequenceSteps step = LoginResponseSequenceSteps.PhoneVerificationStep) 
+        public async Task<IActionResult> LoginResponseSequenceAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, User user, IEnumerable<string> authMethods = null, LoginResponseSequenceSteps step = LoginResponseSequenceSteps.PhoneVerificationStep)
         {
             try
             {
@@ -502,7 +503,7 @@ namespace FoxIDs.Logic
                 Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                 IconUrl = loginUpParty.IconUrl,
                 Css = loginUpParty.Css,
-                ShowCancelLogin = loginUpParty.EnableCancelLogin,                
+                ShowCancelLogin = loginUpParty.EnableCancelLogin,
                 ShowPasswordAuth = !(loginUpParty.DisablePasswordAuth == true),
                 ShowPasswordlessEmail = loginUpParty.EnablePasswordlessEmail == true,
                 ShowPasswordlessSms = loginUpParty.EnablePasswordlessSms == true,

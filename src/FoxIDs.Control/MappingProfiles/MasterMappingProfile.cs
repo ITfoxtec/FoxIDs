@@ -46,6 +46,7 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap();
 
             CreateMap<ControlClientUiSettings, Api.ControlClientUiSettings>();
+            CreateMap<NemLoginAssetsSettings, Api.NemLoginAssetsSettings>();
         }
     }
 }

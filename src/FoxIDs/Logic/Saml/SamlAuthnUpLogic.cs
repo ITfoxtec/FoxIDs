@@ -64,13 +64,17 @@ namespace FoxIDs.Logic
             this.auditLogic = auditLogic;
         }
 
-        public async Task<IActionResult> AuthnRequestRedirectAsync(UpPartyLink partyLink, ILoginRequest loginRequest, string hrdLoginUpPartyName = null)
+        public async Task<IActionResult> AuthnRequestRedirectAsync(UpPartyLink partyLink, ILoginRequest loginRequest, string hrdLoginUpPartyName = null, bool logPlanUsage = true)
         {
             logger.ScopeTrace(() => "AuthMethod, SAML Authn request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Saml2.ToString());
 
-            planUsageLogic.LogLoginEvent(PartyTypes.Saml2);
+            if (logPlanUsage)
+            {
+                planUsageLogic.LogLoginEvent(PartyTypes.Saml2);
+            }
 
             await loginRequest.ValidateObjectAsync();
 
@@ -90,6 +94,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AuthMethod, SAML Authn request.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Saml2.ToString());
             var samlUpSequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(partyName: partyId.PartyIdToName(), remove: false);
             if (!samlUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
@@ -163,18 +168,18 @@ namespace FoxIDs.Logic
                     AuthnContextClassRef = party.AuthnContextClassReferences,
                 };
             }
-            if(profile != null && (profile.AuthnContextComparison.HasValue && party.AuthnContextClassReferences?.Count() > 0 || profile.AuthnContextClassReferences?.Count() > 0))
+            if (profile != null && (profile.AuthnContextComparison.HasValue && party.AuthnContextClassReferences?.Count() > 0 || profile.AuthnContextClassReferences?.Count() > 0))
             {
-                if(saml2AuthnRequest.RequestedAuthnContext == null)
+                if (saml2AuthnRequest.RequestedAuthnContext == null)
                 {
                     saml2AuthnRequest.RequestedAuthnContext = new RequestedAuthnContext();
                 }
 
-                if(profile.AuthnContextComparison.HasValue)
+                if (profile.AuthnContextComparison.HasValue)
                 {
                     saml2AuthnRequest.RequestedAuthnContext.Comparison = (AuthnContextComparisonTypes)Enum.Parse(typeof(AuthnContextComparisonTypes), profile.AuthnContextComparison.Value.ToString());
                 }
-                if(profile.AuthnContextClassReferences?.Count() > 0)
+                if (profile.AuthnContextClassReferences?.Count() > 0)
                 {
                     saml2AuthnRequest.RequestedAuthnContext.AuthnContextClassRef = profile.AuthnContextClassReferences;
                 }
@@ -185,19 +190,25 @@ namespace FoxIDs.Logic
                 try
                 {
                     saml2AuthnRequest.Extensions = new Extensions();
-                    saml2AuthnRequest.Extensions.Element.Add(System.Xml.Linq.XElement.Parse(party.AuthnRequestExtensionsXml));
+                    foreach (var element in ParseAuthnRequestExtensionsXml(party.AuthnRequestExtensionsXml))
+                    {
+                        saml2AuthnRequest.Extensions.Element.Add(element);
+                    }
                 }
                 catch (Exception ex)
                 {
                     logger.Error(ex, "Unable to parse and add extensions XML. A valid XML string is required.");
-                }            
+                }
             }
             if (profile != null && !profile.AuthnRequestExtensionsXml.IsNullOrWhiteSpace())
             {
                 try
                 {
                     saml2AuthnRequest.Extensions = new Extensions();
-                    saml2AuthnRequest.Extensions.Element.Add(System.Xml.Linq.XElement.Parse(profile.AuthnRequestExtensionsXml));
+                    foreach (var element in ParseAuthnRequestExtensionsXml(profile.AuthnRequestExtensionsXml))
+                    {
+                        saml2AuthnRequest.Extensions.Element.Add(element);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -215,6 +226,12 @@ namespace FoxIDs.Logic
             return binding.ToSamlActionResult();
         }
 
+        private static IReadOnlyCollection<System.Xml.Linq.XElement> ParseAuthnRequestExtensionsXml(string authnRequestExtensionsXml)
+        {
+            var wrapper = System.Xml.Linq.XElement.Parse($"<root>{authnRequestExtensionsXml}</root>");
+            return wrapper.Elements().ToList();
+        }
+
         private SamlUpPartyProfile GetProfile(SamlUpParty party, SamlUpSequenceData samlUpSequenceData)
         {
             if (!samlUpSequenceData.UpPartyProfileName.IsNullOrEmpty() && party.Profiles != null)
@@ -228,6 +245,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => $"AuthMethod, SAML Authn response.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Saml2.ToString());
 
             var party = await tenantDataRepository.GetAsync<SamlUpParty>(partyId);
 
@@ -475,7 +493,7 @@ namespace FoxIDs.Logic
                         }
                         idPInitiatedLink.DownPartyRedirectUrl = HttpUtility.UrlDecode(rsSplit[2].Substring("app_redirect=".Count()));
                     }
-                    return (null,  idPInitiatedLink);
+                    return (null, idPInitiatedLink);
                 }
                 else
                 {
@@ -548,7 +566,7 @@ namespace FoxIDs.Logic
             {
                 logger.Error(ex);
                 return await AuthnResponseDownAsync(sequenceData, Saml2StatusCodes.Responder);
-            }        
+            }
         }
 
         private async Task<IActionResult> AuthnResponsePostAsync(SamlUpParty party, SamlUpSequenceData sequenceData, IEnumerable<Claim> jwtValidClaims, IEnumerable<Claim> externalUserClaims, string externalSessionId, IdPInitiatedDownPartyLink idPInitiatedLink = null)
@@ -591,7 +609,7 @@ namespace FoxIDs.Logic
             var totalValueLenght = 0;
             foreach (var claim in claims)
             {
-                if(claim.Type?.Length > Constants.Models.Claim.SamlTypeLength)
+                if (claim.Type?.Length > Constants.Models.Claim.SamlTypeLength)
                 {
                     throw new SamlRequestException($"Claim '{claim.Type.Substring(0, Constants.Models.Claim.SamlTypeLength)}' is too long, maximum length of '{Constants.Models.Claim.SamlTypeLength}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
                 }
@@ -618,22 +636,22 @@ namespace FoxIDs.Logic
             var nameIdFormat = string.Empty;
 
             var nameIdClaim = claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault();
-            if(nameIdClaim != null)
+            if (nameIdClaim != null)
             {
                 nameIdValue = nameIdClaim.Value;
                 nameIdFormat = nameIdClaim.Properties.Where(p => p.Key == Saml2ClaimTypes.NameIdFormat).Select(p => p.Value).FirstOrDefault();
             }
-            
+
             if (nameIdValue.IsNullOrEmpty())
             {
                 nameIdValue = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.Upn);
             }
-            
+
             if (nameIdValue.IsNullOrEmpty())
             {
                 nameIdValue = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.Email);
             }
-            
+
             if (nameIdValue.IsNullOrEmpty())
             {
                 nameIdValue = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.Name);
@@ -663,7 +681,7 @@ namespace FoxIDs.Logic
 
                 logger.ScopeTrace(() => $"Response, Application type {downPartyType}.");
 
-                if (status == Saml2StatusCodes.Success  && jwtClaims != null)
+                if (status == Saml2StatusCodes.Success && jwtClaims != null)
                 {
                     auditLogic.LogLoginEvent(PartyTypes.Saml2, sequenceData.UpPartyId, jwtClaims);
                 }
@@ -738,6 +756,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AuthMethod, SAML validate token exchange subject token.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Saml2.ToString());
 
             var party = await tenantDataRepository.GetAsync<SamlUpParty>(partyId);
 

@@ -204,12 +204,10 @@ namespace FoxIDs.Client.Pages.Components
             scopesViewModel.Remove(removeScope);
         }
 
-        private void AddOidcScopeVoluntaryClaim(MouseEventArgs e, OidcDownScope scope)
+        private void AddOidcScopeVoluntaryClaim(MouseEventArgs e, OidcDownScopeViewModel scope)
         {
-            if (scope.VoluntaryClaims == null)
-            {
-                scope.VoluntaryClaims = new List<OidcDownClaim>();
-            }
+            scope.ShowVoluntaryClaims = true;
+            scope.VoluntaryClaims ??= new List<OidcDownClaim>();
             scope.VoluntaryClaims.Add(new OidcDownClaim());
         }
 

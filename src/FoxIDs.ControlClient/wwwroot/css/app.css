@@ -588,6 +588,38 @@ img.logo {
         border-color: #ea7c0f;
     }
 
+.btn-info {
+    background-color: #f19031;
+    border-color: #f19031;
+}
+
+    .btn-info:hover {
+        color: #fff;
+        background-color: #ea7c0f;
+        border-color: #ea7c0f;
+    }
+
+    .btn-info.focus, .btn-info:focus {
+        color: #fff;
+        background-color: #ea7c0f;
+        border-color: #ea7c0f;
+    }
+
+    .btn-info.disabled, .btn-info:disabled {
+        color: #fff;
+        background-color: #e4b485;
+        border-color: #e4b485;
+    }
+
+    .btn-info:not(:disabled):not(.disabled).active:focus, .btn-info:not(:disabled):not(.disabled):active:focus, .show > .btn-info.dropdown-toggle:focus {
+        box-shadow: 0 0 0 0.2rem rgba(252, 126, 1, 0.25);
+    }
+
+    .btn-info:not(:disabled):not(.disabled).active, .btn-info:not(:disabled):not(.disabled):active, .show > .btn-info.dropdown-toggle {
+        background-color: #ea7c0f;
+        border-color: #ea7c0f;
+    }
+
 .btn-outline-primary {
     color: #788489 !important;
     border-color: #f19031 !important;
@@ -775,6 +807,12 @@ img.logo {
     padding: 0.5rem 0.5rem 0.7rem 0.5rem;
 }
 
+.up-party-template-section {
+    background: linear-gradient(90deg, rgba(255, 241, 224, 0) 0%, rgba(252, 126, 1, 0.04) 2%, rgba(252, 126, 1, 0.06) 8%, rgba(252, 126, 1, 0.06) 92%, rgba(252, 126, 1, 0.04) 98%, rgba(255, 241, 224, 0) 100%);
+    margin: 0.5rem -2.3rem;
+    padding: 0.5rem 2.3rem;
+}
+
 .docs-link {
     color: #df8935 !important;
 }
@@ -892,6 +930,11 @@ img.logo {
     background-clip: padding-box;
 }
 
+.alert.alert-info {
+    color: #6b3d12;
+    background-color: rgba(252, 126, 1, 0.10);
+    border-color: rgba(252, 126, 1, 0.30);
+}
 .main-container .alert.alert-danger,
 .modal-body .alert.alert-danger {
     position: sticky;

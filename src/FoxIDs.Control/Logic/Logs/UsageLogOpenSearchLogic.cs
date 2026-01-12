@@ -14,6 +14,7 @@ namespace FoxIDs.Logic
 {
     public class UsageLogOpenSearchLogic : LogicBase
     {
+        private const string LoginNoTrackLinkAggregationName = "login_no_tracklink";
         private readonly FoxIDsControlSettings settings;
         private readonly OpenSearchClient openSearchClient;
 
@@ -23,13 +24,13 @@ namespace FoxIDs.Logic
             this.openSearchClient = openSearchClient;
         }
 
-        public async Task<List<Api.UsageLogItem>> QueryLogsAsync(Api.UsageLogRequest logRequest, string tenantName, string trackName, List<Api.UsageLogItem> items)
+        public async Task<List<Api.UsageLogItem>> QueryLogsAsync(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool excludeTrackLinkLogins, List<Api.UsageLogItem> items)
         {
             var dayPointer = -1;
             var hourPointer = -1;
             List<Api.UsageLogItem> dayItemsPointer = items;
             List<Api.UsageLogItem> itemsPointer = items;
-            var aggregations = await LoadUsageEventsAsync(tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope, logRequest.TimeOffset), logRequest);
+            var aggregations = await LoadUsageEventsAsync(tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope, logRequest.TimeOffset), logRequest, excludeTrackLinkLogins);
 
             if (aggregations != null)
             {
@@ -82,7 +83,7 @@ namespace FoxIDs.Logic
                         {
                             case Api.UsageLogTypes.Login:
                             case Api.UsageLogTypes.TokenRequest:
-                                (var totalCount, var realCount, var extraCount) = GetCountAndRealEstra(bucketItem);
+                                (var totalCount, var realCount, var extraCount) = GetCountAndRealEstra(bucketItem, excludeTrackLinkLogins && logType == Api.UsageLogTypes.Login);
                                 item.Value = totalCount;
                                 item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.RealCount, Value = realCount }, new Api.UsageLogItem { Type = Api.UsageLogTypes.ExtraCount, Value = extraCount }];
                                 break;
@@ -97,7 +98,7 @@ namespace FoxIDs.Logic
                             default:
                                 item.Value = GetCount(bucketItem);
                                 break;
-                        } 
+                        }
 
                         itemsPointer.Add(item);
                     }
@@ -140,11 +141,11 @@ namespace FoxIDs.Logic
                     yield return bucketItem;
                 }
 
-                foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.ResetPassword.ToString())) 
+                foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.ResetPassword.ToString()))
                 {
                     yield return bucketItem;
                 }
-           
+
                 foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.Mfa.ToString()))
                 {
                     yield return bucketItem;
@@ -192,13 +193,21 @@ namespace FoxIDs.Logic
 
         private decimal GetCount(DateHistogramBucket bucketItem)
         {
-            double itemCount = bucketItem.DocCount.HasValue ? bucketItem.DocCount.Value : 0.0;           
+            double itemCount = bucketItem.DocCount.HasValue ? bucketItem.DocCount.Value : 0.0;
             return Math.Round(Convert.ToDecimal(itemCount), 1);
         }
 
-        private (decimal totalCount, decimal realCount, decimal extraCount) GetCountAndRealEstra(DateHistogramBucket bucketItem)
+        private (decimal totalCount, decimal realCount, decimal extraCount) GetCountAndRealEstra(DateHistogramBucket bucketItem, bool excludeTrackLinkLogins)
         {
             double realCount = bucketItem.DocCount.HasValue ? bucketItem.DocCount.Value : 0.0;
+            if (excludeTrackLinkLogins)
+            {
+                var loginCountAggregate = bucketItem[LoginNoTrackLinkAggregationName] as SingleBucketAggregate;
+                if (loginCountAggregate != null)
+                {
+                    realCount = loginCountAggregate.DocCount;
+                }
+            }
             double extraCount = 0.0;
             var valueAggregate = bucketItem[nameof(OpenSearchLogItem.UsageAddRating).ToLower()] as ValueAggregate;
             if (valueAggregate?.Value != null)
@@ -249,7 +258,7 @@ namespace FoxIDs.Logic
             return (start.DateTime, end.DateTime);
         }
 
-        private async Task<FiltersAggregate> LoadUsageEventsAsync(string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange, Api.UsageLogRequest logRequest)
+        private async Task<FiltersAggregate> LoadUsageEventsAsync(string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange, Api.UsageLogRequest logRequest, bool excludeTrackLinkLogins)
         {
             if (!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApi && !logRequest.IncludeAdditional)
             {
@@ -268,26 +277,39 @@ namespace FoxIDs.Logic
                             .Aggregations(childAggs => childAggs
                                 .DateHistogram("per_interval", dh => dh
                                     .Field(f => f.Timestamp).CalendarInterval(GetDateInterval(logRequest.SummarizeLevel))
-                                    .Aggregations(sumAggs => sumAggs
-                                  
-                                        .Sum(nameof(OpenSearchLogItem.UsageSms).ToLower(), sa => sa
-                                            .Field(p => p.UsageSms)
-                                        )
-                                        .Sum(nameof(OpenSearchLogItem.UsageSmsPrice).ToLower(), sa => sa
-                                            .Field(p => p.UsageSmsPrice)
-                                        )
-                                        .Sum(nameof(OpenSearchLogItem.UsageEmail).ToLower(), sa => sa
-                                            .Field(p => p.UsageEmail)
-                                        )
-                                        .Sum(nameof(OpenSearchLogItem.UsageAddRating).ToLower(), sa => sa
-                                            .Field(p => p.UsageAddRating)
-                                        )
-                                    )
-                             ))
+                                    .Aggregations(sumAggs => AddUsageAggregations(sumAggs, excludeTrackLinkLogins))
+                                 ))
                     ))
                 );
 
             return response.Aggregations.Values.FirstOrDefault() as FiltersAggregate;
+        }
+
+        private AggregationContainerDescriptor<OpenSearchLogItem> AddUsageAggregations(AggregationContainerDescriptor<OpenSearchLogItem> sumAggs, bool excludeTrackLinkLogins)
+        {
+            sumAggs = sumAggs
+                        .Sum(nameof(OpenSearchLogItem.UsageSms).ToLower(), sa => sa
+                            .Field(p => p.UsageSms)
+                        )
+                        .Sum(nameof(OpenSearchLogItem.UsageSmsPrice).ToLower(), sa => sa
+                            .Field(p => p.UsageSmsPrice)
+                        )
+                        .Sum(nameof(OpenSearchLogItem.UsageEmail).ToLower(), sa => sa
+                            .Field(p => p.UsageEmail)
+                        )
+                        .Sum(nameof(OpenSearchLogItem.UsageAddRating).ToLower(), sa => sa
+                            .Field(p => p.UsageAddRating)
+                        );
+
+            if (excludeTrackLinkLogins)
+            {
+                sumAggs = sumAggs.Filter(LoginNoTrackLinkAggregationName, fa => fa
+                    .Filter(q => q.Bool(b => b.MustNot(m => m.Terms(t => t
+                        .Field(f => f.DownPartyType)
+                        .Terms(nameof(PartyTypes.TrackLink).ToLower()))))));
+            }
+
+            return sumAggs;
         }
 
         private IEnumerable<string> GetIndexName()
@@ -329,7 +351,7 @@ namespace FoxIDs.Logic
 
         private static QueryContainer QueryEventLogType(QueryContainerDescriptor<OpenSearchLogItem> m)
         {
-            return m.Term(t => t.LogType, LogTypes.Event.ToString()); 
+            return m.Term(t => t.LogType, LogTypes.Event.ToString());
         }
 
         private IPromise<INamedFiltersContainer> GetFilters(NamedFiltersContainerDescriptor<OpenSearchLogItem> filters, Api.UsageLogRequest logRequest)

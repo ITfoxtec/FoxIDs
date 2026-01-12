@@ -191,13 +191,14 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
             var party = await tenantDataRepository.GetAsync<TParty>(partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, party.Type.ToString());
 
             (var claims, string tokenIssuer) = await ValidateTokenAsync(party, subjectToken, ResolveAudience(party));
 
             logger.ScopeTrace(() => "AuthMethod, OAuth token exchange subject token valid.", triggerEvent: true);
             logger.ScopeTrace(() => $"AuthMethod, OAuth received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-            claims = claims.Where(c => c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthProfileMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType && 
+            claims = claims.Where(c => c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthProfileMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType &&
                 c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType &&
                 c.Type != Constants.JwtClaimTypes.AuthMethodIssuer).ToList();
             claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, party.Name);

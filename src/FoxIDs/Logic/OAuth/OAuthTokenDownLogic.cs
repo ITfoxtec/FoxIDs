@@ -44,6 +44,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AppReg, OAuth Token request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantDataRepository.GetAsync<TParty>(partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyType, party.Type.ToString());
             if (party.Client == null)
             {
                 throw new NotSupportedException("Application Client not configured.");
@@ -147,7 +148,7 @@ namespace FoxIDs.Logic
 
         protected async Task ValidateClientAuthenticationAsync(TParty party, TokenRequest tokenRequest, IHeaderDictionary headers, Dictionary<string, string> formDictionary, bool clientAuthenticationRequired = true)
         {
-            if (party.Client.ClientAuthenticationMethod == ClientAuthenticationMethods.ClientSecretBasic) 
+            if (party.Client.ClientAuthenticationMethod == ClientAuthenticationMethods.ClientSecretBasic)
             {
                 await ValidateClientSecretBasicAsync(party.Client, tokenRequest, headers, clientAuthenticationRequired);
             }
@@ -155,7 +156,7 @@ namespace FoxIDs.Logic
             {
                 await ValidateClientSecretPostAsync(party.Client, tokenRequest, headers, formDictionary, clientAuthenticationRequired);
             }
-            else if(party.Client.ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt)
+            else if (party.Client.ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt)
             {
                 await ValidateClientAssertionAsync(party.Client, party.UsePartyIssuer, tokenRequest, formDictionary, clientAuthenticationRequired);
             }
@@ -244,7 +245,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"AppReg, Client credentials assertion '{clientAssertionCredentials.ToJson()}'.", traceType: TraceTypes.Message);
             try
             {
-                if(!tokenRequest.ClientId.IsNullOrWhiteSpace())
+                if (!tokenRequest.ClientId.IsNullOrWhiteSpace())
                 {
                     ValidateClientId(client, tokenRequest);
                 }
@@ -263,14 +264,14 @@ namespace FoxIDs.Logic
                 {
                     var validClientKeys = new List<JsonWebKey>();
                     var clientKeyAndCertificates = client.ClientKeys.Select(c => new { Key = c, Certificate = c.ToX509Certificate() }).ToList();
-                    foreach(var clientKeyAndCertificate in clientKeyAndCertificates)
+                    foreach (var clientKeyAndCertificate in clientKeyAndCertificates)
                     {
                         if (clientKeyAndCertificate.Certificate.IsValidateCertificate())
                         {
                             validClientKeys.Add(clientKeyAndCertificate.Key);
                         }
                     }
-                    if(validClientKeys.Count <= 0)
+                    if (validClientKeys.Count <= 0)
                     {
                         clientKeyAndCertificates.First().Certificate.ValidateCertificate($"Client (client id '{client.ClientId}') key");
                     }
@@ -331,9 +332,9 @@ namespace FoxIDs.Logic
         {
             codeVerifierSecret.Validate();
 
-            if(codeChallengeMethod.IsNullOrEmpty() || codeChallengeMethod.Equals(IdentityConstants.CodeChallengeMethods.Plain, StringComparison.Ordinal)) 
+            if (codeChallengeMethod.IsNullOrEmpty() || codeChallengeMethod.Equals(IdentityConstants.CodeChallengeMethods.Plain, StringComparison.Ordinal))
             {
-                if(!codeVerifierSecret.CodeVerifier.Equals(codeChallenge, StringComparison.Ordinal))
+                if (!codeVerifierSecret.CodeVerifier.Equals(codeChallenge, StringComparison.Ordinal))
                 {
                     throw new OAuthRequestException($"Invalid '{IdentityConstants.CodeChallengeMethods.Plain}' code verifier (PKCE) for client id '{client.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };
                 }

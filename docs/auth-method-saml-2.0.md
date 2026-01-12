@@ -84,7 +84,7 @@ Enable IdP-Initiated Login.
 2. Click **Show advanced**
 3. Scroll to the bottom of the configuration section
 4. Enable **IdP-Initiated login**
-5. Optionally change the **IdP-Initiated Login grant lifetime for OpenID Connect applications**
+5. Optionally change the **IdP-Initiated Login - OpenID Connect grant lifetime**
 6. Click **Update**
 
 ![Configure SAML 2.0](images/configure-saml-auth-method-idp-initiated.png)

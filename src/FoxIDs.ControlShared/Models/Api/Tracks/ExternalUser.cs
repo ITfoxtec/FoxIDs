@@ -14,6 +14,11 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.User.UserIdLength)]
         public string UserId { get; set; }
 
+        /// <summary>
+        /// Expiration time (Unix seconds). Null or 0 means unlimited.
+        /// </summary>
+        public long? ExpireAt { get; set; }
+
         public bool DisableAccount { get; set; }
 
         [ListLength(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]

@@ -42,13 +42,14 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AuthMethod, OIDC Front channel logout.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Oidc.ToString());
 
             var party = await tenantDataRepository.GetAsync<OidcUpParty>(partyId);
             logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);
-            
+
             if (party.Client.DisableFrontChannelLogout)
             {
-                return new BadRequestResult(); 
+                return new BadRequestResult();
             }
 
             var queryDictionary = HttpContext.Request.Query.ToDictionary();

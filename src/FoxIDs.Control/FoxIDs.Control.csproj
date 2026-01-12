@@ -2,11 +2,11 @@
 
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
-		<Version>2.12.0</Version>
+		<Version>2.13.2</Version>
 		<RootNamespace>FoxIDs</RootNamespace>
 		<Authors>Anders Revsgaard</Authors>
 		<Company>FoxIDs</Company>
-		<Copyright>Copyright © 2025</Copyright>
+		<Copyright>Copyright © 2026</Copyright>
 		
 	</PropertyGroup>
 
@@ -33,9 +33,9 @@
 		</PackageReference>
 		<!-- Microsoft.OpenApi can not be updated to version 3.* because of compatibility issues -->
 		<PackageReference Include="Microsoft.OpenApi" Version="2.3.0" />
-		<PackageReference Include="Mollie.Api" Version="4.15.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.1" />
-		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="10.0.1" />
+		<PackageReference Include="Mollie.Api" Version="4.16.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="10.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>

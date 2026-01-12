@@ -54,6 +54,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AuthMethod, SAML Logout request.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Saml2.ToString());
 
             await logoutRequest.ValidateObjectAsync();
 
@@ -76,6 +77,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AuthMethod, SAML Logout request.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Saml2.ToString());
             var samlUpSequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(partyName: partyId.PartyIdToName(), remove: false);
             if (!samlUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
@@ -163,7 +165,7 @@ namespace FoxIDs.Logic
             if (!nameID.IsNullOrEmpty())
             {
                 var prePartyName = $"{party.Name}|";
-                if(nameID.StartsWith(prePartyName, StringComparison.Ordinal))
+                if (nameID.StartsWith(prePartyName, StringComparison.Ordinal))
                 {
                     nameID = nameID.Remove(0, prePartyName.Length);
                 }
@@ -196,6 +198,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => $"AuthMethod, SAML Logout response.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Saml2.ToString());
 
             var party = await tenantDataRepository.GetAsync<SamlUpParty>(partyId);
             ValidatePartyLogoutSupport(party);
@@ -366,6 +369,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AuthMethod, SAML Single Logout request.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Saml2.ToString());
 
             var party = await tenantDataRepository.GetAsync<SamlUpParty>(partyId);
             ValidatePartyLogoutSupport(party);
@@ -384,7 +388,7 @@ namespace FoxIDs.Logic
         private async Task<IActionResult> SingleLogoutRequestAsync(SamlUpParty party, Saml2Http.HttpRequest samlHttpRequest)
         {
             var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party);
-                        
+
             var saml2LogoutRequest = new Saml2LogoutRequest(samlConfig);
             samlHttpRequest.Binding.ReadSamlRequest(samlHttpRequest, saml2LogoutRequest);
 
@@ -470,6 +474,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AuthMethod, SAML Single Logout request jump.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Saml2.ToString());
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(partyName: partyId.PartyIdToName(), remove: false);
             if (!sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
@@ -485,11 +490,12 @@ namespace FoxIDs.Logic
         private async Task<IActionResult> SingleLogoutResponseAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status = Saml2StatusCodes.Success, string sessionIndex = null)
         {
             logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyType, PartyTypes.Saml2.ToString());
 
             var party = await tenantDataRepository.GetAsync<SamlUpParty>(sequenceData.UpPartyId);
             ValidatePartyLogoutSupport(party);
 
-            var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: true);            
+            var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: true);
             return await SingleLogoutResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState, status, sessionIndex);
         }
 

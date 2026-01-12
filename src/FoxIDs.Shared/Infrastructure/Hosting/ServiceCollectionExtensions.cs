@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Logic;
 using FoxIDs.Logic.Caches.Providers;
+using FoxIDs.Infrastructure.HttpClientFactory;
 using FoxIDs.Logic.Seed;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
@@ -36,6 +37,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<SendSmsLogic>();
             services.AddTransient<SendEmailLogic>();
+            services.AddSingleton<IMtlsHttpClientFactory, MtlsHttpClientFactory>();
 
             services.AddTransient<PlanUsageLogic>();
             services.AddTransient<AuditLogic>();

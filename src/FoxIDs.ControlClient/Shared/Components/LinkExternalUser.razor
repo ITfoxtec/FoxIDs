@@ -1,7 +1,7 @@
 ﻿<div class="info-text">
-    The external users can be redeemed by a redemption claim type (e.g. <code>@JwtClaimTypes.Email</code>) and they are then automatically linked with the link claim type. You should know the redemption claim value and can possible create users in advanced.
+    External users can be redeemed by a redemption claim type (e.g. <code>@JwtClaimTypes.Email</code>) and then automatically linked using the link claim type. You should know the redemption claim value and can optionally create users in advance.
     <br />
-    The external user are linked with the link claim type (e.g. <code>sub</code>). Most of the time, the link claim value is not known in advance. You can possible create users if you know the value.
+    External users are linked using the link claim type (e.g. <code>@JwtClaimTypes.Subject</code>). Most of the time, the link claim value is not known in advance. You can optionally create users if you know the value.
     @if (IsSaml)
     {
         <div class="small">
@@ -16,7 +16,7 @@
     {
         <br />
     }
-    The external users are linked after the first-level claim transforms on the authentication method has been performed.
+    External users are linked after the first-level claim transforms on the authentication method have been performed.
 </div>
 
 <FInputText @bind-Value="Model.RedemptionClaimType" For="@(() => Model.RedemptionClaimType)" />
@@ -24,17 +24,18 @@
 
 <FInputToggle @bind-Value="Model.AutoCreateUser" For="@(() => Model.AutoCreateUser)" TextType="y.n" />
 <FInputToggle @bind-Value="Model.RequireUser" For="@(() => Model.RequireUser)" TextType="y.n" />
+<FInputNumber @bind-Value="Model.ExternalUserLifetime" For="@(() => Model.ExternalUserLifetime)" />
 
 @if (IsSaml)
 {
     <div class="alert alert-info" role="alert">
-        The external user claims is handled and saved as <code>JWT</code> claims. 
+        External user claims are handled and saved as <code>JWT</code> claims.
     </div>
 }
 <div class="info-text">
-    By default, claims on external users are added to the received claims with the exception of the <code>@JwtClaimTypes.Subject</code> claim, which overrides the received <code>sub</code> claim.
+    By default, claims on external users are added to the received claims. The <code>@JwtClaimTypes.Subject</code> claim overrides the received <code>sub</code> claim.
     <br />
-    Claims on external users can optionally override received and the first-level claim transforms output claims.
+    Claims on external users can optionally override received claims and the first-level claim transforms output claims.
 </div>
 
 <FInputToggle @bind-Value="Model.OverwriteClaims" For="@(() => Model.OverwriteClaims)" TextType="y.n" />
@@ -56,10 +57,10 @@
 <div class="active-group active">
     <div class="card">
         <div class="card-body">
-            <div class="info-text">The claim@(IsSaml ? " JWT " : string.Empty)transforms is performed after the user has logged in and optionally signed up, but before the user is saved.</div>
-            <div class="info-text">Optionally include user claims from the authentication method (output of first-level claim transforms).</div>
-            <FInputTextList @bind-ValueList="Model.UpPartyClaims" For="@(() => Model.UpPartyClaims)" DynamicFirstRow="true" />
+            <div class="info-text">The @(IsSaml ? "JWT " : string.Empty)claim transforms are performed after the user has logged in and optionally signed up, but before the user is saved.</div>
             <OAuthClaimTransforms ClaimTransforms="Model.ClaimTransforms" />
+            <div class="info-text">Optionally select claims from the authentication method (output of first-level claim transforms) that are saved on the user.</div>
+            <FInputTextList @bind-ValueList="Model.UpPartyClaims" For="@(() => Model.UpPartyClaims)" DynamicFirstRow="true" />
         </div>
     </div>
     <label class="label-control">Create user claim transforms</label>

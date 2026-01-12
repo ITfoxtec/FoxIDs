@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using FoxIDs.Models.Api;
 using ITfoxtec.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -33,6 +34,20 @@ namespace FoxIDs.Client.Models.ViewModels
         [MaxLength(Constants.Models.User.UserIdLength)]
         [Display(Name = "User id (unique and persistent)")]
         public string UserId { get; set; }
+
+        public long? ExpireAt { get; set; }
+
+        [Display(Name = "Expire at")]
+        public string ExpireAtText
+        {
+            get
+            {
+                return ExpireAt.HasValue && ExpireAt.Value > 0
+                    ? DateTimeOffset.FromUnixTimeSeconds(ExpireAt.Value).ToUniversalTime().ToLocalTime().ToString()
+                    : string.Empty;
+            }
+            set { }
+        }
 
         [Display(Name = "Account status")]
         public bool DisableAccount { get; set; }

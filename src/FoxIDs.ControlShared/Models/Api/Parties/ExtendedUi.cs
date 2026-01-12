@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -13,7 +14,10 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Technical UI name")]
         public string Name { get; set; }
 
-        [Required]
+        /// <summary>
+        /// Page title. Required if <see cref="ModuleType" /> is not set.
+        /// For module templates the title is populated at runtime based on <see cref="ModuleType" />.
+        /// </summary>
         [MaxLength(Constants.Models.ExtendedUi.TitleLength)]
         [Display(Name = "Page title")]
         public string Title { get; set; }
@@ -23,9 +27,21 @@ namespace FoxIDs.Models.Api
         public string SubmitButtonText { get; set; }
 
         /// <summary>
-        /// UI elements.
+        /// Optional module template.
         /// </summary>
-        [ListLength(Constants.Models.ExtendedUi.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
+        public ExtendedUiModuleTypes? ModuleType { get; set; }
+
+        /// <summary>
+        /// Module configuration.
+        /// </summary>
+        [ValidateComplexType]
+        public ExtendedUiModules Modules { get; set; }
+
+        /// <summary>
+        /// UI elements. Required if <see cref="ModuleType" /> is not set.
+        /// For module templates the elements are populated at runtime based on <see cref="ModuleType" />.
+        /// </summary>
+        [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
         public List<DynamicElement> Elements { get; set; }
 
         #region ExternalApi
@@ -62,6 +78,40 @@ namespace FoxIDs.Models.Api
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+
+            if (ModuleType == null)
+            {
+                if (Title.IsNullOrWhiteSpace())
+                {
+                    results.Add(new ValidationResult($"The field '{nameof(Title)}' is required.", [nameof(Title)]));
+                }
+
+                if (Elements == null || Elements.Count < Constants.Models.ExtendedUi.ElementsMin)
+                {
+                    results.Add(new ValidationResult($"The field '{nameof(Elements)}' is required.", [nameof(Elements)]));
+                }
+            }
+            else
+            {
+                Title = null;
+                SubmitButtonText = null;
+                Elements = null;
+
+                Modules ??= new ExtendedUiModules();
+                if (ModuleType == ExtendedUiModuleTypes.NemLoginPrivateCprMatch)
+                {
+                    Modules.NemLogin ??= new ExtendedUiNemLoginModule();
+
+                    if (!Enum.IsDefined(typeof(NemLoginEnvironments), Modules.NemLogin.Environment))
+                    {
+                        Modules.NemLogin.Environment = NemLoginEnvironments.IntegrationTest;
+                    }
+                }
+                else
+                {
+                    results.Add(new ValidationResult($"The module type '{ModuleType}' is not supported.", [nameof(ModuleType)]));
+                }
+            }
 
             if (ExternalConnectType == ExternalConnectTypes.Api)
             {

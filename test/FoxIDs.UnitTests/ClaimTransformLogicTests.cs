@@ -2,6 +2,7 @@
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Infrastructure;
+using FoxIDs.Repository;
 using FoxIDs.UnitTests.Helpers;
 using FoxIDs.UnitTests.MockHelpers;
 using ITfoxtec.Identity;
@@ -53,6 +54,69 @@ namespace FoxIDs.UnitTests
 
             var eventTelemetry = Assert.Single(telemetryChannel.Telemetries.OfType<EventTelemetry>());
             Assert.Equal("andersen@abc.com", eventTelemetry.Name);
+        }
+
+        [Fact]
+        public async Task TransformQueryExternalUser_ExpiredExternalUser_NoClaimsAdded()
+        {
+            var linkClaimValue = "link-value";
+            var upPartyName = "up-party";
+            var routeBinding = new RouteBinding { TenantName = "tenant", TrackName = "track" };
+            var httpContextAccessor = HttpContextAccessorHelper.MockObject(routeBinding);
+
+            var externalUserId = await ExternalUser.IdFormatAsync(routeBinding, upPartyName, await linkClaimValue.HashIdStringAsync());
+            var externalUser = new ExternalUser
+            {
+                Id = externalUserId,
+                UserId = "user-id",
+                UpPartyName = upPartyName,
+                ExpireAt = DateTimeOffset.UtcNow.AddMinutes(-1).ToUnixTimeSeconds(),
+                Claims = new List<ClaimAndValues>
+                {
+                    new ClaimAndValues
+                    {
+                        Claim = JwtClaimTypes.Email,
+                        Values = new List<string> { "expired@abc.com" }
+                    }
+                }
+            };
+
+            var tenantDataRepository = new Mock<ITenantDataRepository>();
+            tenantDataRepository
+                .Setup(r => r.GetAsync<ExternalUser>(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<TelemetryScopedLogger>()))
+                .Returns(new ValueTask<ExternalUser>(externalUser));
+            tenantDataRepository
+                .Setup(r => r.DeleteAsync<ExternalUser>(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<TelemetryScopedLogger>()))
+                .Returns(new ValueTask());
+
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider
+                .Setup(s => s.GetService(typeof(ITenantDataRepository)))
+                .Returns(tenantDataRepository.Object);
+
+            var telemetryScopedLogger = TelemetryLoggerHelper.ScopedLoggerObject(httpContextAccessor);
+            var claimTransformValidationLogic = new ClaimTransformValidationLogic(httpContextAccessor);
+            var claimTransformLogic = new ClaimTransformLogic(telemetryScopedLogger, serviceProvider.Object, claimTransformValidationLogic, null, httpContextAccessor);
+
+            var claims = new List<Claim> { new Claim(Constants.ClaimTransformClaimTypes.ExternalUserLink, linkClaimValue) };
+            var claimTransformations = new List<ClaimTransform>
+            {
+                new OAuthClaimTransform
+                {
+                    Type = ClaimTransformTypes.MatchClaim,
+                    Action = ClaimTransformActions.Add,
+                    Task = ClaimTransformTasks.QueryExternalUser,
+                    ClaimsIn = [Constants.ClaimTransformClaimTypes.ExternalUserLink],
+                    ClaimsOut = [JwtClaimTypes.Subject],
+                    Transformation = Constants.ClaimTransformClaimTypes.ExternalUserLink,
+                    UpPartyName = upPartyName
+                }
+            };
+
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
+
+            Assert.DoesNotContain(claimsResult, claim => claim.Type == JwtClaimTypes.Subject);
+            tenantDataRepository.Verify(r => r.DeleteAsync<ExternalUser>(externalUserId, It.IsAny<bool>(), It.IsAny<TelemetryScopedLogger>()), Times.Once);
         }
 
         [Theory]

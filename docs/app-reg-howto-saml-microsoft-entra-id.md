@@ -51,16 +51,18 @@ You are required to upload the SAML 2.0 signing certificate used in FoxIDs to Mi
 12. Set the **NameID format** to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
 13. Set the **Optional logged out URL** and **Optional single logout URL** to `https://login.microsoftonline.com/login.srf`
 ![Set binding, NameID format, and logout URLs in FoxIDs](images/auth-method-howto-saml-microsoft-entra-id-binding-format-logout.png)
-14. Go to the top of the application, find the **Application information** section and click **Show more**
+14. Set the **Authn response sign type** to `Sign assertion`
+![Sign the assertion](images/auth-method-howto-saml-microsoft-entra-id-sign-assertion.png)
+15. Go to the top of the application, find the **Application information** section and click **Show more**
     - Copy the **IdP Issuer**
     - Copy the **Single Sign-On URL**
     - Copy the **Single Logout URL**
     - Copy the **IdP Signing Certificate** in Base64 format
-15. Select the **Claims Transform** tab
-16. Click **Add claim transform** and click **Map** to add a NameID claim with the user's Immutable ID matching the Microsoft Entra ID user's Immutable ID.
-17. Set **New claim** to `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier` - which is the NameID claim URI
-18. Set **Select claim** to `http://schemas.foxids.com/ws/identity/claims/immutableid`
-19. Click **Update**
+16. Select the **Claims Transform** tab
+17. Click **Add claim transform** and click **Map** to add a NameID claim with the user's Immutable ID matching the Microsoft Entra ID user's Immutable ID.
+18. Set **New claim** to `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier` - which is the NameID claim URI
+19. Set **Select claim** to `http://schemas.foxids.com/ws/identity/claims/immutableid`
+20. Click **Update**
 
 > **You need to set the user's Immutable ID as a claim in FoxIDs.**  
   To set the Immutable ID on an internal user, select the **Users** tab and then **Internal Users** tab find the user and add a claim with the claim type `immutable_id` and the value of the Immutable ID in Microsoft Entra ID - it should be base64 encoded.  
@@ -74,7 +76,10 @@ It is not possible to configure an external SAML 2.0 identity provider in the [M
 2. Install the [Microsoft Graph](https://www.powershellgallery.com/packages/Microsoft.Graph/) PowerShell module if not already installed: `Install-Module -Name Microsoft.Graph` and select `A`
    - Optionally, install for current user: `Install-Module Microsoft.Graph -Scope CurrentUser -Force`
    - Or update the module: `Update-Module -Name Microsoft.Graph` and select `A`
-3. Connect to Microsoft Graph: `Connect-MgGraph -Scopes "Domain.ReadWrite.All,Directory.AccessAsUser.All"`
+3. Connect to Microsoft Graph: 
+   ```powershell
+   Connect-MgGraph -Scopes "Domain.ReadWrite.All,Directory.AccessAsUser.All"
+   ```
 4. Set up the configuration variables:
    ```powershell
    $domainName = "your-domain.com" # The domain name to configure federation for
@@ -92,15 +97,15 @@ It is not possible to configure an external SAML 2.0 identity provider in the [M
    New-MgDomainFederationConfiguration -DomainId $domainName `
      -IssuerUri $idpIssuer `
      -PassiveSignInUri $ssoUrl `
-     -LogoutUri $sloUrl `
+     -SignOutUri $sloUrl `
      -SigningCertificate $signingCertBase64 `
-     -PreferredAuthenticationProtocol "saml" ` 
-     -FederatedIdpMfaBehavior "acceptIfMfaDoneByFederatedIdp" `
+     -PreferredAuthenticationProtocol "saml" `
+     -FederatedIdpMfaBehavior "acceptIfMfaDoneByFederatedIdp"
    ```
    **FederatedIdpMfaBehavior** can be set to:
-   - `acceptIfMfaDoneByFederatedIdp` – Entra accepts MFA from FoxIDs; if FoxIDs didn’t do MFA, Entra will do it.
-   - `enforceMfaByFederatedIdp` – If a policy needs MFA, Entra will send the user back to FoxIDs to complete MFA.
-   - `rejectMfaByFederatedIdp` – Entra always does MFA itself; MFA at FoxIDs is ignored.
+   - `acceptIfMfaDoneByFederatedIdp` - Entra accepts MFA from FoxIDs; if FoxIDs didn't do MFA, Entra will do it.
+   - `enforceMfaByFederatedIdp` - If a policy needs MFA, Entra will send the user back to FoxIDs to complete MFA.
+   - `rejectMfaByFederatedIdp` - Entra always does MFA itself; MFA at FoxIDs is ignored.
 6. Validate the configuration:
    ```powershell
    Get-MgDomainFederationConfiguration -DomainId $domainName

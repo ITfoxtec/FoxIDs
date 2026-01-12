@@ -77,7 +77,7 @@ namespace FoxIDs.Client.Pages.Users
             externalUserFilterForm?.ClearError();
             try
             {
-                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(null));
+                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(null, null));
             }
             catch (TokenUnavailableException)
             {
@@ -95,7 +95,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             try
             {
-                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(externalUserFilterForm.Model.FilterValue));
+                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(externalUserFilterForm.Model.FilterValue, externalUserFilterForm.Model.FilterValue));
             }
             catch (FoxIDsApiException ex)
             {
@@ -114,7 +114,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             try
             {
-                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(externalUserFilterForm.Model.FilterValue, paginationToken: paginationToken), addUsers: true);
+                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(externalUserFilterForm.Model.FilterValue, externalUserFilterForm.Model.FilterValue, paginationToken: paginationToken), addUsers: true);
             }
             catch (TokenUnavailableException)
             {
@@ -195,6 +195,7 @@ namespace FoxIDs.Client.Pages.Users
                 var externalUser = await ExternalUserService.GetExternalUserAsync(generalExternalUser.UpPartyName, generalExternalUser.LinkClaimValue, generalExternalUser.RedemptionClaimValue);
                 generalExternalUser.LinkClaimValue = externalUser.LinkClaimValue;
                 generalExternalUser.RedemptionClaimValue = externalUser.RedemptionClaimValue;
+                generalExternalUser.ExpireAt = externalUser.ExpireAt;
                 await generalExternalUser.Form.InitAsync(externalUser.Map<ExternalUserViewModel>(afterMap: afterMap =>
                 {
                     afterMap.UpPartyDisplayName = generalExternalUser.UpPartyDisplayName;
@@ -203,6 +204,23 @@ namespace FoxIDs.Client.Pages.Users
             catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    toastService.ShowWarning("External user not found.");
+                    generalExternalUser.Edit = false;
+                    try
+                    {
+                        externalUsers.Remove(generalExternalUser);
+                    }
+                    catch { }
+                }
+                else
+                {
+                    throw;
+                }
             }
             catch (HttpRequestException ex)
             {
@@ -293,6 +311,7 @@ namespace FoxIDs.Client.Pages.Users
                     generalExternalUser.RedemptionClaimValue = externalUserResult.RedemptionClaimValue;
                     generalExternalUser.UserId = externalUserResult.UserId;
                     generalExternalUser.UpPartyName = externalUserResult.UpPartyName;
+                    generalExternalUser.ExpireAt = externalUserResult.ExpireAt;
                     generalExternalUser.UpPartyDisplayName = await GetUpPartyDisplayName(externalUserResult.UpPartyName);
                     generalExternalUser.LoadName(externalUserResult.Claims);
                     generalExternalUser.Form.UpdateModel(externalUserResult.Map<ExternalUserViewModel>(afterMap: afterMap =>
@@ -318,6 +337,7 @@ namespace FoxIDs.Client.Pages.Users
                     toastService.ShowSuccess("External user updated.");
                     generalExternalUser.LinkClaimValue = externalUserResult.LinkClaimValue;
                     generalExternalUser.RedemptionClaimValue = externalUserResult.RedemptionClaimValue;
+                    generalExternalUser.ExpireAt = externalUserResult.ExpireAt;
                     generalExternalUser.LoadName(externalUserResult.Claims);
                     generalExternalUser.Form.UpdateModel(externalUserResult.Map<ExternalUserViewModel>(afterMap: afterMap =>
                     {

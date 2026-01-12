@@ -43,7 +43,8 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Validating external user, link claim type '{party.LinkExternalUser.LinkClaimType}' and value '{linkClaimValue}', Route '{RouteBinding?.Route}'.");
             if (!linkClaimValue.IsNullOrWhiteSpace())
             {
-                var externalUser = await tenantDataRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, party.Name, await linkClaimValue.HashIdStringAsync()), required: false);
+                var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                var externalUser = await GetExternalUserAsync(await ExternalUser.IdFormatAsync(RouteBinding, party.Name, await linkClaimValue.HashIdStringAsync()), now);
 
                 if (externalUser == null && !party.LinkExternalUser.RedemptionClaimType.IsNullOrWhiteSpace())
                 {
@@ -51,13 +52,14 @@ namespace FoxIDs.Logic
                     logger.ScopeTrace(() => $"Validating external user, redemption claim type '{party.LinkExternalUser.RedemptionClaimType}' and value '{redemptionClaimValue}', Route '{RouteBinding?.Route}'.");
                     if (!redemptionClaimValue.IsNullOrWhiteSpace())
                     {
-                        externalUser = await tenantDataRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, party.Name, await redemptionClaimValue.HashIdStringAsync()), required: false);
+                        externalUser = await GetExternalUserAsync(await ExternalUser.IdFormatAsync(RouteBinding, party.Name, await redemptionClaimValue.HashIdStringAsync()), now);
                         if (externalUser != null)
                         {
                             // Change to use a link claim type instead of redemption claim type.
                             var oldExternalIserId = externalUser.Id;
                             externalUser.Id = await ExternalUser.IdFormatAsync(RouteBinding, party.Name, await linkClaimValue.HashIdStringAsync());
                             externalUser.LinkClaimValue = linkClaimValue;
+                            ExtendExternalUserLifetime(externalUser, now);
                             await tenantDataRepository.CreateAsync(externalUser);
                             await tenantDataRepository.DeleteAsync<ExternalUser>(oldExternalIserId);
                         }
@@ -79,6 +81,11 @@ namespace FoxIDs.Logic
                 {
                     if (!externalUser.DisableAccount)
                     {
+                        if (ExtendExternalUserLifetime(externalUser, now))
+                        {
+                            await tenantDataRepository.UpdateAsync(externalUser);
+                        }
+
                         var externalUserClaims = GetExternalUserClaim(party, externalUser);
                         logger.ScopeTrace(() => $"AuthMethod, External user output JWT claims '{externalUserClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                         return (externalUserClaims, null, false);
@@ -158,6 +165,18 @@ namespace FoxIDs.Logic
                 Claims = transformedClaims.ToClaimAndValues()
             };
 
+            var externalUserLifetime = upParty.LinkExternalUser.ExternalUserLifetime;
+            if (externalUserLifetime > 0)
+            {
+                externalUser.ExpireInSeconds = externalUserLifetime;
+                externalUser.ExpireAt = DateTimeOffset.UtcNow.AddSeconds(externalUserLifetime).ToUnixTimeSeconds();
+            }
+            else
+            {
+                externalUser.ExpireInSeconds = null;
+                externalUser.ExpireAt = null;
+            }
+
             await tenantDataRepository.CreateAsync(externalUser);
             logger.ScopeTrace(() => $"External user created, with user id '{externalUser.UserId}'.");
 
@@ -179,6 +198,41 @@ namespace FoxIDs.Logic
             populateSequenceDataAction(sequenceData);
             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
             return HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.ExtController, Constants.Endpoints.CreateUser, includeSequence: true).ToRedirectResult();
+        }
+
+        private async Task<ExternalUser> GetExternalUserAsync(string externalUserId, long now)
+        {
+            var externalUser = await tenantDataRepository.GetAsync<ExternalUser>(externalUserId, required: false);
+            if (externalUser == null)
+            {
+                return null;
+            }
+
+            if (externalUser.ExpireAt > 0 && externalUser.ExpireAt < now)
+            {
+                await tenantDataRepository.DeleteAsync<ExternalUser>(externalUser.Id);
+                return null;
+            }
+
+            return externalUser;
+        }
+
+        private static bool ExtendExternalUserLifetime(ExternalUser externalUser, long now)
+        {
+            var lifetimeSeconds = externalUser?.ExpireInSeconds ?? 0;
+            if (lifetimeSeconds <= 0)
+            {
+                return false;
+            }
+
+            var newExpireAt = now + lifetimeSeconds;
+            if (externalUser.ExpireAt != newExpireAt)
+            {
+                externalUser.ExpireAt = newExpireAt;
+                return true;
+            }
+
+            return false;
         }
 
         private List<Claim> GetExternalUserClaim<TProfile>(UpPartyWithExternalUser<TProfile> party, ExternalUser externalUser) where TProfile : UpPartyProfile

@@ -103,9 +103,34 @@ namespace FoxIDs
         {
             if (list != null)
             {
-                return string.Join(", ", list.Select(c => $"{c.Type}: {c.Value}"));
+                return string.Join(", ", list.Select(c => $"{c.Type}: {MaskSensitiveClaimValue(c.Type, c.Value)}"));
             }
             return string.Empty;
+        }
+
+        private static string MaskSensitiveClaimValue(string type, string value)
+        {
+            if (value.IsNullOrWhiteSpace())
+            {
+                return value;
+            }
+
+            if (type == Constants.JwtClaimTypes.Modules.CprNumber || type == Constants.SamlClaimTypes.Modules.CprNumber)
+            {
+                return value.MaskCprNumber();
+            }
+
+            return value;
+        }
+
+        public static string MaskCprNumber(this string cprNumber)
+        {
+            if (cprNumber.IsNullOrWhiteSpace() || cprNumber.Length != 10)
+            {
+                return cprNumber;
+            }
+
+            return $"{cprNumber.Substring(0, 6)}****";
         }
 
         /// <summary>

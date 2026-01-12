@@ -1,5 +1,4 @@
-﻿using AspNetCoreGeneratedDocument;
-using FoxIDs.Infrastructure;
+﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Models.Logic;
 using FoxIDs.Repository;
@@ -762,7 +761,7 @@ namespace FoxIDs.Logic
 
                 if (externalUserByLink != null)
                 {
-                    if (!externalUserByLink.DisableAccount)
+                    if (!await ExternalUserIsExpiredAsync(tenantDataRepository, externalUserByLink) && !externalUserByLink.DisableAccount)
                     {
                         logger.ScopeTrace(() => $"Claims transformation, External user '{externalUserByLink.UserId}' found by authentication method '{upPartyName}' and link claim value '{selectUserClaimValue}'.");
                         return externalUserByLink;
@@ -772,11 +771,23 @@ namespace FoxIDs.Logic
                 }
             }
 
-            (var externalUsers, _) = await tenantDataRepository.GetManyAsync<ExternalUser>(idKey, whereQuery: u =>
+            (var externalUsersLoaded, _) = await tenantDataRepository.GetManyAsync<ExternalUser>(idKey, whereQuery: u =>
                 u.DataType.Equals(Constants.Models.DataType.ExternalUser) &&
                 !u.DisableAccount &&
                 u.UpPartyName.Equals(upPartyName) &&
                 u.Claims.Where(c => c.Claim == lookupClaimOnUser && c.Values.Any(v => v == selectUserClaimValue)).Any());
+
+            var externalUsers = new List<ExternalUser>();
+            if (externalUsersLoaded?.Count() > 0)
+            {
+                foreach (var externalUser in externalUsersLoaded)
+                {
+                    if (!await ExternalUserIsExpiredAsync(tenantDataRepository, externalUser))
+                    {
+                        externalUsers.Add(externalUser);
+                    }
+                }
+            }
 
             if (externalUsers?.Count() == 1)
             {
@@ -793,6 +804,16 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => $"Claims transformation, No external user found by authentication method '{upPartyName}' and claim '{lookupClaimOnUser}' with claim value '{selectUserClaimValue}'.");
             }
             return null;
+        }
+
+        private async Task<bool> ExternalUserIsExpiredAsync(ITenantDataRepository tenantDataRepository, ExternalUser externalUser)
+        {
+            if (externalUser.ExpireAt > 0 && externalUser.ExpireAt < DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+            {
+                await tenantDataRepository.DeleteAsync<ExternalUser>(externalUser.Id);
+                return true;
+            }
+            return false;
         }
 
         private List<string> GetUpdateSourceValues(IEnumerable<Claim> claims, string updateSourceClaimType, bool isInternalUser)

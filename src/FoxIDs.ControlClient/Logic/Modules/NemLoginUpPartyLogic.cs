@@ -476,7 +476,7 @@ namespace FoxIDs.Client.Logic.Modules
 
             try
             {
-                var logSettings = await trackService.GetTrackLogSettingAsync();
+                var logSettings = await trackService.GetTrackLogSettingAsync() ?? new LogSettings();
                 logSettings.LogInfoTrace = true;
                 logSettings.LogClaimTrace = true;
                 logSettings.LogMessageTrace = true;

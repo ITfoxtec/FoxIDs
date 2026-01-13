@@ -88,7 +88,7 @@
                                 <FInputToggle @bind-Value="Model.Modules.NemLogin.SaveCprOnExternalUsers" For="@(() => Model.Modules.NemLogin.SaveCprOnExternalUsers)" TextType="y.n" OnValidChange="NemLoginCprFlowChanged" />
                                 @if (Model.Modules.NemLogin.SaveCprOnExternalUsers && Model.LinkExternalUser != null)
                                 {
-                                    <FInputNumber @bind-Value="Model.LinkExternalUser.ExternalUserLifetime" For="@(() => Model.LinkExternalUser.ExternalUserLifetime)" />
+                                    <FInputNumberSecondsAsDays @bind-Value="Model.LinkExternalUser.ExternalUserLifetime" For="@(() => Model.LinkExternalUser.ExternalUserLifetime)" LabelText="External user lifetime in days (0 to disable, sliding expiration)" />
                                 }
                             }
                         }

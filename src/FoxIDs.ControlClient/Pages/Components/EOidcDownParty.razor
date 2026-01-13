@@ -61,7 +61,7 @@
                             <FFieldTextClipboard Class="@(oidcDownParty.ShowAuthorityDetails ? string.Empty : "pb-1")" @bind-Value="oidcDownParty.Form.Model.Authority" For="@(() => oidcDownParty.Form.Model.Authority)" />
                             @if (!oidcDownParty.ShowAuthorityDetails && !oidcDownParty.Form.Model.Name.IsNullOrWhiteSpace())
                             {
-                                <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => oidcDownParty.ShowAuthorityDetails = true">Show more</button>
+                                <button type="button" class="btn btn-link btn-xs pl-1 pb-2" @onclick="() => oidcDownParty.ShowAuthorityDetails = true">Show more</button>
                             }
                             @if (oidcDownParty.ShowAuthorityDetails)
                             {
@@ -86,7 +86,7 @@
                             <FFieldTextClipboard Class="@(oidcDownParty.ShowResourceAuthorityDetails ? string.Empty : "pb-1")" @bind-Value="oidcDownParty.Form.Model.ResourceAuthority" For="@(() => oidcDownParty.Form.Model.ResourceAuthority)" />
                             @if (!oidcDownParty.ShowResourceAuthorityDetails && !oidcDownParty.Form.Model.Name.IsNullOrWhiteSpace())
                             {
-                                <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => oidcDownParty.ShowResourceAuthorityDetails = true">Show more</button>
+                                <button type="button" class="btn btn-link btn-xs pl-1 pb-2" @onclick="() => oidcDownParty.ShowResourceAuthorityDetails = true">Show more</button>
                             }
                             @if (oidcDownParty.ShowResourceAuthorityDetails && !oidcDownParty.Form.Model.Name.IsNullOrWhiteSpace())
                             {

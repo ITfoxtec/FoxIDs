@@ -171,6 +171,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "ACS URL")]
         public string MetadataAcs { get; set; }
 
+        [Display(Name = "Single logout URL")]
+        public string MetadataSingleLogout { get; set; }
+
         /// <summary>
         /// Default 10 hours.
         /// </summary>
@@ -209,7 +212,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Login hint in Authn request in Subject NameID")]
         public bool DisableLoginHint { get; set; }
 
-        [Display(Name = "Add logout response location URL in metadata")]
+        [Display(Name = "Add logout response location URL in metadata (same as single logout)")]
         public bool MetadataAddLogoutResponseLocation { get; set; }
 
         [Display(Name = "Sign metadata")]

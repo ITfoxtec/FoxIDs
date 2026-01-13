@@ -111,13 +111,16 @@ public partial class SamlUpPartyNemLoginTemplate : ComponentBase
             Model.Metadata = null;
             Model.MetadataEntityId = null;
             Model.MetadataAcs = null;
+            Model.MetadataSingleLogout = null;
+            GeneralSamlUpParty.ShowAuthorityDetails = false;
             return;
         }
 
-        var (metadata, entityId, acs) = MetadataLogic.GetUpSamlMetadata(Model.Name, Model.PartyBindingPattern);
+        var (metadata, entityId, acs, singleLogout) = MetadataLogic.GetUpSamlMetadata(Model.Name, Model.PartyBindingPattern);
         Model.Metadata = metadata;
         Model.MetadataEntityId = string.IsNullOrWhiteSpace(Model.SpIssuer) ? entityId : Model.SpIssuer;
         Model.MetadataAcs = acs;
+        Model.MetadataSingleLogout = singleLogout;
     }
 
     private async Task OnNemLoginTrackCertificateFileSelectedAsync(InputFileChangeEventArgs e)

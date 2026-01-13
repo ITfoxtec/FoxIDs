@@ -51,12 +51,24 @@
                             <FFieldTextClipboard @bind-Value="samlUpParty.Form.Model.Metadata" For="@(() => samlUpParty.Form.Model.Metadata)" Class="pb-0" />
                             @if (!samlUpParty.Form.Model.Metadata.IsNullOrWhiteSpace())
                             {
-                                <a class="btn btn-link btn-xs pl-0 pb-3" href="@samlUpParty.Form.Model.Metadata" target="_blank" rel="noopener noreferrer" download>
-                                    <span class="oi oi-cloud-download" aria-hidden="true"></span> Download metadata
-                                </a>
+                                <div class="pb-3">
+                                    <a class="btn btn-link btn-xs pl-0" href="@samlUpParty.Form.Model.Metadata" target="_blank" rel="noopener noreferrer" download>
+                                        <span class="oi oi-cloud-download" aria-hidden="true"></span> Download metadata
+                                    </a>
+                                </div>
                             }
-                            <FFieldTextClipboard @bind-Value="samlUpParty.Form.Model.MetadataEntityId" For="@(() => samlUpParty.Form.Model.MetadataEntityId)" />
-                            <FFieldTextClipboard @bind-Value="samlUpParty.Form.Model.MetadataAcs" For="@(() => samlUpParty.Form.Model.MetadataAcs)" />
+                            @if (!samlUpParty.ShowAuthorityDetails && !samlUpParty.Form.Model.Name.IsNullOrWhiteSpace())
+                            {
+                                <div class="pb-2">
+                                    <button type="button" class="btn btn-link btn-xs pl-1" @onclick="() => samlUpParty.ShowAuthorityDetails = true">Show more</button>
+                                </div>
+                            }
+                            @if (samlUpParty.ShowAuthorityDetails)
+                            {
+                                <FFieldTextClipboard @bind-Value="samlUpParty.Form.Model.MetadataEntityId" For="@(() => samlUpParty.Form.Model.MetadataEntityId)" />
+                                <FFieldTextClipboard @bind-Value="samlUpParty.Form.Model.MetadataAcs" For="@(() => samlUpParty.Form.Model.MetadataAcs)" />
+                                <FFieldTextClipboard @bind-Value="samlUpParty.Form.Model.MetadataSingleLogout" For="@(() => samlUpParty.Form.Model.MetadataSingleLogout)" />
+                            }
                         </div>
                     </div>
                 }

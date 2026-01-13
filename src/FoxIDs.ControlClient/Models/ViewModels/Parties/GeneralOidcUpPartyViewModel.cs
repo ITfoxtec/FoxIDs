@@ -23,5 +23,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool ShowHrdTab { get; set; }
         public bool ShowProfileTab { get; set; }
         public bool ShowSessionTab { get; set; }
+
+        public bool ShowAuthorityDetails { get; set; }
     }
 }

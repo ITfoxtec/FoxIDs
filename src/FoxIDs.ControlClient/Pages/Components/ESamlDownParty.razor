@@ -43,7 +43,7 @@
                         <FFieldTextClipboard Class="@(samlDownParty.ShowMetadataDetails ? string.Empty : "pb-1")" @bind-Value="samlDownParty.Form.Model.Metadata" For="@(() => samlDownParty.Form.Model.Metadata)" />
                         @if (!samlDownParty.ShowMetadataDetails && !samlDownParty.Form.Model.Name.IsNullOrWhiteSpace() && hasMetadataDetails)
                         {
-                            <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="@(async () => await ShowSamlMetadataDetailsAsync(samlDownParty))">Show more</button>
+                            <button type="button" class="btn btn-link btn-xs pl-1 pb-2" @onclick="@(async () => await ShowSamlMetadataDetailsAsync(samlDownParty))">Show more</button>
                         }
                         @if (samlDownParty.ShowMetadataDetails && !samlDownParty.Form.Model.Name.IsNullOrWhiteSpace())
                         {

@@ -69,13 +69,16 @@ namespace FoxIDs.Client.Pages.Components
                 model.Metadata = null;
                 model.MetadataEntityId = null;
                 model.MetadataAcs = null;
+                model.MetadataSingleLogout = null;
+                generalSamlUpParty.ShowAuthorityDetails = false;
                 return;
             }
 
-            var (metadata, entityId, acs) = MetadataLogic.GetUpSamlMetadata(model.Name, model.PartyBindingPattern);
+            var (metadata, entityId, acs, singleLogout) = MetadataLogic.GetUpSamlMetadata(model.Name, model.PartyBindingPattern);
             model.Metadata = metadata;
             model.MetadataEntityId = string.IsNullOrWhiteSpace(model.SpIssuer) ? entityId : model.SpIssuer;
             model.MetadataAcs = acs;
+            model.MetadataSingleLogout = singleLogout;
         }
 
         private SamlUpPartyViewModel ToViewModel(GeneralSamlUpPartyViewModel generalSamlUpParty, SamlUpParty samlUpParty)

@@ -49,6 +49,7 @@ Before you can create IT systems for NemLog-in, your organization must be connec
 Other useful resources:
 - The [NemLog-in development portal](https://tu.nemlog-in.dk/oprettelse-og-administration-af-it-systemer/) with documentation for test and production environments
 - Test user creation in the [MitID emulator](https://pp.mitid.dk/test-tool/frontend/#/create-identity) and [MitID simulator](https://mitidsimulator.test-nemlog-in.dk/Home/Create)
+- [Integration with NemLog-in (PDF)](https://cms.nemlog-in.dk/media/jhmbnulm/integration-with-nemlog-in.pdf) with a detailed description of the integration flow (secondary reading)
 
 ## Consider a separate environment
 
@@ -137,7 +138,14 @@ And possible credential types:
 
 **8) App-switch**
 
-Optionally configure app-switch which creates an authentication method profile per app-switch (Android, name: `android` / iOS, name: `ios`). You can allow (select) the app-switch profiles for each FoxIDs application configuration.
+Optionally configure app-switch to create one authentication method profile per mobile platform. You can then allow (select) the profiles per FoxIDs application configuration.
+
+- Android profile name: `android`
+- iOS profile name: `ios`
+
+Further reading:
+- [Integration of mobile applications with NemLog-in](https://tu.nemlog-in.dk/oprettelse-og-administration-af-it-systemer/log-in/integration-af-mobilapplikationer-med-nemlog-in/)
+- [Integration with NemLog-in (PDF)](https://cms.nemlog-in.dk/media/jhmbnulm/integration-with-nemlog-in.pdf) (see chapter "12.8 Mobile app-switch")
 
 ![Android and iOS app-switch settings](images/howto-saml-nemlogin-template-app-switch.png)
 

@@ -1,15 +1,16 @@
 @inherits UpPartyBase
 
 @{
-    var samlUpParty = UpParty as GeneralSamlUpPartyViewModel;
-    var isNemLogin = samlUpParty?.Form?.Model?.ModuleType == UpPartyModuleTypes.NemLogin;
-    var isMicrosoftEntraId = samlUpParty?.Form?.Model?.ModuleType == UpPartyModuleTypes.MicrosoftEntraId;
-    var showStandardSamlSettings = (!isNemLogin && !isMicrosoftEntraId) || samlUpParty?.ShowStandardSettings == true;
+    var samlUpParty = SamlUpPartyModel;
+    var showStandardSamlSettings = ShowStandardSamlSettings(samlUpParty);
+    var isFormReady = samlUpParty?.Form?.Model != null;
 }
 
 @if (samlUpParty != null)
 {
 <PageEditForm @ref="samlUpParty.Form" TModel="SamlUpPartyViewModel" OnAfterInit="@(async m => await SamlUpPartyViewModelAfterInitAsync(samlUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditSamlUpPartyValidSubmitAsync(samlUpParty, editContext))">
+    @if (isFormReady)
+    {
     <div class="modal-header sticky-header">
         <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
             <span class="text-truncate second-header flex-grow-1" style="min-width: 0;">@GetUpPartyDisplayName(samlUpParty.Form?.Model)</span>
@@ -34,12 +35,12 @@
             <FInputText @bind-Value="samlUpParty.Form.Model.Note" For="@(() => samlUpParty.Form.Model.Note)" />
         }
 
-        @if (isNemLogin)
+        @if (IsNemLogin)
         {
             <SamlUpPartyNemLoginTemplate GeneralSamlUpParty="samlUpParty" @bind-ShowStandardSettings="samlUpParty.ShowStandardSettings" />
         }
 
-        @if (isMicrosoftEntraId)
+        @if (IsMicrosoftEntraId)
         {
             <SamlUpPartyMicrosoftEntraIdTemplate GeneralSamlUpParty="samlUpParty" @bind-ShowStandardSettings="samlUpParty.ShowStandardSettings" />
         }
@@ -576,5 +577,6 @@
         <button type="submit" class="btn btn-primary">@(@UpParty.CreateMode ? "Create" : "Update")</button>
         <button type="button" class="btn btn-secondary" @onclick="@(() => UpPartyCancelAsync(UpParty))">@(@UpParty.CreateMode ? "Cancel" : "Close")</button>
     </div>
+    }
 </PageEditForm>
 }

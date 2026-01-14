@@ -56,6 +56,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\auth-method-howto-oidc-signicat.md = docs\auth-method-howto-oidc-signicat.md
 		docs\auth-method-howto-saml-2.0-adfs.md = docs\auth-method-howto-saml-2.0-adfs.md
 		docs\auth-method-howto-saml-2.0-google-workspace.md = docs\auth-method-howto-saml-2.0-google-workspace.md
+		docs\auth-method-howto-saml-2.0-microsoft-entra-id.md = docs\auth-method-howto-saml-2.0-microsoft-entra-id.md
 		docs\auth-method-howto-saml-2.0-nemlogin-oiosaml3-std.md = docs\auth-method-howto-saml-2.0-nemlogin-oiosaml3-std.md
 		docs\auth-method-howto-saml-2.0-nemlogin.md = docs\auth-method-howto-saml-2.0-nemlogin.md
 		docs\auth-method-howto-saml-2.0-pingone.md = docs\auth-method-howto-saml-2.0-pingone.md

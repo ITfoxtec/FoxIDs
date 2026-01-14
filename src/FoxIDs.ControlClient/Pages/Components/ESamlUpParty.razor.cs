@@ -24,13 +24,10 @@ namespace FoxIDs.Client.Pages.Components
     public partial class ESamlUpParty : UpPartyBase
     {
         [Inject]
-        public NemLoginUpPartyLogic NemLoginUpPartyLogic { get; set; }
-
-        [Inject]
-        public MicrosoftEntraIdUpPartyLogic MicrosoftEntraIdUpPartyLogic { get; set; }
-
-        [Inject]
         public HelpersService HelpersService { get; set; }
+
+        [Inject]
+        public SamlUpPartyModuleLogic SamlUpPartyModuleLogic { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -38,6 +35,14 @@ namespace FoxIDs.Client.Pages.Components
             if (!UpParty.CreateMode)
             {
                 await DefaultLoadAsync();
+            }
+        }
+
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if (firstRender)
+            {
+                StateHasChanged();
             }
         }
 
@@ -84,19 +89,41 @@ namespace FoxIDs.Client.Pages.Components
             model.MetadataSingleLogout = singleLogout;
         }
 
+        private GeneralSamlUpPartyViewModel SamlUpPartyModel => UpParty as GeneralSamlUpPartyViewModel;
+
+        private bool IsNemLogin => SamlUpPartyModel?.Form?.Model?.ModuleType == UpPartyModuleTypes.NemLogin;
+
+        private bool IsMicrosoftEntraId => SamlUpPartyModel?.Form?.Model?.ModuleType == UpPartyModuleTypes.MicrosoftEntraId;
+
+        private bool ShowStandardSamlSettings(GeneralSamlUpPartyViewModel samlUpParty)
+        {
+            if (samlUpParty == null)
+            {
+                return false;
+            }
+
+            var moduleType = samlUpParty.Form?.Model?.ModuleType;
+            if (moduleType == UpPartyModuleTypes.NemLogin || moduleType == UpPartyModuleTypes.MicrosoftEntraId)
+            {
+                return samlUpParty.ShowStandardSettings;
+            }
+
+            return true;
+        }
+
         private SamlUpPartyViewModel ToViewModel(GeneralSamlUpPartyViewModel generalSamlUpParty, SamlUpParty samlUpParty)
         {
             return samlUpParty.Map<SamlUpPartyViewModel>(afterMap =>
             {
                 if (afterMap.ModuleType == UpPartyModuleTypes.NemLogin)
                 {
-                    NemLoginUpPartyLogic.EnsureNemLoginModule(afterMap);
-                    NemLoginUpPartyLogic.InitializeNemLoginTemplateModel(afterMap);
+                    SamlUpPartyModuleLogic.NemLogin.EnsureNemLoginModule(afterMap);
+                    SamlUpPartyModuleLogic.NemLogin.InitializeNemLoginTemplateModel(afterMap);
                     generalSamlUpParty.ShowStandardSettings = afterMap.Modules?.ShowStandardSettings == true;
                 }
                 else if (afterMap.ModuleType == UpPartyModuleTypes.MicrosoftEntraId)
                 {
-                    MicrosoftEntraIdUpPartyLogic.EnsureMicrosoftEntraIdModule(afterMap);
+                    SamlUpPartyModuleLogic.MicrosoftEntraId.EnsureMicrosoftEntraIdModule(afterMap);
                     generalSamlUpParty.ShowStandardSettings = afterMap.Modules?.ShowStandardSettings == true;
                 }
                 else
@@ -205,15 +232,15 @@ namespace FoxIDs.Client.Pages.Components
                 if (samlUpParty.ModuleType == UpPartyModuleTypes.NemLogin)
                 {
                     model.ModuleType = samlUpParty.ModuleType;
-                    NemLoginUpPartyLogic.EnsureNemLoginModule(model);
-                    NemLoginUpPartyLogic.ApplyNemLoginCreateDefaults(model);
+                    SamlUpPartyModuleLogic.NemLogin.EnsureNemLoginModule(model);
+                    SamlUpPartyModuleLogic.NemLogin.ApplyNemLoginCreateDefaults(model);
                     samlUpParty.ShowStandardSettings = model.Modules?.ShowStandardSettings == true;
                 }
                 else if (samlUpParty.ModuleType == UpPartyModuleTypes.MicrosoftEntraId)
                 {
                     model.ModuleType = samlUpParty.ModuleType;
-                    MicrosoftEntraIdUpPartyLogic.EnsureMicrosoftEntraIdModule(model);
-                    MicrosoftEntraIdUpPartyLogic.ApplyMicrosoftEntraIdTemplateDefaults(model);
+                    SamlUpPartyModuleLogic.MicrosoftEntraId.EnsureMicrosoftEntraIdModule(model);
+                    SamlUpPartyModuleLogic.MicrosoftEntraId.ApplyMicrosoftEntraIdTemplateDefaults(model);
                     samlUpParty.ShowStandardSettings = model.Modules?.ShowStandardSettings == true;
                 }
             }
@@ -489,11 +516,11 @@ namespace FoxIDs.Client.Pages.Components
             {
                 if (generalSamlUpParty.Form.Model?.ModuleType == UpPartyModuleTypes.NemLogin)
                 {
-                    return NemLoginUpPartyLogic.PrepareNemLoginBeforeSave(generalSamlUpParty.Form.Model);
+                    return SamlUpPartyModuleLogic.NemLogin.PrepareNemLoginBeforeSave(generalSamlUpParty.Form.Model);
                 }
                 else if (generalSamlUpParty.Form.Model?.ModuleType == UpPartyModuleTypes.MicrosoftEntraId)
                 {
-                    MicrosoftEntraIdUpPartyLogic.ApplyMicrosoftEntraIdTemplateDefaults(generalSamlUpParty.Form.Model);
+                    SamlUpPartyModuleLogic.MicrosoftEntraId.ApplyMicrosoftEntraIdTemplateDefaults(generalSamlUpParty.Form.Model);
                 }
             }
 
@@ -503,7 +530,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (generalSamlUpParty.Form.Model?.ModuleType == UpPartyModuleTypes.NemLogin)
             {
-                await NemLoginUpPartyLogic.UpdateNemLoginEnvironmentAsync(generalSamlUpParty.Form.Model);
+                await SamlUpPartyModuleLogic.NemLogin.UpdateNemLoginEnvironmentAsync(generalSamlUpParty.Form.Model);
             }
         }
 

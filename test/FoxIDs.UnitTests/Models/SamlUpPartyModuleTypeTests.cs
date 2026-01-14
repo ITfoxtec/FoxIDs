@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using FoxIDs.Models;
-using ITfoxtec.Identity.Saml2.Schemas;
 using Xunit;
 using Api = FoxIDs.Models.Api;
 
@@ -30,7 +29,7 @@ namespace FoxIDs.UnitTests
             var party = new Api.SamlUpParty
             {
                 DisplayName = "Microsoft Entra ID",
-                AuthnResponseBinding = SamlBindingTypes.Post,
+                AuthnResponseBinding = Api.SamlBindingTypes.Post,
                 MetadataUrl = "https://login.microsoftonline.com/tenant/federationmetadata/2007-06/federationmetadata.xml",
                 ModuleType = Api.UpPartyModuleTypes.MicrosoftEntraId,
                 Modules = new Api.SamlUpPartyModules()

@@ -29,6 +29,7 @@ or use [FoxIDs Cloud](https://www.foxids.com/action/createtenant).
 After deployment consider to:
 
 - Place your FoxIDs deployment securely behind a [reverse proxy](reverse-proxy.md).
+- Trust an internal root CA in Kubernetes when internal TLS is terminated and re-issued by a proxy. [Kubernetes internal CA](deployment-k8s-internal-ca.md).
 - Improve the password quality by [uploading risk passwords](risk-passwords.md). 
 - Configure [monitoring](monitoring.md).
 - [Upload your users](users-upload.md) from a SVC file, with or without a password.

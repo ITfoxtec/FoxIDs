@@ -357,6 +357,9 @@ This section lists some deployment and security considerations.
 **Kubernetes Service Mesh**  
 It is recommended to use a [Kubernetes Service Mesh](https://www.toptal.com/kubernetes/service-mesh-comparison) to achieve a zero-trust architecture. Where the internal traffic is secured with mutual TLS (mTLS) and encryption.
 
+**Internal PKI / root CA**  
+If internal traffic is terminated and re-encrypted by a proxy or service mesh with an internal root CA, configure the FoxIDs containers to trust that CA. See [Kubernetes internal CA](deployment-k8s-internal-ca.md).
+
 **Namespace**  
 This guide generally uses the namespace `foxids`, consider changing the namespace to suit your kubernetes environment.
 

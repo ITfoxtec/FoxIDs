@@ -29,7 +29,7 @@ By configuring a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a
 3. Select **Microsoft Entra ID - SAML 2.0**
 4. Enter a name for the authentication method
 
-<!-- Screenshot: FoxIDs - select Microsoft Entra ID template -->
+![Select Microsoft Entra ID template](images/howto-saml-microsoft-entra-id-template.png)
 
 **2) Copy the FoxIDs application information**
 
@@ -42,14 +42,14 @@ By configuring a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a
 
 **3) Create the enterprise application in Microsoft Entra ID**
 
-1. Open the Microsoft Entra admin center
+1. Open the Microsoft Entra admin center at http://entra.microsoft.com/
 2. Go to **Enterprise applications**
 3. Click **New application** 
 4. Click **Create your own application**
 5. Enter a name for the application
 6. Click **Create**
 
-<!-- Screenshot: Entra ID - create enterprise application -->
+![Create enterprise application](images/howto-saml-microsoft-entra-id-ent-app-create.png)
 
 **4) Configure SAML single sign-on**
 
@@ -60,13 +60,13 @@ By configuring a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a
    - **Single logout URL** (Logout URL)
 3. Click **Save**
 
-<!-- Screenshot: Entra ID - basic SAML configuration -->
+![Basic SAML configuration](images/howto-saml-microsoft-entra-id-ent-app-saml-conf.png)
 
 **5) Copy the federation metadata URL**
 
 1. In the **SAML Certificates** section, copy the **App Federation Metadata URL**
 
-<!-- Screenshot: Entra ID - App Federation Metadata URL -->
+![App Federation Metadata URL](images/howto-saml-microsoft-entra-id-ent-app-metadata.png)
 
 ## Finish the authentication method in FoxIDs
 
@@ -75,4 +75,11 @@ By configuring a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a
 1. Paste the **App Federation Metadata URL** into the required **Metadata URL** field
 2. Click **Create**
 
-<!-- Screenshot: FoxIDs - Microsoft Entra ID template metadata -->
+![Microsoft Entra ID template metadata](images/howto-saml-microsoft-entra-id-metadata.png)
+
+## Test the authentication method
+
+1. Click **Test authentication** to create a test application
+2. Click **Start the test** to start the test
+
+![Microsoft Entra ID template test](images/howto-saml-microsoft-entra-id-test.png)

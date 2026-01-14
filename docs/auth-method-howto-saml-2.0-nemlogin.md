@@ -183,6 +183,14 @@ When you create an IT system in NemLog-in it has two tabs: integration test and 
 
 ![Upload NemLog-in metadata](images/howto-saml-nemlogin-template-it-system.png)
 
+## Test the authentication method
+
+1. Go back to FoxIDs Control Client and open the NemLog-in authentication method
+2. Click **Test authentication** to create a test application
+3. Click **Start the test** to start the test
+
+![NemLog-in template test](images/howto-saml-nemlogin-template-test.png)
+
 ## Legacy
 
 If you need the legacy guide for configuring NemLog-in with the standard SAML 2.0 settings, see [Connect to NemLog-in with SAML 2.0 (Legacy standard configuration)](auth-method-howto-saml-2.0-nemlogin-oiosaml3-std.md).

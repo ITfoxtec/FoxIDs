@@ -136,11 +136,19 @@ namespace FoxIDs.Logic
         {
             var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: true);
 
+            var loginHint = !party.DisableLoginHint && !samlUpSequenceData.LoginHint.IsNullOrWhiteSpace() ? samlUpSequenceData.LoginHint : null;
+            // Add login_hint as query parameter for Microsoft Entra ID as it does not support Subject in AuthnRequest.
+            var useLoginHintQuery = !loginHint.IsNullOrWhiteSpace() && party.AuthnUrl?.StartsWith("https://login.microsoftonline.com/", StringComparison.OrdinalIgnoreCase) == true;
+            if (useLoginHintQuery)
+            {
+                samlConfig.SingleSignOnDestination = AddLoginHintQueryParameter(samlConfig.SingleSignOnDestination, loginHint);
+            }
+
             binding.RelayState = await sequenceLogic.CreateExternalSequenceIdAsync();
             var saml2AuthnRequest = new Saml2AuthnRequest(samlConfig);
-            if (!party.DisableLoginHint && !samlUpSequenceData.LoginHint.IsNullOrWhiteSpace())
+            if (!loginHint.IsNullOrWhiteSpace() && !useLoginHintQuery)
             {
-                saml2AuthnRequest.Subject = new Subject { NameID = new NameID { ID = samlUpSequenceData.LoginHint, Format = new EmailAddressAttribute().IsValid(samlUpSequenceData.LoginHint) ? NameIdentifierFormats.Email.OriginalString : NameIdentifierFormats.Persistent.OriginalString } };
+                saml2AuthnRequest.Subject = new Subject { NameID = new NameID { ID = loginHint, Format = new EmailAddressAttribute().IsValid(loginHint) ? NameIdentifierFormats.Email.OriginalString : NameIdentifierFormats.Persistent.OriginalString } };
             }
 
             saml2AuthnRequest.AssertionConsumerServiceUrl = new Uri(UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlAcs));
@@ -230,6 +238,20 @@ namespace FoxIDs.Logic
         {
             var wrapper = System.Xml.Linq.XElement.Parse($"<root>{authnRequestExtensionsXml}</root>");
             return wrapper.Elements().ToList();
+        }
+
+        private static Uri AddLoginHintQueryParameter(Uri destination, string loginHint)
+        {
+            if (destination == null)
+            {
+                return null;
+            }
+
+            var builder = new UriBuilder(destination);
+            var query = HttpUtility.ParseQueryString(builder.Query);
+            query["login_hint"] = loginHint;
+            builder.Query = query.ToString();
+            return builder.Uri;
         }
 
         private SamlUpPartyProfile GetProfile(SamlUpParty party, SamlUpSequenceData samlUpSequenceData)

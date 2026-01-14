@@ -154,7 +154,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Optional encryption certificate")]
         public JwkWithCertificateInfo EncryptionKey { get; set; }
         
-        [Display(Name = "Add logout response location URL in metadata")]
+        [Display(Name = "Add logout response location URL in metadata (same as single logout)")]
         public bool MetadataAddLogoutResponseLocation { get; set; }
 
         [Display(Name = "Sign metadata")]

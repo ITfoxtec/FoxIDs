@@ -72,6 +72,7 @@ namespace FoxIDs.Client.Pages.Components
                 model.RedirectUrl = null;
                 model.PostLogoutRedirectUrl = null;
                 model.FrontChannelLogoutUrl = null;
+                generalOidcUpParty.ShowAuthorityDetails = false;
                 return;
             }
 

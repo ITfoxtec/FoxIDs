@@ -92,7 +92,7 @@
 			<rect x="0" y="292.633" width="161.008" height="48.0253" class="st2"/>
 			<text x="13.68" y="307.05" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>External enterprise Identity <tspan
 						x="47.07" dy="1.2em" class="st6">Provider (IdP)<v:newlineChar/></tspan><tspan x="9.26" dy="1.26em"
-						class="st8">(Microsoft Entra ID, AD FS, Okta ...)</tspan></text>		</g>
+						class="st8">(Entra ID, AD FS, Okta ...)</tspan></text>		</g>
 		<g id="shape27-29" v:mID="27" v:groupContext="shape" v:layerMember="0" transform="translate(136.32,-291.633)">
 			<title>Dynamic connector.52</title>
 			<desc>SAML 2.0 IdP-Initiated login Relay state to App X or App Y</desc>

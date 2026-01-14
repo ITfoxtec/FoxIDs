@@ -11,6 +11,12 @@ namespace FoxIDs.Models
         /// NemLog-in template.
         /// </summary>
         [EnumMember(Value = "nemlogin")]
-        NemLogin = 100
+        NemLogin = 100,
+
+        /// <summary>
+        /// Microsoft Entra ID template.
+        /// </summary>
+        [EnumMember(Value = "microsoft_entra_id")]
+        MicrosoftEntraId = 1010
     }
 }

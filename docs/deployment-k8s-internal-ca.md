@@ -83,20 +83,22 @@ spec:
 ```
 
 ## Important notes for .NET / ASP.NET
-If the containers need to call public services, a bundle that contains only private roots can break those calls because it replaces the default trust store. 
-In that case:
+If the containers need to access public services, using a CA bundle that contains only private root certificates can break those calls, because it replaces the default system trust store.
 
-- Create a combined bundle (public + private) and mount it (recommended).
-- Or extend the system trust store inside the image instead of using `SSL_CERT_FILE`.
+In that case, you should either:
 
-### How to combined bundle (public + private)
-The safest option is to keep the public trust store and append your internal roots. Start with the public CA bundle from the FoxIDs container base image, add your internal roots, and mount that combined bundle with `SSL_CERT_FILE`.
+- **Create a combined CA bundle** that includes both public and private root certificates and mount it (recommended).
+- **Extend the system trust store** inside the container image instead of using `SSL_CERT_FILE`.
 
-Example (path depends on the base image; verify in your container):
+### How to create a combined bundle (public + private)
+
+The safest approach is to keep the existing public trust store and append your internal root certificates. Start with the public CA bundle from the FoxIDs container base image, add your internal roots, and mount the resulting combined bundle using `SSL_CERT_FILE`.
+
+Example (the path may vary depending on the base image; verify it inside your container):
 
 ```bash
 cat /etc/ssl/certs/ca-certificates.crt extra-roots.pem > combined-roots.pem
 kubectl -n <foxids-namespace> create configmap foxids-extra-ca --from-file=combined-roots.pem
 ```
 
-Use the same volume mount and `SSL_CERT_FILE` configuration as in step 2, but point to `combined-roots.pem`.
+Use the same volume mount and `SSL_CERT_FILE` configuration as described in step 2, but point it to `combined-roots.pem`.

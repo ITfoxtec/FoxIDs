@@ -1,9 +1,9 @@
 <!--
 {
     "title":  "Kubernetes internal CA",
-    "description":  "Trust an internal PKI/root CA when FoxIDs runs in Kubernetes behind a TLS-terminating proxy.",
+    "description":  "Trust an internal PKI/root CA when FoxIDs is deployed in Kubernetes behind a TLS-terminating proxy.",
     "ogTitle":  "Kubernetes internal CA",
-    "ogDescription":  "Trust an internal PKI/root CA when FoxIDs runs in Kubernetes behind a TLS-terminating proxy.",
+    "ogDescription":  "Trust an internal PKI/root CA when FoxIDs is deployed in Kubernetes behind a TLS-terminating proxy.",
     "ogType":  "article",
     "ogImage":  "/images/foxids_logo.png",
     "twitterCard":  "summary_large_image",
@@ -15,7 +15,11 @@
 
 # Kubernetes internal CA
 
-When FoxIDs is installed in Kubernetes and internal traffic goes through a proxy that terminates TLS and re-issues certificates from an internal root CA, the FoxIDs containers must trust that root CA. The steps below show the simplest setup without modifying the container images.
+When FoxIDs is deployed in Kubernetes and outbound traffic is routed through a proxy that terminates TLS and re-issues certificates from an internal root CA, the FoxIDs containers must trust that root CA.
+
+This configuration applies only to outbound HTTPS traffic from the FoxIDs and FoxIDs Control pods, such as calls to external services made through the proxy. It does not affect how inbound TLS traffic is terminated.
+
+The steps below describe the simplest configuration, which does not require any modifications to the container images.
 
 ## 1) Create a bundle file (PEM) containing the internal roots
 If you already have a combined bundle, use it. Otherwise, concatenate the internal root certificates into one PEM file and create a ConfigMap:
@@ -79,7 +83,8 @@ spec:
 ```
 
 ## Important notes for .NET / ASP.NET
-If the containers need to call public services, a bundle that contains only private roots can break those calls because it replaces the default trust store. In that case:
+If the containers need to call public services, a bundle that contains only private roots can break those calls because it replaces the default trust store. 
+In that case:
 
 - Create a combined bundle (public + private) and mount it (recommended).
 - Or extend the system trust store inside the image instead of using `SSL_CERT_FILE`.

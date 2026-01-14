@@ -73,6 +73,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\customisation.md = docs\customisation.md
 		docs\deployment-azure.md = docs\deployment-azure.md
 		docs\deployment-docker.md = docs\deployment-docker.md
+		docs\deployment-k8s-internal-ca.md = docs\deployment-k8s-internal-ca.md
 		docs\deployment-k8s.md = docs\deployment-k8s.md
 		docs\deployment-window-iis.md = docs\deployment-window-iis.md
 		docs\deployment.md = docs\deployment.md

@@ -75,6 +75,8 @@ By configuring a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a
 1. Paste the **App Federation Metadata URL** into the required **Metadata URL** field
 2. Click **Create**
 
+> FoxIDs monitors the metadata URL. When Microsoft Entra ID rotates certificates, the new certificates are provisioned automatically.
+
 ![Microsoft Entra ID template metadata](images/howto-saml-microsoft-entra-id-metadata.png)
 
 ## Test the authentication method

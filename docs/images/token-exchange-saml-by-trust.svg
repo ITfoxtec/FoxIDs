@@ -112,7 +112,7 @@
 			<text x="24.98" y="319.26" class="st8" v:langID="2057"><v:paragraph v:horizAlign="1"/><v:tabList/>Access token</text>		</g>
 		<g id="shape35-36" v:mID="35" v:groupContext="shape" transform="translate(8.9958,-274.923)">
 			<title>Rectangle.35</title>
-			<desc>External Identity Provider (IdP) (Azure AD, AD FS, Auth0, Key...</desc>
+			<desc>External Identity Provider (IdP) (Entra ID, AD FS, Auth0, Key...</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
@@ -120,7 +120,7 @@
 			<v:textRect cx="126.859" cy="299.936" width="253.72" height="48.0253"/>
 			<rect x="0" y="275.923" width="253.717" height="48.0253" class="st2"/>
 			<text x="51.78" y="297.54" class="st10" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>External Identity Provider (IdP)<v:newlineChar/><tspan
-						x="7.19" dy="1.26em" class="st11">(Azure AD, AD FS, Auth0, Keycloak, Google Apps</tspan><tspan class="st11"
+						x="7.19" dy="1.26em" class="st11">(Entra ID, AD FS, Auth0, Keycloak, Google Apps</tspan><tspan class="st11"
 						v:langID="2057">, FoxIDs</tspan><tspan class="st11"> </tspan><tspan class="st11">...)</tspan></text>		</g>
 		<g id="shape36-43" v:mID="36" v:groupContext="shape" v:layerMember="0" transform="translate(253.075,-274.923)">
 			<title>Dynamic connector.36</title>

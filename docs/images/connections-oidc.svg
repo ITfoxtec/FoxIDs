@@ -81,7 +81,7 @@
 						class="st4" v:langID="1033">OAuth 2.0 Resource</tspan></text>		</g>
 		<g id="shape22-21" v:mID="22" v:groupContext="shape" transform="translate(9.752,-263.973)">
 			<title>Rectangle.22</title>
-			<desc>External OpenID Provider (OP) (Azure AD, AD FS, IdentityServe...</desc>
+			<desc>External OpenID Provider (OP) (Entra ID, AD FS, IdentityServe...</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
@@ -89,7 +89,7 @@
 			<v:textRect cx="80.5039" cy="288.986" width="161.01" height="48.0253"/>
 			<rect x="0" y="264.973" width="161.008" height="48.0253" class="st2"/>
 			<text x="6.57" y="280.59" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>External OpenID Provider (OP)<v:newlineChar/><tspan
-						x="13.69" dy="1.26em" class="st9">(Azure AD, AD FS, IdentityServer, </tspan><tspan x="61.71" dy="1.2em"
+						x="13.69" dy="1.26em" class="st9">(Entra ID, AD FS, IdentityServer, </tspan><tspan x="61.71" dy="1.2em"
 						class="st9">Auth0 ...)</tspan></text>		</g>
 		<g id="shape24-26" v:mID="24" v:groupContext="shape" v:layerMember="0" transform="translate(84.4908,-263.973)">
 			<title>Dynamic connector</title>

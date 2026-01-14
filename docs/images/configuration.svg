@@ -63,14 +63,14 @@
 						x="32.05" dy="1.2em" class="st4" v:langID="1033">OAuth 2.0</tspan></text>		</g>
 		<g id="shape5-12" v:mID="5" v:groupContext="shape" transform="translate(1,-251.299)">
 			<title>Rectangle.22</title>
-			<desc>Microsoft Entra ID, AD FS, IdentityServer, Google, Auth0, Okt...</desc>
+			<desc>Entra ID, AD FS, IdentityServer, Google, Auth0, Okt...</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="90" cy="271.291" width="180" height="37.9843"/>
 			<rect x="0" y="252.299" width="180" height="37.9843" class="st2"/>
-			<text x="6.34" y="262.29" class="st5" v:langID="2057"><v:paragraph v:horizAlign="1"/><v:tabList/>Microsoft Entra ID<tspan
+			<text x="6.34" y="262.29" class="st5" v:langID="2057"><v:paragraph v:horizAlign="1"/><v:tabList/>Entra ID<tspan
 						class="st6" v:langID="1033">, AD FS, IdentityServer</tspan>, <tspan x="19.59" dy="1.2em" class="st6">Google</tspan><tspan
 						class="st6" v:langID="1033">, Auth0</tspan>, Okta, Ping Identity, <tspan x="22.04" dy="1.2em" class="st6"
 						v:langID="1033">Keycloak</tspan>, Facebook, LinkedIn etc.</text>		</g>
@@ -200,14 +200,14 @@
 			<text x="-8.14" y="318.38" class="st9" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>SAML 2.0</text>		</g>
 		<g id="shape19-77" v:mID="19" v:groupContext="shape" transform="translate(220.685,-251.299)">
 			<title>Rectangle.51</title>
-			<desc>Microsoft Entra ID, AD FS, Google Workspace, Auth0, Okta, Pin...</desc>
+			<desc>Entra ID, AD FS, Google Workspace, Auth0, Okta, Pin...</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="90" cy="271.291" width="180" height="37.9842"/>
 			<rect x="0" y="252.299" width="180" height="37.9842" class="st2"/>
-			<text x="21.95" y="262.29" class="st5" v:langID="2057"><v:paragraph v:horizAlign="1"/><v:tabList/>Microsoft Entra ID<tspan
+			<text x="21.95" y="262.29" class="st5" v:langID="2057"><v:paragraph v:horizAlign="1"/><v:tabList/>Entra ID<tspan
 						class="st6" v:langID="1033">, AD FS, </tspan>Google <tspan x="11.33" dy="1.2em" class="st6">Workspace, </tspan><tspan
 						class="st6" v:langID="1033">Auth0</tspan>, Okta, Ping Identity<tspan class="st6" v:langID="1033">, </tspan><tspan
 						x="34.23" dy="1.2em" class="st6" v:langID="1033">Keycloak,</tspan> National IdPs etc.</text>		</g>

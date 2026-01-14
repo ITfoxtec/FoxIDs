@@ -42,7 +42,7 @@ Configure [OpenID Connect](auth-method-oidc.md) to trust an external OpenID Prov
 How to guides:
 
 - Connect [IdentityServer](auth-method-howto-oidc-identityserver.md)
-- Connect [Microsoft Entra ID (Azure AD)](auth-method-howto-oidc-microsoft-entra-id.md) 
+- Connect [Microsoft Entra ID](auth-method-howto-oidc-microsoft-entra-id.md) 
 - Connect [Azure AD B2C](auth-method-howto-oidc-azure-ad-b2c.md) 
 - Connect [Amazon Cognito](auth-method-howto-oidc-amazon-cognito.md)
 - Connect [Google](auth-method-howto-oidc-google.md)

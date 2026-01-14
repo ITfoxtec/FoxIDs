@@ -38,15 +38,16 @@ By configuring a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a
 3. Copy the **Single logout URL**
 4. Keep the page open
 
-<!-- Screenshot: FoxIDs - Microsoft Entra ID application information -->
-
 ## Create the Microsoft Entra ID enterprise application
 
 **3) Create the enterprise application in Microsoft Entra ID**
 
 1. Open the Microsoft Entra admin center
 2. Go to **Enterprise applications**
-3. Select **New application** and create a non-gallery application
+3. Click **New application** 
+4. Click **Create your own application**
+5. Enter a name for the application
+6. Click **Create**
 
 <!-- Screenshot: Entra ID - create enterprise application -->
 
@@ -57,7 +58,7 @@ By configuring a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a
    - **Entity ID** (Identifier)
    - **ACS URL** (Reply URL)
    - **Single logout URL** (Logout URL)
-3. Save the SAML configuration
+3. Click **Save**
 
 <!-- Screenshot: Entra ID - basic SAML configuration -->
 
@@ -74,4 +75,4 @@ By configuring a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a
 1. Paste the **App Federation Metadata URL** into the required **Metadata URL** field
 2. Click **Create**
 
-<!-- Screenshot: FoxIDs - Microsoft Entra ID template settings -->
+<!-- Screenshot: FoxIDs - Microsoft Entra ID template metadata -->

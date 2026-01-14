@@ -113,7 +113,7 @@
 			<text x="26.76" y="319.26" class="st9" v:langID="2057"><v:paragraph v:horizAlign="1"/><v:tabList/>Access token</text>		</g>
 		<g id="shape35-36" v:mID="35" v:groupContext="shape" transform="translate(12.6888,-274.923)">
 			<title>Rectangle.35</title>
-			<desc>External IdP / OpenID Provider (OP) (Azure AD, IdentityServer...</desc>
+			<desc>External IdP / OpenID Provider (OP) (Entra ID, IdentityServer...</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
@@ -122,7 +122,7 @@
 			<rect x="0" y="275.923" width="223.97" height="48.0253" class="st2"/>
 			<text x="25.25" y="297.54" class="st3" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>External<tspan
 						class="st4" v:langID="2057"> </tspan><tspan class="st4" v:langID="2057">IdP /</tspan> OpenID Provider (OP)<v:newlineChar/><tspan
-						x="5.41" dy="1.26em" class="st6">(Azure AD, IdentityServer, Auth0</tspan><tspan class="st6" v:langID="2057">, Signicat, FoxIDs</tspan><tspan
+						x="5.41" dy="1.26em" class="st6">(Entra ID, IdentityServer, Auth0</tspan><tspan class="st6" v:langID="2057">, Signicat, FoxIDs</tspan><tspan
 						class="st6"> </tspan><tspan class="st6">...)</tspan></text>		</g>
 		<g id="shape36-45" v:mID="36" v:groupContext="shape" v:layerMember="0" transform="translate(203.914,-274.923)">
 			<title>Dynamic connector.36</title>

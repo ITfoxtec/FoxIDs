@@ -41,9 +41,16 @@
                 <div class="card bg-light border mb-3">
                     <div class="card-body">
                         <h6 class="card-title mt-1 mb-3">Application information</h6>
-                        <FFieldTextClipboard @bind-Value="oidcUpParty.Form.Model.RedirectUrl" For="@(() => oidcUpParty.Form.Model.RedirectUrl)" />
-                        <FFieldTextClipboard @bind-Value="oidcUpParty.Form.Model.PostLogoutRedirectUrl" For="@(() => oidcUpParty.Form.Model.PostLogoutRedirectUrl)" />
-                        <FFieldTextClipboard @bind-Value="oidcUpParty.Form.Model.FrontChannelLogoutUrl" For="@(() => oidcUpParty.Form.Model.FrontChannelLogoutUrl)" />
+                        <FFieldTextClipboard Class="@(oidcUpParty.ShowAuthorityDetails ? string.Empty : "pb-1")" @bind-Value="oidcUpParty.Form.Model.RedirectUrl" For="@(() => oidcUpParty.Form.Model.RedirectUrl)" />
+                        @if (!oidcUpParty.ShowAuthorityDetails && !oidcUpParty.Form.Model.Name.IsNullOrWhiteSpace())
+                        {
+                            <button type="button" class="btn btn-link btn-xs pl-1 pb-2" @onclick="() => oidcUpParty.ShowAuthorityDetails = true">Show more</button>
+                        }
+                        @if (oidcUpParty.ShowAuthorityDetails)
+                        {
+                            <FFieldTextClipboard @bind-Value="oidcUpParty.Form.Model.PostLogoutRedirectUrl" For="@(() => oidcUpParty.Form.Model.PostLogoutRedirectUrl)" />
+                            <FFieldTextClipboard @bind-Value="oidcUpParty.Form.Model.FrontChannelLogoutUrl" For="@(() => oidcUpParty.Form.Model.FrontChannelLogoutUrl)" />
+                        }
                     </div>
                 </div>
             }

@@ -361,7 +361,7 @@ namespace FoxIDs.Models.Api
                         results.Add(new ValidationResult($"The field '{nameof(Modules.NemLogin)}' is required when the module type is '{ModuleType}'.", [$"{nameof(Modules)}.{nameof(Modules.NemLogin)}"]));
                     }
                 }
-                else
+                else if (ModuleType != UpPartyModuleTypes.MicrosoftEntraId)
                 {
                     results.Add(new ValidationResult($"The module type '{ModuleType}' is not supported.", [nameof(ModuleType)]));
                 }

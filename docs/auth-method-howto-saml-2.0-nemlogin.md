@@ -65,8 +65,8 @@ You can connect two environments in the same tenant with an [Environment Link](h
 
 **1) Start in FoxIDs Control Client**
 
-1. Go to the Authentication tab
-2. Click New authentication
+1. Go to the **Authentication** tab
+2. Click **New authentication**
 3. Select **NemLog-in - SAML 2.0**
 
 ![Select the NemLog-in template](images/howto-saml-nemlogin-template-select.png)
@@ -74,10 +74,10 @@ You can connect two environments in the same tenant with an [Environment Link](h
 **2) Configure the template**
 
 1. Enter a name for the authentication method
-2. Select sector:
+2. Select **Sector**:
    - Public sector (OIOSAML 3.0.3)
    - Private sector (OIOSAML 3.0.3)
-3. Select environment:
+3. Select **NemLog-in environment**:
    - Integration test
    - Production
 
@@ -182,6 +182,14 @@ When you create an IT system in NemLog-in it has two tabs: integration test and 
 7. You are now in production with MitID
 
 ![Upload NemLog-in metadata](images/howto-saml-nemlogin-template-it-system.png)
+
+## Test the authentication method
+
+1. Go back to FoxIDs Control Client and open the NemLog-in authentication method
+2. Click **Test authentication** to create a test application
+3. Click **Start the test** to start the test
+
+![NemLog-in template test](images/howto-saml-nemlogin-template-test.png)
 
 ## Legacy
 

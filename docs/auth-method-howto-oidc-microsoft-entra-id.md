@@ -1,9 +1,9 @@
 <!--
 {
     "title":  "Connect to Microsoft Entra ID with OpenID Connect",
-    "description":  "FoxIDs can be connected to Microsoft Entra ID (Azure AD) with OpenID Connect and thereby authenticating end users in a Microsoft Entra ID tenant.",
+    "description":  "FoxIDs can be connected to Microsoft Entra ID with OpenID Connect and thereby authenticating end users in a Microsoft Entra ID tenant.",
     "ogTitle":  "Connect to Microsoft Entra ID with OpenID Connect",
-    "ogDescription":  "FoxIDs can be connected to Microsoft Entra ID (Azure AD) with OpenID Connect and thereby authenticating end users in a Microsoft Entra ID tenant.",
+    "ogDescription":  "FoxIDs can be connected to Microsoft Entra ID with OpenID Connect and thereby authenticating end users in a Microsoft Entra ID tenant.",
     "ogType":  "article",
     "ogImage":  "/images/foxids_logo.png",
     "twitterCard":  "summary_large_image",
@@ -15,7 +15,7 @@
 
 # Connect to Microsoft Entra ID with OpenID Connect
 
-FoxIDs can be connected to Microsoft Entra ID (Azure AD) with OpenID Connect and thereby authenticating end users in a Microsoft Entra ID tenant.
+FoxIDs can be connected to Microsoft Entra ID with OpenID Connect and thereby authenticating end users in a Microsoft Entra ID tenant.
 
 It is possible to connect both a [single tenant](#configure-single-tenant) and [multitenant](#configure-multitenant) Microsoft Entra ID App as an authentication method on FoxIDs using OpenID Connect.
 A more complex case is to [read claims form the access token](#read-claims-from-access-token).

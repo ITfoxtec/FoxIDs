@@ -31,7 +31,9 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             services.AddScoped<MetadataLogic>();
             services.AddScoped<ClipboardLogic>();
             services.AddScoped<ServerErrorLogic>();
+            services.AddScoped<SamlUpPartyModuleLogic>();
             services.AddScoped<NemLoginUpPartyLogic>();
+            services.AddScoped<MicrosoftEntraIdUpPartyLogic>();
 
             return services;
         }

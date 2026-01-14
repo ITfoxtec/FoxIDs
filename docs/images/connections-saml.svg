@@ -83,7 +83,7 @@
 			<text x="-7.39" y="340.57" class="st10" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>SAML 2.0</text>		</g>
 		<g id="shape19-22" v:mID="19" v:groupContext="shape" transform="translate(224.37,-263.973)">
 			<title>Rectangle.51</title>
-			<desc>External Identity Provider (IdP) (Azure AD, AD FS, Auth0, Key...</desc>
+			<desc>External Identity Provider (IdP) (Entra ID, AD FS, Auth0, Key...</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
@@ -91,7 +91,7 @@
 			<v:textRect cx="80.5039" cy="288.986" width="161.01" height="48.0253"/>
 			<rect x="0" y="264.973" width="161.008" height="48.0253" class="st2"/>
 			<text x="5.43" y="280.59" class="st6" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>External Identity Provider (IdP)<v:newlineChar/><tspan
-						x="9.82" dy="1.26em" class="st7">(Azure AD, AD FS, Auth0, Keycloak, </tspan><tspan x="48.42" dy="1.2em"
+						x="9.82" dy="1.26em" class="st7">(Entra ID, AD FS, Auth0, Keycloak, </tspan><tspan x="48.42" dy="1.2em"
 						class="st7">Google Apps ...)</tspan></text>		</g>
 		<g id="shape20-27" v:mID="20" v:groupContext="shape" v:layerMember="0" transform="translate(310.593,-263.973)">
 			<title>Dynamic connector.52</title>

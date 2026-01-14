@@ -1,0 +1,82 @@
+@namespace FoxIDs.Client.Pages.Components.Modules
+
+@{
+    var isCreateMode = GeneralSamlUpParty?.CreateMode == true;
+}
+
+@if (Model != null)
+{
+    @if (ShowStandardSettings)
+    {
+        <div class="card bg-light border mb-3 mt-2">
+            <div class="card-body">
+                <div class="info-text" role="alert">
+                    You are viewing the standard SAML settings. Switching back will reapply the Microsoft Entra ID template defaults and may overwrite your changes.
+                </div>
+                @if (!showSwitchToTemplateConfirm)
+                {
+                    <button type="button" class="btn btn-link pl-2" @onclick="RequestSwitchToTemplate">Switch back to Microsoft Entra ID template</button>
+                }
+                else
+                {
+                    <div class="alert alert-warning" role="alert">
+                        <div>Reapplying the Microsoft Entra ID template overwrites standard SAML changes. Continue?</div>
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-outline-dark" @onclick="ConfirmSwitchToTemplateAsync">Switch back</button>
+                            <button type="button" class="btn btn-secondary" @onclick="CancelSwitchToTemplate">Cancel</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        EnsureSamlUpPartySummaryDefaults();
+        <div class="card bg-light border mb-3 mt-2">
+            <div class="card-body">
+                <h6 class="card-title mt-1 mb-3">Application information</h6>
+                <div class="info-text" role="alert">
+                    Use these values when configuring the Microsoft Entra ID enterprise application.
+                </div>
+                <FFieldTextClipboard @bind-Value="Model.MetadataEntityId" For="@(() => Model.MetadataEntityId)" />
+                <FFieldTextClipboard @bind-Value="Model.MetadataAcs" For="@(() => Model.MetadataAcs)" />
+                <FFieldTextClipboard @bind-Value="Model.MetadataSingleLogout" For="@(() => Model.MetadataSingleLogout)" />
+            </div>
+        </div>
+
+        <div class="card mb-4 mt-2">
+            <div class="card-body">
+                <h6 class="card-title mt-1 mb-3">Microsoft Entra ID template</h6>
+
+                <div class="info-text" role="alert">
+                    Paste the App Federation Metadata URL from the Microsoft Entra ID enterprise application.
+                    <br />
+                    See the <DocsLink Page="auth-method-howto-saml-2.0-microsoft-entra-id">Microsoft Entra ID SAML 2.0 guide</DocsLink>.
+                </div>
+
+                <FInputText @bind-Value="Model.MetadataUrl" For="@(() => Model.MetadataUrl)" />
+            </div>
+        </div>
+
+        @if (!isCreateMode)
+        {
+            <div class="mt-2">
+                @if (!showSwitchToStandardConfirm)
+                {
+                    <button type="button" class="btn btn-link pl-0" @onclick="RequestSwitchToStandard">Switch to standard SAML settings</button>
+                }
+                else
+                {
+                    <div class="alert alert-warning" role="alert">
+                        <div>Switching to standard SAML settings exposes all SAML options and stops the Microsoft Entra ID template guidance. Continue?</div>
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-outline-dark" @onclick="ConfirmSwitchToStandardAsync">Continue</button>
+                            <button type="button" class="btn btn-secondary" @onclick="CancelSwitchToStandard">Cancel</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+}

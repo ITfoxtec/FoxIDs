@@ -193,7 +193,7 @@
                                                 <FFieldTextClipboard Class="@(newDownPartyModal.ShowOidcAuthorityDetails ? "" : "pb-1")" @bind-Value="newDownPartyModal.OidcForm.Model.Authority" For="@(() => newDownPartyModal.OidcForm.Model.Authority)" />
                                                 @if (!newDownPartyModal.ShowOidcAuthorityDetails && !newDownPartyModal.OidcForm.Model.Name.IsNullOrWhiteSpace())
                                                 {
-                                                    <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => newDownPartyModal.ShowOidcAuthorityDetails = true">Show more</button>
+                                                    <button type="button" class="btn btn-link btn-xs pl-1 pb-2" @onclick="() => newDownPartyModal.ShowOidcAuthorityDetails = true">Show more</button>
                                                 }
                                                 @if (newDownPartyModal.ShowOidcAuthorityDetails && !newDownPartyModal.OidcForm.Model.Name.IsNullOrWhiteSpace())
                                                 {

@@ -54,6 +54,13 @@
                             <div class="text-muted small text-uppercase">Templates</div>
                             <div class="row justify-content-center">
                                 <div class="col-12 col-md-6 py-3">
+                                    <button type="button" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" @onclick="@(async () => await ChangeNewUpPartyStateAsync("Microsoft Entra ID", PartyTypes.Saml2, moduleType: UpPartyModuleTypes.MicrosoftEntraId))">
+                                        <h5 class="py-2">Microsoft Entra ID <div class="small pt-2"><div class="badge badge-light border">SAML 2.0</div></div></h5>
+                                        <div class="py-2 font-italic">Enterprise application in Microsoft Entra ID.</div>
+                                        <div class="py-2">Creates a SAML 2.0 authentication method tailored for Microsoft Entra ID.</div>
+                                    </button>
+                                </div>
+                                <div class="col-12 col-md-6 py-3">
                                     <button type="button" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" @onclick="@(async () => await ChangeNewUpPartyStateAsync("NemLog-in", PartyTypes.Saml2, moduleType: UpPartyModuleTypes.NemLogin))">
                                         <h5 class="py-2">NemLog-in <div class="small pt-2"><div class="badge badge-light border">SAML 2.0</div></div></h5>
                                         <div class="py-2 font-italic">Danish MitID broker (OIOSAML).</div>

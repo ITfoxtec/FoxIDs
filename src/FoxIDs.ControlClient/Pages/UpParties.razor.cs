@@ -263,9 +263,16 @@ namespace FoxIDs.Client.Pages
 
         private string GetUpPartyTypeLabel(UpParty upParty)
         {
-            if (upParty.Type == PartyTypes.Saml2 && upParty.ModuleType == UpPartyModuleTypes.NemLogin)
+            if (upParty.Type == PartyTypes.Saml2)
             {
-                return "SAML 2.0 - NemLog-in";
+                if (upParty.ModuleType == UpPartyModuleTypes.MicrosoftEntraId)
+                {
+                    return "SAML 2.0 - Microsoft Entra ID";
+                }
+                else if (upParty.ModuleType == UpPartyModuleTypes.NemLogin)
+                {
+                    return "SAML 2.0 - NemLog-in";
+                }
             }
 
             return upParty.Type switch

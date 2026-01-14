@@ -42,12 +42,16 @@ namespace FoxIDs.Client.Logic
             return (oauthUrl + Constants.Endpoints.AuthorizationResponse, oauthUrl + Constants.Endpoints.EndSessionResponse, oauthUrl + Constants.Endpoints.FrontChannelLogout);
         }
 
-        public (string metadata, string entityId, string acs) GetUpSamlMetadata(string partyName, PartyBindingPatterns partyBindingPattern)
+        public (string metadata, string entityId, string acs, string singleLogout) GetUpSamlMetadata(string partyName, PartyBindingPatterns partyBindingPattern)
         {
             var partyBinding = (partyName.IsNullOrEmpty() ? "--auth-method-name--" : partyName.ToLower()).ToUpPartyBinding(partyBindingPattern);
             var samlBaseUrl = $"{routeBindingLogic.GetFoxIDsTenantEndpoint()}/{(routeBindingLogic.IsMasterTenant ? "master" : trackSelectedLogic.Track.Name)}/";
             var samlUrl = $"{samlBaseUrl}{partyBinding}/{Constants.Routes.SamlController}/";
-            return (samlUrl + Constants.Endpoints.SamlSPMetadata, samlBaseUrl, samlUrl + Constants.Endpoints.SamlAcs);
+            return (
+                metadata: samlUrl + Constants.Endpoints.SamlSPMetadata,
+                entityId: samlBaseUrl,
+                acs: samlUrl + Constants.Endpoints.SamlAcs,
+                singleLogout: samlUrl + Constants.Endpoints.SamlSingleLogout);
         }
     }
 }

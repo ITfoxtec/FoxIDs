@@ -88,3 +88,15 @@ In that case:
 
 - Create a combined bundle (public + private) and mount it (recommended).
 - Or extend the system trust store inside the image instead of using `SSL_CERT_FILE`.
+
+### How to combined bundle (public + private)
+The safest option is to keep the public trust store and append your internal roots. Start with the public CA bundle from the FoxIDs container base image, add your internal roots, and mount that combined bundle with `SSL_CERT_FILE`.
+
+Example (path depends on the base image; verify in your container):
+
+```bash
+cat /etc/ssl/certs/ca-certificates.crt extra-roots.pem > combined-roots.pem
+kubectl -n <foxids-namespace> create configmap foxids-extra-ca --from-file=combined-roots.pem
+```
+
+Use the same volume mount and `SSL_CERT_FILE` configuration as in step 2, but point to `combined-roots.pem`.

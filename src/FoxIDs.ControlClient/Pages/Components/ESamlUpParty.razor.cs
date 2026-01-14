@@ -27,6 +27,9 @@ namespace FoxIDs.Client.Pages.Components
         public NemLoginUpPartyLogic NemLoginUpPartyLogic { get; set; }
 
         [Inject]
+        public MicrosoftEntraIdUpPartyLogic MicrosoftEntraIdUpPartyLogic { get; set; }
+
+        [Inject]
         public HelpersService HelpersService { get; set; }
 
         protected override async Task OnInitializedAsync()
@@ -89,6 +92,11 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     NemLoginUpPartyLogic.EnsureNemLoginModule(afterMap);
                     NemLoginUpPartyLogic.InitializeNemLoginTemplateModel(afterMap);
+                    generalSamlUpParty.ShowStandardSettings = afterMap.Modules?.ShowStandardSettings == true;
+                }
+                else if (afterMap.ModuleType == UpPartyModuleTypes.MicrosoftEntraId)
+                {
+                    MicrosoftEntraIdUpPartyLogic.EnsureMicrosoftEntraIdModule(afterMap);
                     generalSamlUpParty.ShowStandardSettings = afterMap.Modules?.ShowStandardSettings == true;
                 }
                 else
@@ -199,6 +207,13 @@ namespace FoxIDs.Client.Pages.Components
                     model.ModuleType = samlUpParty.ModuleType;
                     NemLoginUpPartyLogic.EnsureNemLoginModule(model);
                     NemLoginUpPartyLogic.ApplyNemLoginCreateDefaults(model);
+                    samlUpParty.ShowStandardSettings = model.Modules?.ShowStandardSettings == true;
+                }
+                else if (samlUpParty.ModuleType == UpPartyModuleTypes.MicrosoftEntraId)
+                {
+                    model.ModuleType = samlUpParty.ModuleType;
+                    MicrosoftEntraIdUpPartyLogic.EnsureMicrosoftEntraIdModule(model);
+                    MicrosoftEntraIdUpPartyLogic.ApplyMicrosoftEntraIdTemplateDefaults(model);
                     samlUpParty.ShowStandardSettings = model.Modules?.ShowStandardSettings == true;
                 }
             }
@@ -470,9 +485,16 @@ namespace FoxIDs.Client.Pages.Components
 
         private bool PrepareModulesBeforeSave(GeneralSamlUpPartyViewModel generalSamlUpParty)
         {
-            if (generalSamlUpParty.Form.Model?.ModuleType == UpPartyModuleTypes.NemLogin)
+            if (generalSamlUpParty.Form.Model.Modules?.ShowStandardSettings != true)
             {
-                return NemLoginUpPartyLogic.PrepareNemLoginBeforeSave(generalSamlUpParty.Form.Model);
+                if (generalSamlUpParty.Form.Model?.ModuleType == UpPartyModuleTypes.NemLogin)
+                {
+                    return NemLoginUpPartyLogic.PrepareNemLoginBeforeSave(generalSamlUpParty.Form.Model);
+                }
+                else if (generalSamlUpParty.Form.Model?.ModuleType == UpPartyModuleTypes.MicrosoftEntraId)
+                {
+                    MicrosoftEntraIdUpPartyLogic.ApplyMicrosoftEntraIdTemplateDefaults(generalSamlUpParty.Form.Model);
+                }
             }
 
             return true;                
@@ -492,6 +514,10 @@ namespace FoxIDs.Client.Pages.Components
             if (samlUpPartyResult.ModuleType == UpPartyModuleTypes.NemLogin)
             {
                 toastService.ShowSuccess($"NemLog-in authentication method {subText}.");
+            }
+            else if (samlUpPartyResult.ModuleType == UpPartyModuleTypes.MicrosoftEntraId)
+            {
+                toastService.ShowSuccess($"Microsoft Entra ID authentication method {subText}.");
             }
             else
             {

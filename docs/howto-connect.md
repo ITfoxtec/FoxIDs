@@ -61,6 +61,7 @@ Configure [SAML 2.0](auth-method-saml-2.0.md) to trust an external Identity Prov
 
 How to guides:
 
+- Connect [Microsoft Entra ID](auth-method-howto-saml-2.0-microsoft-entra-id.md)
 - Connect [PingIdentity / PingOne](auth-method-howto-saml-2.0-pingone.md)
 - Connect [Google Workspace](auth-method-howto-saml-2.0-google-workspace.md)
 - Connect [Microsoft AD FS](auth-method-howto-saml-2.0-adfs.md)

@@ -3,7 +3,8 @@
 @{
     var samlUpParty = UpParty as GeneralSamlUpPartyViewModel;
     var isNemLogin = samlUpParty?.Form?.Model?.ModuleType == UpPartyModuleTypes.NemLogin;
-    var showStandardSamlSettings = !isNemLogin || samlUpParty?.ShowStandardSettings == true;
+    var isMicrosoftEntraId = samlUpParty?.Form?.Model?.ModuleType == UpPartyModuleTypes.MicrosoftEntraId;
+    var showStandardSamlSettings = (!isNemLogin && !isMicrosoftEntraId) || samlUpParty?.ShowStandardSettings == true;
 }
 
 @if (samlUpParty != null)
@@ -36,6 +37,11 @@
         @if (isNemLogin)
         {
             <SamlUpPartyNemLoginTemplate GeneralSamlUpParty="samlUpParty" @bind-ShowStandardSettings="samlUpParty.ShowStandardSettings" />
+        }
+
+        @if (isMicrosoftEntraId)
+        {
+            <SamlUpPartyMicrosoftEntraIdTemplate GeneralSamlUpParty="samlUpParty" @bind-ShowStandardSettings="samlUpParty.ShowStandardSettings" />
         }
         
         @if(showStandardSamlSettings)

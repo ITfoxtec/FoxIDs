@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
-		<Version>2.13.8</Version>
+		<Version>2.14.0</Version>
 		<RootNamespace>FoxIDs</RootNamespace>
 		<Authors>Anders Revsgaard</Authors>
 		<Company>FoxIDs</Company>

@@ -8,6 +8,11 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// NemLog-in template.
         /// </summary>
-        NemLogin = 100
+        NemLogin = 100,
+
+        /// <summary>
+        /// Microsoft Entra ID template.
+        /// </summary>
+        MicrosoftEntraId = 1010
     }
 }

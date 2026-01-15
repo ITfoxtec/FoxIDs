@@ -4,9 +4,14 @@
 
 @{
     var samlDownParty = DownParty as GeneralSamlDownPartyViewModel;
+    var isFormReady = samlDownParty?.Form?.Model != null;
 }
 
+@if (samlDownParty != null)
+{
 <PageEditForm @ref="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditSamlDownPartyValidSubmitAsync(samlDownParty, editContext))">
+    @if (isFormReady)
+    {
     <div class="modal-header sticky-header">
         <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
             <span class="text-truncate second-header flex-grow-1" style="min-width: 0;">@GetDownPartyDisplayName(samlDownParty.Form.Model)</span>
@@ -416,7 +421,9 @@
         <button type="submit" class="btn btn-primary">Update</button>
         <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">Close</button>
     </div>
+    }
 </PageEditForm>
+}
 
 
 

@@ -489,18 +489,18 @@
                                             <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.Name" For="@(() => newDownPartyModal.SamlForm.Model.Name)" />
                                         }
                                         <div class="info-text pt-2">
-                                            <div>Optional select to configure your application with a online metadata URL.</div>
+                                            Choose how to configure your application. You can enter ACS URLs manually, use a metadata URL with automatic updates, or import a metadata file once.
                                         </div>
-                                        <FInputToggle @bind-Value="newDownPartyModal.SamlForm.Model.AutomaticUpdate" For="@(() => newDownPartyModal.SamlForm.Model.AutomaticUpdate)" TextType="e.d" />
+                                        <FInputSelect TValue="SamlDownPartyConfigurationOptions" @bind-Value="newDownPartyModal.SamlForm.Model.ConfigurationOption" For="@(() => newDownPartyModal.SamlForm.Model.ConfigurationOption)" OnValidChange="@((option) => OnNewDownPartySamlConfigurationOptionChanged(option))">
+                                            <option value="@SamlDownPartyConfigurationOptions.AcsUrl">Enter ACS URL(s) manually</option>
+                                            <option value="@SamlDownPartyConfigurationOptions.MetadataUrl">Use a metadata URL (automatic updates)</option>
+                                            <option value="@SamlDownPartyConfigurationOptions.MetadataFile">Import a metadata file (one-time)</option>
+                                        </FInputSelect>
 
-                                        @if (newDownPartyModal.SamlForm.Model.IsManual)
+                                        @if (newDownPartyModal.SamlForm.Model.ConfigurationOption == SamlDownPartyConfigurationOptions.AcsUrl)
                                         {
-                                            <label class="btn btn-link pl-0">
-                                                Optional read metadata from file
-                                                <InputFile hidden OnChange="@(async (e) => await OnReadNewDownPartySamlMetadataFileAsync(e))" />
-                                            </label>
                                             <div class="info-text pt-2">
-                                                <div>Without online metadata enter your application's base URL as Assertion consumer service (ACS) URL, e.g. 'https://myapp.com/' or 'https://myapp.com/acs' or 'https://myapp.com/theappsite'.</div>
+                                                Enter your application's Assertion Consumer Service (ACS) URLs, e.g. 'https://myapp.com/acs' or 'https://myapp.com/theappsite'.
                                             </div>
                                             <FInputTextList @bind-ValueList="newDownPartyModal.SamlForm.Model.AcsUrls" For="@(() => newDownPartyModal.SamlForm.Model.AcsUrls)" />
                                             @if (newDownPartyModal.ShowAdvanced)
@@ -509,12 +509,28 @@
                                                 <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
                                             }
                                         }
+                                        else if (newDownPartyModal.SamlForm.Model.ConfigurationOption == SamlDownPartyConfigurationOptions.MetadataUrl)
+                                        {
+                                            <div class="info-text pt-2">
+                                                Provide the online metadata URL. FoxIDs reads it now and keeps the registration updated automatically.
+                                            </div>
+                                            <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.MetadataUrl" For="@(() => newDownPartyModal.SamlForm.Model.MetadataUrl)" />
+                                        }
                                         else
                                         {
                                             <div class="info-text pt-2">
-                                                <div>Enter your application's online metadata URL.</div>
+                                                Upload a metadata XML file to prefill URLs, bindings, and certificates. You can edit the values after import.
                                             </div>
-                                            <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.MetadataUrl" For="@(() => newDownPartyModal.SamlForm.Model.MetadataUrl)" />
+                                            <label class="btn btn-link pl-0">
+                                                Upload metadata file
+                                                <InputFile hidden OnChange="@(async (e) => await OnReadNewDownPartySamlMetadataFileAsync(e))" />
+                                            </label>
+                                            <ValidationMessage For="@(() => newDownPartyModal.SamlForm.Model.AcsUrls)" />
+                                            @if (newDownPartyModal.SamlForm.Model.AcsUrls?.Count() > 0)
+                                            {
+                                                <FFieldTextList @bind-ValueList="newDownPartyModal.SamlForm.Model.AcsUrls" For="@(() => newDownPartyModal.SamlForm.Model.AcsUrls)" />
+                                                <FFieldText @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
+                                            }
                                         }
                                     </div>
                                 </div>
@@ -552,7 +568,7 @@
                                                     @if (newDownPartyModal.SamlForm.Model.IdPKeyInfo != null)
                                                     {
                                                         var idPKeyInfo = newDownPartyModal.SamlForm.Model.IdPKeyInfo;
-                                                        <div class="active-group active">
+                                                        <div class="active-group active pb-0">
                                                             <div class="card bg-light">
                                                                 <div class="card-body">
                                                                     <div>
@@ -571,9 +587,12 @@
                                                     }
                                                 }
                                             </div>
-                                            <div>
-                                                <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
-                                            </div>
+                                            @if (newDownPartyModal.SamlForm.Model.ConfigurationOption == SamlDownPartyConfigurationOptions.AcsUrl && !newDownPartyModal.ShowAdvanced)
+                                            {
+                                                <div>
+                                                    <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
+                                                </div>
+                                            }
                                         </div>
                                     </div>
                                 </div>

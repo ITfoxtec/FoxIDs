@@ -598,12 +598,23 @@ namespace FoxIDs.Client.Pages
         private async Task OnNewDownPartySamlModalAfterInitAsync(NewDownPartySamlViewModel model)
         {
             model.Name = await DownPartyService.GetNewPartyNameAsync();
-            model.IsManual = true;
+            model.ConfigurationOption = SamlDownPartyConfigurationOptions.AcsUrl;
+            model.AutomaticUpdate = false;
 
             if (!model.Name.IsNullOrWhiteSpace() && model.Issuer.IsNullOrWhiteSpace())
             {
                 model.Issuer = $"uri:{model.Name}";
             }
+        }
+
+        private void OnNewDownPartySamlConfigurationOptionChanged(SamlDownPartyConfigurationOptions option)
+        {
+            if (newDownPartyModal?.SamlForm?.Model == null)
+            {
+                return;
+            }
+
+            newDownPartyModal.SamlForm.Model.AutomaticUpdate = option == SamlDownPartyConfigurationOptions.MetadataUrl;
         }
 
         private async Task OnNewDownPartySamlModalValidSubmitAsync(NewDownPartyViewModel newDownPartyViewModel, PageEditForm<NewDownPartySamlViewModel> newDownPartySamlForm, EditContext editContext)

@@ -7,6 +7,13 @@ using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
+    public enum SamlDownPartyConfigurationOptions
+    {
+        AcsUrl,
+        MetadataUrl,
+        MetadataFile
+    }
+
     public class NewDownPartySamlViewModel : IValidatableObject
     {
         [Required]
@@ -20,6 +27,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
         [Display(Name = "Name")]
         public string DisplayName { get; set; }
+
+        [Display(Name = "Configuration method")]
+        public SamlDownPartyConfigurationOptions ConfigurationOption { get; set; } = SamlDownPartyConfigurationOptions.AcsUrl;
 
         [MaxLength(Constants.Models.Party.IssuerLength)]
         [Display(Name = "Application issuer")]
@@ -98,7 +108,15 @@ namespace FoxIDs.Client.Models.ViewModels
             {
                 if (AcsUrls == null || AcsUrls.Count < Constants.Models.SamlParty.Down.AcsUrlsMin)
                 {
-                    results.Add(new ValidationResult($"The field {nameof(AcsUrls)} must be at least {Constants.Models.SamlParty.Down.AcsUrlsMin}.", new[] { nameof(AcsUrls) }));
+                    if (ConfigurationOption == SamlDownPartyConfigurationOptions.MetadataFile)
+                    {
+                        results.Add(new ValidationResult("Read the metadata file before creating the application.", new[] { nameof(AcsUrls) }));
+                    }
+                    else
+                    {
+                        results.Add(new ValidationResult($"The field {nameof(AcsUrls)} must be at least {Constants.Models.SamlParty.Down.AcsUrlsMin}.", new[] { nameof(AcsUrls) }));
+
+                    }
                 }
             }
             else

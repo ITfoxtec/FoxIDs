@@ -63,39 +63,36 @@
                                 <div class="py-2">Web application running on a server, optionally with a backend API.</div>
                             </button>
                         </div>
+                        <div class="col-12 col-md-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
+                            <button type="button" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" @onclick="@(() => ChangeNewDownPartyState("Web Application", PartyTypes.Saml2))">
+                                <h5 class="py-2">Web Application <div class="small pt-2"><div class="badge badge-light border">SAML 2.0</div></div></h5>
+                                <div class="py-2 font-italic">E.g., ASP.NET Core, Java, PHP.</div>
+                                <div class="py-2">Web application running on a server.<br />SAML 2.0 is an old standard with its shortcomings, it is often better to use OpenID Connect.</div>
+                            </button>
+                        </div>
                         @if (newDownPartyModal.ShowAll)
                         {
                             <div class="col-12 col-md-6 py-3 col-lg-4">
-                                <button type="button" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" @onclick="@(() => ChangeNewDownPartyState("Web Application", PartyTypes.Saml2))">
-                                    <h5 class="py-2">Web Application <div class="small pt-2"><div class="badge badge-light border">SAML 2.0</div></div></h5>
-                                    <div class="py-2 font-italic">E.g., ASP.NET Core, Java, PHP.</div>
-                                    <div class="py-2">Web application running on a server.<br />SAML 2.0 is an old standard with its shortcomings, it is often better to use OpenID Connect.</div>
+                                <button type="button" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" @onclick="@(() => ChangeNewDownPartyState("Single Page Application", PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Public))">
+                                    <h5 class="py-2">Single Page Application <div class="small pt-2"><div class="badge badge-light border">OpenID Connect</div></div></h5>
+                                    <div class="py-2">E.g., Blazor WebAssembly (WASM), React, Angular, Vue.</div>
+                                    <div class="py-2">Application running in the browser, often with a backend API.</div>
                                 </button>
                             </div>
-                        }
-                        <div class="col-12 col-md-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                            <button type="button" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" @onclick="@(() => ChangeNewDownPartyState("Single Page Application", PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Public))">
-                                <h5 class="py-2">Single Page Application <div class="small pt-2"><div class="badge badge-light border">OpenID Connect</div></div></h5>
-                                <div class="py-2">E.g., Blazor WebAssembly (WASM), React, Angular, Vue.</div>
-                                <div class="py-2">Application running in the browser, often with a backend API.</div>
-                            </button>
-                        </div>
-                        <div class="col-12 col-md-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                            <button type="button" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" @onclick="@(() => ChangeNewDownPartyState("Native Application", PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.PublicNative))">
-                                <h5 class="py-2">Native Application <div class="small pt-2"><div class="badge badge-light border">OpenID Connect</div></div></h5>
-                                <div class="py-2">E.g., .NET MAUI, React Native, Ionic, iOS, Android.</div>
-                                <div class="py-2">Mobile, smart device or desktop applications, often with a backend API.</div>
-                            </button>
-                        </div>
-                        <div class="col-12 col-md-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                            <button type="button" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" @onclick="@(() => ChangeNewDownPartyState("Backend Application", PartyTypes.OAuth2, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Confidential))">
-                                <h5 class="py-2">Backend Application <div class="small pt-2"><div class="badge badge-light border">OAuth 2.0</div></div></h5>
-                                <div class="py-2">E.g., .NET service, Java, script.</div>
-                                <div class="py-2">Backend service or daemon applications, optionally with a backend API.</div>
-                            </button>
-                        </div>
-                        @if (newDownPartyModal.ShowAll)
-                        {
+                            <div class="col-12 col-md-6 py-3 col-lg-4">
+                                <button type="button" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" @onclick="@(() => ChangeNewDownPartyState("Native Application", PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.PublicNative))">
+                                    <h5 class="py-2">Native Application <div class="small pt-2"><div class="badge badge-light border">OpenID Connect</div></div></h5>
+                                    <div class="py-2">E.g., .NET MAUI, React Native, Ionic, iOS, Android.</div>
+                                    <div class="py-2">Mobile, smart device or desktop applications, often with a backend API.</div>
+                                </button>
+                            </div>
+                            <div class="col-12 col-md-6 py-3 col-lg-4">
+                                <button type="button" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" @onclick="@(() => ChangeNewDownPartyState("Backend Application", PartyTypes.OAuth2, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Confidential))">
+                                    <h5 class="py-2">Backend Application <div class="small pt-2"><div class="badge badge-light border">OAuth 2.0</div></div></h5>
+                                    <div class="py-2">E.g., .NET service, Java, script.</div>
+                                    <div class="py-2">Backend service or daemon applications, optionally with a backend API.</div>
+                                </button>
+                            </div>
                             <div class="col-12 col-md-6 py-3 col-lg-4">
                                 <button type="button" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" @onclick="@(() => ChangeNewDownPartyState("API", PartyTypes.OAuth2, DownPartyOAuthTypes.Resource))">
                                     <h5 class="py-2">API <div class="small pt-2"><div class="badge badge-light border">OAuth 2.0</div></div></h5>

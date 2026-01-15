@@ -50,21 +50,20 @@ You are required to upload the SAML 2.0 metadata from FoxIDs to Amazon IAM Ident
 
 1. Select the **Applications** tab
 2. Click **New application**
-3. Click **Show advanced**
-4. Click **Web application (SAML 2.0)**
-5. Add the **Name** e.g. `Amazon IAM Identity Center`
-6. Set the **Application issuer** to the **IAM Identity Center issuer URL** you copied
-7. Set the **Assertion consumer service (ACS) URL** to the **IAM Identity Center Assertion Consumer Service (ACS) URL** you copi  ed
+3. Click **Web application (SAML 2.0)**
+4. Add the **Name** e.g. `Amazon IAM Identity Center`
+5. Set the **Application issuer** to the **IAM Identity Center issuer URL** you copied
+6. Set the **Assertion consumer service (ACS) URL** to the **IAM Identity Center Assertion Consumer Service (ACS) URL** you copi  ed
 ![Add issuer and ACS in FoxIDs](images/app-reg-howto-saml-amazon-iam-ic-create.png)
-8. Click **Create**
-9. Click **Change application** to open the application in edit mode
-10. Click **Show advanced**
-11. Set the **Authn request binding** to **Post**
-12. Set the **NameID format** to `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`
+7. Click **Create**
+8. Click **Change application** to open the application in edit mode
+9. Click **Show advanced**
+10. Set the **Authn request binding** to **Post**
+11. Set the **NameID format** to `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`
 ![Set binding and NameID format in FoxIDs](images/app-reg-howto-saml-amazon-iam-ic-binding-format.png)
-13. At the bottom of the application, set the **NameID format in metadata** to `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`
-14. Click **Update**
-15. Go to the top of the application and find the **SAML 2.0 Metadata URL** link, open it in a browser, and save the page as an XML file
+12. At the bottom of the application, set the **NameID format in metadata** to `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`
+13. Click **Update**
+14. Go to the top of the application and find the **SAML 2.0 Metadata URL** link, open it in a browser, and save the page as an XML file
  
 **4 - Go back to the Amazon IAM Identity Center in [AWS portal](https://aws.amazon.com/)**
 

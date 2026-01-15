@@ -38,16 +38,15 @@ You are required to upload the SAML 2.0 metadata from FoxIDs to Google Workspace
 
 1. Select the **Applications** tab
 2. Click **New application**
-3. Click **Show advanced**
-4. Click **Web application (SAML 2.0)**
-5. Enter the **Name**, e.g. `Google Workspace`
-6. In the panel on the right, click **Show more** in the section labeled **The application will have the following information**
+3. Click **Web application (SAML 2.0)**
+4. Enter the **Name**, e.g. `Google Workspace`
+5. In the panel on the right, click **Show more** in the section labeled **The application will have the following information**
 ![Start creating app in FoxIDs](images/app-reg-howto-saml-google-workspace-pre-create.png)
-7. Save the application information for later use in Google Workspace:
+6. Save the application information for later use in Google Workspace:
     - Copy the **IdP Issuer**
     - Copy the **Single Sign-On URL**
     - Under **IdP Signing Certificate**, click **Download certificate**
-8. Keep the FoxIDs application UI open for later use
+7. Keep the FoxIDs application UI open for later use
 
 **3 - Then go to the [Google Workspace portal](https://workspace.google.com/)**
 

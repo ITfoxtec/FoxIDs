@@ -42,7 +42,7 @@ namespace FoxIDs.Models.Api
         public PartyUpdateStates UpdateState { get; set; } = PartyUpdateStates.Automatic;
 
         [Range(Constants.Models.SamlParty.MetadataUpdateRateMin, Constants.Models.SamlParty.MetadataUpdateRateMax)]
-        public int? MetadataUpdateRate { get; set; } = 172800; // 2 days
+        public int? MetadataUpdateRate { get; set; } = 86400; // 24 hours
 
         [MaxLength(Constants.Models.SamlParty.MetadataUrlLength)]
         public string MetadataUrl { get; set; }

@@ -6,6 +6,7 @@ using ITfoxtec.Identity.Saml2.Schemas;
 using System.ServiceModel.Security;
 using FoxIDs.Models.Api;
 using ITfoxtec.Identity.Saml2;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -27,6 +28,33 @@ namespace FoxIDs.Client.Models.ViewModels
         [MaxLength(Constants.Models.Party.NoteLength)]
         [Display(Name = "Your notes")]
         public string Note { get; set; }
+
+        public bool IsManual { get; set; } = true;
+
+        public bool AutomaticStopped { get; set; }
+
+        [Range(Constants.Models.SamlParty.MetadataUpdateRateMin, Constants.Models.SamlParty.MetadataUpdateRateMax)]
+        [Display(Name = "Automatic update rate in seconds")]
+        public int MetadataUpdateRate { get; set; } = 86400; // 24 hours
+
+        [MaxLength(Constants.Models.SamlParty.MetadataUrlLength)]
+        [Display(Name = "Metadata URL")]
+        public string MetadataUrl { get; set; }
+
+        [Display(Name = "Automatic update")]
+        public bool AutomaticUpdate
+        {
+            get
+            {
+                AutomaticStopped = false;
+                return !IsManual;
+            }
+            set
+            {
+                AutomaticStopped = false;
+                IsManual = !value;
+            }
+        }
 
         [Display(Name = "SAML 2.0 metadata")]
         public string Metadata { get; set; }
@@ -179,6 +207,10 @@ namespace FoxIDs.Client.Models.ViewModels
             if (AllowUpParties?.Count <= 0)
             {
                 results.Add(new ValidationResult($"At least one allowed authentication method is required.", [nameof(AllowUpParties)]));
+            }
+            if (!IsManual && MetadataUrl.IsNullOrEmpty())
+            {
+                results.Add(new ValidationResult($"The {nameof(MetadataUrl)} field is required.", [nameof(MetadataUrl)]));
             }
             return results;
         }

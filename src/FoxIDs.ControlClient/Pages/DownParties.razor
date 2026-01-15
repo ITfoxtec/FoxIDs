@@ -483,23 +483,38 @@
 
                                     <div class="pt-2">
                                         <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.DisplayName" For="@(() => newDownPartyModal.SamlForm.Model.DisplayName)" Focus="true" />
-                                        <div class="info-text">Enter the application's issuer, otherwise auto generated.</div>
-                                        <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
                                         @if (newDownPartyModal.ShowAdvanced)
                                         {
                                             <div class="info-text">Enter the technical name you want for the registration, otherwise auto generated.</div>
                                             <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.Name" For="@(() => newDownPartyModal.SamlForm.Model.Name)" />
                                         }
                                         <div class="info-text pt-2">
-                                            <div>Enter your application's base URL as Assertion consumer service (ACS) URL, e.g. 'https://myapp.com/' or 'https://myapp.com/acs' or 'https://myapp.com/theappsite'.</div>
+                                            <div>Optional select to configure your application with a online metadata URL.</div>
                                         </div>
-                                        <FInputTextList @bind-ValueList="newDownPartyModal.SamlForm.Model.AcsUrls" For="@(() => newDownPartyModal.SamlForm.Model.AcsUrls)" />
-                                        @if (newDownPartyModal.ShowAdvanced)
+                                        <FInputToggle @bind-Value="newDownPartyModal.SamlForm.Model.AutomaticUpdate" For="@(() => newDownPartyModal.SamlForm.Model.AutomaticUpdate)" TextType="e.d" />
+
+                                        @if (newDownPartyModal.SamlForm.Model.IsManual)
+                                        {
+                                            <label class="btn btn-link pl-0">
+                                                Optional read metadata from file
+                                                <InputFile hidden OnChange="@(async (e) => await OnReadNewDownPartySamlMetadataFileAsync(e))" />
+                                            </label>
+                                            <div class="info-text pt-2">
+                                                <div>Without online metadata enter your application's base URL as Assertion consumer service (ACS) URL, e.g. 'https://myapp.com/' or 'https://myapp.com/acs' or 'https://myapp.com/theappsite'.</div>
+                                            </div>
+                                            <FInputTextList @bind-ValueList="newDownPartyModal.SamlForm.Model.AcsUrls" For="@(() => newDownPartyModal.SamlForm.Model.AcsUrls)" />
+                                            @if (newDownPartyModal.ShowAdvanced)
+                                            {
+                                                <div class="info-text">Enter the application's issuer, otherwise auto generated.</div>
+                                                <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
+                                            }
+                                        }
+                                        else
                                         {
                                             <div class="info-text pt-2">
-                                                Enable Absolute URLs if you know the exact URL in your application that the user should be redirected back to when logged in, and enter the absolute URL as the Assertion consumer service (ACS) URL.
+                                                <div>Enter your application's online metadata URL.</div>
                                             </div>
-                                            <FInputToggle @bind-Value="newDownPartyModal.SamlForm.Model.DisableAbsoluteUrls" For="@(() => newDownPartyModal.SamlForm.Model.DisableAbsoluteUrls)" Negation="true" TextType="e.d" />
+                                            <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.MetadataUrl" For="@(() => newDownPartyModal.SamlForm.Model.MetadataUrl)" />
                                         }
                                     </div>
                                 </div>

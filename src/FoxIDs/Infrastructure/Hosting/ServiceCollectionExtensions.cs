@@ -104,6 +104,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SamlMetadataExposeLogic>();
             services.AddTransient<SamlMetadataReadLogic>();
             services.AddTransient<SamlMetadataReadUpLogic>();
+            services.AddTransient<SamlMetadataReadDownLogic>();
             services.AddTransient<SamlAuthnUpLogic>();
             services.AddTransient<SamlAuthnUpIdPInitiatedGrantLogic>();
             services.AddTransient<SamlAuthnDownLogic>();

@@ -237,7 +237,7 @@ namespace FoxIDs.Client.Logic.Modules
             EnsureNemLoginModule(model);
 
             model.IsManual = false;
-            model.MetadataUpdateRate = 172800;
+            model.MetadataUpdateRate = 86400;
             model.MetadataUrl = GetNemLoginMetadataUrl(model.Modules.NemLogin.Environment, model.Modules.NemLogin.Sector);
 
             model.PartyBindingPattern = PartyBindingPatterns.Dot;

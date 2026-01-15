@@ -29,6 +29,24 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.Party.NoteLength)]
         public string Note { get; set; }
 
+        /// <summary>
+        /// Metadata update state.
+        /// </summary>
+        [Required]
+        public PartyUpdateStates UpdateState { get; set; } = PartyUpdateStates.Manual;
+
+        /// <summary>
+        /// Metadata update rate in seconds.
+        /// </summary>
+        [Range(Constants.Models.SamlParty.MetadataUpdateRateMin, Constants.Models.SamlParty.MetadataUpdateRateMax)]
+        public int? MetadataUpdateRate { get; set; } = 86400; // 24 hours
+
+        /// <summary>
+        /// Metadata URL.
+        /// </summary>
+        [MaxLength(Constants.Models.SamlParty.MetadataUrlLength)]
+        public string MetadataUrl { get; set; }
+
         [Obsolete($"Please use {nameof(AllowUpParties)} instead.")]
         [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
         public List<string> AllowUpPartyNames { get; set; }
@@ -101,7 +119,7 @@ namespace FoxIDs.Models.Api
         [Required]
         public SamlBindingTypes? AuthnResponseBinding { get; set; }
 
-        [ListLength(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
+        [ListLength(0, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
         public List<string> AcsUrls { get; set; }
 
         [Display(Name = "Disable absolute URLs")]
@@ -156,6 +174,25 @@ namespace FoxIDs.Models.Api
             if (Claims?.Where(c => c == "*").Count() > 1)
             {
                 results.Add(new ValidationResult($"Only one wildcard (*) is allowed in the field {nameof(Claims)}.", [nameof(Claims)]));
+            }
+
+            if (UpdateState == PartyUpdateStates.Manual)
+            {
+                if (AcsUrls == null || AcsUrls.Count < Constants.Models.SamlParty.Down.AcsUrlsMin)
+                {
+                    results.Add(new ValidationResult($"The field {nameof(AcsUrls)} must be at least {Constants.Models.SamlParty.Down.AcsUrlsMin}.", new[] { nameof(AcsUrls) }));
+                }
+            }
+            else
+            {
+                if (!MetadataUpdateRate.HasValue)
+                {
+                    results.Add(new ValidationResult($"The {nameof(MetadataUpdateRate)} field is required. If '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", [nameof(MetadataUpdateRate)]));
+                }
+                if (MetadataUrl.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"The {nameof(MetadataUrl)} field is required. If '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", [nameof(MetadataUrl)]));
+                }
             }
 
             if (!LoggedOutUrl.IsNullOrWhiteSpace())

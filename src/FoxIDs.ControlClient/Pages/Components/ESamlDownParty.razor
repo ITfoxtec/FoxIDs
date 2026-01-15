@@ -94,6 +94,10 @@
                 <option value="@PartyBindingPatterns.Dot">Dot pattern .../application.auth-method./...</option>
             </FInputSelect>
         }
+        @if (DownParty.ShowAdvanced && !samlDownParty.Form.Model.IsManual)
+        {
+            <FInputNumber @bind-Value="samlDownParty.Form.Model.MetadataUpdateRate" For="@(() => samlDownParty.Form.Model.MetadataUpdateRate)" />
+        }
 
         <ul class="nav nav-tabs">
             <li class="nav-item">
@@ -122,23 +126,88 @@
             @if (samlDownParty.ShowSamlTab)
             {
                 <SelectUpParties @ref="samlDownParty.SelectAllowUpPartyName" EditDownPartyForm="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnUpdateUpParties="@((arg) => UpdateAllowUpParties(arg, true))" OnRemoveUpParty="@((arg) => RemoveAllowUpParty(arg, true))" />
-                <FInputText @bind-Value="samlDownParty.Form.Model.Issuer" For="@(() => samlDownParty.Form.Model.Issuer)" />
-                <FInputTextList @bind-ValueList="samlDownParty.Form.Model.AcsUrls" For="@(() => samlDownParty.Form.Model.AcsUrls)" />
+                @if (samlDownParty.Form.Model.IsManual)
+                {
+                    <label class="btn btn-link pl-0">
+                        Read metadata from file
+                        <InputFile hidden OnChange="@(async (e) => await OnReadMetadataFileAsync(samlDownParty, e))" />
+                    </label>
+                }
+                else
+                {
+                    <FInputText @bind-Value="samlDownParty.Form.Model.MetadataUrl" For="@(() => samlDownParty.Form.Model.MetadataUrl)" />
+                }
+
+                <FInputToggle @bind-Value="samlDownParty.Form.Model.AutomaticUpdate" For="@(() => samlDownParty.Form.Model.AutomaticUpdate)" TextType="e.d" />
+
+                @if (samlDownParty.Form.Model.AutomaticStopped)
+                {
+                    <div class="mb-3 alert alert-warning" role="alert">
+                        <i>Automatic application update by metadata is currently stopped.</i>
+                        <div>Restart the automatic update process by clicking the update button.</div>
+                    </div>
+                }
+
+                @if (samlDownParty.Form.Model.IsManual)
+                {
+                    <FInputText @bind-Value="samlDownParty.Form.Model.Issuer" For="@(() => samlDownParty.Form.Model.Issuer)" />
+                }
+                else
+                {
+                    <FFieldText @bind-Value="samlDownParty.Form.Model.Issuer" For="@(() => samlDownParty.Form.Model.Issuer)" />
+                }
+
+                @if (samlDownParty.Form.Model.IsManual)
+                {
+                    <FInputTextList @bind-ValueList="samlDownParty.Form.Model.AcsUrls" For="@(() => samlDownParty.Form.Model.AcsUrls)" />
+                }
+                else
+                {
+                    <FFieldTextList @bind-ValueList="samlDownParty.Form.Model.AcsUrls" For="@(() => samlDownParty.Form.Model.AcsUrls)" />
+                }
                 <FInputToggle @bind-Value="samlDownParty.Form.Model.DisableAbsoluteUrls" For="@(() => samlDownParty.Form.Model.DisableAbsoluteUrls)" Negation="true" TextType="e.d" />
                 @if (samlDownParty.ShowAdvanced)
                 {
                     <div class="row active-group-outline">
                         <div class="col">
-                            <FInputSelect @bind-Value="samlDownParty.Form.Model.AuthnRequestBinding" For="@(() => samlDownParty.Form.Model.AuthnRequestBinding)">
-                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                            </FInputSelect>
+                            @if (samlDownParty.Form.Model.IsManual)
+                            {
+                                <FInputSelect @bind-Value="samlDownParty.Form.Model.AuthnRequestBinding" For="@(() => samlDownParty.Form.Model.AuthnRequestBinding)">
+                                    <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                    <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                </FInputSelect>
+                            }
+                            else
+                            {
+                                <div class="active-group active">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            @samlDownParty.Form.Model.AuthnRequestBinding.ToString()
+                                        </div>
+                                    </div>
+                                    <Label For="@(() => samlDownParty.Form.Model.AuthnRequestBinding)" class="label-control" />
+                                </div>
+                            }
                         </div>
                         <div class="col">
-                            <FInputSelect @bind-Value="samlDownParty.Form.Model.AuthnResponseBinding" For="@(() => samlDownParty.Form.Model.AuthnResponseBinding)">
-                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                            </FInputSelect>
+                            @if (samlDownParty.Form.Model.IsManual)
+                            {
+                                <FInputSelect @bind-Value="samlDownParty.Form.Model.AuthnResponseBinding" For="@(() => samlDownParty.Form.Model.AuthnResponseBinding)">
+                                    <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                    <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                </FInputSelect>
+                            }
+                            else
+                            {
+                                <div class="active-group active">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            @samlDownParty.Form.Model.AuthnResponseBinding.ToString()
+                                        </div>
+                                    </div>
+                                    <Label For="@(() => samlDownParty.Form.Model.AuthnResponseBinding)" class="label-control" />
+                                </div>
+                            }
                         </div>
                     </div>
 
@@ -179,48 +248,110 @@
                 <FInputText @bind-Value="samlDownParty.Form.Model.LoggedOutUrl" For="@(() => samlDownParty.Form.Model.LoggedOutUrl)" />
                 @if (samlDownParty.ShowAdvanced)
                 {
-                    <FInputText @bind-Value="samlDownParty.Form.Model.SingleLogoutUrl" For="@(() => samlDownParty.Form.Model.SingleLogoutUrl)" />
-                    <div class="row active-group-outline">
-                        <div class="col">
-                            <FInputSelect @bind-Value="samlDownParty.Form.Model.LogoutRequestBinding" For="@(() => samlDownParty.Form.Model.LogoutRequestBinding)">
-                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                            </FInputSelect>
+                    @if (samlDownParty.Form.Model.IsManual)
+                    {
+                        <FInputText @bind-Value="samlDownParty.Form.Model.SingleLogoutUrl" For="@(() => samlDownParty.Form.Model.SingleLogoutUrl)" />
+                    }
+                    else if (!samlDownParty.Form.Model.SingleLogoutUrl.IsNullOrEmpty())
+                    {
+                        <FFieldText @bind-Value="samlDownParty.Form.Model.SingleLogoutUrl" For="@(() => samlDownParty.Form.Model.SingleLogoutUrl)" />
+                    }
+                    @if (samlDownParty.Form.Model.IsManual || !samlDownParty.Form.Model.SingleLogoutUrl.IsNullOrEmpty())
+                    {
+                        <div class="row active-group-outline">
+                            <div class="col">
+                                @if (samlDownParty.Form.Model.IsManual)
+                                {
+                                    <FInputSelect @bind-Value="samlDownParty.Form.Model.LogoutRequestBinding" For="@(() => samlDownParty.Form.Model.LogoutRequestBinding)">
+                                        <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                        <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                    </FInputSelect>
+                                }
+                                else
+                                {
+                                    <div class="active-group active">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                @samlDownParty.Form.Model.LogoutRequestBinding.ToString()
+                                            </div>
+                                        </div>
+                                        <Label For="@(() => samlDownParty.Form.Model.LogoutRequestBinding)" class="label-control" />
+                                    </div>
+                                }
+                            </div>
+                            <div class="col">
+                                @if (samlDownParty.Form.Model.IsManual)
+                                {
+                                    <FInputSelect @bind-Value="samlDownParty.Form.Model.LogoutResponseBinding" For="@(() => samlDownParty.Form.Model.LogoutResponseBinding)">
+                                        <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                        <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                    </FInputSelect>
+                                }
+                                else
+                                {
+                                    <div class="active-group active">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                @samlDownParty.Form.Model.LogoutResponseBinding.ToString()
+                                            </div>
+                                        </div>
+                                        <Label For="@(() => samlDownParty.Form.Model.LogoutResponseBinding)" class="label-control" />
+                                    </div>
+                                }
+                            </div>
                         </div>
-                        <div class="col">
-                            <FInputSelect @bind-Value="samlDownParty.Form.Model.LogoutResponseBinding" For="@(() => samlDownParty.Form.Model.LogoutResponseBinding)">
-                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                            </FInputSelect>
-                        </div>
-                    </div>
+                    }
                 }
                 <FInputTextList @bind-ValueList="samlDownParty.Form.Model.Claims" For="@(() => samlDownParty.Form.Model.Claims)" DynamicFirstRow="true" />
-                <div class="form-group active-group active">
-                    <div class="drag-drop-zone input-control">
-                        <InputFile OnChange="@(async (e) => await OnSamlDownPartyCertificateFileSelectedAsync(samlDownParty, e))" multiple />
-                        @samlDownParty.CertificateFileStatus
+                @if (samlDownParty.Form.Model.IsManual)
+                {
+                    <div class="form-group active-group active">
+                        <div class="drag-drop-zone input-control">
+                            <InputFile OnChange="@(async (e) => await OnSamlDownPartyCertificateFileSelectedAsync(samlDownParty, e))" multiple />
+                            @samlDownParty.CertificateFileStatus
+                        </div>
+                        <Label For="@(() => samlDownParty.Form.Model.Keys)" class="label-control" />
+                        <ValidationMessage For="@(() => samlDownParty.Form.Model.Keys)" />
+                        <ul class="list-group">
+                            @foreach (var keyInfo in samlDownParty.KeyInfoList)
+                            {
+                                <li class="list-group-item">
+                                    <div class="d-flex">
+                                        <div class="mr-auto p-2">
+                                            <strong>@keyInfo.Subject</strong><br />
+                                            Valid from @keyInfo.ValidFrom.ToShortDateString() to @keyInfo.ValidTo.ToShortDateString()<br />
+                                            Thumbprint: @keyInfo.Thumbprint
+                                        </div>
+                                        <div class="p-2">
+                                            <button type="button" class="btn btn-link" title="Remove" @onclick="@(() => RemoveSamlDownPartyCertificate(samlDownParty, keyInfo))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
                     </div>
-                    <Label For="@(() => samlDownParty.Form.Model.Keys)" class="label-control" />
-                    <ValidationMessage For="@(() => samlDownParty.Form.Model.Keys)" />
-                    <ul class="list-group">
-                        @foreach (var keyInfo in samlDownParty.KeyInfoList)
-                        {
-                            <li class="list-group-item">
-                                <div class="d-flex">
-                                    <div class="mr-auto p-2">
-                                        <strong>@keyInfo.Subject</strong><br />
-                                        Valid from @keyInfo.ValidFrom.ToShortDateString() to @keyInfo.ValidTo.ToShortDateString()<br />
-                                        Thumbprint: @keyInfo.Thumbprint
+                }
+                else
+                {
+                    <div class="form-group active-group active">
+                        <Label For="@(() => samlDownParty.Form.Model.Keys)" class="label-control" />
+                        <ValidationMessage For="@(() => samlDownParty.Form.Model.Keys)" />
+                        <ul class="list-group">
+                            @foreach (var keyInfo in samlDownParty.KeyInfoList)
+                            {
+                                <li class="list-group-item p-0 bg-light">
+                                    <div class="d-flex">
+                                        <div class="mr-auto p-2">
+                                            <strong>@keyInfo.Subject</strong><br />
+                                            Valid from @keyInfo.ValidFrom.ToShortDateString() to @keyInfo.ValidTo.ToShortDateString()<br />
+                                            Thumbprint: @keyInfo.Thumbprint
+                                        </div>
                                     </div>
-                                    <div class="p-2">
-                                        <button type="button" class="btn btn-link" title="Remove" @onclick="@(() => RemoveSamlDownPartyCertificate(samlDownParty, keyInfo))"><span class="oi oi-delete" aria-hidden="true"></span></button>
-                                    </div>
-                                </div>
-                            </li>
-                        }
-                    </ul>
-                </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
                 @if (DownParty.ShowAdvanced)
                 {
                     <FInputSelect @bind-Value="samlDownParty.Form.Model.SignatureAlgorithm" For="@(() => samlDownParty.Form.Model.SignatureAlgorithm)">

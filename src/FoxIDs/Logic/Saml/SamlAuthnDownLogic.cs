@@ -34,9 +34,10 @@ namespace FoxIDs.Logic
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly SamlClaimsDownLogic samlClaimsDownLogic;
         private readonly ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic;
+        private readonly SamlMetadataReadDownLogic samlMetadataReadDownLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlAuthnDownLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ClaimTransformLogic claimTransformLogic, SamlClaimsDownLogic samlClaimsDownLogic, ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlAuthnDownLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ClaimTransformLogic claimTransformLogic, SamlClaimsDownLogic samlClaimsDownLogic, ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic, SamlMetadataReadDownLogic samlMetadataReadDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
@@ -47,6 +48,7 @@ namespace FoxIDs.Logic
             this.claimTransformLogic = claimTransformLogic;
             this.samlClaimsDownLogic = samlClaimsDownLogic;
             this.claimsOAuthDownLogic = claimsOAuthDownLogic;
+            this.samlMetadataReadDownLogic = samlMetadataReadDownLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
         }
 
@@ -56,6 +58,7 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             logger.SetScopeProperty(Constants.Logs.DownPartyType, PartyTypes.Saml2.ToString());
             var party = await tenantDataRepository.GetAsync<SamlDownParty>(partyId);
+            party = await samlMetadataReadDownLogic.CheckMetadataAndUpdateDownPartyAsync(party);
             await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.Saml2);
 
             var samlHttpRequest = HttpContext.Request.ToGenericHttpRequest(validate: true);

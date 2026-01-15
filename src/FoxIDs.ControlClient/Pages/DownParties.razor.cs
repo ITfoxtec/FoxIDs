@@ -19,6 +19,8 @@ using System.Linq;
 using System.Security.Claims;
 using Microsoft.JSInterop;
 using FoxIDs.Util;
+using System.Text;
+using System.IO;
 
 namespace FoxIDs.Client.Pages
 {
@@ -596,6 +598,7 @@ namespace FoxIDs.Client.Pages
         private async Task OnNewDownPartySamlModalAfterInitAsync(NewDownPartySamlViewModel model)
         {
             model.Name = await DownPartyService.GetNewPartyNameAsync();
+            model.IsManual = true;
 
             if (!model.Name.IsNullOrWhiteSpace() && model.Issuer.IsNullOrWhiteSpace())
             {
@@ -614,6 +617,7 @@ namespace FoxIDs.Client.Pages
                 {
                     afterMap.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = Constants.DefaultLogin.Name } };
                     afterMap.Claims = new List<string> { ClaimTypes.Email, ClaimTypes.Name, ClaimTypes.GivenName, ClaimTypes.Surname };
+                    afterMap.UpdateState = newDownPartySamlForm.Model.IsManual ? PartyUpdateStates.Manual : PartyUpdateStates.Automatic;
                 });
 
                 var samlDownPartyResult = await DownPartyService.CreateSamlDownPartyAsync(samlDownParty);
@@ -789,6 +793,62 @@ namespace FoxIDs.Client.Pages
             }
 
             newDownPartyModal.ShowSamlMetadataDetails = true;
+        }
+
+        private async Task OnReadNewDownPartySamlMetadataFileAsync(InputFileChangeEventArgs e)
+        {
+            newDownPartyModal.SamlForm.ClearError();
+            try
+            {
+                byte[] metadataXmlBytes;
+                using (var memoryStream = new MemoryStream())
+                {
+                    using var fileStream = e.File.OpenReadStream();
+                    await fileStream.CopyToAsync(memoryStream);
+                    metadataXmlBytes = memoryStream.ToArray();
+                }
+                var metadataXml = Encoding.ASCII.GetString(metadataXmlBytes);
+
+                var samlDownParty = await DownPartyService.ReadSamlDownPartyMetadataAsync(new SamlReadMetadataRequest { Type = SamlReadMetadataType.Xml, Metadata = metadataXml });
+
+                newDownPartyModal.SamlForm.Model.Issuer = samlDownParty.Issuer;
+                newDownPartyModal.SamlForm.Model.AcsUrls = samlDownParty.AcsUrls;
+                newDownPartyModal.SamlForm.Model.DisableAbsoluteUrls = false;
+                if (samlDownParty.AuthnRequestBinding.HasValue)
+                {
+                    newDownPartyModal.SamlForm.Model.AuthnRequestBinding = samlDownParty.AuthnRequestBinding.Value;
+                }
+                if (samlDownParty.AuthnResponseBinding.HasValue)
+                {
+                    newDownPartyModal.SamlForm.Model.AuthnResponseBinding = samlDownParty.AuthnResponseBinding.Value;
+                }
+
+                newDownPartyModal.SamlForm.Model.SingleLogoutUrl = samlDownParty.SingleLogoutUrl;
+                if (samlDownParty.LogoutRequestBinding.HasValue)
+                {
+                    newDownPartyModal.SamlForm.Model.LogoutRequestBinding = samlDownParty.LogoutRequestBinding.Value;
+                }
+                if (samlDownParty.LogoutResponseBinding.HasValue)
+                {
+                    newDownPartyModal.SamlForm.Model.LogoutResponseBinding = samlDownParty.LogoutResponseBinding.Value;
+                }
+
+                newDownPartyModal.SamlForm.Model.Keys = new List<JwkWithCertificateInfo>();
+                if (samlDownParty.Keys?.Count > 0)
+                {
+                    foreach (var key in samlDownParty.Keys)
+                    {
+                        newDownPartyModal.SamlForm.Model.Keys.Add(key);
+                    }
+                }
+
+                newDownPartyModal.SamlForm.Model.EncryptAuthnResponse = samlDownParty.EncryptAuthnResponse;
+                newDownPartyModal.SamlForm.Model.EncryptionKey = samlDownParty.EncryptionKey;
+            }
+            catch (Exception ex)
+            {
+                newDownPartyModal.SamlForm.SetError($"Failing SAML 2.0 metadata. {ex.Message}");
+            }
         }
 
         private void EnsureNewDownPartySamlSummaryDefaults()

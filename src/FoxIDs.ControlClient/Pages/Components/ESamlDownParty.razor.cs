@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http;
 using Microsoft.JSInterop;
+using System.Text;
 
 namespace FoxIDs.Client.Pages.Components
 {
@@ -111,6 +112,68 @@ namespace FoxIDs.Client.Pages.Components
             generalSamlDownParty.ShowMetadataDetails = true;
         }
 
+        private async Task OnReadMetadataFileAsync(GeneralSamlDownPartyViewModel generalSamlDownParty, InputFileChangeEventArgs e)
+        {
+            generalSamlDownParty.Form.ClearError();
+            try
+            {
+                byte[] metadataXmlBytes;
+                using (var memoryStream = new MemoryStream())
+                {
+                    using var fileStream = e.File.OpenReadStream();
+                    await fileStream.CopyToAsync(memoryStream);
+                    metadataXmlBytes = memoryStream.ToArray();
+                }
+                var metadataXml = Encoding.ASCII.GetString(metadataXmlBytes);
+
+                var samlDownParty = await DownPartyService.ReadSamlDownPartyMetadataAsync(new SamlReadMetadataRequest { Type = SamlReadMetadataType.Xml, Metadata = metadataXml });
+
+                generalSamlDownParty.Form.Model.Issuer = samlDownParty.Issuer;
+                generalSamlDownParty.Form.Model.AcsUrls = samlDownParty.AcsUrls;
+                if (samlDownParty.AuthnRequestBinding.HasValue)
+                {
+                    generalSamlDownParty.Form.Model.AuthnRequestBinding = samlDownParty.AuthnRequestBinding.Value;
+                }
+                if (samlDownParty.AuthnResponseBinding.HasValue)
+                {
+                    generalSamlDownParty.Form.Model.AuthnResponseBinding = samlDownParty.AuthnResponseBinding.Value;
+                }
+
+                generalSamlDownParty.Form.Model.SingleLogoutUrl = samlDownParty.SingleLogoutUrl;
+                if (samlDownParty.LogoutRequestBinding.HasValue)
+                {
+                    generalSamlDownParty.Form.Model.LogoutRequestBinding = samlDownParty.LogoutRequestBinding.Value;
+                }
+                if (samlDownParty.LogoutResponseBinding.HasValue)
+                {
+                    generalSamlDownParty.Form.Model.LogoutResponseBinding = samlDownParty.LogoutResponseBinding.Value;
+                }
+
+                generalSamlDownParty.KeyInfoList = new List<KeyInfoViewModel>();
+                generalSamlDownParty.Form.Model.Keys = new List<JwkWithCertificateInfo>();
+
+                if (samlDownParty.Keys?.Count() > 0)
+                {
+                    foreach (var key in samlDownParty.Keys)
+                    {
+                        generalSamlDownParty.KeyInfoList.Add(new KeyInfoViewModel
+                        {
+                            Subject = key.CertificateInfo.Subject,
+                            ValidFrom = key.CertificateInfo.ValidFrom,
+                            ValidTo = key.CertificateInfo.ValidTo,
+                            Thumbprint = key.CertificateInfo.Thumbprint,
+                            Key = key
+                        });
+                        generalSamlDownParty.Form.Model.Keys.Add(key);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                generalSamlDownParty.Form.SetError($"Failing SAML 2.0 metadata. {ex.Message}");
+            }
+        }
+
         private SamlDownPartyViewModel ToViewModel(GeneralSamlDownPartyViewModel generalSamlDownParty, SamlDownParty samlDownParty)
         {
             return samlDownParty.Map<SamlDownPartyViewModel>(afterMap =>
@@ -120,6 +183,24 @@ namespace FoxIDs.Client.Pages.Components
                 if (afterMap.DisplayName.IsNullOrWhiteSpace())
                 {
                     afterMap.DisplayName = afterMap.Name;
+                }
+
+                if (samlDownParty.UpdateState == PartyUpdateStates.Manual)
+                {
+                    afterMap.IsManual = true;
+                }
+                else
+                {
+                    afterMap.IsManual = false;
+                }
+
+                if (samlDownParty.UpdateState == PartyUpdateStates.AutomaticStopped)
+                {
+                    afterMap.AutomaticStopped = true;
+                }
+                else
+                {
+                    afterMap.AutomaticStopped = false;
                 }
 
                 generalSamlDownParty.KeyInfoList.Clear();
@@ -309,6 +390,15 @@ namespace FoxIDs.Client.Pages.Components
                     {
                         afterMap.NewName = afterMap.Name;
                         afterMap.Name = generalSamlDownParty.Form.Model.InitName;
+                    }
+
+                    if (generalSamlDownParty.Form.Model.IsManual)
+                    {
+                        afterMap.UpdateState = PartyUpdateStates.Manual;
+                    }
+                    else
+                    {
+                        afterMap.UpdateState = PartyUpdateStates.Automatic;
                     }
 
                     afterMap.ClaimTransforms.MapSamlClaimTransformsAfterMap();

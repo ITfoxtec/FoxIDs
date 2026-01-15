@@ -93,6 +93,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<SamlMetadataReadLogic>();
             services.AddTransient<SamlMetadataReadUpLogic>();
+            services.AddTransient<SamlMetadataReadDownLogic>();
 
             if (settings.Payment?.EnablePayment == true && settings.Usage?.EnableInvoice == true)
             {

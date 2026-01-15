@@ -18,10 +18,12 @@ namespace FoxIDs.Controllers
     public class TSamlDownPartyController : GenericPartyApiController<Api.SamlDownParty, Api.SamlClaimTransform, SamlDownParty>
     {
         private readonly ValidateApiModelSamlPartyLogic validateApiModelSamlPartyLogic;
+        private readonly SamlMetadataReadDownLogic samlMetadataReadDownLogic;
 
-        public TSamlDownPartyController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PartyLogic partyLogic, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateModelGenericPartyLogic validateModelGenericPartyLogic, ValidateApiModelSamlPartyLogic validateApiModelSamlPartyLogic) : base(settings, logger, mapper, tenantDataRepository, partyLogic, downPartyCacheLogic, upPartyCacheLogic, downPartyAllowUpPartiesQueueLogic, validateApiModelGenericPartyLogic, validateModelGenericPartyLogic)
+        public TSamlDownPartyController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PartyLogic partyLogic, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateModelGenericPartyLogic validateModelGenericPartyLogic, ValidateApiModelSamlPartyLogic validateApiModelSamlPartyLogic, SamlMetadataReadDownLogic samlMetadataReadDownLogic) : base(settings, logger, mapper, tenantDataRepository, partyLogic, downPartyCacheLogic, upPartyCacheLogic, downPartyAllowUpPartiesQueueLogic, validateApiModelGenericPartyLogic, validateModelGenericPartyLogic)
         {
             this.validateApiModelSamlPartyLogic = validateApiModelSamlPartyLogic;
+            this.samlMetadataReadDownLogic = samlMetadataReadDownLogic;
         }
 
         /// <summary>
@@ -40,7 +42,9 @@ namespace FoxIDs.Controllers
         /// <returns>SAML 2.0 application registration.</returns>
         [ProducesResponseType(typeof(Api.SamlDownParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.SamlDownParty>> PostSamlDownParty([FromBody] Api.SamlDownParty party) => await Post(party, ap => new ValueTask<bool>(validateApiModelSamlPartyLogic.ValidateApiModel(ModelState, ap)));
+        public async Task<ActionResult<Api.SamlDownParty>> PostSamlDownParty([FromBody] Api.SamlDownParty party) => await Post(party,
+            ap => new ValueTask<bool>(validateApiModelSamlPartyLogic.ValidateApiModel(ModelState, ap)),
+            async (ap, mp) => await samlMetadataReadDownLogic.PopulateModelAsync(ModelState, mp));
 
         /// <summary>
         /// Update SAML 2.0 application registration.
@@ -49,7 +53,9 @@ namespace FoxIDs.Controllers
         /// <returns>SAML 2.0 application registration.</returns>
         [ProducesResponseType(typeof(Api.SamlDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.SamlDownParty>> PutSamlDownParty([FromBody] Api.SamlDownParty party) => await Put(party, ap => new ValueTask<bool>(validateApiModelSamlPartyLogic.ValidateApiModel(ModelState, ap)));
+        public async Task<ActionResult<Api.SamlDownParty>> PutSamlDownParty([FromBody] Api.SamlDownParty party) => await Put(party,
+            ap => new ValueTask<bool>(validateApiModelSamlPartyLogic.ValidateApiModel(ModelState, ap)),
+            async (ap, mp) => await samlMetadataReadDownLogic.PopulateModelAsync(ModelState, mp));
 
         /// <summary>
         /// Delete SAML 2.0 application registration.

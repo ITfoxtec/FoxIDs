@@ -358,7 +358,16 @@ namespace FoxIDs.Client.Shared
                 selectTrackError = null;
                 await LoadSelectTrackAsync();
 
-                var userProfile = await UserProfileLogic.GetUserProfileAsync();
+                UserControlProfile userProfile;
+                try
+                {
+                    userProfile = await UserProfileLogic.GetUserProfileAsync();
+                }
+                catch (TokenUnavailableException)
+                {
+                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+                    return;
+                }
                 if (!string.IsNullOrWhiteSpace(userProfile?.LastTrackName) && await SelectTrackAsync(userProfile.LastTrackName))
                 {
                     return;
@@ -408,6 +417,10 @@ namespace FoxIDs.Client.Shared
                 {
                     selectTrackTotalCount = selectTrackTasks.Count();
                 }
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
             catch (FoxIDsApiException aex)
             {
@@ -483,11 +496,18 @@ namespace FoxIDs.Client.Shared
 
         private async Task SelectTrackAsync(Track track)
         {
-            if (!RouteBindingLogic.IsMasterTenant)
+            try
             {
-                await UserProfileLogic.UpdateTrackAsync(track.Name);
+                if (!RouteBindingLogic.IsMasterTenant)
+                {
+                    await UserProfileLogic.UpdateTrackAsync(track.Name);
+                }
+                await TrackSelectedLogic.TrackSelectedAsync(track);
             }
-            await TrackSelectedLogic.TrackSelectedAsync(track);
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
         }
 
         private void ToggleVersionDisplay()

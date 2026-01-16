@@ -92,13 +92,9 @@
                 }
             }
 
-            @if (UpParty.ShowAdvanced)
+            @if (UpParty.ShowAdvanced && !samlUpParty.Form.Model.DisableUserAuthenticationTrust)
             {
-                <FInputNumber @bind-Value="samlUpParty.Form.Model.MetadataUpdateRate" For="@(() => samlUpParty.Form.Model.MetadataUpdateRate)" />
-                @if (!samlUpParty.Form.Model.DisableUserAuthenticationTrust)
-                {
-                    <FInputToggle @bind-Value="samlUpParty.Form.Model.DisableSingleLogout" For="@(() => samlUpParty.Form.Model.DisableSingleLogout)" Negation="true" TextType="e.d" />
-                }
+                <FInputToggle @bind-Value="samlUpParty.Form.Model.DisableSingleLogout" For="@(() => samlUpParty.Form.Model.DisableSingleLogout)" Negation="true" TextType="e.d" />
             }
 
             @if (UpParty.ShowAdvanced || samlUpParty.Form.Model.DisableUserAuthenticationTrust || samlUpParty.Form.Model.DisableTokenExchangeTrust)
@@ -211,12 +207,18 @@
                             <InputFile hidden OnChange="@(async (e) => await OnReadMetadataFileAsync(samlUpParty, e))" />
                         </label>
                     }
-                    else
+                    <div class="info-text">
+                        Automatically refresh metadata by reading the online metadata file.
+                    </div>
+                    @if (!samlUpParty.Form.Model.IsManual)
                     {
                         <FInputText @bind-Value="samlUpParty.Form.Model.MetadataUrl" For="@(() => samlUpParty.Form.Model.MetadataUrl)" />
                     }
-
                     <FInputToggle @bind-Value="samlUpParty.Form.Model.AutomaticUpdate" For="@(() => samlUpParty.Form.Model.AutomaticUpdate)" TextType="e.d" />
+                    @if (!samlUpParty.Form.Model.IsManual && UpParty.ShowAdvanced)
+                    {
+                        <FInputNumber @bind-Value="samlUpParty.Form.Model.MetadataUpdateRate" For="@(() => samlUpParty.Form.Model.MetadataUpdateRate)" />
+                    }
 
                     @if (samlUpParty.Form.Model.IsManual)
                     {

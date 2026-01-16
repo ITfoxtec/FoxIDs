@@ -170,6 +170,21 @@ namespace FoxIDs.Client.Pages.Components
 
                 generalSamlDownParty.Form.Model.EncryptAuthnResponse = samlDownParty.EncryptAuthnResponse;
                 generalSamlDownParty.Form.Model.EncryptionKey = samlDownParty.EncryptionKey;
+                if (samlDownParty.EncryptionKey != null)
+                {
+                    generalSamlDownParty.EncryptionKeyInfo = new KeyInfoViewModel
+                    {
+                        Subject = samlDownParty.EncryptionKey.CertificateInfo.Subject,
+                        ValidFrom = samlDownParty.EncryptionKey.CertificateInfo.ValidFrom,
+                        ValidTo = samlDownParty.EncryptionKey.CertificateInfo.ValidTo,
+                        Thumbprint = samlDownParty.EncryptionKey.CertificateInfo.Thumbprint,
+                        Key = samlDownParty.EncryptionKey
+                    };
+                }
+                else
+                {
+                    generalSamlDownParty.EncryptionKeyInfo = null;
+                }
             }
             catch (Exception ex)
             {

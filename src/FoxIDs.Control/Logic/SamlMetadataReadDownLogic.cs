@@ -18,18 +18,18 @@ namespace FoxIDs.Logic
             this.samlMetadataReadLogic = samlMetadataReadLogic;
         }
 
-        public async Task<bool> PopulateModelAsync(ModelStateDictionary modelState, SamlDownParty party)
+        public async Task<bool> PopulateModelAsync(ModelStateDictionary modelState, SamlDownParty mp)
         {
             var isValid = true;
             try
             {
-                if (party.UpdateState != PartyUpdateStates.Manual)
+                if (mp.UpdateState != PartyUpdateStates.Manual)
                 {
-                    _ = await samlMetadataReadLogic.PopulateModelAsync(party);
+                    _ = await samlMetadataReadLogic.PopulateModelAsync(mp);
 
-                    if (party.UpdateState == PartyUpdateStates.AutomaticStopped)
+                    if (mp.UpdateState == PartyUpdateStates.AutomaticStopped)
                     {
-                        party.UpdateState = PartyUpdateStates.Automatic;
+                        mp.UpdateState = PartyUpdateStates.Automatic;
                     }
                 }
             }
@@ -37,7 +37,7 @@ namespace FoxIDs.Logic
             {
                 isValid = false;
                 logger.Warning(ex);
-                modelState.TryAddModelError(nameof(party.MetadataUrl).ToCamelCase(), ex.GetAllMessagesJoined());
+                modelState.TryAddModelError(nameof(mp.MetadataUrl).ToCamelCase(), ex.GetAllMessagesJoined());
             }
             return isValid;
         }

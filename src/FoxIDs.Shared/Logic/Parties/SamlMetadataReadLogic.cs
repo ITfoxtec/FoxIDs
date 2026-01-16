@@ -103,7 +103,7 @@ namespace FoxIDs.Logic
 
         private async Task<SamlUpParty> PopulateModelInternalAsync(SamlUpParty party, EntityDescriptor entityDescriptor)
         {
-            if (entityDescriptor.IdPSsoDescriptor != null)
+            if (entityDescriptor.IdPSsoDescriptor == null)
             {
                 throw new Exception("IDPSSODescriptor element is missing from the metadata file.");
             }

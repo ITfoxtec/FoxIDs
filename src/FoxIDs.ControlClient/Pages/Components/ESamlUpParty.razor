@@ -217,7 +217,7 @@
                     <FInputToggle @bind-Value="samlUpParty.Form.Model.AutomaticUpdate" For="@(() => samlUpParty.Form.Model.AutomaticUpdate)" TextType="e.d" />
                     @if (!samlUpParty.Form.Model.IsManual && UpParty.ShowAdvanced)
                     {
-                        <FInputNumber @bind-Value="samlUpParty.Form.Model.MetadataUpdateRate" For="@(() => samlUpParty.Form.Model.MetadataUpdateRate)" />
+                        <FInputNumberSecondsAsHours @bind-Value="samlUpParty.Form.Model.MetadataUpdateRate" For="@(() => samlUpParty.Form.Model.MetadataUpdateRate)" />
                     }
 
                     @if (samlUpParty.Form.Model.IsManual)

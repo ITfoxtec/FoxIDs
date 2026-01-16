@@ -1,0 +1,48 @@
+@using System.Globalization
+@using Microsoft.AspNetCore.Components
+@inherits FInputBase<int>
+
+<div class="form-group active-group">
+    <input @ref="inputElement" type="number" step="@Step" @bind="@CurrentValueAsString" class="form-control input-control" />
+    <Label For="@For" LabelText="@LabelText" class="label-control" />
+    <ValidationMessage For="@For" />
+</div>
+
+@code {
+    private const int SecondsPerHour = 60 * 60;
+    private const string HourFormat = "0.######";
+
+    [Parameter]
+    public string LabelText { get; set; }
+
+    [Parameter]
+    public string Step { get; set; } = "1";
+
+    protected override string FormatValueAsString(int value)
+    {
+        var hours = value / (decimal)SecondsPerHour;
+        return hours.ToString(HourFormat, CultureInfo.InvariantCulture);
+    }
+
+    protected override bool TryParseValueFromString(string value, out int result, out string validationErrorMessage)
+    {
+        if (!BindConverter.TryConvertTo<decimal>(value, CultureInfo.InvariantCulture, out var hours))
+        {
+            result = default;
+            validationErrorMessage = $"Unable to pass '{value}' value to hours.";
+            return false;
+        }
+
+        var seconds = decimal.Round(hours * SecondsPerHour, 0, MidpointRounding.AwayFromZero);
+        if (seconds > int.MaxValue || seconds < int.MinValue)
+        {
+            result = default;
+            validationErrorMessage = "Value is out of range.";
+            return false;
+        }
+
+        result = (int)seconds;
+        validationErrorMessage = null;
+        return true;
+    }
+}

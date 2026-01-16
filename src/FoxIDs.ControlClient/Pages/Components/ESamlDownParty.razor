@@ -101,7 +101,7 @@
         }
         @if (DownParty.ShowAdvanced && !samlDownParty.Form.Model.IsManual)
         {
-            <FInputNumber @bind-Value="samlDownParty.Form.Model.MetadataUpdateRate" For="@(() => samlDownParty.Form.Model.MetadataUpdateRate)" />
+            <FInputNumberSecondsAsHours @bind-Value="samlDownParty.Form.Model.MetadataUpdateRate" For="@(() => samlDownParty.Form.Model.MetadataUpdateRate)" />
         }
 
         <ul class="nav nav-tabs">
@@ -148,7 +148,7 @@
                 <FInputToggle @bind-Value="samlDownParty.Form.Model.AutomaticUpdate" For="@(() => samlDownParty.Form.Model.AutomaticUpdate)" TextType="e.d" />
                 @if (!samlDownParty.Form.Model.IsManual && DownParty.ShowAdvanced)
                 {
-                    <FInputNumber @bind-Value="samlDownParty.Form.Model.MetadataUpdateRate" For="@(() => samlDownParty.Form.Model.MetadataUpdateRate)" />
+                    <FInputNumberSecondsAsHours @bind-Value="samlDownParty.Form.Model.MetadataUpdateRate" For="@(() => samlDownParty.Form.Model.MetadataUpdateRate)" LabelText="Automatic update rate in hours" />
                 }
 
                 @if (samlDownParty.Form.Model.AutomaticStopped)

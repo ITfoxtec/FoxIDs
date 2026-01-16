@@ -167,6 +167,9 @@ namespace FoxIDs.Client.Pages.Components
                         generalSamlDownParty.Form.Model.Keys.Add(key);
                     }
                 }
+
+                generalSamlDownParty.Form.Model.EncryptAuthnResponse = samlDownParty.EncryptAuthnResponse;
+                generalSamlDownParty.Form.Model.EncryptionKey = samlDownParty.EncryptionKey;
             }
             catch (Exception ex)
             {

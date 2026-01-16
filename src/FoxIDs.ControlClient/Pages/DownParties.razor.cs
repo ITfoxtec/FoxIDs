@@ -609,12 +609,40 @@ namespace FoxIDs.Client.Pages
 
         private void OnNewDownPartySamlConfigurationOptionChanged(SamlDownPartyConfigurationOptions option)
         {
-            if (newDownPartyModal?.SamlForm?.Model == null)
-            {
-                return;
-            }
+            var model = newDownPartyModal.SamlForm.Model;
+            newDownPartyModal.SamlForm.ClearError();
 
-            newDownPartyModal.SamlForm.Model.AutomaticUpdate = option == SamlDownPartyConfigurationOptions.MetadataUrl;
+            model.ConfigurationOption = option;
+            model.AutomaticUpdate = option == SamlDownPartyConfigurationOptions.MetadataUrl;
+
+            model.MetadataUrl = null;
+            model.AcsUrls = null;
+            model.Keys = new List<JwkWithCertificateInfo>();
+            model.EncryptionKey = null;
+            model.EncryptAuthnResponse = false;
+            model.SingleLogoutUrl = null;
+            model.AuthnRequestBinding = SamlBindingTypes.Redirect;
+            model.AuthnResponseBinding = SamlBindingTypes.Post;
+            model.LogoutRequestBinding = SamlBindingTypes.Post;
+            model.LogoutResponseBinding = SamlBindingTypes.Post;
+            model.Metadata = null;
+            model.MetadataIssuer = null;
+            model.MetadataAuthn = null;
+            model.MetadataLogout = null;
+            model.IdPKeyInfo = null;
+            model.Issuer = null;
+
+            newDownPartyModal.SamlForm.ClearFieldError(nameof(newDownPartyModal.SamlForm.Model.AcsUrls));
+            newDownPartyModal.SamlForm.ClearFieldError(nameof(newDownPartyModal.SamlForm.Model.MetadataUrl));
+            newDownPartyModal.SamlForm.ClearFieldError(nameof(newDownPartyModal.SamlForm.Model.ConfigurationOption));
+            newDownPartyModal.SamlForm.ClearFieldError(nameof(newDownPartyModal.SamlForm.Model.Issuer));
+            newDownPartyModal.SamlForm.ClearFieldError(nameof(newDownPartyModal.SamlForm.Model.Keys));
+            newDownPartyModal.SamlForm.ClearFieldError(nameof(newDownPartyModal.SamlForm.Model.EncryptionKey));
+
+            newDownPartyModal.SamlForm.EditContext.NotifyFieldChanged(new FieldIdentifier(model, nameof(model.ConfigurationOption)));
+            newDownPartyModal.SamlForm.EditContext.NotifyFieldChanged(new FieldIdentifier(model, nameof(model.MetadataUrl)));
+            newDownPartyModal.SamlForm.EditContext.NotifyFieldChanged(new FieldIdentifier(model, nameof(model.AcsUrls)));
+            newDownPartyModal.SamlForm.EditContext.NotifyFieldChanged(new FieldIdentifier(model, nameof(model.Issuer)));
         }
 
         private async Task OnNewDownPartySamlModalValidSubmitAsync(NewDownPartyViewModel newDownPartyViewModel, PageEditForm<NewDownPartySamlViewModel> newDownPartySamlForm, EditContext editContext)
@@ -809,6 +837,12 @@ namespace FoxIDs.Client.Pages
         private async Task OnReadNewDownPartySamlMetadataFileAsync(InputFileChangeEventArgs e)
         {
             newDownPartyModal.SamlForm.ClearError();
+            newDownPartyModal.SamlForm.ClearFieldError(nameof(newDownPartyModal.SamlForm.Model.AcsUrls));
+            newDownPartyModal.SamlForm.ClearFieldError(nameof(newDownPartyModal.SamlForm.Model.MetadataUrl));
+            newDownPartyModal.SamlForm.ClearFieldError(nameof(newDownPartyModal.SamlForm.Model.ConfigurationOption));
+            newDownPartyModal.SamlForm.ClearFieldError(nameof(newDownPartyModal.SamlForm.Model.Issuer));
+            newDownPartyModal.SamlForm.ClearFieldError(nameof(newDownPartyModal.SamlForm.Model.Keys));
+            newDownPartyModal.SamlForm.ClearFieldError(nameof(newDownPartyModal.SamlForm.Model.EncryptionKey));
             try
             {
                 byte[] metadataXmlBytes;
@@ -855,6 +889,10 @@ namespace FoxIDs.Client.Pages
 
                 newDownPartyModal.SamlForm.Model.EncryptAuthnResponse = samlDownParty.EncryptAuthnResponse;
                 newDownPartyModal.SamlForm.Model.EncryptionKey = samlDownParty.EncryptionKey;
+
+                var model = newDownPartyModal.SamlForm.Model;
+                newDownPartyModal.SamlForm.EditContext.NotifyFieldChanged(new FieldIdentifier(model, nameof(model.ConfigurationOption)));
+                newDownPartyModal.SamlForm.EditContext.NotifyFieldChanged(new FieldIdentifier(model, nameof(model.AcsUrls)));
             }
             catch (Exception ex)
             {
